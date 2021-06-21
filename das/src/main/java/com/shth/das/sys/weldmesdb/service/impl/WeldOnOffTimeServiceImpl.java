@@ -1,0 +1,19 @@
+package com.shth.das.sys.weldmesdb.service.impl;
+
+import com.shth.das.pojo.WeldOnOffTime;
+import com.shth.das.sys.weldmesdb.mapper.WeldOnOffTimeMapper;
+import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
+
+    @Autowired
+    WeldOnOffTimeMapper weldOnOffTimeMapper;
+
+    @Override
+    public int insertWeldOnOffTime(WeldOnOffTime weldOnOffTime) {
+        return weldOnOffTimeMapper.insert(weldOnOffTime);
+    }
+}
