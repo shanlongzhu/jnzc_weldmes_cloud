@@ -48,7 +48,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      * value:采集编号
      * 采集盒的IP地址和采集编号对应关系(用来向前端发送关机数据)
      */
-    public static final ConcurrentMap<String, String> gatherAndIpMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, String> gatherAndIpMap = new ConcurrentHashMap<>();
 
     /**
      * 服务端收到消息执行的方法
