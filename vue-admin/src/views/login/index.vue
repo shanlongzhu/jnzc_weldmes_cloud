@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">腾 焊 智 能 </h3>
+        <h3 class="title">云 智 能 焊 接 管 控 系 统</h3>
       </div>
 
       <!--用户名输入框-->
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  export default {
+export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {

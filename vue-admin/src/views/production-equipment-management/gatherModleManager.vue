@@ -1,102 +1,117 @@
-<el-container style="height: 500px; border: 1px solid #eee">
-  <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-    <el-menu :default-openeds="['1', '3']">
-      <el-submenu index="1">
-        <template slot="title"><i class="el-icon-message"></i>导航一</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title"><i class="el-icon-menu"></i>导航二</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="2-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="2-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title"><i class="el-icon-setting"></i>导航三</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="3-1">选项1</el-menu-item>
-          <el-menu-item index="3-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="3-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="3-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-    </el-menu>
-  </el-aside>
-
-  <el-container>
-    <el-header style="text-align: right; font-size: 12px">
-      <el-dropdown>
-        <i class="el-icon-setting" style="margin-right: 15px"></i>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>查看</el-dropdown-item>
-          <el-dropdown-item>新增</el-dropdown-item>
-          <el-dropdown-item>删除</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-      <span>王小虎</span>
-    </el-header>
-
-    <el-main>
-      <el-table :data="tableData">
-        <el-table-column prop="date" label="日期" width="140">
-        </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
-        </el-table-column>
-        <el-table-column prop="address" label="地址">
-        </el-table-column>
-      </el-table>
-    </el-main>
-  </el-container>
-</el-container>
-<style>
-  .el-header {
-    background-color: #B3C0D1;
-    color: #333;
-    line-height: 60px;
-  }
-
-  .el-aside {
-    color: #333;
-  }
-</style>
+<template>
+  <div>
+    <div />
+    <div>
+      <el-row>
+        <el-table
+          id="out-table"
+          :data="list"
+          stripe
+          style="width: 100%"
+          align="center"
+          border
+          size="medium"
+          width="80%"
+          :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+        >
+          <el-table-column prop="taskNo" label="采 集 模 块 编 号" align="center" width="100" />
+          <el-table-column prop="gradeIdToStr" label="所 属 项 目" align="center" width="100" />
+          <el-table-column prop="deptName" label="采 集 模 块 状 态" align="center" width="100" />
+          <el-table-column prop="welderName" label="采 集 模 块 通 讯 协 议" align="center" width="100" />
+          <el-table-column prop="planStarttime" label="采 集 模 块 IP 地 址" align="center" width="120" />
+          <el-table-column prop="realityStarttime" label="采 集 模 块 MAC 地 址" align="center" width="120" />
+          <el-table-column prop="planEndtime" label="采 集 模 块 出 厂 时 间" align="center" width="120" />
+          <el-table-column label="操 作" align="center" class-name="small-padding fixed-width">
+            <template>
+              <el-button
+                size="mini"
+                type="primary"
+                plain
+              >
+                修改
+              </el-button>
+              <el-button size="mini" type="danger" plain>
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+    </div>
+    <div class="block">
+      <el-pagination
+        :current-page.sync="currentPage1"
+        :page-size="10"
+        align="center"
+        layout="total, prev, pager, next"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+  </div>
+</template>
 
 <script>
-  export default {
-    data() {
-      const item = {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      };
-      return {
-        tableData: Array(20).fill(item)
+import { getInfo, getTaskInfos, queryCurrentPageTaskListController } from '../../api/user'
+export default {
+  data() {
+    return {
+      role: null,
+      showButton: false,
+      list: [{ taskNo: '7853', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7854', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7855', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7856', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7857', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7858', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7860', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7861', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7862', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' },
+        { taskNo: '7863', gradeIdToStr: '部件MAG焊机', deptName: '正常', welderName: '串口', planStarttime: 'wwww.baidu.com', realityStarttime: 'www.baidu.com', planEndtime: '2021-05-29 11:46:58' }],
+      total: 10,
+      listLoading: true,
+      formData: {
+        taskNo: '',
+        gradeIdToStr: '',
+        deptName: '',
+        planStarttime: '',
+        planEndtime: '',
+        realityStarttime: '',
+        realityEndtime: '',
+        evaluateContent: '',
+        evaluateStarsIdToStr: ''
       }
     }
-  };
+  },
+
+  created() {
+    this.getUserRoles()
+  },
+  methods: {
+    getList() {
+      getTaskInfos().then(res => {
+        this.list = res.data.list
+        this.total = res.data.total
+      })
+    },
+    getUserRoles() {
+      getInfo().then(res => {
+        this.role = res.data.role
+      })
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(pn) {
+      queryCurrentPageTaskListController(pn).then(res => {
+        this.list = res.data.list
+      })
+    }
+  }
+}
 </script>
+
+<style scoped>
+
+</style>

@@ -14,41 +14,26 @@
           width="80%"
           :header-cell-style="{background:'#eef1f6',color:'#606266'}"
         >
-          <el-table-column prop="taskNo" label="任 务 编 号" align="center" width="100" />
-          <el-table-column prop="gradeIdToStr" label="任 务 等 级" align="center" width="100" />
-          <el-table-column prop="deptName" label="所 属 班 组" align="center" width="100" />
-          <el-table-column prop="welderName" label="焊 工 姓 名" align="center" width="100" />
-          <el-table-column prop="planStarttime" label="计划开始时间" align="center" width="120" />
-          <el-table-column prop="realityStarttime" label="实际开始时间" align="center" width="120" />
-          <el-table-column prop="planEndtime" label="计划结束时间" align="center" width="120" />
-          <el-table-column prop="realityEndtime" label="实际结束时间" align="center" width="120" />
-          <el-table-column prop="evaluateContent" label="任 务 评 价" align="center" width="100" />
-          <el-table-column prop="evaluateStarsIdToStr" label="评 价 等 级" align="center" width="100" />
+          <el-table-column prop="gradeIdToStr" label="焊 机 型 号" align="center" width="100" />
+          <el-table-column prop="deptName" label="创 建 日 期" align="center" width="100" />
+          <el-table-column prop="welderName" label="状 态" align="center" width="100" />
           <el-table-column label="操 作" align="center" class-name="small-padding fixed-width">
             <template>
+              <el-button size="mini" type="warning" plain>
+                工艺库下发
+              </el-button>
+              <el-button size="mini" type="success" plain>
+                新增工艺
+              </el-button>
               <el-button
-                v-if="showButtonEdit"
                 size="mini"
                 type="primary"
                 plain
               >
                 修改
               </el-button>
-              <el-button
-                v-if="showButtonDel"
-                size="mini"
-                type="danger"
-                plain
-              >
+              <el-button size="mini" type="danger" plain>
                 删除
-              </el-button>
-              <el-button
-                v-if="showButtonComment"
-                size="mini"
-                type="success"
-                plain
-              >
-                评价
               </el-button>
             </template>
           </el-table-column>
@@ -75,11 +60,18 @@ export default {
   data() {
     return {
       role: null,
-      showButtonDel: true,
-      showButtonEdit: true,
-      showButtonComment: true,
-      list: {},
-      total: 0,
+      showButton: false,
+      list: [{ taskNo: 'CPVE', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'CPVE', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test1', gradeIdToStr: 'CPVE-500', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test2', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test3', gradeIdToStr: 'CPVE-500', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test4', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test5', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test6', gradeIdToStr: 'YD-500GR3', deptName: '2021-06-05 10:05:54', welderName: '启用' },
+        { taskNo: 'test7', gradeIdToStr: 'CPVE-500', deptName: '2021-06-05 10:05:54', welderName: '启用' }],
+      total: 10,
       listLoading: true,
       formData: {
         taskNo: '',
@@ -96,7 +88,6 @@ export default {
   },
 
   created() {
-    this.getList()
     this.getUserRoles()
   },
   methods: {
@@ -108,11 +99,7 @@ export default {
     },
     getUserRoles() {
       getInfo().then(res => {
-        console.log(res.data)
         this.role = res.data.role
-        if (this.role[0] !== 'admin') {
-          this.showButtonDel = false
-        }
       })
     },
     handleSizeChange(val) {

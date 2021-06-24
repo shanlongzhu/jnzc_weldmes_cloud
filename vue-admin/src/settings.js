@@ -1,5 +1,5 @@
 module.exports = {
-  title: '腾焊智能',
+  title: '云智能焊接管控',
 
   /**
    * @type {boolean} true | false

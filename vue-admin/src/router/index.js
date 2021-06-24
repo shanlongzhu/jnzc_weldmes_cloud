@@ -112,7 +112,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/page',
-        component: () => import('@/views/production-equipment-management/gatherModleManager.vue'),
+        component: () => import('@/views/production-equipment-management/gatherModleManager'),
         name: 'PagePermission',
         meta: {
           title: '采集模块管理',
@@ -121,7 +121,7 @@ export const asyncRoutes = [
       },
       {
         path: 'directive',
-        component: () => import('@/views/production-equipment-management/show-task-list'),
+        component: () => import('@/views/production-equipment-management/product-equip-manage'),
         name: 'DirectivePermission',
         meta: {
           title: '生产设备管理',
@@ -153,7 +153,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'pa',
-        component: () => import('@/views/table/inline-edit-table'),
+        component: () => import('@/views/production-equipment-management/technology-manage'),
         name: 'PagePermission',
         meta: {
           title: '工艺管理',
@@ -292,7 +292,7 @@ export const asyncRoutes = [
       },
       {
         path: 'keyboard4',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/production-equipment-management/grade-product-data-manage'),
         name: 'KeyboardChart',
         meta: {
           title: '班组生产数据统计',
@@ -392,7 +392,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'keyboard',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/production-equipment-management/user-manage'),
         name: 'KeyboardChart',
         meta: {
           title: '用户管理',
@@ -401,7 +401,7 @@ export const asyncRoutes = [
       },
       {
         path: 'keyboard4',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/production-equipment-management/RolesManager'),
         name: 'KeyboardChart',
         meta: {
           title: '角色管理',
@@ -410,7 +410,7 @@ export const asyncRoutes = [
       },
       {
         path: 'keyboard5',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/production-equipment-management/RolesManager'),
         name: 'KeyboardChart',
         meta: {
           title: '菜单管理',
