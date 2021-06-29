@@ -14,7 +14,7 @@ body {
 }
 
 label {
-  font-weight: 700;
+  font-weight: 400;
 }
 
 html {
@@ -119,6 +119,31 @@ aside {
   }
 }
 
+.flex{
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.flex-n{
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.flex-c{
+  display: flex;
+  flex-flow: column;
+}
+
+.w100{
+  width: 100px !important;
+}
+.w150{
+  width: 150px !important;
+}
+.p10{
+  padding: 10px;
+}
+
 //main-container全局样式
 .app-container {
   padding: 20px;
@@ -188,4 +213,13 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.top-con{
+  padding: 10px;
+  font-size: 12px;
+  .con-w{
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 }

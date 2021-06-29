@@ -49,6 +49,9 @@
         @current-change="handleCurrentChange"
       />
     </div> -->
+    <div class="buttons" style="border-bottom:1px solid #ddd;padding:10px">
+            <el-button size="small" @click="append">添加顶级菜单</el-button>
+        </div>
         <el-tree
             :data="data"
             show-checkbox
@@ -57,6 +60,25 @@
             default-expand-all
             :expand-on-click-node="false"
         >
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span>{{ node.label }}</span>          
+          <span>
+            <span class="span-mark">{{ data.mark}}</span>
+            <el-button
+              type="text"
+              size="mini"
+              v-show="data.type==1"
+              @click="() => append(data,node)">
+              <i style="font-size:16px;" class="el-icon-plus"></i>
+            </el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="() => remove(node, data)">
+              <i style="font-size:16px;color:red" class="el-icon-delete"></i>
+            </el-button>
+          </span>
+        </span>
         </el-tree>
         <div class="buttons">
             <el-button @click="getCheckedNodes">通过 node 获取</el-button>
@@ -65,6 +87,30 @@
             <el-button @click="setCheckedKeys">通过 key 设置</el-button>
             <el-button @click="resetChecked">清空</el-button>
         </div>
+        <el-dialog title="新增/编辑资源" :visible.sync="sourceVisible">
+          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="上级目录" prop="parentName">
+              <el-input disabled v-model="ruleForm.parentName"></el-input>
+            </el-form-item>
+            <el-form-item label="资源类型" prop="type">
+              <el-select v-model="ruleForm.type" placeholder="请选择活动区域">
+                <el-option label="菜单" value="1"></el-option>
+                <el-option label="按钮" value="2"></el-option>
+              </el-select>              
+            </el-form-item>
+            <el-form-item label="名称" prop="label">
+                <el-input v-model="ruleForm.label"></el-input>
+              </el-form-item>
+              <el-form-item label="权限标识" prop="mark">
+                <el-input v-model="ruleForm.label"></el-input>
+              </el-form-item>
+            
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -77,25 +123,25 @@ export default {
             data: [{
                 id: 1,
                 label: '生产设备管理',
-                type: "menu",
+                type: "1",
                 mark: "1",
                 children: [{
                     id: 101,
                     label: '采集模块管理',
                     mark: "101",
-                    type: "menu",
+                    type: "1",
                     parentId: 1,
                     children: [{
                         id: 1011,
                         parentId: 101,
                         mark: "101_add",
-                        type: "btn",
+                        type: "2",
                         label: '新增'
                     }, {
                         id: 1012,
                         parentId: 101,
                         mark: "101_del",
-                        type: "btn",
+                        type: "2",
                         label: '删除'
                     }]
                 }, {
@@ -601,7 +647,23 @@ export default {
                     }]
                 }]
             }
-            ]
+            ],
+            //树形新增点击数据
+            hanldObj:{},
+            //model资源编辑层
+            sourceVisible:false,
+            //form
+            objRuleForm:{
+              parentId:'',//父级id
+              parentName:'',//父级名称
+              type:'1',//新增资源类型
+              label:'',//新增资源名称
+              mark:''//权限标识
+            },
+            ruleForm:{
+            },
+            //
+            rules:{}
         }
     },
 
@@ -609,6 +671,12 @@ export default {
     },
     methods: {
         append (data) {
+          this.hanldObj = {...data};
+          this.ruleForm = {...this.objRuleForm};
+          this.ruleForm.parentName = data.label||"顶级";
+          this.ruleForm.parentId = data.id||0;
+          this.sourceVisible = true;
+          console.log(data)
             const newChild = { id: id++, label: 'testtest', children: [] };
             if (!data.children) {
                 this.$set(data, 'children', []);
@@ -656,5 +724,10 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+}
+
+.span-mark{
+  display: inline-block;
+  width: 200px; 
 }
 </style>
