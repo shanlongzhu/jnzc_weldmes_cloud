@@ -79,6 +79,14 @@ export function delWelder(params = {}) {
   });
 }
 
+// 获取全部采集序号
+export function getAllGatherNos() {
+  return request({
+    url: `/collection/getGatherNos`,
+    method: "get"
+  });
+}
+
 // 获取焊机设备详情
 export function getWelderDetail(id) {
   return request({
@@ -86,6 +94,37 @@ export function getWelderDetail(id) {
     method: "get"
   });
 }
+
+
+// 新增焊机设备
+export function addWelder(data = {}) {
+  return request({
+    url: "/welder",
+    method: "post",
+    data
+  });
+}
+
+// 修改焊机设备
+export function editWelder(data = {}) {
+  return request({
+    url: "/welder",
+    method: "put",
+    data
+  });
+}
+
+// 修改焊机设备
+export function getWeldingModel(params = {}) {
+  return request({
+    url: "/library/getMachineInfoByFirm",
+    method: "get",
+    params
+  });
+}
+
+
+
 
   //导出
   export function exportWelderExcel(params = {}) {

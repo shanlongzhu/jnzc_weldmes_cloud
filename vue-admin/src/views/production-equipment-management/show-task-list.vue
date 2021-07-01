@@ -628,7 +628,7 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId.pop()
+                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
                         const { data, code } = await editProcess(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
@@ -637,7 +637,7 @@ export default {
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId.pop()
+                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
                         const { data, code } = await addProcess(req)
                         if (code == 200) {
                             this.$message.success('新增成功')

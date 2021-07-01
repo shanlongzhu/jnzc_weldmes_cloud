@@ -1,5 +1,9 @@
+//************生产过程*************** */
 import request from '@/utils/request'
 import qs from 'qs'
+
+//************任务工单*************** */
+
 // 获取列表
 export function getProcessList(params = {}) {
   return request({
@@ -115,4 +119,107 @@ export function exportExcel(params = {}) {
 // 导入
 export function importExcel(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/task/importExcel`
+}
+
+
+//************焊工管理*************** */
+
+// 获取焊工列表
+export function getWelderPeopleList(params = {}) {
+  return request({
+    url: "/solderer",
+    method: "get",
+    params
+  });
+}
+
+
+// 新增焊工
+export function addWelderPeople(data = {}) {
+  return request({
+    url: "/solderer",
+    method: "post",
+    data
+  });
+}
+
+// 修改焊工
+export function editWelderPeople(data = {}) {
+  return request({
+    url: "/solderer",
+    method: "put",
+    data
+  });
+}
+
+// 获取焊工详情
+export function getWelderPeopleDetail(id) {
+  return request({
+    url: `/solderer/${id}`,
+    method: "get",
+  });
+}
+
+// 导出
+export function exportWelderPeopleExcel(params = {}) {
+  return `${process.env.VUE_APP_BASE_API}/solderer/excel?${qs.stringify(params)}`
+}
+
+
+
+//************工艺管理*************** */
+
+//获取工艺库
+export function getProcesLibraryList(params = {}) {
+  return request({
+    url: "/library",
+    method: "get",
+    params
+  });
+}
+
+//获取工艺库明细
+export function getProcesLibraryDetail(id) {
+  return request({
+    url: `/library/${id}`,
+    method: "get"
+  });
+}
+
+//删除工艺库
+export function delProcesLibrary(params={}) {
+  return request({
+    url: `/library`,
+    method: "delete",
+    params
+  });
+}
+
+
+//新增工艺库
+export function addProcesLibrary(data={}) {
+  return request({
+    url: `/library`,
+    method: "post",
+    data
+  });
+}
+
+
+//新增工艺库
+export function editProcesLibrary(data={}) {
+  return request({
+    url: `/library`,
+    method: "put",
+    data
+  });
+}
+
+//获取工艺库子数据
+export function getProcesLibraryChild(params) {
+  return request({
+    url: `/craft`,
+    method: "get",
+    params
+  });
 }
