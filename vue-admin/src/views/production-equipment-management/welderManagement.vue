@@ -5,17 +5,58 @@
     >
         <div class="top-con flex-n">
             <div class="con-w">
-                <span>编号：</span>
+                <span>姓名：</span>
                 <el-input
                     size="small"
-                    class="w150"
-                    v-model="gatherNo"
+                    class="w100"
+                    v-model="searchObj.welderName"
                 ></el-input>
             </div>
             <div class="con-w">
-                <span>所属项目：</span>
+                <span>编号：</span>
+                <el-input
+                    size="small"
+                    class="w100"
+                    v-model="searchObj.welderNo"
+                ></el-input>
+            </div>
+            <div class="con-w">
+                <span>级别：</span>
+                <el-select
+                    v-model="searchObj.rate"
+                    placeholder="请选择"
+                    clearable
+                    style="width:120px"
+                >
+                    <el-option
+                        v-for="item in levelArr"
+                        :key="item.id"
+                        :label="item.valueName"
+                        :value="item.id"
+                    />
+                </el-select>
+            </div>
+            <div class="con-w">
+                <span>资质：</span>
+                <el-select
+                    v-model="searchObj.talent"
+                    placeholder="请选择"
+                    clearable
+                    style="width:120px"
+                >
+                    <el-option
+                        v-for="item in qualiArr"
+                        :key="item.id"
+                        :label="item.valueName"
+                        :value="item.id"
+                    />
+                </el-select>
+            </div>
+
+            <div class="con-w">
+                <span>部门：</span>
                 <el-cascader
-                    v-model="grade"
+                    v-model="searchObj.grade"
                     size="small"
                     class="w150"
                     clearable
@@ -82,62 +123,70 @@
                 <el-table-column
                     label=""
                     align="left"
-                    min-width="200"
+                    width="50"
                     type="index"
                     fixed="left"
                 />
                 <el-table-column
-                    prop="gatherNo"
-                    label="编号"
+                    prop="welderName"
+                    label="姓名"
                     align="left"
-                    min-width="200"
+                    min-width="100"
                     fixed="left"
                 />
                 <el-table-column
-                    prop="deptName"
-                    label="所属项目"
+                    prop="welderNo"
+                    label="编号"
                     align="left"
-                    min-width="200"
+                    min-width="120"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDept.name}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
-                    label="状态"
+                    prop="cellphone"
+                    label="手机"
                     align="left"
-                    min-width="100"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="rank"
+                    label="级别"
+                    align="left"
+                    min-width="120"
                 >
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueName}}
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
-                    label="通讯协议"
+                    prop="welderNo"
+                    label="卡号"
                     align="left"
-                    min-width="100"
+                    min-width="120"
+                />
+                <el-table-column
+                    prop="macPath"
+                    label="资质"
+                    align="left"
+                    min-width="120"
                 >
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueNames}}
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="ipPath"
-                    label="IP地址"
-                    align="left"
-                    min-width="100"
-                />
-                <el-table-column
-                    prop="macPath"
-                    label="MAC地址"
-                    align="left"
-                    min-width="100"
-                />
-                <el-table-column
                     prop="createTime"
-                    label="出厂时间"
+                    label="部门"
+                    align="left"
+                    min-width="170"
+                >
+                    <template slot-scope="scope">
+                        {{scope.row.sysDept.name}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="remarks"
+                    label="备注"
                     align="left"
                     min-width="170"
                 />
@@ -196,12 +245,76 @@
             >
                 <el-form-item
                     label="编号"
-                    prop="gatherNo"
+                    prop="welderNo"
                 >
-                    <el-input v-model="ruleForm.gatherNo" style="width:250px"></el-input>
+                    <el-input
+                        v-model="ruleForm.welderNo"
+                        style="width:250px"
+                    ></el-input>
                 </el-form-item>
                 <el-form-item
-                    label="所属项目"
+                    label="姓名"
+                    prop="welderName"
+                >
+                    <el-input
+                        v-model="ruleForm.welderName"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="手机"
+                    prop="cellphone"
+                >
+                    <el-input
+                        v-model="ruleForm.cellphone"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="卡号"
+                    prop="welderNo"
+                >
+                    <el-input
+                        v-model="ruleForm.welderNo"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="资质"
+                    prop="certification"
+                >
+                    <el-select
+                        v-model="ruleForm.certification"
+                        placeholder="请选择"
+                        style="width:250px"
+                    >
+                        <el-option
+                            v-for="item in qualiArr"
+                            :key="item.id"
+                            :label="item.valueName"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="级别"
+                    prop="rank"
+                >
+                    <el-select
+                        v-model="ruleForm.rank"
+                        placeholder="请选择"
+                        style="width:250px"
+                    >
+                        <el-option
+                            v-for="item in levelArr"
+                            :key="item.id"
+                            :label="item.valueName"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="部门"
                     prop="deptId"
                 >
                     <el-cascader
@@ -214,62 +327,14 @@
                         :show-all-levels="false"
                     />
                 </el-form-item>
+
                 <el-form-item
-                    label="状态"
-                    prop="status"
+                    label="备注"
+                    prop="remarks"
                 >
-                    <el-select
-                        v-model="ruleForm.status"
-                        placeholder="请选择"
+                    <el-input
+                        v-model="ruleForm.remarks"
                         style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in statusArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="通讯协议"
-                    prop="protocol"
-                >
-                    <el-select
-                        v-model="ruleForm.protocol"
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in protocolArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="IP地址"
-                    prop="ipPath"
-                >
-                    <el-input v-model="ruleForm.ipPath" style="width:250px"/>
-                </el-form-item>
-                <el-form-item
-                    label="MAC地址"
-                    prop="macPath"
-                >
-                    <el-input v-model="ruleForm.macPath" style="width:250px"/>
-                </el-form-item>
-                <el-form-item
-                    label="出厂时间"
-                    prop="createTime"
-                >
-                    <el-date-picker
-                        v-model="ruleForm.createTime"
-                        style="width:250px"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetime"
-                        placeholder="选择日期时间"
                     />
                 </el-form-item>
 
@@ -286,12 +351,20 @@
 </template>
 
 <script>
-import { getEquList, getWelderDetail, delEqu, exportExcel, addEqu,editEqu } from '_api/productionEquipment/production'
-import { getTeam, getDictionaries } from '_api/productionProcess/process'
+import { getTeam, getDictionaries, getWelderPeopleList, addWelderPeople,editWelderPeople,getWelderPeopleDetail,exportWelderPeopleExcel } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
-    name: 'gatherModleManager',
+    name: 'welderManagement',
     data () {
+        let validatorPhone = function (rule, value, callback) {
+            if (value === '') {
+                callback()
+            } else if (!/^1\d{10}$/.test(value)) {
+                callback(new Error('手机号格式错误'))
+            } else {
+                callback()
+            }
+        }
         return {
             list: [],
             //分页
@@ -299,61 +372,65 @@ export default {
             total: 0,
 
             //搜索条件
-            grade: '',//编号
-            gatherNo: '',//所属项目
+            searchObj:{
+                welderName:'',
+                welderNo:'',
+                rate:'',
+                talent:'',
+                grade:''
+            },
 
             visable1: false,
             ruleFormObj: {
                 id: '',
-                gatherNo: '',//编号
-                status: '',//状态
+                welderNo: '',//编号
+                welderName: '',//姓名
                 deptId: '',//项目（机构id）
-                ipPath: '',//ip
-                macPath: '',//mac
-                protocol: '',//通讯协议
-                createTime: ''//出厂时间
+                cellphone: '',//手机号
+                rank: '',//级别
+                certification: '',//资质
+                remarks: ''//备注
             },
             ruleForm: {
                 id: '',
-                gatherNo: '',//编号
-                status: '',//状态
+                welderNo: '',//编号
+                welderName: '',//姓名
                 deptId: '',//项目（机构id）
-                ipPath: '',//ip
-                macPath: '',//mac
-                protocol: '',//通讯协议
-                createTime: ''//出厂时间
+                cellphone: '',//手机号
+                rank: '',//级别
+                certification: '',//资质
+                remarks: ''//备注
             },
             rules: {
-                gatherNo: [
+                welderNo: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
                 deptId: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
-                status: [
-                    { required: true, message: '不能为空', trigger: 'change' }
+                cellphone: [
+                    { validator: validatorPhone, trigger: 'blur' }
                 ],
-                protocol: [
-                    { required: true, message: '不能为空', trigger: 'change' }
+                welderName: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ]
             },
-            title: '修改任务',
-            dateTime: '',
+            title: '新建焊工',
 
             //机构数据
             teamArr: [],
-            //状态下拉数据
-            statusArr: [],
-            //通讯协议下来数据
-            protocolArr: [],
+            //级别下拉数据
+            levelArr: [],
+            //资质下拉数据
+            qualiArr: [],
             // 级联下拉配置
             defalutProps: {
                 label: 'name',
                 value: 'id',
                 children: 'list'
             },
-            loading:false,
-            importUrl: `${process.env.VUE_APP_BASE_API}/collection/importExcel`,
+            loading: false,
+            importUrl: `${process.env.VUE_APP_BASE_API}/solderer/importExcel`,
             headers: {
                 'Authorization': getToken()
             }
@@ -371,10 +448,10 @@ export default {
     methods: {
         //获取数据字典
         async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["1", "2"] });
+            let { data, code } = await getDictionaries({ "types": ["13", "14"] });
             if (code == 200) {
-                this.statusArr = data['1'] || [];
-                this.protocolArr = data['2'] || [];
+                this.levelArr = data['13'] || [];
+                this.qualiArr = data['14'] || [];
             }
         },
         search () {
@@ -384,12 +461,12 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                grade: this.grade && this.grade.length > 0 ? this.grade.slice(-1).join('') : '',
-                gatherNo: this.gatherNo
+                ...this.searchObj
             }
-            this.loading =true;
-            let { data, code } = await getEquList(req);
-            this.loading =false;
+            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
+            this.loading = true;
+            let { data, code } = await getWelderPeopleList(req);
+            this.loading = false;
             if (code == 200) {
                 this.list = data.list
                 this.total = data.total
@@ -397,7 +474,7 @@ export default {
         },
         //新增
         addFun () {
-            this.title = "新建采集模块"
+            this.title = "新建焊工"
             this.visable1 = true;
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
@@ -408,9 +485,9 @@ export default {
         },
         //修改
         async editFun (id) {
-            this.title = "修改采集模块"
+            this.title = "修改焊工"
             this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await getWelderDetail(id);
+            let { data, code } = await getWelderPeopleDetail(id);
             if (code == 200) {
                 this.visable1 = true;
                 this.$nextTick(() => {
@@ -454,13 +531,13 @@ export default {
                 duration: 1000
             });
             let req = {
-                grade: this.grade && this.grade.length > 0 ? this.grade.slice(-1).join('') : '',
-                gatherNo: this.gatherNo
+                ...this.searchObj
             }
-            location.href = exportExcel(req);
+            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
+            location.href = exportWelderPeopleExcel(req)
         },
         handleAvatarSuccess (res, file) {
-            if(res.code==200){
+            if (res.code == 200) {
                 this.$message.success("导入成功");
                 this.search();
             }
@@ -472,8 +549,8 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
-                        const { data, code } = await editEqu(req)
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
+                        const { data, code } = await editWelderPeople(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
                             this.visable1 = false
@@ -481,8 +558,8 @@ export default {
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
-                        const { data, code } = await addEqu(req);
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
+                        const { data, code } = await addWelderPeople(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
                             this.visable1 = false
@@ -502,3 +579,5 @@ export default {
 
 <style scoped>
 </style>
+
+

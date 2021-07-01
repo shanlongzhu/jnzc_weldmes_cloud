@@ -263,8 +263,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop=""
-                    label="位置"
+                    prop="areaStr"
+                    label="区域"
+                    align="left"
+                    min-width="100"
+                />
+                <el-table-column
+                    prop="bayStr"
+                    label="跨间"
                     align="left"
                     min-width="100"
                 />
@@ -314,7 +320,6 @@
                             size="mini"
                             type="danger"
                             plain
-                            @click="delFun(scope.row.id)"
                         >
                             维修记录
                         </el-button>
@@ -407,6 +412,7 @@
                         v-model="ruleForm.firm"
                         placeholder="请选择"
                         style="width:250px"
+                        @change="changeFirm"
                     >
                         <el-option
                             v-for="item in manufactorArr"
@@ -415,41 +421,6 @@
                             :value="item.id"
                         />
                     </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="采集序号"
-                    prop="gid"
-                >
-                    <el-select
-                        v-model="ruleForm.gid"
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in manufactorArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="设备位置"
-                    prop="status"
-                >
-                    <el-input
-                        v-model="ruleForm.gatherNo"
-                        style="width:250px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="IP地址"
-                    prop="ipPath"
-                >
-                    <el-input
-                        v-model="ruleForm.ipPath"
-                        style="width:250px"
-                    />
                 </el-form-item>
                 <el-form-item
                     label="设备型号"
@@ -468,6 +439,66 @@
                         />
                     </el-select>
                 </el-form-item>
+                <el-form-item
+                    label="采集序号"
+                    prop="gid"
+                >
+                    <el-select
+                        v-model="ruleForm.gid"
+                        placeholder="请选择"
+                        style="width:250px"                        
+                    >
+                        <el-option
+                            v-for="item in gatherNos"
+                            :key="item.id"
+                            :label="item.gatherNo"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="区域"
+                    prop="area"
+                >
+                    <el-select
+                        v-model="ruleForm.area"
+                        placeholder="请选择"
+                        style="width:250px"                        
+                    >
+                        <el-option
+                            v-for="item in areaArr"
+                            :key="item.id"
+                            :label="item.valueName"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="跨间"
+                    prop="bay"
+                >
+                    <el-select
+                        v-model="ruleForm.bay"
+                        placeholder="请选择"
+                        style="width:250px"                        
+                    >
+                        <el-option
+                            v-for="item in straddleArr"
+                            :key="item.id"
+                            :label="item.valueName"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="IP地址"
+                    prop="ipPath"
+                >
+                    <el-input
+                        v-model="ruleForm.ipPath"
+                        style="width:250px"
+                    />
+                </el-form-item>                
                 <el-form-item
                     label="状态"
                     prop="status"
@@ -503,7 +534,7 @@
 </template>
 
 <script>
-import { getWelderList, getWelderDetail, delWelder, exportWelderExcel } from '_api/productionEquipment/production'
+import { getWelderList, getWelderDetail, delWelder, exportWelderExcel,getAllGatherNos,addWelder,editWelder,getWeldingModel } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
@@ -541,6 +572,8 @@ export default {
                 protocol: '',//通讯协议
                 createTime: '',//入厂时间
                 ipPath: '',//ip
+                area:'',
+                bay:''
             },
             ruleForm: {
                 id: '',
@@ -555,14 +588,28 @@ export default {
                 protocol: '',//通讯协议
                 createTime: '',//入厂时间
                 ipPath: '',//ip
+                area:'',
+                bay:''
             },
             rules: {
-                taskNo: [
-                    { required: true, message: '任务编号不能为空', trigger: 'blur' }
+                machineNo: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
+                ],
+                type: [
+                    { required: true, message: '不能为空', trigger: 'change' }
                 ],
                 deptId: [
-                    { required: true, message: '班组不能为空', trigger: 'blur' }
-                ]
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
+                firm: [
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
+                gid: [
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
+                model: [
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
             },
             title: '修改任务',
             dateTime: '',
@@ -577,7 +624,12 @@ export default {
             typeArr: [],
             //厂家
             manufactorArr: [],
-
+            //采集序号下拉
+            gatherNos:[],
+            //区域
+            areaArr:[],
+            //跨间
+            straddleArr:[],
             // 级联下拉配置
             defalutProps: {
                 label: 'name',
@@ -592,22 +644,30 @@ export default {
     },
 
     created () {
-        // 获取班组
-        if (this.teamArr.length == 0) {
-            this.getTeamList()
-        }
+        // 获取班组        
+        this.getTeamList();        
         this.getList();
         this.getDicFun();
+        this.getAllGatherNosFun();
     },
     methods: {
         //获取数据字典
         async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6"] });
+            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6","16","17"] });
             if (code == 200) {
                 this.statusArr = data['4'] || [];
                 this.manufactorArr = data['5'] || [];
                 this.typeArr = data['3'] || [];
-                this.modelArr = data['6'] || [];
+                this.areaArr = data['16']||[];
+                this.straddleArr = data['17']||[];
+                //this.modelArr = data['6'] || [];
+            }
+        },
+        //获取全部采集序号
+        async getAllGatherNosFun(){
+            let {data,code} = await getAllGatherNos();
+            if(code==200){
+                this.gatherNos = data||[]
             }
         },
         search(){
@@ -616,7 +676,7 @@ export default {
         },
         async getList () {
             let req = {
-                page: this.page,
+                pn: this.page,
                 ...this.searchObj
             }
             req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
@@ -627,10 +687,25 @@ export default {
                 this.total = data.total
             }
         },
+
+        //根据厂家获取关联设备型号
+        async changeFirm(id){
+            let {data,code} = await getWeldingModel({id});
+            if(code==200){
+                this.modelArr = data||[];
+            }
+        },
+
         //新增
         addFun () {
             this.title = "新增焊机设备"
             this.visable1 = true;
+            this.modelArr = [];
+            this.$nextTick(() => {
+                this.$refs.ruleForm.resetFields();
+                this.ruleForm = { ...this.ruleFormObj };
+                Reflect.deleteProperty(this.ruleForm, "id");
+            })
         },
         //修改
         async editFun (id) {
@@ -639,7 +714,11 @@ export default {
             let { data, code } = await getWelderDetail(id);
             if (code == 200) {
                 this.visable1 = true;
-                this.ruleForm = data[0] || {}
+                this.$nextTick(() => {
+                    this.$refs.ruleForm.resetFields();
+                    this.ruleForm = data[0] || {};
+                    this.changeFirm(this.ruleForm.firm);
+                })
             }
         },
         //删除
@@ -665,7 +744,8 @@ export default {
         },
         //分页切换
         handleCurrentChange (p) {
-
+            this.page = p;
+            this.getList();
         },
         //导出
         exportExcelFun () {
@@ -675,14 +755,47 @@ export default {
                 type: 'success',
                 duration: 1000
             });
-            location.href = exportWelderExcel()
+            let req = {
+                ...this.searchObj
+            }
+            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
+            location.href = exportWelderExcel(req)
         },
         handleAvatarSuccess (res, file) {
             if (res.code == 200) {
                 this.$message.success("导入成功");
                 this.search();
             }
-        }
+        },
+        // 新增/编辑提交
+        submitForm (formName) {
+            this.$refs[formName].validate(async (valid) => {
+                if (valid) {
+                    if (this.ruleForm.hasOwnProperty('id')) {
+                        const req = { ...this.ruleForm }
+                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        const { data, code } = await editWelder(req)
+                        if (code == 200) {
+                            this.$message.success('修改成功')
+                            this.visable1 = false
+                            this.getList()
+                        }
+                    } else {
+                        const req = { ...this.ruleForm }
+                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        const { data, code } = await addWelder(req);
+                        if (code == 200) {
+                            this.$message.success('新增成功')
+                            this.visable1 = false
+                            this.getList()
+                        }
+                    }
+                } else {
+                    console.log('error submit!!')
+                    return false
+                }
+            })
+        },
 
     }
 }

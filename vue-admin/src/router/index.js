@@ -193,9 +193,9 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'keyboard',
-        component: () => import('@/views/production-equipment-management/gatherModleManager.vue'),
-        name: 'KeyboardChart',
+        path: 'welderManagement',
+        component: () => import('@/views/production-equipment-management/welderManagement.vue'),
+        name: 'welderManagement',
         meta: {
           title: '焊工管理',
           roles: ['admin', 'user'],
@@ -232,7 +232,7 @@ export const asyncRoutes = [
         meta: { title: '生产任务详情' }
       },
       {
-        path: 'drag-table',
+        path: 'drag-table1',
         component: () => import('@/views/table/drag-table'),
         name: 'DragTable',
         meta: {
