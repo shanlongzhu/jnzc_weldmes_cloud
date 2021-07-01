@@ -224,5 +224,8 @@ aside {
   .con-w{
     margin-right: 10px;
     margin-bottom: 10px;
+    flex-flow: row nowrap;
+    display: flex;
+    align-items: center;
   }
 }

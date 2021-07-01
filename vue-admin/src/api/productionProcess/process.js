@@ -88,13 +88,24 @@ export function getTeam() {
 }
 
 // 评价
-export function setEvaluate(params = {}) {
+export function setEvaluate(data = {}) {
   return request({
     url: '/task/addComment',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }
+
+
+//获取数据字典
+export function getDictionaries(data = {}) {
+  return request({
+    url: '/sysDictionary/getInfoByType',
+    method: 'post',
+    data
+  })
+}
+
 
 // 导出
 export function exportExcel(params = {}) {
