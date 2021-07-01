@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gw.data.historicalCurve.dao.HistoricalCurveDao">
+
+    <select id="getList" resultType="com.gw.entities.RealtimeData">
+select
+	felectricity,
+	fvoltage
+from
+	realtime_data
+        <where>
+            <if test="time!=null">
+                and fWeldTime &gt;= #{time}
+            </if>
+            <if test="time2!=null">
+                and fWeldTime &lt;= #{time2}
+            </if>
+            <if test="fWelderId!=null and fWelderId!=''">
+                and fwelder_id = #{fWelderId}
+            </if>
+            <if test="fMachineId!=null and fMachineId!=''">
+                and fmachine_id = #{fMachineId}
+            </if>
+            <if test="fJunctionId!=null and fJunctionId!=''">
+                and fjunction_id = #{fJunctionId}
+            </if>
+        </where>
+    </select>
+</mapper>

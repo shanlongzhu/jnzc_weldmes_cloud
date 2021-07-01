@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gw.data.artifact.dao.ArtifactDao">
+    <resultMap id="realtimeData" type="com.gw.entities.RealtimeData">
+        <id property="id"  column="id"></id>
+        <result property="fwelderId" column="fwelder_id"></result>
+        <result property="fgatherNo" column="fgather_no"></result>
+        <result property="fmachineId" column="fmachine_id"></result>
+        <result property="fjunctionId" column="fjunction_id"></result>
+        <result property="fItemId" column="fitemid"></result>
+        <result property="fElectricity" column="felectricity"></result>
+        <result property="fVoltage" column="fvoltage"></result>
+        <result property="fRateOfFlow" column="frate_of_flow"></result>
+        <result property="fStatus" column="fstatus"></result>
+        <result property="fWelderNo" column="fwelder_no"></result>
+        <result property="fJunctionNo" column="fjunction_no"></result>
+        <result property="fWeldNo" column="fweld_no"></result>
+        <result property="fChannel" column="fchannel"></result>
+        <result property="fMaxElectricity" column="fmax_electricity"></result>
+        <result property="fMinElectricity" column="fmin_electricity"></result>
+        <result property="fMaxVoltage" column="fmax_voltage"></result>
+        <result property="fMinVoltage" column="fmin_voltage"></result>
+        <result property="fWelderItemId" column="fwelder_itemid"></result>
+        <result property="fJunctionItemId" column="fjunction_itemid"></result>
+        <result property="fMachineItemId" column="fmachine_itemid"></result>
+        <result property="fWireFeedRate" column="fwirefeedrate"></result>
+        <result property="fWeldingRate" column="fweldingrate"></result>
+        <result property="fMachineModel" column="fmachinemodel"></result>
+        <result property="fWireDiameter" column="fwirediameter"></result>
+        <result property="fMaterialGas" column="fmaterialgas"></result>
+        <result property="fWeldTime" column="fweldtime"></result>
+        <result property="fWeldTime2" column="fweldtime2"></result>
+        <result property="fSolderLayer" column="fsolder_layer"></result>
+        <result property="fWeldBead" column="fweld_bead"></result>
+        <result property="count" column="count"></result>
+        <result property="utilization" column="utilization"></result>
+        <result property="time" column="time"></result>
+        <result property="time2" column="time2"></result>
+        <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
+            <id property="id" column="id"></id>
+            <result property="taskName" column="task_name"></result>
+            <result property="taskNo" column="task_no"></result>
+        </association>
+    </resultMap>
+
+    <select id="getList" resultMap="realtimeData">
+    select
+	a.*,
+	b.*,
+	c.*,
+	cast(
+	b.time / c.time2 * 100 as decimal ( 13, 2 )) utilization
+    from
+	( select distinct task_no
+	from
+	realtime_data r, task_info t
+        <where>
+            r.fjunction_id = t.id
+            <if test="time1!=null and time1!=''">
+                and r.fWeldTime &gt;= #{time1}
+            </if>
+            <if test="time2!=null and time2!=''">
+                and r.fWeldTime &lt;= #{time2}
+            </if>
+            <if test="taskNo!=null and taskNo!=''">
+                and r.fjunction_no = #{taskNo}
+            </if>
+        </where>
+	) a,
+	(
+	select
+		SEC_TO_TIME(
+		count( r.id )) time,
+		t.task_no
+	from
+		realtime_data r,
+		task_info t
+	where
+		r.fjunction_id = t.id
+		and ( r.fstatus = 3 or r.fstatus = 99 )
+	group by
+		t.task_no
+	) b,
+	(
+	select
+		SEC_TO_TIME(
+		count( r.id )) time2,
+		t.task_no
+	from
+		realtime_data r,
+		task_info t
+	where
+		r.fjunction_id = t.id
+		and (
+			r.fstatus = 0
+			or r.fstatus = 3
+			or r.fstatus = 5
+			or r.fstatus = 7
+			or r.fstatus = 99
+		)
+	group by
+		t.task_no
+	) c
+    where
+	a.task_no = b.task_no
+	and a.task_no = c.task_no
+
+    </select>
+</mapper>

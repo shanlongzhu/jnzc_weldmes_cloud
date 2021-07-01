@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.craft.dao.LibraryDao">
+
+    <resultMap id="library" type="com.gw.entities.WpsLibrary">
+        <id property="id" column="id"></id>
+        <result property="wpsName" column="wps_name"></result>
+        <result property="weldModel" column="weld_model"></result>
+        <result property="createTime" column="create_time"></result>
+        <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
+            <id property="id" column="id"></id>
+                <result property="valueName" column="value_name"></result>
+        </association>
+    </resultMap>
+
+    <select id="getList" resultMap="library">
+    select
+    w.id,
+	w.wps_name,
+	w.weld_model,
+	s.value_name,
+	w.create_time
+    from
+	wps_library w,
+	sys_dictionary s
+    where
+	w.weld_model = s.id
+    </select>
+
+    <insert id="addLibrary" parameterType="com.gw.entities.WpsLibrary">
+        insert into wps_library(wps_name,weld_model,create_time,firm_id)
+        values (#{wpsLibrary.wpsName},#{wpsLibrary.weldModel},#{wpsLibrary.createTime},#{wpsLibrary.firmId})
+    </insert>
+
+    <select id="getById" resultType="com.gw.entities.WpsLibrary">
+        select id,wps_name wpsName,weld_model weldModel,firm_id firmId
+        from wps_library
+        where id =#{id}
+    </select>
+
+    <update id="updateLibrary" parameterType="com.gw.entities.WpsLibrary">
+        update wps_library
+        <trim prefix="set" suffixOverrides=",">
+            <if test="wpsLibrary.wpsName != null and wpsLibrary.wpsName !=''">wps_name=#{wpsLibrary.wpsName},</if>
+            <if test="wpsLibrary.weldModel != null and wpsLibrary.weldModel !=''">weld_model=#{wpsLibrary.weldModel},</if>
+            <if test="wpsLibrary.firmId != null and wpsLibrary.firmId !=''">firm_id=#{wpsLibrary.firmId},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteLibrary">
+        delete from wps_library where id=#{id}
+    </delete>
+
+    <!--通过 厂家字典表id 查询 字典表设备id-->
+    <select id="queryMachineIdByFirmId" resultType="java.lang.Long">
+        select machine_id from firm_machine where firm_id = #{id}
+    </select>
+
+    <!--通过 字典表设备id 查询 设备描述 value_name -->
+    <select id="queryMachineInfoByDictionaryId" resultType="com.gw.entities.SysDictionary">
+        select id,value_name valueName from sys_dictionary where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

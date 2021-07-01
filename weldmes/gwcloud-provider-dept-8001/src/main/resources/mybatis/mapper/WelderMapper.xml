@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gw.equipment.welder.dao.WelderDao">
+
+    <resultMap id="welder" type="com.gw.entities.MachineWeldInfo">
+        <id property="id"  column="id"></id>
+        <result property="machineNo" column="machine_no"></result>
+        <result property="status" column="status"></result>
+        <result property="type" column="type"></result>
+        <result property="firm" column="firm"></result>
+        <result property="model" column="model"></result>
+        <result property="deptId" column="dept_id"></result>
+        <result property="gId" column="g_id"></result>
+        <result property="isNetwork" column="is_network"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="ipPath" column="ip_path"></result>
+        <result property="areaStr" column="area"></result>
+        <result property="bayStr" column="bay"></result>
+        <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
+            <id property="id" column="id"></id>
+            <result property="type" column="type"></result>
+            <result property="typeName" column="type_name"></result>
+            <result property="value" column="value"></result>
+            <result property="valueName" column="value_name"></result>
+            <result property="valueNames" column="value_names"></result>
+            <result property="remarks" column="remarks"></result>
+            <result property="valueNamess" column="value_namess"></result>
+            <result property="valueNamesss" column="value_namesss"></result>
+        </association>
+        <association property="sysDept" javaType="com.gw.entities.SysDept">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+            <result property="parentId" column="parent_id"></result>
+        </association>
+        <association property="machineGatherInfo" javaType="com.gw.entities.MachineGatherInfo">
+            <id property="id" column="id"></id>
+            <result property="gatherNo" column="gather_no"></result>
+        </association>
+    </resultMap>
+
+    <select id="getList" resultMap="welder">
+        select m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,
+	           m.`status`,m.model,m.firm,m.is_network,d.value_name,d1.value_name value_names,
+	           d2.value_name value_namess,d3.value_name value_namesss,s.`name`,
+	           g.gather_no,m.ip_path,d4.value_name area,d5.value_name bay,
+	           d.id,s.id,d1.id,d2.id
+        from machine_weld_info m
+	    left join sys_dictionary d  on m.type = d.id
+	    left join sys_dictionary d1 on m.`status` = d1.id
+	    left join sys_dictionary d2 on m.firm=d2.id
+	    left join sys_dictionary d3 on m.model=d3.id
+        left join sys_dictionary d4 on m.area=d4.id
+        left join sys_dictionary d5 on m.bay=d5.id
+	    left join sys_dept s on m.dept_id=s.id
+	    left join machine_gather_info g on m.g_id=g.id
+        where 1=1
+        <if test="machineNo != null and machineNo != ''">
+            and  m.machine_no = #{machineNo}
+        </if>
+        <if test="type != null and type != ''">
+            and  d.id = #{type}
+        </if>
+        <if test="grade != null and grade != ''">
+            and  s.id = #{grade}
+        </if>
+        <if test="status != null and status != ''">
+            and  d1.id = #{status}
+        </if>
+        <if test="firm != null and firm != ''">
+            and  d2.id = #{firm}
+        </if>
+        <if test="isNetwork != null and isNetwork != ''">
+            and  m.is_network = #{isNetwork}
+        </if>
+        <if test="gatherNo != null and gatherNo != ''">
+            and  g.gather_no = #{gatherNo}
+        </if>
+        <if test="ipPath != null and ipPath != ''">
+            and  m.ip_path = #{ipPath}
+        </if>
+        <if test="model != null and model != ''">
+            and  model = #{model}
+        </if>
+    </select>
+
+    <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
+        insert into machine_weld_info(machine_no,type,dept_id,firm,g_id,model,is_Network,status,ip_path,create_time,area,bay)
+        values (#{machineWeldInfo.machineNo},#{machineWeldInfo.type},#{machineWeldInfo.deptId},#{machineWeldInfo.firm},
+        #{machineWeldInfo.gId},#{machineWeldInfo.model},#{machineWeldInfo.isNetwork},#{machineWeldInfo.status},
+        #{machineWeldInfo.ipPath},#{machineWeldInfo.createTime},#{machineWeldInfo.area},#{machineWeldInfo.bay})
+    </insert>
+
+
+    <select id="getById" resultType="com.gw.entities.MachineWeldInfo">
+        select
+            id,machine_no,`type`,dept_id,firm,g_id,model,is_network,status,create_time,ip_path,area,bay
+        from machine_weld_info
+        where id =#{id}
+    </select>
+
+    <update id="updateWelder" parameterType="com.gw.entities.MachineWeldInfo">
+        update machine_weld_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="machineWeldInfo.machineNo != null and machineWeldInfo.machineNo !=''">machine_no=#{machineWeldInfo.machineNo},</if>
+            <if test="machineWeldInfo.type != null and machineWeldInfo.type !=''">type=#{machineWeldInfo.type},</if>
+            <if test="machineWeldInfo.deptId != null and machineWeldInfo.deptId !=''">dept_id=#{machineWeldInfo.deptId},</if>
+            <if test="machineWeldInfo.firm != null and machineWeldInfo.firm !=''">firm=#{machineWeldInfo.firm},</if>
+            <if test="machineWeldInfo.gId != null and machineWeldInfo.gId !=''">g_id=#{machineWeldInfo.gId},</if>
+            <if test="machineWeldInfo.model != null and machineWeldInfo.model !=''">model=#{machineWeldInfo.model},</if>
+            <if test="machineWeldInfo.isNetwork != null">is_network=#{machineWeldInfo.isNetwork},</if>
+            <if test="machineWeldInfo.status != null and machineWeldInfo.status !=''">status=#{machineWeldInfo.status},</if>
+            <if test="machineWeldInfo.createTime != null and machineWeldInfo.createTime !=''">create_time=#{machineWeldInfo.createTime},</if>
+            <if test="machineWeldInfo.area != null and machineWeldInfo.area !=''">area=#{machineWeldInfo.area},</if>
+            <if test="machineWeldInfo.bay != null and machineWeldInfo.bay !=''">bay=#{machineWeldInfo.bay},</if>
+        </trim>
+        where id=#{machineWeldInfo.id}
+    </update>
+
+    <delete id="deleteWelder">
+        delete from machine_weld_info where id=#{id}
+    </delete>
+
+    <select id="getTypeId" resultType="java.lang.Byte">
+        select id from sys_dictionary where value_name=#{type}
+    </select>
+
+    <select id="getDeptId" resultType="java.lang.Long">
+        select id from sys_dept where name =#{deptName}
+    </select>
+
+    <select id="getStatusId" resultType="java.lang.Byte">
+        select id from sys_dictionary where value_name=#{status}
+    </select>
+
+    <select id="getFirmId" resultType="java.lang.Byte">
+        select id from sys_dictionary where value_name=#{firm}
+    </select>
+
+    <select id="getGid" resultType="java.lang.Long">
+        select id from machine_gather_info where gather_no=#{machineNo}
+    </select>
+
+    <select id="getModelId" resultType="java.lang.Byte">
+        select id from sys_dictionary where value_name=#{model}
+    </select>
+
+    <insert id="save">
+        insert into machine_weld_info(machine_no,type,dept_id,status ,firm,is_netWork,g_id,model,create_time)
+        values(#{machineNo},#{type},#{deptId},#{status},#{firm},#{isNetwork},#{gId},#{model},#{createTime})
+    </insert>
+
+    <select id="getDeptIdByWelderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select dept_id from welder_info where `id` = #{id}
+    </select>
+</mapper>

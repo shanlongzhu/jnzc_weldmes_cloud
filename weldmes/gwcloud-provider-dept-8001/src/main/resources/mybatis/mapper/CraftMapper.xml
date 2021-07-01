@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.craft.dao.CraftDao">
+
+    <resultMap id="craft" type="com.gw.entities.WpsNorm">
+        <id property="id"  column="id"></id>
+        <result property="channelNo" column="channel_no"></result>
+        <result property="initialCondition" column="initial_condition"></result>
+        <result property="fusionControl" column="fusion_control"></result>
+        <result property="unitarySeveral" column="unitary_several"></result>
+        <result property="controlArc" column="control_arc"></result>
+        <result property="arcCharacter" column="arc_character"></result>
+        <result property="softArcSchema" column="soft_arc_schema"></result>
+        <result property="weldingStickTexture" column="welding_stick_texture"></result>
+        <result property="gases" column="gases"></result>
+        <result property="weldingStickDiameter" column="welding_stick_diameter"></result>
+        <result property="weldingProcess" column="welding_process"></result>
+        <result property="spotWeldingTime" column="spot_welding_time"></result>
+        <result property="inAdvanceAspirated" column="in_advance_aspirated"></result>
+        <result property="hysteresisAspirated" column="hysteresis_aspirated"></result>
+        <result property="initialEle" column="initial_ele"></result>
+        <result property="initialVol" column="initial_vol"></result>
+        <result property="initialVolUnitary" column="initial_vol_unitary"></result>
+        <result property="weldingEle" column="welding_ele"></result>
+        <result property="weldingVol" column="welding_vol"></result>
+        <result property="weldingVolUnitary" column="welding_vol_unitary"></result>
+        <result property="arcEle" column="arc_ele"></result>
+        <result property="arcVol" column="arc_vol"></result>
+        <result property="arcVolUnitary" column="arc_vol_unitary"></result>
+        <result property="weldingEleAdjust" column="welding_ele_adjust"></result>
+        <result property="weldingVolAdjust" column="welding_vol_adjust"></result>
+        <result property="arcEleAdjust" column="arc_ele_adjust"></result>
+        <result property="arcVolAdjust" column="arc_vol_adjust"></result>
+        <result property="alarmsEleMax" column="alarms_ele_max"></result>
+        <result property="alarmsEleMin" column="alarms_ele_min"></result>
+        <result property="alarmsVolMax" column="alarms_vol_max"></result>
+        <result property="alarmsVolMin" column="alarms_vol_min"></result>
+    <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
+        <id property="id" column="id"></id>
+        <result property="type" column="type"></result>
+        <result property="typeName" column="type_name"></result>
+        <result property="value" column="value"></result>
+        <result property="valueName" column="value_name"></result>
+        <result property="valueNames" column="value_names"></result>
+        <result property="valueNamess" column="value_namess"></result>
+        <result property="valueNamesss" column="value_namesss"></result>
+        <result property="valueNamessss" column="value_namessss"></result>
+    </association>
+    </resultMap>
+
+	<select id="getList" resultMap="craft">
+    select
+	w.id,
+	w.channel_no,
+	w.initial_condition,
+	w.fusion_control,
+	w.unitary_several,
+	w.control_arc,
+	w.arc_character,
+	w.soft_arc_schema,
+	w.welding_stick_texture,
+	w.gases,
+	w.welding_stick_diameter,
+	w.welding_process,
+	w.spot_welding_time,
+	w.in_advance_aspirated,
+	w.hysteresis_aspirated,
+	w.initial_ele,
+	w.initial_vol,
+	w.initial_vol_unitary,
+	w.welding_ele,
+	w.welding_vol,
+	w.welding_vol_unitary,
+	w.arc_ele,
+	w.arc_vol,
+	w.arc_vol_unitary,
+	w.welding_ele_adjust,
+	w.welding_vol_adjust,
+	w.arc_ele_adjust,
+	w.arc_vol_adjust,
+	w.alarms_ele_max,
+	w.alarms_ele_min,
+	w.alarms_vol_max,
+	w.alarms_vol_min,
+	d.value_name,
+    d1.value_name	value_names,
+	d2.value_name value_namess,
+	d3.value_name value_namesss,
+	d4.value_name value_namessss
+    from
+	wps_norm w
+	left join sys_dictionary d  on w.control_arc=d.id
+	left join sys_dictionary d1 on w.welding_stick_texture=d1.id
+	left join sys_dictionary d2 on w.gases=d2.id
+	left join sys_dictionary d3 on w.welding_stick_diameter=d3.id
+	left join sys_dictionary d4 on w.welding_process=d4.id
+    where w.wps_library_id=#{id}
+    </select>
+
+    <insert id="addCraft">
+        insert into wps_norm(wps_library_id,channel_no,control_arc,unitary_several,initial_condition
+        ,fusion_control,soft_arc_schema,arc_character,spot_welding_time,welding_stick_texture
+        ,welding_stick_diameter,in_advance_aspirated,hysteresis_aspirated,gases
+        ,welding_process,initial_ele,welding_ele,arc_ele,initial_vol,welding_vol
+        ,arc_vol,welding_vol_unitary,arc_vol_unitary,initial_vol_unitary
+        ,welding_ele_adjust,arc_ele_adjust,welding_vol_adjust,arc_vol_adjust
+        ,alarms_ele_max,alarms_ele_min,alarms_vol_max,alarms_vol_min)
+        values(#{wpsLibraryId},#{channelNo},#{controlArc},#{unitarySeveral},#{initialCondition}
+        ,#{fusionControl},#{softArcSchema},#{arcCharacter},#{spotWeldingTime},#{weldingStickTexture}
+        ,#{weldingStickDiameter},#{inAdvanceAspirated},#{hysteresisAspirated},#{gases}
+        ,#{weldingProcess},#{initialEle},#{weldingEle},#{arcEle},#{initialVol},#{weldingVol}
+        ,#{arcVol},#{weldingVolUnitary},#{arcVolUnitary},#{initialVolUnitary}
+        ,#{weldingEleAdjust},#{arcEleAdjust},#{weldingVolAdjust},#{arcVolAdjust}
+        ,#{alarmsEleMax},#{alarmsEleMin},#{alarmsVolMax},#{alarmsVolMin})
+    </insert>
+
+    <select id="getById" resultType="com.gw.entities.WpsNorm">
+    select
+	channel_no,
+	initial_condition,
+	fusion_control,
+	unitary_several,
+	control_arc,
+	arc_character,
+	soft_arc_schema,
+	welding_stick_texture,
+	gases,
+	welding_stick_diameter,
+	welding_process,
+	spot_welding_time,
+	in_advance_aspirated,
+	hysteresis_aspirated,
+	initial_ele,
+	initial_vol,
+	initial_vol_unitary,
+	welding_ele,
+	welding_vol,
+	welding_vol_unitary,
+	arc_ele,
+	arc_vol,
+	arc_vol_unitary,
+	welding_ele_adjust,
+	welding_vol_adjust,
+	arc_ele_adjust,
+	arc_vol_adjust,
+	alarms_ele_max,
+	alarms_ele_min,
+	alarms_vol_max,
+	alarms_vol_min
+    from
+	wps_norm
+    where
+	id =#{id}
+    </select>
+
+	<update id="updateCraft">
+		update wps_norm
+		<trim prefix="set" suffixOverrides=",">
+			<if test="channelNo != null and channelNo !=''">channel_no=#{channelNo},</if>
+			<if test="controlArc != null and controlArc !=''">control_arc=#{controlArc},</if>
+			<if test="unitarySeveral != null">unitary_several=#{unitarySeveral},</if>
+			<if test="initialCondition != null">initial_condition=#{initialCondition},</if>
+			<if test="fusionControl != null">fusion_control=#{fusionControl},</if>
+			<if test="softArcSchema != null">soft_arc_schema=#{softArcSchema},</if>
+			<if test="arcCharacter != null and arcCharacter !=''">arc_character=#{arcCharacter},</if>
+			<if test="spotWeldingTime != null and spotWeldingTime !=''">spot_welding_time=#{spotWeldingTime},</if>
+			<if test="weldingStickTexture != null and weldingStickTexture !=''">welding_stick_texture=#{weldingStickTexture},</if>
+			<if test="weldingStickDiameter != null and weldingStickDiameter !=''">welding_stick_diameter=#{weldingStickDiameter},</if>
+			<if test="inAdvanceAspirated != null and inAdvanceAspirated !=''">in_advance_aspirated=#{inAdvanceAspirated},</if>
+			<if test="hysteresisAspirated != null and hysteresisAspirated !=''">hysteresis_aspirated=#{hysteresisAspirated},</if>
+			<if test="gases != null and gases !=''">gases=#{gases},</if>
+			<if test="weldingProcess != null and weldingProcess !=''">welding_process=#{weldingProcess},</if>
+			<if test="initialEle != null and initialEle !=''">initial_ele=#{initialEle},</if>
+			<if test="initialVol != null and initialVol !=''">initial_vol=#{initialVol},</if>
+			<if test="weldingEle != null and weldingEle !=''">welding_ele=#{weldingEle},</if>
+			<if test="weldingVol != null and weldingVol !=''">welding_vol=#{weldingVol},</if>
+			<if test="arcEle != null and arcEle !=''">arc_ele=#{arcEle},</if>
+			<if test="arcVol != null and arcVol !=''">arc_vol=#{arcVol},</if>
+			<if test="weldingVolUnitary != null and weldingVolUnitary !=''">welding_vol_unitary=#{weldingVolUnitary},</if>
+			<if test="arcVolUnitary != null and arcVolUnitary !=''">arc_vol_unitary=#{arcVolUnitary},</if>
+			<if test="initialVolUnitary != null and initialVolUnitary !=''">initial_vol_unitary=#{initialVolUnitary},</if>
+			<if test="weldingEleAdjust != null and weldingEleAdjust !=''">welding_ele_adjust=#{weldingEleAdjust},</if>
+			<if test="weldingVolAdjust != null and weldingVolAdjust !=''">welding_vol_adjust=#{weldingVolAdjust},</if>
+			<if test="arcEleAdjust != null and arcEleAdjust !=''">arc_ele_adjust=#{arcEleAdjust},</if>
+			<if test="arcVolAdjust != null and arcVolAdjust !=''">arc_vol_adjust=#{arcVolAdjust},</if>
+			<if test="alarmsEleMax != null and alarmsEleMax !=''">alarms_ele_max=#{alarmsEleMax},</if>
+			<if test="alarmsEleMin != null and alarmsEleMin !=''">alarms_ele_min=#{alarmsEleMin},</if>
+			<if test="alarmsVolMax != null and alarmsVolMax !=''">alarms_vol_max=#{alarmsVolMax},</if>
+			<if test="alarmsVolMin != null and alarmsVolMin !=''">alarms_vol_min=#{alarmsVolMin},</if>
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteCraft">
+		delete from wps_norm where id=#{id}
+	</delete>
+</mapper>

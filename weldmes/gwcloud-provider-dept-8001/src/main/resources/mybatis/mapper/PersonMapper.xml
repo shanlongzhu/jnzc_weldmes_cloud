@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gw.data.person.dao.PersonDao">
+    <resultMap id="realtimeData" type="com.gw.entities.RealtimeData">
+    <id property="id"  column="id"></id>
+    <result property="fwelderId" column="fwelder_id"></result>
+    <result property="fgatherNo" column="fgather_no"></result>
+    <result property="fmachineId" column="fmachine_id"></result>
+    <result property="fjunctionId" column="fjunction_id"></result>
+    <result property="fItemId" column="fitemid"></result>
+    <result property="fElectricity" column="felectricity"></result>
+    <result property="fVoltage" column="fvoltage"></result>
+    <result property="fRateOfFlow" column="frate_of_flow"></result>
+    <result property="fStatus" column="fstatus"></result>
+    <result property="fWelderNo" column="fwelder_no"></result>
+    <result property="fJunctionNo" column="fjunction_no"></result>
+    <result property="fWeldNo" column="fweld_no"></result>
+    <result property="fChannel" column="fchannel"></result>
+    <result property="fMaxElectricity" column="fmax_electricity"></result>
+    <result property="fMinElectricity" column="fmin_electricity"></result>
+    <result property="fMaxVoltage" column="fmax_voltage"></result>
+    <result property="fMinVoltage" column="fmin_voltage"></result>
+    <result property="fWelderItemId" column="fwelder_itemid"></result>
+    <result property="fJunctionItemId" column="fjunction_itemid"></result>
+    <result property="fMachineItemId" column="fmachine_itemid"></result>
+    <result property="fWireFeedRate" column="fwirefeedrate"></result>
+    <result property="fWeldingRate" column="fweldingrate"></result>
+    <result property="fMachineModel" column="fmachinemodel"></result>
+    <result property="fWireDiameter" column="fwirediameter"></result>
+    <result property="fMaterialGas" column="fmaterialgas"></result>
+    <result property="fWeldTime" column="fweldtime"></result>
+    <result property="fWeldTime2" column="fweldtime2"></result>
+    <result property="fSolderLayer" column="fsolder_layer"></result>
+    <result property="fWeldBead" column="fweld_bead"></result>
+    <result property="count" column="count"></result>
+    <result property="utilization" column="utilization"></result>
+    <result property="time" column="time"></result>
+    <result property="time2" column="time2"></result>
+    <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
+        <id property="id"  column="id"></id>
+        <result property="welderName" column="welder_name"></result>
+        <result property="welderNo" column="welder_no"></result>
+    </association>
+    </resultMap>
+    <select id="getList" resultMap="realtimeData">
+    select
+	a.*,
+	b.*,
+	c.*,
+	d.*,
+	cast(c.time / d.time2 *100 as decimal (13,2)) utilization
+    from
+	( select distinct
+	    r.fwelder_no, w.welder_name
+	 from
+	    realtime_data r, welder_info w
+		<where>
+			r.fwelder_id = w.id
+			<if test="time1!=null and time1!=''">
+				and r.fWeldTime &gt;= #{time1}
+			</if>
+			<if test="time2!=null and time2!=''">
+				and r.fWeldTime &lt;= #{time2}
+			</if>
+		</where>
+	    ) a,
+	(
+	select
+	    count( r.fwelder_id ) count,
+	    r.fwelder_no
+	from
+	    realtime_data r,
+	    welder_info w
+	where
+		r.fjunction_id != 0
+		and r.fwelder_id = w.id
+	group by
+		r.fwelder_no
+		) b,(
+	select
+		SEC_TO_TIME(
+		count( r.id )) time,
+		w.welder_no
+	from
+		realtime_data r,
+		welder_info w
+	where
+		r.fwelder_id = w.id
+		and ( r.fstatus = 3 or r.fstatus = 99 )
+	group by
+		w.welder_no
+		) c,(
+	select
+		SEC_TO_TIME(
+		count( r.id )) time2,
+		w.welder_no
+	from
+		realtime_data r,
+		welder_info w
+	where
+		r.fwelder_id = w.id
+		and (
+			r.fstatus = 0
+			or r.fstatus = 3
+			or r.fstatus = 5
+			or r.fstatus = 7
+			or r.fstatus = 99
+		)
+	group by
+		w.welder_no
+	) d
+    where
+	a.fwelder_no = b.fwelder_no
+	and a.fwelder_no = c.welder_no
+	and a.fwelder_no = d.welder_no
+    </select>
+</mapper>
