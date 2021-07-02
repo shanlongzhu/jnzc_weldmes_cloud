@@ -63,6 +63,7 @@
                             :ref="'expandTable'+props.row.id"
                             :childTable="props.row.childTable"
                             @throwData="getDetailTable"
+                            @editDetail="editDetailFun"
                         ></expand-table>
                     </template>
                 </el-table-column>
@@ -164,7 +165,7 @@
                             <el-select
                                 v-model="ruleForm.firmId"
                                 placeholder="请选择"
-                                style="width:120px"
+                                style="width:100px"
                                 size="mini"
                                 @change="changeFirm"
                             >
@@ -178,370 +179,437 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row style="border-top:1px solid #ddd">
-                    <el-col :span="6">
-                        <el-form-item
-                            label="收弧"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                <div style="border:1px solid #aaa" class="pt10 pb10 mt10">
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧"
+                                prop="firmId"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="一元/个别"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="一元/个别"
+                                prop="firmId"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item
-                            label=""
-                            label-width="40px"
-                        >
-                            <el-checkbox v-model="checked">初期条件</el-checkbox>
-                            <el-checkbox v-model="checked">熔深控制</el-checkbox>
-                            <el-checkbox v-model="checked">柔软电弧模式</el-checkbox>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="电弧特性"
-                            prop="firmId"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (±1)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="焊丝材质"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item
+                                label=""
+                                label-width="40px"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="提前送气"
-                            prop="firmId"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (0.1s)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="气体"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                                <el-checkbox v-model="checked">初期条件</el-checkbox>
+                                <el-checkbox v-model="checked">熔深控制</el-checkbox>
+                                <el-checkbox v-model="checked">柔软电弧模式</el-checkbox>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="电弧特性"
+                                prop="firmId"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>                    
-                </el-row>
-                <el-row>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="点焊时间"
-                            prop="firmId"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (0.1s)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="焊丝直径"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (±1)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊丝材质"
+                                prop="firmId"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="滞后送气"
-                            prop="firmId"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (0.1s)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item
-                            label="焊接过程"
-                            prop="firmId"
-                        >
-                            <el-select
-                                v-model="ruleForm.firmId"
-                                placeholder="请选择"
-                                style="width:120px"
-                                size="mini"
-                                @change="changeFirm"
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="提前送气"
+                                prop="firmId"
                             >
-                                <el-option
-                                    v-for="item in manufactorArr"
-                                    :key="item.id"
-                                    :label="item.valueName"
-                                    :value="item.id"
-                                />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>                    
-                </el-row>
-                <el-row style="border-top:1px solid #ddd">
-                    <el-col :span="8">
-                        <el-form-item
-                            label="初期电流"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="焊接电流"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="收弧电流"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>                                        
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="初期电压"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="焊接电压"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="收弧电压"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V)</span>
-                        </el-form-item>
-                    </el-col>                                        
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="焊接电压（一元）"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (±1)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="收弧电压（一元）"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (±1)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="初期电压（一元）"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (±1)</span>
-                        </el-form-item>
-                    </el-col>                                        
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="焊接电流微调"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="收弧电流微调"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>                                                         
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="焊接电压微调"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V/%)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="收弧电压微调"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V/%)</span>
-                        </el-form-item>
-                    </el-col>                                                         
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="报警电流上限"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="报警电流下限"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (A)</span>
-                        </el-form-item>
-                    </el-col>                                                         
-                </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="报警电压上限"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V/%)</span>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item
-                            label="报警电压下限"
-                            prop="firmId"
-                            label-width="120px"
-                        >
-                            <el-input size="mini" style="width:100px"></el-input>
-                            <span> (V/%)</span>
-                        </el-form-item>
-                    </el-col>                                                         
-                </el-row>
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (0.1s)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="气体"
+                                prop="firmId"
+                            >
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="点焊时间"
+                                prop="firmId"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (0.1s)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊丝直径"
+                                prop="firmId"
+                            >
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="滞后送气"
+                                prop="firmId"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (0.1s)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接过程"
+                                prop="firmId"
+                            >
+                                <el-select
+                                    v-model="ruleForm.firmId"
+                                    placeholder="请选择"
+                                    style="width:120px"
+                                    size="mini"
+                                    @change="changeFirm"
+                                >
+                                    <el-option
+                                        v-for="item in manufactorArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div style="border:1px solid #aaa" class="pt10 pb10 mt10">
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="初期电流"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="焊接电流"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="收弧电流"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="初期电压"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="焊接电压"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="收弧电压"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="焊接电压（一元）"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (±1)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="收弧电压（一元）"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (±1)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="初期电压（一元）"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (±1)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="焊接电流微调"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="收弧电流微调"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="焊接电压微调"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V/%)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="收弧电压微调"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V/%)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="报警电流上限"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="报警电流下限"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="报警电压上限"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V/%)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="报警电压下限"
+                                prop="firmId"
+                                label-width="120px"
+                            >
+                                <el-input
+                                    size="mini"
+                                    style="width:100px"
+                                ></el-input>
+                                <span> (V/%)</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
 
-                <el-form-item>
+                <el-form-item class="mt10 tc" label-width="0">
                     <el-button
                         type="primary"
                         @click="submitForm('ruleForm')"
@@ -733,15 +801,18 @@ export default {
                 }
             })
         },
+
+        //子组件调用修改
+        editDetailFun(id){
+            console.log(id)
+        }
     }
 }
 </script>
 
-<style>
-    .procces-wrap *{
-        font-size: 12px;
-    }
-    .procces-wrap .el-form-item{
-        margin-bottom: 0px;
-    }
+<style lang="sass">
+.procces-wrap .el-form-item
+    margin-bottom: 0px
+    *
+        font-size: 12px
 </style>
