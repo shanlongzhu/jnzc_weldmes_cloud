@@ -66,9 +66,27 @@
                     class="w120"
                     clearable
                     placeholder="请选择"
+                    @change="changeFirmSearch"
                 >
                     <el-option
                         v-for="item in manufactorArr"
+                        :key="item.id"
+                        :label="item.valueName"
+                        :value="item.id"
+                    />
+                </el-select>
+            </div>
+            <div class="con-w">
+                <span>设备型号：</span>
+                <el-select
+                    v-model="searchObj.model"
+                    size="small"
+                    class="w150"
+                    clearable
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in modelArr2"
                         :key="item.id"
                         :label="item.valueName"
                         :value="item.id"
@@ -109,24 +127,7 @@
                     class="w150"
                     v-model="searchObj.ipPath"
                 ></el-input>
-            </div>
-            <div class="con-w">
-                <span>设备型号：</span>
-                <el-select
-                    v-model="searchObj.model"
-                    size="small"
-                    class="w150"
-                    clearable
-                    placeholder="请选择"
-                >
-                    <el-option
-                        v-for="item in modelArr"
-                        :key="item.id"
-                        :label="item.valueName"
-                        :value="item.id"
-                    />
-                </el-select>
-            </div>
+            </div>            
             <div class="con-w">
                 <el-button
                     size="small"
@@ -553,6 +554,8 @@ export default {
                ipPath:'',
                model:''
             },
+            //搜索条件设备型号
+            modelArr2: [],
             list: [],
             //分页
             page: 1,
@@ -693,6 +696,14 @@ export default {
             let {data,code} = await getWeldingModel({id});
             if(code==200){
                 this.modelArr = data||[];
+            }
+        },
+
+        //根据厂家获取关联设备型号搜索
+        async changeFirmSearch(id){
+            let {data,code} = await getWeldingModel({id});
+            if(code==200){
+                this.modelArr2 = data||[];
             }
         },
 

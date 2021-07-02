@@ -286,7 +286,7 @@
 </template>
 
 <script>
-import { getEquList, getWelderDetail, delEqu, exportExcel, addEqu,editEqu } from '_api/productionEquipment/production'
+import { getEquList, getEquDetail, delEqu, exportExcel, addEqu,editEqu } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
@@ -410,7 +410,7 @@ export default {
         async editFun (id) {
             this.title = "修改采集模块"
             this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await getWelderDetail(id);
+            let { data, code } = await getEquDetail(id);
             if (code == 200) {
                 this.visable1 = true;
                 this.$nextTick(() => {

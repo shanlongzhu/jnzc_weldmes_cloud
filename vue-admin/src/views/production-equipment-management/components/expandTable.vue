@@ -1,257 +1,242 @@
 <template>
     <div>
-        <el-table
-            :data="childTable.list"
-            stripe
-            style="width: 100%"
-            align="center"
-            v-loading='loading'
-            border
-            size="mini"
-            height='120px'
-            :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-        >
-            <el-table-column
-                label="序号"
-                align="left"
-                width="50"
-                type="index"
-            />
-            <el-table-column
-                prop="channelNo"
-                label="通道号"
-                align="left"
-                min-width="100"
-            />
-            <el-table-column
-                prop="initialCondition"
-                label="初期条件"
-                align="left"
-                min-width="120"
+        <vxe-table
+                border
+                :data="list"
+                :loading="loading"
+                size="mini"
+                max-height="200px"
             >
-                <template slot-scope="scope">
-                    {{scope.row.initialCondition?'是':'否'}}
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="fusionControl"
-                label="熔深控制"
-                align="left"
-                min-width="120"
-            >
-            <template slot-scope="scope">
-                    {{scope.row.fusionControl?'是':'否'}}
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="unitarySeveral"
-                label="一元/个别"
-                align="left"
-                min-width="120"
-            >
-                <template slot-scope="scope">
-                    {{scope.row.unitarySeveral?'个别':'一元'}}
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="controlArc"
-                label="收弧"
-                align="left"
-                min-width="120"
-            />
-            <el-table-column
-                prop="arcCharacter"
-                label="电弧特性"
-                align="left"
-                min-width="120"
-            >
-                <template slot-scope="scope">
-                    {{}}
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="softArcSchema"
-                label="柔软电弧模式"
-                align="left"
-                min-width="170"
-            >
-                <template slot-scope="scope">
-                    {{}}
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="weldingStickTexture"
-                label="焊丝材质"
-                align="left"
-                min-width="170"
-            >
-            <template slot-scope="scope">
-                {{scope.row.sysDictionary.valueNames}}
-            </template>
-            </el-table-column>
-            <el-table-column
-                prop="gases"
-                label="气体"
-                align="left"
-                min-width="170"
-            >
-            <template slot-scope="scope">
-                {{scope.row.sysDictionary.valueNamess}}
-            </template>
-            </el-table-column>
-            <el-table-column
-                prop="weldingStickDiameter"
-                label="焊丝直径"
-                align="left"
-                min-width="170"
-            >
-            <template slot-scope="scope">
-                {{scope.row.sysDictionary.valueNamesss}}
-            </template>
-            </el-table-column>
-            <el-table-column
-                prop="weldingProcess"
-                label="焊接过程"
-                align="left"
-                min-width="170"
-            >
-            <template slot-scope="scope">
-                {{scope.row.sysDictionary.valueNamessss}}
-            </template>
-            </el-table-column>
-            <el-table-column
-                prop="spotWeldingTime"
-                label="点焊时间"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="inAdvanceAspirated"
-                label="提前送气"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="hysteresisAspirated"
-                label="滞后送气"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="initialEle"
-                label="初期电流"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="initialVol"
-                label="初期电压"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="initialVolUnitary"
-                label="初期电压一元"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="weldingEle"
-                label="焊接电流"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="weldingVol"
-                label="焊接电压"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="weldingVolUnitary"
-                label="焊接电压一元"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="arcEle"
-                label="收弧电流"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="arcVol"
-                label="收弧电压"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="arcVolUnitary"
-                label="收弧电压一元"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="weldingEleAdjust"
-                label="焊接电流微调"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="weldingVolAdjust"
-                label="焊接电压微调"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="arcEleAdjust"
-                label="收弧电流微调"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="arcVolAdjust"
-                label="收弧电压微调"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="alarmsEleMax"
-                label="报警电流上限"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="alarmsEleMin"
-                label="报警电流下限"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="alarmsVolMax"
-                label="报警电压上限"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                prop="alarmsVolMin"
-                label="报警电压下限"
-                align="left"
-                min-width="170"
-            />
-            <el-table-column
-                label="操作"
-                align="left"
-                class-name="small-padding fixed-width"
-                width="150"
-                fixed="right"
-            >
-                <template slot-scope="scope">
-                    <el-button
+                <vxe-table-column
+                    type="seq"
+                    width="60"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="channelNo"
+                    title="通道号"
+                    min-width="120"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="initialCondition"
+                    title="初期条件"
+                    min-width="120"
+                >
+                    <template #default="{row}">
+                        {{row.initialCondition?'是':'否'}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="fusionControl"
+                    title="熔深控制"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                        {{row.fusionControl?'是':'否'}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="unitarySeveral"
+                    title="一元/个别"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                        {{row.unitarySeveral?'个别':'一元'}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="controlArc"
+                    title="收弧"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                         {{row.sysDictionary.valueName}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcCharacter"
+                    title="电弧特性"
+                    min-width="120"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="softArcSchema"
+                    title="柔软电弧模式"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                          {{row.softArcSchema?'是':'否'}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingStickTexture"
+                    title="焊丝材质"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                         {{row.sysDictionary.valueNames}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="gases"
+                    title="气体"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                         {{row.sysDictionary.valueNamess}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingStickDiameter"
+                    title="焊丝直径"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                         {{row.sysDictionary.valueNamesss}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingProcess"
+                    title="焊接过程"
+                    min-width="120"
+                >
+                <template #default="{row}">
+                         {{row.sysDictionary.valueNamessss}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="spotWeldingTime"
+                    title="点焊时间"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="inAdvanceAspirated"
+                    title="提前送气"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="hysteresisAspirated"
+                    title="滞后送气"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="initialEle"
+                    title="初期电流"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="initialVol"
+                    title="初期电压"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="initialVolUnitary"
+                    title="初期电压一元"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingEle"
+                    title="焊接电流"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingVol"
+                    title="焊接电压"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingVolUnitary"
+                    title="焊接电压一元"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcEle"
+                    title="收弧电流"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcVol"
+                    title="收弧电压"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcVolUnitary"
+                    title="收弧电压一元"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingEleAdjust"
+                    title="焊接电流微调"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingVolAdjust"
+                    title="焊接电压微调"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcEleAdjust"
+                    title="收弧电流微调"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="arcVolAdjust"
+                    title="收弧电压微调"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="alarmsEleMax"
+                    title="报警电流上限"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="alarmsEleMin"
+                    title="报警电流下限"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="alarmsVolMax"
+                    title="报警电压上限"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+                <vxe-table-column
+                    field="alarmsVolMin"
+                    title="报警电压下限"
+                    min-width="120"
+                >                
+                </vxe-table-column>
+
+                <vxe-table-column
+                    field="createTime"
+                    title="操作"
+                    width="150"
+                    fixed="right"
+                >
+                    <template #default="{row}">
+                        <el-button
                         size="mini"
                         type="primary"
                         plain
-                        @click="editFun(scope.row.id)"
+                        @click="editFun(row.id)"
                     >
                         修改
                     </el-button>
@@ -259,13 +244,13 @@
                         size="mini"
                         type="danger"
                         plain
-                        @click="delFun(scope.row.id)"
+                        @click="delFun(row.id)"
                     >
                         删除
                     </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+                    </template>
+                </vxe-table-column>
+            </vxe-table>        
         <el-pagination
             class="p10"
             :current-page.sync="page"
@@ -274,52 +259,64 @@
             small
             background
             layout="total, prev, pager, next"
-            :total="childTable.total"
+            :total="total"
             @current-change="handleCurrentChange"
         />
     </div>
 </template>
 
 <script>
-import { getProcesLibraryChild } from '_api/productionProcess/process'
+import { getProcesLibraryChild,delProcesLibraryChild } from '_api/productionProcess/process'
 export default {
     props:{
-        childTable:{}
+        id:''
     },
     data () {
         return {
-            id:'',
             page: 1,
             total: 0,
             list: [],
             loading: false
         }
     },
+    mounted(){
+        this.getExpandDetail()
+    },
     methods: {
-        init (row) {
-            this.getExpandDetail(row.id);
-            this.id = row.id;
-        },
         //获取展开行详细数据
-        async getExpandDetail (id) {
+        async getExpandDetail () {
             this.loading = true;
-            let { data, code } = await getProcesLibraryChild({ id});
+            let { data, code } = await getProcesLibraryChild({ id:this.id});
             this.loading = false;
             if(code==200){   
-                let objData = {
-                    id:id,
-                    tableList : data
-                }
-                this.$emit('throwData',objData);          
-                
+                this.list = data.list||[];
+                this.total = data.total||0;               
             }
         },
 
         //修改
         editFun(id){
-            this.$emit('editDetail',id);
+            let objData = {
+                id:id,
+                parentId:this.id
+            }
+            this.$emit('editDetail',objData);
         },
 
+        delFun(id){
+            this.$confirm('确定要删除吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                let {data,code} = await delProcesLibraryChild({id});
+                if (code == 200) {
+                    this.$message.success('操作成功')
+                    this.$emit('reload')
+                }
+            }).catch(() => { })           
+
+        },
 
         handleCurrentChange(p){
             this.page = p;
