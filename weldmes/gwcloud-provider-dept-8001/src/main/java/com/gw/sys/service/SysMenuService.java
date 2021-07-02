@@ -1,6 +1,7 @@
 package com.gw.sys.service;
 
 import com.gw.common.PageInfo;
+import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysMenu;
 
 import java.math.BigInteger;
@@ -25,15 +26,9 @@ public interface SysMenuService {
     int deleteSysMenu(List<BigInteger> ids);
 
     /**
-     * 根据角色id查询角色列表
-     * @param roleId
-     * @return
+     * @Date 2021/7/2 15:32
+     * @Description  新增 目录/菜单/按钮信息
+     * @Params menuAndButtonInfo 目录/菜单/按钮信息
      */
-    List<SysMenu> getSysMenuByRoleId(BigInteger roleId);
-
-    /**
-     * 查询所有菜单列表，不分页
-     * @return
-     */
-    List<SysMenu> getSysMenuAll();
+    void addMuenOrButtonInfo(MenuAndButtonInfo menuAndButtonInfo);
 }

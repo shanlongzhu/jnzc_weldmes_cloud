@@ -4,6 +4,7 @@ import com.gw.common.CommonUtil;
 import com.gw.common.DateTimeUtil;
 import com.gw.common.HttpResult;
 import com.gw.common.PageInfo;
+import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysMenu;
 import com.gw.entities.SysMenu;
 import com.gw.sys.service.SysMenuService;
@@ -101,6 +102,20 @@ public class SysMenuController {
         } catch (Exception e) {
             return HttpResult.error();
         }
+    }
+
+    /**
+     * @Date 2021/6/25 16:47
+     * @Description 新增 目录/菜单/按钮信息
+     * @Params
+     */
+    @RequestMapping("addMenuOrButtonInfo")
+    public HttpResult insertMenuOrButtonInfo(@RequestBody MenuAndButtonInfo menuAndButtonInfo){
+
+
+        sysMenuService.addMuenOrButtonInfo(menuAndButtonInfo);
+
+        return HttpResult.ok("新增成功");
     }
 
 }
