@@ -315,6 +315,12 @@ export default {
             }
         },
 
+        //修改
+        editFun(id){
+            this.$emit('editDetail',id);
+        },
+
+
         handleCurrentChange(p){
             this.page = p;
         }
