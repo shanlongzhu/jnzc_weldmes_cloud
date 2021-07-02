@@ -66,7 +66,6 @@
                     class="w120"
                     clearable
                     placeholder="请选择"
-                    @change="changeFirmSearch"
                 >
                     <el-option
                         v-for="item in manufactorArr"
@@ -75,24 +74,7 @@
                         :value="item.id"
                     />
                 </el-select>
-            </div>
-            <div class="con-w">
-                <span>设备型号：</span>
-                <el-select
-                    v-model="searchObj.model"
-                    size="small"
-                    class="w150"
-                    clearable
-                    placeholder="请选择"
-                >
-                    <el-option
-                        v-for="item in modelArr2"
-                        :key="item.id"
-                        :label="item.valueName"
-                        :value="item.id"
-                    />
-                </el-select>
-            </div>
+            </div>            
             <div class="con-w">
                 <span>是否在网：</span>
                 <el-select
@@ -127,7 +109,24 @@
                     class="w150"
                     v-model="searchObj.ipPath"
                 ></el-input>
-            </div>            
+            </div>     
+            <div class="con-w">
+                <span>设备型号：</span>
+                <el-select
+                    v-model="searchObj.model"
+                    size="small"
+                    class="w150"
+                    clearable
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in modelArr2"
+                        :key="item.id"
+                        :label="item.valueName"
+                        :value="item.id"
+                    />
+                </el-select>
+            </div>       
             <div class="con-w">
                 <el-button
                     size="small"
@@ -663,7 +662,7 @@ export default {
                 this.typeArr = data['3'] || [];
                 this.areaArr = data['16']||[];
                 this.straddleArr = data['17']||[];
-                //this.modelArr = data['6'] || [];
+                this.modelArr2 = data['6'] || [];
             }
         },
         //获取全部采集序号
@@ -699,13 +698,6 @@ export default {
             }
         },
 
-        //根据厂家获取关联设备型号搜索
-        async changeFirmSearch(id){
-            let {data,code} = await getWeldingModel({id});
-            if(code==200){
-                this.modelArr2 = data||[];
-            }
-        },
 
         //新增
         addFun () {
