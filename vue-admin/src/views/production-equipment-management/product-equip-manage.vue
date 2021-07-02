@@ -74,7 +74,7 @@
                         :value="item.id"
                     />
                 </el-select>
-            </div>
+            </div>            
             <div class="con-w">
                 <span>是否在网：</span>
                 <el-select
@@ -109,7 +109,7 @@
                     class="w150"
                     v-model="searchObj.ipPath"
                 ></el-input>
-            </div>
+            </div>     
             <div class="con-w">
                 <span>设备型号：</span>
                 <el-select
@@ -120,13 +120,13 @@
                     placeholder="请选择"
                 >
                     <el-option
-                        v-for="item in modelArr"
+                        v-for="item in modelArr2"
                         :key="item.id"
                         :label="item.valueName"
                         :value="item.id"
                     />
                 </el-select>
-            </div>
+            </div>       
             <div class="con-w">
                 <el-button
                     size="small"
@@ -553,6 +553,8 @@ export default {
                ipPath:'',
                model:''
             },
+            //搜索条件设备型号
+            modelArr2: [],
             list: [],
             //分页
             page: 1,
@@ -660,7 +662,7 @@ export default {
                 this.typeArr = data['3'] || [];
                 this.areaArr = data['16']||[];
                 this.straddleArr = data['17']||[];
-                //this.modelArr = data['6'] || [];
+                this.modelArr2 = data['6'] || [];
             }
         },
         //获取全部采集序号
@@ -695,6 +697,7 @@ export default {
                 this.modelArr = data||[];
             }
         },
+
 
         //新增
         addFun () {

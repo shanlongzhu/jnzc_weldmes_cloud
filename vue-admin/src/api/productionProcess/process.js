@@ -215,11 +215,55 @@ export function editProcesLibrary(data={}) {
   });
 }
 
-//获取工艺库子数据
+//根据工艺库id获取工艺数据
 export function getProcesLibraryChild(params) {
   return request({
     url: `/craft`,
     method: "get",
+    params
+  });
+}
+
+//获取工艺数据详情
+export function getProcesLibraryChildDetail(id) {
+  return request({
+    url: `/craft/${id}`,
+    method: "get"
+  });
+}
+
+//根据工艺库id获取已使用的通道号
+export function getChannNos(params) {
+  return request({
+    url: `/craft/getChannelNosById`,
+    method: "get",
+    params
+  });
+}
+
+//新增工艺
+export function addProcesLibraryChild(data) {
+  return request({
+    url: `/craft`,
+    method: "post",
+    data
+  });
+}
+
+//修改工艺
+export function editProcesLibraryChild(data) {
+  return request({
+    url: `/craft`,
+    method: "put",
+    data
+  });
+}
+
+//删除工艺
+export function delProcesLibraryChild(params) {
+  return request({
+    url: `/craft`,
+    method: "delete",
     params
   });
 }
