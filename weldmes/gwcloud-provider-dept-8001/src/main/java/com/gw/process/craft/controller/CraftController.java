@@ -47,9 +47,9 @@ public class CraftController {
     }
     //修改工艺前先查询
     @GetMapping("{id}")
-    public List<WpsNorm> getById(@PathVariable Long id){
+    public HttpResult getById(@PathVariable Long id){
         List<WpsNorm> list=craftService.getById(id);
-        return list;
+        return HttpResult.ok(list);
     }
 
     //修改工艺信息
@@ -86,4 +86,18 @@ public class CraftController {
         }
 
     }
+
+    /**
+     * @Date 2021/7/2 16:08
+     * @Description  根据 工艺库id  查询  通道号
+     * @Params  工艺库id
+     */
+    @RequestMapping("getChannelNosById")
+    public HttpResult getChannelNos(Long id){
+
+        List<Integer> list = craftService.getChannelNos(id);
+
+        return HttpResult.ok(list);
+    }
+
 }
