@@ -47,7 +47,7 @@
             <if test="wpsLibrary.weldModel != null and wpsLibrary.weldModel !=''">weld_model=#{wpsLibrary.weldModel},</if>
             <if test="wpsLibrary.firmId != null and wpsLibrary.firmId !=''">firm_id=#{wpsLibrary.firmId},</if>
         </trim>
-        where id=#{id}
+        where id=#{wpsLibrary.id}
     </update>
 
     <delete id="deleteLibrary">
