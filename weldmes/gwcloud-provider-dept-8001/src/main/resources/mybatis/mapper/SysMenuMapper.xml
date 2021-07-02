@@ -13,5 +13,12 @@
         </if>
     </select>
 
+    <!--插入 目录/菜单/按钮信息-->
+    <insert id="insertMenuAndButtonInfo" parameterType="com.gw.entities.MenuAndButtonInfo">
+        insert into sys_menu(label,parent_id,`type`,mark,create_time)
+        values(#{menuAndButtonInfo.label},#{menuAndButtonInfo.parentId},
+        #{menuAndButtonInfo.type},#{menuAndButtonInfo.mark},#{menuAndButtonInfo.createTime})
+    </insert>
+
 
 </mapper>
