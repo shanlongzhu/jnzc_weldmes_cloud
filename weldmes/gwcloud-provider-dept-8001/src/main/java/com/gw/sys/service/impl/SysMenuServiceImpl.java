@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gw.common.CommonUtil;
+import com.gw.common.DateTimeUtil;
 import com.gw.common.PageInfo;
+import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysMenu;
 import com.gw.sys.dao.SysMenuDao;
 import com.gw.sys.service.SysMenuService;
@@ -50,14 +52,20 @@ public class SysMenuServiceImpl implements SysMenuService {
         return sysMenuDao.deleteBatchIds(ids);
     }
 
+    /**
+     * @Date 2021/7/2 15:56
+     * @Description  新增 目录/菜单/按钮信息
+     * @Params menuAndButtonInfo 目录/菜单/按钮信息
+     */
     @Override
-    public List<SysMenu> getSysMenuByRoleId(BigInteger roleId) {
-        return sysMenuDao.getSysMenuByRoleId(roleId);
+    public void addMuenOrButtonInfo(MenuAndButtonInfo menuAndButtonInfo) {
+
+        //获取当前时间
+        String createTime = DateTimeUtil.getCurrentTime();
+
+        menuAndButtonInfo.setCreateTime(createTime);
+
+        sysMenuDao.insertMenuAndButtonInfo(menuAndButtonInfo);
     }
 
-    @Override
-    public List<SysMenu> getSysMenuAll() {
-        QueryWrapper<SysMenu> wrapper = new QueryWrapper<>();
-        return sysMenuDao.selectList(wrapper);
-    }
 }

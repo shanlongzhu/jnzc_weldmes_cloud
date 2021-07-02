@@ -39,4 +39,17 @@ public class CraftServiceImpl implements CraftService {
     public int deleteCraft(Long id) {
         return craftDao.deleteCraft(id);
     }
+
+    /**
+     * @Date 2021/7/2 16:08
+     * @Description  根据 工艺库id  查询  通道号
+     * @Params  工艺库id
+     */
+    @Override
+    public List<Integer> getChannelNos(Long id) {
+
+        List<Integer> list = craftDao.queryChannelNos(id);
+
+        return list;
+    }
 }

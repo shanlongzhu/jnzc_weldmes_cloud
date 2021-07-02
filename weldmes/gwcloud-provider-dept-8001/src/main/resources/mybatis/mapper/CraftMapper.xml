@@ -6,6 +6,7 @@
 
     <resultMap id="craft" type="com.gw.entities.WpsNorm">
         <id property="id"  column="id"></id>
+		<result property="wpsLibraryId" column="wps_library_id"></result>
         <result property="channelNo" column="channel_no"></result>
         <result property="initialCondition" column="initial_condition"></result>
         <result property="fusionControl" column="fusion_control"></result>
@@ -118,7 +119,7 @@
 
     <select id="getById" resultType="com.gw.entities.WpsNorm">
     select
-	channel_no,
+	id,wps_library_id wpsLibraryId,channel_no,
 	initial_condition,
 	fusion_control,
 	unitary_several,
@@ -196,4 +197,9 @@
 	<delete id="deleteCraft">
 		delete from wps_norm where id=#{id}
 	</delete>
+
+	<!--根据 工艺库id  查询  通道号-->
+	<select id="queryChannelNos" parameterType="Long" resultType="java.lang.Integer">
+		select channel_no from wps_norm where wps_library_id = #{id}
+	</select>
 </mapper>

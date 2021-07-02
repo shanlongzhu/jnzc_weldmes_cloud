@@ -23,18 +23,6 @@ public class SysRoleController {
     @Autowired
     SysRoleService sysRoleService;
 
-
-
-    /**
-     * @Date 2021/6/25 16:47
-     * @Description 新增菜单/按钮信息
-     * @Params
-     */
-    @RequestMapping("addMenuOrButtonInfo")
-    public HttpResult insertMenuOrButtonInfo(@RequestBody MenuAndButtonInfo menuAndButtonInfo){
-        //
-        return HttpResult.ok();
-    }
     /**
      * 角色查询分页
      *
