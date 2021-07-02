@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.sys.dao.SysMenuDao">
+
+    <!-- 根据角色id查询菜单列表 -->
+    <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenu">
+        SELECT m.* from sys_menu m,sys_role_menu rm
+        WHERE m.id = rm.menu_id
+        <if test="roleId != null">
+            AND rm.role_id = #{roleId}
+        </if>
+    </select>
+
+
+</mapper>

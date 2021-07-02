@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gw.data.productionTask.dao.ProductionTaskDao">
+
+    <resultMap id="realtimeData" type="com.gw.entities.RealtimeData">
+        <id property="id"  column="id"></id>
+        <result property="fWelderId" column="fwelder_id"></result>
+        <result property="fGatherNo" column="fgather_no"></result>
+        <result property="fMachineId" column="fmachine_id"></result>
+        <result property="fJunctionId" column="fjunction_id"></result>
+        <result property="fItemId" column="fitemid"></result>
+        <result property="fElectricity" column="felectricity"></result>
+        <result property="fVoltage" column="fvoltage"></result>
+        <result property="fRateOfFlow" column="frate_of_flow"></result>
+        <result property="fStatus" column="fstatus"></result>
+        <result property="fWelderNo" column="fwelder_no"></result>
+        <result property="fJunctionNo" column="fjunction_no"></result>
+        <result property="fWeldNo" column="fweld_no"></result>
+        <result property="fChannel" column="fchannel"></result>
+        <result property="fMaxElectricity" column="fmax_electricity"></result>
+        <result property="fMinElectricity" column="fmin_electricity"></result>
+        <result property="fMaxVoltage" column="fmax_voltage"></result>
+        <result property="fMinVoltage" column="fmin_voltage"></result>
+        <result property="fWelderItemId" column="fwelder_itemid"></result>
+        <result property="fJunctionItemId" column="fjunction_itemid"></result>
+        <result property="fMachineItemId" column="fmachine_itemid"></result>
+        <result property="fWireFeedRate" column="fwirefeedrate"></result>
+        <result property="fWeldingRate" column="fweldingrate"></result>
+        <result property="fMachineModel" column="fmachinemodel"></result>
+        <result property="fWireDiameter" column="fwirediameter"></result>
+        <result property="fMaterialGas" column="fmaterialgas"></result>
+        <result property="fWeldTime" column="fweldtime"></result>
+        <result property="fSolderLayer" column="fsolder_layer"></result>
+        <result property="fWeldBead" column="fweld_bead"></result>
+        <result property="count" column="count"></result>
+        <result property="count2" column="count2"></result>
+        <result property="count3" column="count3"></result>
+        <result property="count4" column="count4"></result>
+        <result property="count5" column="count5"></result>
+        <result property="utilization" column="utilization"></result>
+        <result property="time" column="time"></result>
+        <result property="time2" column="time2"></result>
+        <result property="utilization2" column="utilization2"></result>
+        <association property="sysDept" javaType="com.gw.entities.SysDept">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+            <result property="parentId" column="parent_id"></result>
+        </association>
+        <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
+            <id property="id" column="id"></id>
+            <result property="taskNo" column="task_no"></result>
+            <result property="status" column="status"></result>
+            <result property="realityStarttime" column="reality_starttime"></result>
+            <result property="realityEndtime" column="reality_endtime"></result>
+        </association>
+        <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
+            <id property="id"  column="id"></id>
+            <result property="welderName" column="welder_name"></result>
+            <result property="welderNo" column="welder_no"></result>
+            <result property="deptId" column="dept_id"></result>
+            <result property="gender" column="gender"></result>
+            <result property="cellphone" column="cellphone"></result>
+            <result property="rank" column="rank"></result>
+            <result property="certification" column="certification"></result>
+            <result property="remarks" column="remarks"></result>
+            <result property="status" column="status"></result>
+        </association>
+    </resultMap>
+    <select id="getList" resultMap="realtimeData">
+    select a.*,
+    b.*,
+    c.*,
+    cast(a.time / c.time3 * 100 as decimal ( 13, 2 )) utilization
+    from
+    (select
+	r.fwelder_id,
+	s.NAME,
+    s.parent_id,
+	r.fwelder_no,
+	w.welder_name,
+	r.fweld_no,
+	r.fjunction_no,
+	t.reality_starttime,
+	t.reality_endtime,
+	r.fchannel,
+	SEC_TO_TIME(
+	count( r.fwelder_id )) time
+    from
+	realtime_data r,
+	sys_dept s,
+	welder_info w,
+	task_info t
+        <where>
+            r.fjunction_itemid = s.id
+            and r.fjunction_id = t.id
+            and r.fwelder_id = w.id
+            and ( r.fstatus = 3 or r.fstatus = 5 or r.fstatus = 7 )
+            <if test="time1!=null and time1!=''">
+                and r.fWeldTime &gt;= #{time1}
+            </if>
+            <if test="time2!=null and time2!=''">
+                and r.fWeldTime &lt;= #{time2}
+            </if>
+            <if test="areaId!=null and areaId!=''">
+                and s.parent_id = #{areaId}
+            </if>
+            <if test="teamName!=null and teamName!=''">
+                and s.name = #{teamName}
+            </if>
+            <if test="welderNo!=null and welderNo!=''">
+                and r.fwelder_no = #{welderNo}
+            </if>
+            <if test="junctionNo!=null and junctionNo!=''">
+                and r.fjunction_no = #{junctionNo}
+            </if>
+        </where>
+    group by
+	r.fwelder_id,
+	r.fjunction_no)a,(
+	select
+	r.fwelder_id,
+	r.fjunction_no,
+	SEC_TO_TIME(
+	count( case when r.fstatus = 99  then 1 else null end )) time2,
+	cast( AVG(r.felectricity) as decimal ( 13, 2 )) felectricity,
+	cast( AVG(r.fvoltage) as decimal ( 13, 2 )) fvoltage
+    from
+	realtime_data r,
+	welder_info w,
+	task_info t
+    where
+	r.fwelder_id = w.id
+	and r.fjunction_id = t.id
+    group by
+	r.fwelder_id,
+	r.fjunction_no
+	)b,(
+	select
+	r.fwelder_id,
+	r.fjunction_no,
+	SEC_TO_TIME(
+	count( case when r.fstatus = 3 or r.fstatus = 5 or r.fstatus = 7 or r.fstatus = 99  then 1 else null end )) time3
+    from
+	realtime_data r,
+	welder_info w,
+	task_info t
+    where
+	r.fwelder_id = w.id
+	and r.fjunction_id = t.id
+    group by
+	r.fwelder_id,
+	r.fjunction_no
+	)c
+	where
+	a.fwelder_id=b.fwelder_id
+	and
+	a.fjunction_no=b.fjunction_no
+	and
+	a.fwelder_id=c.fwelder_id
+	and
+	a.fjunction_no=c.fjunction_no
+    </select>
+    <select id="getTeamName" resultType="java.lang.String">
+        select name from sys_dept where id=#{teamId}
+    </select>
+</mapper>

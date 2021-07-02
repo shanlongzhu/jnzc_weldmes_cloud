@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.dispatch.dao.DispatchDao">
+
+    <resultMap id="taskList" type="com.gw.entities.TaskInfo">
+        <id property="id" column="id"></id>
+        <result property="taskName" column="task_name"></result>
+        <result property="taskNo" column="task_no"></result>
+        <result property="planStarttime" column="plan_starttime"></result>
+        <result property="planEndtime" column="plan_endtime"></result>
+        <result property="realityStarttime" column="reality_starttime"></result>
+        <result property="realityEndtime" column="reality_endtime"></result>
+        <result property="deptId" column="dept_id"></result>
+        <result property="welderId" column="welder_id"></result>
+        <result property="welderName" column="welderName"></result>
+        <result property="gradeIdToStr" column="gradeStr"></result><!--任务等级-->
+        <result property="grade" column="grade"></result>
+        <result property="evaluateStarsIdToStr" column="evaluate_stars"></result><!--评价星级-->
+        <result property="evaluateStars" column="startId"></result><!--星级id-->
+        <result property="evaluateContent" column="evaluate_content"></result>
+        <result property="statusStr" column="status"></result><!--任务状态-->
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="deptName" column="name"></result><!--所属班组-->
+        <result property="workSpaceName" column="workSpace"></result><!--所属作业区-->
+        <result property="workSpaceId" column="parent_id"></result><!--所属作业区-->
+    </resultMap>
+
+    <resultMap id="deptInfoMap" type="com.gw.entities.SysDeptInfo">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="parentId" column="parent_id"></result>
+        <result property="orderNum" column="order_num"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="lastUpdate_by"></result>
+        <result property="lastUpdateTime" column="lastUpdate_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+    </resultMap>
+
+    <!--按条件 获取任务列表-->
+    <select id="queryTaskList" resultMap="taskList">
+        select if(welder_info.welder_name is null,'此任务暂未分配',welder_info.welder_name) welderName,
+               task.id,task.task_no,dictionaryTemp.value_name gradeStr,
+               dept.name,deptWork.name workSpace,task.plan_starttime,task.plan_endtime,
+               task.reality_starttime,task.reality_endtime,
+               task.evaluate_content,dictionaryTP.value_name evaluate_stars,dictionaryTP.id startId,
+               task.dept_id,task.welder_id,dictionary.value_name status
+        from task_info task
+        left join sys_dept dept on dept.id = task.dept_id
+        left join sys_dept deptWork on deptWork.id = dept.parent_id
+        left join sys_dictionary dictionary on dictionary.id = task.status
+        left join sys_dictionary dictionaryTemp on dictionaryTemp.id = task.grade
+        left join sys_dictionary dictionaryTP on dictionaryTP.id = task.evaluate_stars
+        left join welder_info on welder_info.id = task.welder_id
+        where 1=1
+        <if test="grade != null and grade != ''">
+            and task.dept_id = #{grade}
+        </if>
+        <if test="taskStatus != null and taskStatus != ''">
+            and task.status = #{taskStatus}
+        </if>
+    </select>
+
+    <!--通过所属作业区查询出部门Id-->
+    <select id="queryDeptIdByWorkArea" parameterType="java.lang.String" resultType="java.lang.Long">
+        select id from sys_dept where name=#{workArea}
+    </select>
+
+    <!--通过班组的 部门Id列表 获取 任务列表-->
+    <select id="queryTaskListByDeptIdList" parameterType="java.util.List" resultMap="taskList">
+        select task.id,task.task_no,dictionaryTemp.value_name grade,
+        dept.name,task.plan_starttime,task.plan_endtime,
+        task.reality_starttime,task.reality_endtime,
+        task.evaluate_content,dictionaryTP.value_name evaluate_stars,
+        task.dept_id,task.welder_id,dictionary.value_name status
+        from task_info task
+        left join sys_dept dept on dept.id=task.dept_id
+        left join sys_dictionary dictionary on dictionary.id=task.status
+        left join sys_dictionary dictionaryTemp on dictionaryTemp.id=task.grade
+        left join sys_dictionary dictionaryTP on dictionaryTP.id=task.evaluate_stars
+        where dept_id in (select id from sys_dept where parent_id=#{deptId})
+    </select>
+
+    <!--通过班组的 部门Id 获取任务列表-->
+    <select id="queryTaskListByDeptId" parameterType="java.lang.Long" resultMap="taskList">
+        select task.id,task.task_no,dictionaryTemp.value_name grade,
+               dept.name,task.plan_starttime,task.plan_endtime,
+               task.reality_starttime,task.reality_endtime,
+               task.evaluate_content,dictionaryTP.value_name evaluate_stars,
+               task.dept_id,task.welder_id,dictionary.value_name status
+        from task_info task
+        left join sys_dept dept on dept.id=task.dept_id
+        left join sys_dictionary dictionary on dictionary.id=task.status
+        left join sys_dictionary dictionaryTemp on dictionaryTemp.id=task.grade
+        left join sys_dictionary dictionaryTP on dictionaryTP.id=task.evaluate_stars
+        where dept_id = #{deptId}
+    </select>
+
+    <!--通过用户名和密码获取该用户的部门Id-->
+    <select id="queryUserDeptId" parameterType="java.lang.String" resultType="java.lang.Long">
+        select dept_id from sys_user where `name`=#{userName} and `password`=#{passWord}
+    </select>
+
+    <!--通过部门Id获取作业区-->
+    <select id="queryDeptNameList" parameterType="java.lang.Long" resultMap="deptInfoMap">
+        select id,`name` from sys_dept where `id`=#{deptId}
+    </select>
+
+    <!--通过工作区父级id获取班组列表-->
+    <select id="queryGradeList" parameterType="java.lang.Long" resultMap="deptInfoMap">
+        select id,`name` from sys_dept where parent_id=#{deptId}
+    </select>
+
+    <!--通过 类型 获取 字典表信息-->
+    <select id="queryDictionInfos" parameterType="java.lang.String" resultType="com.gw.entities.SysDictionary">
+        select value_name valueName,id,`value` from sys_dictionary where `type` = #{type}
+    </select>
+
+    <!--新增任务信息-->
+    <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
+        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time)
+        values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},#{taskInfo.planEndtime},52,NOW())
+    </insert>
+
+    <!--通过任务id查询任务信息-->
+    <select id="queryTaskInfoById" parameterType="java.lang.Long" resultMap="taskList">
+        select task.id,task.task_no,task.grade,
+        task.plan_starttime,task.plan_endtime,
+        task.dept_id,sys_dept.name deptName,sys_dept.parent_id
+        from task_info task
+        left join sys_dept on task.dept_id = sys_dept.id
+        where task.id = #{id}
+    </select>
+
+    <!--修改任务信息-->
+
+
+    <update id="updateTaskInfo" parameterType="com.gw.entities.TaskInfo">
+        update task_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="taskInfo.taskNo != null and taskInfo.taskNo !=''">task_no = #{taskInfo.taskNo},</if>
+            <if test="taskInfo.grade != null and taskInfo.grade !=''">grade = #{taskInfo.grade},</if>
+            <if test="taskInfo.deptId != null and taskInfo.deptId !=''">dept_id = #{taskInfo.deptId},</if>
+            <if test="taskInfo.planStarttime != null and taskInfo.planStarttime !=''">plan_starttime = #{taskInfo.planStarttime},</if>
+            <if test="taskInfo.planEndtime != null and taskInfo.planEndtime !=''">plan_endtime = #{taskInfo.planEndtime},</if>
+            <if test="taskInfo.realityStarttime != null and taskInfo.realityStarttime !=''">reality_starttime = #{taskInfo.realityStarttime},</if>
+            <if test="taskInfo.realityEndtime != null and taskInfo.realityEndtime !=''">reality_endtime = #{taskInfo.realityEndtime},</if>
+            <if test="taskInfo.status != null and taskInfo.status !=''">status = #{taskInfo.status},</if>
+            <if test="taskInfo.welderId != null and taskInfo.welderId !=''">welder_id = #{taskInfo.welderId},</if>
+        </trim>
+        where id=#{taskInfo.id}
+    </update>
+
+    <!--根据任务主键 删除 任务信息-->
+    <delete id="deleteTaskInfoById" parameterType="java.lang.Long">
+        delete from task_info where id=#{id}
+    </delete>
+
+    <!--根据任务主键列表 批量删除 任务信息-->
+    <delete id="deleteTaskInfoByIdList">
+        delete from task_info where id in
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--批量修改任务状态信息-->
+    <update id="updateTaskInfoStatusByIdList" parameterType="java.util.List">
+        update task_info set status = #{status},reality_endtime = #{time} where id in
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--通过任务等级的描述(value_name) 获取到该条任务等级的主键-->
+    <select id="queryTaskGradeIdByValueName" parameterType="java.lang.String" resultType="byte">
+        select `id` from sys_dictionary where value_name=#{taskGradeValueName}
+    </select>
+
+    <!--批量插入任务信息-->
+    <insert id="addTaskInfoList" parameterType="ArrayList">
+        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,
+                              plan_endtime,reality_starttime,status,
+                              reality_endtime,evaluate_content,evaluate_stars,create_time)
+        values
+        <foreach collection="taskInfos" item="item" index="index" separator=",">
+            (#{item.taskNo},'',#{item.grade},#{item.deptId},#{item.planStarttime},#{item.planEndtime},#{item.realityStarttime},
+            52,#{item.realityEndtime},#{item.evaluateContent},#{item.evaluateStars},NOW())
+        </foreach>
+    </insert>
+
+    <!--根据 任务Id 插入评论信息-->
+    <insert id="addCommentInfo">
+        update task_info set evaluate_content = #{comments},evaluate_stars = #{start} where `id`=#{id}
+    </insert>
+
+    <!--task_claim表 入库操作-->
+    <insert id="addTaskClaimInfo" parameterType="com.gw.entities.TaskClaim">
+        insert into task_claim(welder_id,task_id,weld_id,claim_time) values (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},#{taskClaimInfo.weldId},NOW())
+    </insert>
+
+    <!--获取所有任务状态为 进行中 的任务编号-->
+    <select id="queryAllTaskNosOfStatusWorking" resultType="com.gw.entities.TaskInfo">
+        select id,task_no from task_info where status = 51
+    </select>
+
+    <!--通过 类型 获取 字典表信息-->
+    <select id="queryDictionaryInfos" resultType="com.gw.entities.SysDictionary">
+        select `type`,type_name typeName,value_name valueName,id,`value` from sys_dictionary where `type` = #{type}
+    </select>
+</mapper>
