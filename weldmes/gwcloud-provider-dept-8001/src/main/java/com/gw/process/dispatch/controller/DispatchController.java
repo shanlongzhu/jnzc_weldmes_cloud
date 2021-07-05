@@ -3,6 +3,7 @@ package com.gw.process.dispatch.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gw.common.ConstantInfo;
 import com.gw.common.HttpResult;
 import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
@@ -55,7 +56,7 @@ public class DispatchController {
             return HttpResult.ok("当前用户尚未分配角色,无法查询作业区信息");
         }
 
-        if(userInfo.getRoles().get(0).equals("admin")){
+        if(userInfo.getRoles().get(0).equals(ConstantInfo.ADMIN_FLAG)){
 
             Map<String,Object> map= dispatchService.getWorkSpaceAndGradeInfo(userInfo.getUserName(),userInfo.getPassWord());
             return HttpResult.ok(map);
