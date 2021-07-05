@@ -7,6 +7,9 @@ public class DateTimeUtil {
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * 获取系统当前时间
+     */
     public static String getCurrentTime(){
 
         Date date = new Date();// 获取当前时间

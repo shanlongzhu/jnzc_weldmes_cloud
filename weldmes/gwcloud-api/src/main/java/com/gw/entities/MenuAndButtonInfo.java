@@ -2,6 +2,8 @@ package com.gw.entities;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/6/25 16:23
@@ -13,12 +15,12 @@ public class MenuAndButtonInfo {
     /**
      * 目录/菜单/按钮 父级id
      */
-    private int parentId;
+    private Long parentId;
 
     /**
      * 目录/菜单/按钮 id
      */
-    private int id;
+    private Long id;
 
     /**
      * 目录/菜单/按钮 名字
@@ -59,5 +61,20 @@ public class MenuAndButtonInfo {
      * 是否删除  -1：已删除  0：正常
      */
     private int delFlag;
+
+    /**
+     * 子菜单列表
+     */
+    List<MenuAndButtonInfo> menus;
+
+    /**
+     * 三级菜单列表
+     */
+    List<MenuAndButtonInfo> threeLevelMenuInfos;
+
+    /**
+     * 按钮列表
+     */
+    List<MenuAndButtonInfo> buttons;
 
 }
