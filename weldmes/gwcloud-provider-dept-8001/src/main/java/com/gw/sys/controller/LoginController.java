@@ -74,11 +74,6 @@ public class LoginController {
                 //将 当前用户 的sessionId 作为 token 返回给前端  存于浏览器请求头中的 Authorization 中
                 Token token = new Token(sessionId);
 
-                /*Map<String,Object> map = new HashMap<>();
-                map.put("username",username);
-                map.put("password",password);
-                currentUser.getSession().setAttribute("sessionId",map);*/
-
                 return HttpResult.ok(token);
 
             }catch(UnknownAccountException uka){
