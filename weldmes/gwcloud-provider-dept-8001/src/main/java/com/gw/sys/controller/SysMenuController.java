@@ -6,7 +6,6 @@ import com.gw.common.HttpResult;
 import com.gw.common.PageInfo;
 import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysMenu;
-import com.gw.entities.SysMenu;
 import com.gw.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -116,6 +115,32 @@ public class SysMenuController {
         sysMenuService.addMuenOrButtonInfo(menuAndButtonInfo);
 
         return HttpResult.ok("新增成功");
+    }
+
+    /**
+     * @Date 2021/7/5 9:47
+     * @Description  拉取菜单列表信息
+     * @Params
+     */
+    @RequestMapping("getMenuOrButtonInfo")
+    public HttpResult getMenuInfoList(){
+
+        List<MenuAndButtonInfo> list = sysMenuService.getMenuInfoList();
+
+        return HttpResult.ok(list);
+    }
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  根据id 删除菜单/按钮
+     * @Params id 菜单/按钮id
+     */
+    @RequestMapping("delMenuOrButtonInfoById")
+    public HttpResult delMenuOrButtonInfoById(Long id){
+
+        sysMenuService.delMenuOrButoonInfoById(id);
+
+        return HttpResult.ok("删除成功!");
     }
 
 }

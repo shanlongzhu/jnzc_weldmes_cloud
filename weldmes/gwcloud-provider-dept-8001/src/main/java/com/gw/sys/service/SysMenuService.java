@@ -31,4 +31,19 @@ public interface SysMenuService {
      * @Params menuAndButtonInfo 目录/菜单/按钮信息
      */
     void addMuenOrButtonInfo(MenuAndButtonInfo menuAndButtonInfo);
+
+    /**
+     * @Date 2021/7/5 9:49
+     * @Description 拉取菜单列表信息
+     * @Params
+     */
+    List<MenuAndButtonInfo> getMenuInfoList();
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  根据id 删除菜单/按钮
+     * @Params id 菜单/按钮id
+     */
+    void delMenuOrButoonInfoById(Long id);
+
 }

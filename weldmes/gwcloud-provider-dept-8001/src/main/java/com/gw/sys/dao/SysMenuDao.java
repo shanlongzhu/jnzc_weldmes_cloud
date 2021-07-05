@@ -25,4 +25,25 @@ public interface SysMenuDao extends BaseMapper<SysMenu> {
      */
     void insertMenuAndButtonInfo(@Param("menuAndButtonInfo") MenuAndButtonInfo menuAndButtonInfo);
 
+    /**
+     * @Date 2021/7/5 9:49
+     * @Description 拉取菜单列表信息
+     * @Params
+     */
+    List<MenuAndButtonInfo> selectMenuInfoList();
+
+    /**
+     * @Date 2021/7/5 9:49
+     * @Description 通过 顶级菜单id 拉取子菜单列表信息
+     * @Params
+     */
+    List<MenuAndButtonInfo> selectChildrenMenuInfoListByMenuId(@Param("id") Long id);
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  根据id 删除菜单/按钮
+     * @Params id 菜单/按钮id
+     */
+    void deleteMenuOrButtonInfoById(@Param("id") Long id);
+
 }

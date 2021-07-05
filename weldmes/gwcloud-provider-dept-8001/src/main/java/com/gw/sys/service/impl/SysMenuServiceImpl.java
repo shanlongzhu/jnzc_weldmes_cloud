@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gw.common.CommonUtil;
+import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtil;
 import com.gw.common.PageInfo;
 import com.gw.entities.MenuAndButtonInfo;
@@ -68,4 +69,66 @@ public class SysMenuServiceImpl implements SysMenuService {
         sysMenuDao.insertMenuAndButtonInfo(menuAndButtonInfo);
     }
 
+
+    /**
+     * @Date 2021/7/5 9:49
+     * @Description 拉取菜单列表信息
+     * @Params
+     */
+    @Override
+    public List<MenuAndButtonInfo> getMenuInfoList() {
+
+        //获取顶级菜单
+        List<MenuAndButtonInfo> list = sysMenuDao.selectMenuInfoList();
+
+        //获取菜单信息列表中的每一个顶级菜单
+        for (MenuAndButtonInfo menuAndButtonInfo : list) {
+
+            //通过 顶级菜单的id 查询顶级菜单下的子菜单信息
+            List<MenuAndButtonInfo> childrenMenuInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(menuAndButtonInfo.getId());
+
+            //获取每一个顶级菜单中的每一个子菜单
+            for (MenuAndButtonInfo childrenMenuInfo : childrenMenuInfos) {
+
+                //通过 子菜单的id 查询按钮信息 或 三级菜单信息
+                List<MenuAndButtonInfo> buttonOrThreeLevelMenuInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(childrenMenuInfo.getId());
+
+                for (MenuAndButtonInfo buttonOrThreeLevelMenuInfo : buttonOrThreeLevelMenuInfos) {
+
+                    //判断是否存在三级菜单
+                    if(buttonOrThreeLevelMenuInfo.getType().equals(ConstantInfo.BUTTON_FLAG)){
+
+                        //不存在三级菜单时  直接将按钮信息放入子菜单中
+                        childrenMenuInfo.setButtons(buttonOrThreeLevelMenuInfos);
+                        break;
+                    }
+
+                    List<MenuAndButtonInfo> threeLevelMenuButtonInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(buttonOrThreeLevelMenuInfo.getId());
+
+                    //存在三级菜单时   将按钮信息放入三级菜单中
+                    buttonOrThreeLevelMenuInfo.setButtons(threeLevelMenuButtonInfos);
+
+                }
+                //将三级菜单信息放入子菜单中
+                childrenMenuInfo.setThreeLevelMenuInfos(buttonOrThreeLevelMenuInfos);
+            }
+
+            //将子菜单信息放入顶级菜单中
+            menuAndButtonInfo.setMenus(childrenMenuInfos);
+        }
+
+        return list;
+    }
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  根据id 删除菜单/按钮
+     * @Params id 菜单/按钮id
+     */
+    @Override
+    public void delMenuOrButoonInfoById(Long id) {
+
+        sysMenuDao.deleteMenuOrButtonInfoById(id);
+
+    }
 }
