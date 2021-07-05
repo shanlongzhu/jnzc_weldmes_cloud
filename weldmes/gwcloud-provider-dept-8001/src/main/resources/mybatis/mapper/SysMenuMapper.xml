@@ -4,6 +4,19 @@
 
 <mapper namespace="com.gw.sys.dao.SysMenuDao">
 
+    <resultMap id="MenuAndButtonMap" type="com.gw.entities.MenuAndButtonInfo">
+        <id property="id" column="id"></id>
+        <result property="parentId" column="parent_id"></result>
+        <result property="label" column="label"></result>
+        <result property="mark" column="mark"></result>
+        <result property="type" column="type"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="last_update_by"></result>
+        <result property="lastUpdateTime" column="last_update_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+    </resultMap>
+
     <!-- 根据角色id查询菜单列表 -->
     <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenu">
         SELECT m.* from sys_menu m,sys_role_menu rm
@@ -20,5 +33,21 @@
         #{menuAndButtonInfo.type},#{menuAndButtonInfo.mark},#{menuAndButtonInfo.createTime})
     </insert>
 
+    <!--查询菜单信息列表-->
+    <select id="selectMenuInfoList" resultMap="MenuAndButtonMap">
+        select id,parent_id,label,`type`,mark from `sys_menu` sysMenu
+        where exists
+        (select id from `sys_menu` where parent_id = 0 and sysMenu.id = sys_menu.id)
+    </select>
 
+    <!--查询子菜单信息列表-->
+    <select id="selectChildrenMenuInfoListByMenuId" parameterType="Long" resultMap="MenuAndButtonMap">
+        select id,parent_id,label,type,mark from `sys_menu` sysMenu
+        where parent_id = #{id}
+    </select>
+
+    <!--根据id 删除菜单/按钮-->
+    <delete id="deleteMenuOrButtonInfoById" parameterType="Long">
+        delete from sys_menu where id = #{id}
+    </delete>
 </mapper>
