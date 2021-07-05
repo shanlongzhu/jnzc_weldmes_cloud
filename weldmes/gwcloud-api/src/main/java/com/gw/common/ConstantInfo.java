@@ -15,4 +15,9 @@ public class ConstantInfo {
      */
     public static final String BUTTON_FLAG = "2";
 
+    /**
+     * 管理员角色标识
+     */
+    public static final String ADMIN_FLAG = "admin";
+
 }
