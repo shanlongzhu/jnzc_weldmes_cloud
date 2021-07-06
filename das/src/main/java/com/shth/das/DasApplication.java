@@ -3,9 +3,8 @@ package com.shth.das;
 import com.shth.das.job.RtDataJob;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServer;
-import com.shth.das.sys.rtdata.service.RtDataService;
-import com.shth.das.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,11 +28,14 @@ public class DasApplication implements CommandLineRunner {
     @Autowired
     private RtDataJob rtDataJob;
 
+    @Value("${nettyServer.port}")
+    private int otcPort;
+
     @Override
     public void run(String... args) {
         emqMqttClient.start();
-        nettyServer.start();
-        rtDataJob.start();
+        nettyServer.start(otcPort);
+        rtDataJob.startJnOtcJob();
     }
 
     public static void main(String[] args) {

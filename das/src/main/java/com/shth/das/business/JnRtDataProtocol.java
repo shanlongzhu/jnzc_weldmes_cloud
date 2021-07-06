@@ -1,60 +1,117 @@
 package com.shth.das.business;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.TopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.*;
-import com.shth.das.sys.rtdata.mapper.RtDataMapper;
 import com.shth.das.sys.rtdata.service.RtDataService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.BeanContext;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
  * 江南项目数据解析类
  */
 @Slf4j
-public class JNRtDataProtocol {
+public class JnRtDataProtocol {
 
-    //数据累积后插入到数据库
-    private static final List<JNRtDataDB> jnRtDataList = new LinkedList<>();
+    /**
+     * 数据累积后插入到数据库
+     */
+    private static final List<JNRtDataDB> JN_RT_DATA_LIST = new LinkedList<>();
 
-    //采集盒IP地址盒采集编号绑定
+    /**
+     * 采集盒IP地址盒采集编号绑定
+     */
     public static void gatherNoIpBinding(String clientIp, String gatherNo) {
         //判断map集合是否有，没有则新增
-        if (!NettyServerHandler.gatherAndIpMap.containsKey(clientIp)) {
-            NettyServerHandler.gatherAndIpMap.put(clientIp, gatherNo);
+        if (!NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
+            NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.put(clientIp, gatherNo);
             //新增设备开机时间
             WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
             WeldOnOffTime onOffTime = new WeldOnOffTime();
             onOffTime.setGatherNo(gatherNo);
             onOffTime.setStartTime(DateTimeUtils.getNowDateTime());
+            onOffTime.setMachineId(getMachineIdByGatherNo(gatherNo));
+            onOffTime.setMachineType(0);
             onOffTimeService.insertWeldOnOffTime(onOffTime);
         }
     }
 
     /**
+     * 江南版实时数据协议解码处理
+     */
+    public static Map<String, Object> jnRtDataDecoderManage(String str) {
+        Map<String, Object> map = new HashMap<>(8);
+        /*
+        江南版实时数据协议解析
+         */
+        if (str.length() == 282) {
+            //存数据库
+            List<JNRtDataDB> jnRtDataDbs = JnRtDataProtocol.jnRtDataAnalysis(str);
+            //发送前端
+            List<JNRtDataUI> jnRtDataUis = JnRtDataProtocol.jnRtDataUiAnalysis(str);
+            map.put("JNRtDataDB", jnRtDataDbs);
+            map.put("JNRtDataUI", jnRtDataUis);
+        }
+        /*
+        下发规范返回
+         */
+        if (str.length() == 24) {
+            JNProcessIssueReturn issueReturn = JnRtDataProtocol.jnIssueReturnAnalysis(str);
+            map.put("JNProcessIssueReturn", issueReturn);
+        }
+        /*
+        索取规范返回
+         */
+        if (str.length() == 112) {
+            JNProcessClaimReturn claimReturn = JnRtDataProtocol.jnClaimReturnAnalysis(str);
+            map.put("JNProcessClaimReturn", claimReturn);
+        }
+        /*
+        密码返回
+        控制命令返回
+         */
+        if (str.length() == 22) {
+            //密码返回
+            if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+                JNPasswordReturn passwordReturn = JnRtDataProtocol.jnPasswordReturnAnalysis(str);
+                map.put("JNPasswordReturn", passwordReturn);
+            }
+            //控制命令返回
+            if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+                JNCommandReturn commandReturn = JnRtDataProtocol.jnCommandReturnAnalysis(str);
+                map.put("JNCommandReturn", commandReturn);
+            }
+        }
+        return map;
+    }
+
+    /**
      * 实时数据处理
      */
-    public static void rtDataManage(String clientIp, Object msg) {
+    @SuppressWarnings("unchecked")
+    public static void jnRtDataManage(String clientIp, Object msg) {
         Map<String, Object> map = (Map<String, Object>) msg;
         if (map.size() > 0) {
             //实时数据发送到前端
             if (map.containsKey("JNRtDataUI")) {
-                List<JNRtDataUI> jnRtDataUIS = (List<JNRtDataUI>) map.get("JNRtDataUI");
-                String gatherNo = jnRtDataUIS.get(0).getGatherNo();
+                List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
+                String gatherNo = jnRtDataUis.get(0).getGatherNo();
                 gatherNoIpBinding(clientIp, gatherNo);
                 //集合转字符串[消除对同一对象的循环引用]
-                String message = JSON.toJSONString(jnRtDataUIS, SerializerFeature.DisableCircularReferenceDetect);
+                String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                 //通过mqtt发送到服务端
                 EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), message, 0);
             }
@@ -62,12 +119,12 @@ public class JNRtDataProtocol {
             if (map.containsKey("JNRtDataDB")) {
                 List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
                 if (CommonUtils.isNotEmpty(list)) {
-                    synchronized (jnRtDataList) {
-                        jnRtDataList.addAll(list);
-                        if (jnRtDataList.size() >= 100) {
+                    synchronized (JN_RT_DATA_LIST) {
+                        JN_RT_DATA_LIST.addAll(list);
+                        if (JN_RT_DATA_LIST.size() >= 100) {
                             RtDataService rtDataService = BeanContext.getBean(RtDataService.class);
-                            rtDataService.insertRtDataList(jnRtDataList);
-                            jnRtDataList.clear();
+                            rtDataService.insertRtDataList(JN_RT_DATA_LIST);
+                            JN_RT_DATA_LIST.clear();
                         }
                     }
                 }
@@ -77,7 +134,6 @@ public class JNRtDataProtocol {
                 JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
                 if (null != processIssueReturn) {
                     //Java类转JSON字符串
-                    //7E000000005200010100007D
                     String message = JSON.toJSONString(processIssueReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(TopicEnum.processIssueReturn.name(), message, 0);
@@ -120,26 +176,30 @@ public class JNRtDataProtocol {
      * @return 返回一个集合对象
      */
     public static List<JNRtDataUI> jnRtDataUiAnalysis(String str) {
-        List<JNRtDataUI> rtdata = new ArrayList<>();
+        List<JNRtDataUI> rtData = new ArrayList<>();
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "22".equals(str.substring(10, 12)) && "7D".equals(str.substring(280, 282))) {
                     JNRtDataUI data = new JNRtDataUI();
-                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString()); //采集模块编号
+                    //采集模块编号
+                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
                     for (int a = 0; a < 239; a += 80) {
-                        data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
+                        //电流
+                        data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
+                        //电压
                         data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));  //电压
-                        data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));//焊机状态
-                        rtdata.add(data);
+                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
+                        //焊机状态
+                        data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
+                        rtData.add(data);
                     }
                 }
             }
         } catch (Exception e) {
             log.error("江南实时数据协议解析异常：{}", e.getMessage());
         }
-        return rtdata;
+        return rtData;
     }
 
     /**
@@ -155,14 +215,20 @@ public class JNRtDataProtocol {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
                     JNRtDataDB data = new JNRtDataDB();
-                    data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));//焊机型号
-                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());     //采集模块编号
-                    data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());     //焊工号
-                    String nowDate = DateTimeUtils.getNowDate(); //当前日期：yyyy-MM-dd
-                    String nowDateTime = DateTimeUtils.getNowDateTime(); //当前系统时间 yyyy-MM-dd HH:mm:ss
-                    data.setCreateTime(nowDateTime); //创建时间
+                    //焊机型号
+                    data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
+                    //采集模块编号
+                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
+                    //焊工号
+                    data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
+                    //当前日期：yyyy-MM-dd
+                    String nowDate = DateTimeUtils.getNowDate();
+                    //当前系统时间 yyyy-MM-dd HH:mm:ss
+                    String nowDateTime = DateTimeUtils.getNowDateTime();
+                    //创建时间
+                    data.setCreateTime(nowDateTime);
                     //采集模块信息查询并绑定
-                    List<GatherModel> gatherList = CommonDbData.gatherList;
+                    List<GatherModel> gatherList = CommonDbData.GATHER_LIST;
                     if (CommonUtils.isNotEmpty(gatherList)) {
                         for (GatherModel gather : gatherList) {
                             if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
@@ -173,7 +239,7 @@ public class JNRtDataProtocol {
                         }
                     }
                     //焊机信息查询并绑定
-                    List<WeldModel> weldList = CommonDbData.weldList;
+                    List<WeldModel> weldList = CommonDbData.WELD_LIST;
                     if (CommonUtils.isNotEmpty(weldList)) {
                         for (WeldModel weld : weldList) {
                             if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
@@ -185,7 +251,7 @@ public class JNRtDataProtocol {
                         }
                     }
                     //焊工信息查询并绑定
-                    List<WelderModel> welderList = CommonDbData.welderList;
+                    List<WelderModel> welderList = CommonDbData.WELDER_LIST;
                     if (CommonUtils.isNotEmpty(welderList)) {
                         for (WelderModel welder : welderList) {
                             if (Integer.valueOf(data.getWelderNo()).equals(Integer.valueOf(welder.getWelderNo()))) {
@@ -197,7 +263,7 @@ public class JNRtDataProtocol {
                         }
                     }
                     //任务信息查询并绑定
-                    List<TaskModel> taskList = CommonDbData.taskList;
+                    List<TaskModel> taskList = CommonDbData.TASK_LIST;
                     if (CommonUtils.isNotEmpty(taskList)) {
                         for (TaskModel task : taskList) {
                             if (CommonUtils.isNotEmpty(task.getWelderNo()) && Integer.valueOf(data.getWelderNo()).equals(Integer.valueOf(task.getWelderNo()))) {
@@ -209,20 +275,21 @@ public class JNRtDataProtocol {
                         }
                     }
                     for (int a = 0; a < 239; a += 80) {
-                        String year = Integer.valueOf(str.substring(38 + a, 40 + a), 16).toString();
-                        String month = Integer.valueOf(str.substring(40 + a, 42 + a), 16).toString();
-                        String day = Integer.valueOf(str.substring(42 + a, 44 + a), 16).toString();
-                        String hour = Integer.valueOf(str.substring(44 + a, 46 + a), 16).toString();
-                        String minute = Integer.valueOf(str.substring(46 + a, 48 + a), 16).toString();
-                        String second = Integer.valueOf(str.substring(48 + a, 50 + a), 16).toString();
-                        String strdate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-                        Date time = DateTimeUtils.parse("yy-MM-dd HH:mm:ss", strdate);
-                        String welddate = DateTimeUtils.sdfDate.format(time);
-                        String welddatetime = DateTimeUtils.sdfDateTime.format(time);
-                        if (welddate.equals(nowDate)) {  //判断实时数据是否当天数据，true：保存，false；赋值系统时间
-                            data.setWeldTime(welddatetime);
+                        String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
+                        String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
+                        String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
+                        String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
+                        String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
+                        String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
+                        String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                        String weldDate = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                        String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                        //判断实时数据是否当天数据，true：保存，false；赋值系统时间
+                        if (weldDate.equals(nowDate)) {
+                            data.setWeldTime(weldDateTime);
                         } else {
-                            data.setWeldTime(nowDateTime);      //焊机时间
+                            //焊机时间
+                            data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
                         data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
@@ -267,7 +334,7 @@ public class JNRtDataProtocol {
      */
     public static String jnIssueProtocol(JNProcessIssue model) {
         String head = JNProcessIssue.Flag.HEAD.value;
-        String order = JNProcessIssue.Flag.ORDER.value;//控制命令:52
+        String order = JNProcessIssue.Flag.ORDER.value;
         String foot = JNProcessIssue.Flag.FOOT.value;
         String gatherNo = CommonUtils.lengthJoint(model.getGatherNo(), 4);//采集编号：0001
         String channelNo = CommonUtils.lengthJoint(model.getChannelNo(), 2);//通道号：01
@@ -334,8 +401,10 @@ public class JNRtDataProtocol {
         String head = JNProcessClaim.Flag.HEAD.value;
         String foot = JNProcessClaim.Flag.FOOT.value;
         String order = JNProcessClaim.Flag.ORDER.value;
-        String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);//采集编号：0001
-        String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);//通道号：01
+        //采集编号：0001
+        String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);
+        //通道号：01
+        String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);
         String str = head + order + gatherNo + channelNo + foot;
         str = str.toUpperCase();
         return str;
@@ -436,7 +505,7 @@ public class JNRtDataProtocol {
      * @param str 16进制字符串
      * @return 密码返回实体类
      */
-    public static JNPasswordReturn jNPasswordReturnAnalysis(String str) {
+    public static JNPasswordReturn jnPasswordReturnAnalysis(String str) {
         JNPasswordReturn passwordReturn = new JNPasswordReturn();
         if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
             passwordReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
@@ -451,13 +520,88 @@ public class JNRtDataProtocol {
      * @param str 16进制字符串
      * @return 控制命令返回实体类
      */
-    public static JNCommandReturn jNCommandReturnAnalysis(String str) {
+    public static JNCommandReturn jnCommandReturnAnalysis(String str) {
         JNCommandReturn commandReturn = new JNCommandReturn();
         if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
             commandReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
             commandReturn.setFlag(Integer.valueOf(str.substring(16, 18)));
         }
         return commandReturn;
+    }
+
+    /**
+     * 根据采集编号查询焊机ID
+     *
+     * @param gatherNo 采集编号
+     * @return 焊机ID
+     */
+    public static BigInteger getMachineIdByGatherNo(String gatherNo) {
+        List<WeldModel> weldList = CommonDbData.WELD_LIST;
+        if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
+            for (WeldModel weld : weldList) {
+                if (gatherNo.equals(weld.getGatherNo())) {
+                    return weld.getId();
+                }
+            }
+        }
+        return BigInteger.ZERO;
+    }
+
+    /**
+     * 江南OTC设备关机数据处理
+     */
+    public static void jnWeldOffDataManage(String clientIp) {
+        //有客户端终止连接则发送关机数据到mq，刷新实时界面
+        if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
+            List<JNRtDataUI> dataList = new ArrayList<>();
+            JNRtDataUI jnRtDataUi = new JNRtDataUI();
+            //采集编号
+            String gatherNo = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.get(clientIp);
+            jnRtDataUi.setGatherNo(gatherNo);
+            //-1 为关机
+            jnRtDataUi.setWeldStatus(-1);
+            jnRtDataUi.setElectricity(BigDecimal.ZERO);
+            jnRtDataUi.setVoltage(BigDecimal.ZERO);
+            dataList.add(jnRtDataUi);
+            String dataArray = JSONArray.toJSONString(dataList);
+            EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), dataArray, 0);
+            log.info("OTC关机：" + "：{}", TopicEnum.rtcdata.name() + ":" + dataArray);
+            NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.remove(clientIp);
+            //新增设备关机时间
+            WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
+            WeldOnOffTime onOffTime = new WeldOnOffTime();
+            onOffTime.setGatherNo(gatherNo);
+            onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
+            onOffTime.setMachineId(JnRtDataProtocol.getMachineIdByGatherNo(gatherNo));
+            onOffTime.setMachineType(0);
+            onOffTimeService.insertWeldOnOffTime(onOffTime);
+        }
+    }
+
+    /**
+     * 根据采集编号查找采集盒IP地址
+     *
+     * @param gatherNo 采集编号
+     * @return 返回采集盒IP地址
+     */
+    public static String getClientIpByGatherNo(String gatherNo) {
+        String clientIp = "";
+        if (CommonUtils.isNotEmpty(gatherNo)) {
+            synchronized (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP) {
+                Set<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet();
+                //循环查找value（采集编号）的key（IP地址）
+                for (Map.Entry<String, String> entry : entries) {
+                    //采集编号
+                    String gatherno = entry.getValue();
+                    if (Integer.valueOf(gatherNo).equals(Integer.valueOf(gatherno))) {
+                        //采集盒IP地址
+                        clientIp = entry.getKey();
+                        break;
+                    }
+                }
+            }
+        }
+        return clientIp;
     }
 
 }

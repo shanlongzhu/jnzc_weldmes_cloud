@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional(value = "ds2TransactionManager")
+@Transactional(value = "ds2TransactionManager", rollbackFor = Exception.class)
 public class RtDataServiceImpl implements RtDataService {
 
     @Autowired
@@ -28,8 +28,8 @@ public class RtDataServiceImpl implements RtDataService {
     @Override
     public void insertRtDataList(List<JNRtDataDB> list) {
         if (CommonUtils.isNotEmpty(list)) {
-            Map<String, Object> map = new HashMap<>();
-            String tableName = "rtdata" + DateTimeUtils.getSdfDate.format(System.currentTimeMillis());
+            Map<String, Object> map = new HashMap<>(6);
+            String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
             map.put("tableName", tableName);
             map.put("list", list);
             rtDataMapper.insertRtDataList(map);
