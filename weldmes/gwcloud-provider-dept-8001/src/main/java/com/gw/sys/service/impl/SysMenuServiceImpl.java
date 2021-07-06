@@ -185,7 +185,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             return sysMenuInfo;
         }
 
-        //获取到该id对应的菜单信息
+        //获取到目标菜单/按钮信息
         sysMenuInfo = menus.get(0);
 
         list.clear();
@@ -194,10 +194,32 @@ public class SysMenuServiceImpl implements SysMenuService {
 
         List<SysMenuInfo> menuList = sysMenuDao.queryMenuInfoByMenuId(list);
 
-        SysMenuInfo sysParentMenuInfo = menuList.get(0);
+        if(!ObjectUtils.isEmpty(menuList)){
 
-        sysMenuInfo.setParentName(sysParentMenuInfo.getLabel());
+            //获取目标菜单/按钮信息 的 父级菜单/按钮信息
+            SysMenuInfo sysParentMenuInfo = menuList.get(0);
+
+            //将父级菜单/按钮名称  放到  目标菜单/按钮中
+            sysMenuInfo.setParentName(sysParentMenuInfo.getLabel());
+        }
 
         return sysMenuInfo;
+    }
+
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  根据角色  查询该角色的菜单以及按钮权限
+     * @Params  id  角色id
+     */
+    @Override
+    public List<SysMenuInfo> getMenuOrButtonInfoByRole(Long id) {
+
+        //获取 菜单Id列表
+        List<Long> menuIds = userRolesAndPerDao.queryMenuIdByRoleId(id);
+
+        //获取菜单信息列表
+        List<SysMenuInfo> menus = sysMenuDao.queryMenuInfoByMenuId(menuIds);
+
+        return menus;
     }
 }

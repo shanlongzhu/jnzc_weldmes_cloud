@@ -105,13 +105,13 @@ public class SysMenuController {
     /**
      * @Date 2021/7/6 10:49
      * @Description  根据角色  查询该角色的菜单以及按钮权限
-     * @Params
+     * @Params  id  角色id
      */
     @RequestMapping("getMenuAndButtonInfoByRoleId")
     public HttpResult getRoleMenuAndButtonInfo(Long id){
 
+        List<SysMenuInfo> list = sysMenuService.getMenuOrButtonInfoByRole(id);
 
-
-        return HttpResult.ok();
+        return HttpResult.ok(list);
     }
 }
