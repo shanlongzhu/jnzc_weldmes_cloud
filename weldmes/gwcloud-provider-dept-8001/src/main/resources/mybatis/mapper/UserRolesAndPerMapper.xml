@@ -4,6 +4,57 @@
 
 <mapper namespace="com.gw.sys.dao.UserRolesAndPerDao">
 
+    <resultMap id="SysRoleMap" type="com.gw.entities.SysRole">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="remark" column="remark"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="last_update_by"></result>
+        <result property="lastUpdateTime" column="last_update_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+    </resultMap>
+
+    <!--获取角色信息列表-->
+    <select id="selectRolesInfos" resultMap="SysRoleMap">
+        select id,`name`,remark,create_by,create_time,last_update_by,last_update_time,del_flag
+        from sys_role
+    </select>
+
+    <!--新增角色信息-->
+    <insert id="insertRoleInfo" parameterType="com.gw.entities.SysRole">
+        insert into sys_role(`name`,remark,create_by,create_time,last_update_by,last_update_time,del_flag)
+        values(sysRole.name,sysRole.remark,sysRole.createBy,
+               sysRole.createTime,sysRole.lastUpdateBy,sysRole.lastUpdateTime,sysRole.delFlag)
+    </insert>
+
+    <!--通过角色id获取角色信息-->
+    <select id="selectRoleInfoById" parameterType="Long" resultMap="SysRoleMap">
+        select id,`name`,remark,create_by,create_time,last_update_by,last_update_time,del_flag
+        from sys_role
+        where id = #{id}
+    </select>
+
+    <!--修改角色信息-->
+    <update id="updateRoleInfo" parameterType="com.gw.entities.SysRole">
+        update sys_role
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysRole.name != null and sysRole.name !=''">`name` = #{sysRole.name},</if>
+            <if test="sysRole.remark != null and sysRole.remark !=''">remark = #{sysRole.remark},</if>
+            <if test="sysRole.createBy != null and sysRole.createBy !=''">create_by = #{sysRole.createBy},</if>
+            <if test="sysRole.createTime != null and sysRole.createTime !=''">create_time = #{sysRole.createTime},</if>
+            <if test="sysRole.lastUpdateBy != null and sysRole.lastUpdateBy !=''">last_update_by = #{sysRole.lastUpdateBy},</if>
+            <if test="sysRole.lastUpdateTime != null and sysRole.lastUpdateTime !=''">last_update_time = #{sysRole.lastUpdateTime},</if>
+            <if test="sysRole.delFlag != null and sysRole.delFlag !=''">del_flag = #{sysRole.delFlag},</if>
+        </trim>
+        where id = #{sysRole.id}
+    </update>
+
+    <!--根据id删除角色信息-->
+    <delete id="deleteRoleInfoById" parameterType="Long">
+        delete from sys_role where id = #{id}
+    </delete>
+
     <!--根据用户名和密码查询用户登录信息-->
     <select id="queryUserInfoByUserNameAndPwd" resultType="com.gw.entities.UserOfSys">
         select id,`name`,password,status from sys_user where `name` = #{userName}
