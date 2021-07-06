@@ -144,4 +144,21 @@ public class SysMenuServiceImpl implements SysMenuService {
 
         return map;
     }
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  修改菜单/按钮权限信息
+     * @Params  menuAndButtonInfo 菜单/按钮权限信息
+     */
+    @Override
+    public void updateMenuOrButtonInfo(SysMenuInfo menuAndButtonInfo) {
+
+        //获取系统当前时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        menuAndButtonInfo.setLastUpdateTime(time);
+
+        sysMenuDao.updateMenuOrButtonInfo(menuAndButtonInfo);
+
+    }
 }

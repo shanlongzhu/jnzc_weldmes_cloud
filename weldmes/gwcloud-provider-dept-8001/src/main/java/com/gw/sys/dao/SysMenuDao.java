@@ -51,4 +51,11 @@ public interface SysMenuDao {
      */
     public List<SysMenuInfo> queryMenuInfoByMenuId(@Param("ids")List<Long> ids);
 
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  修改菜单/按钮权限信息
+     * @Params  menuAndButtonInfo 菜单/按钮权限信息
+     */
+    public void updateMenuOrButtonInfo(@Param("sysMenuInfo") SysMenuInfo sysMenuInfo);
+
 }

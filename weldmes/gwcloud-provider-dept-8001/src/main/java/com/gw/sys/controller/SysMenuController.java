@@ -76,4 +76,29 @@ public class SysMenuController {
         return HttpResult.ok(list);
     }
 
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  修改菜单/按钮信息
+     * @Params
+     */
+    @RequestMapping("updateMenuAndButtonInfo")
+    public HttpResult updateRoleMenuAndButtonInfo(@RequestBody SysMenuInfo sysMenuInfo){
+
+        sysMenuService.updateMenuOrButtonInfo(sysMenuInfo);
+
+        return HttpResult.ok("修改成功!");
+    }
+
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  根据角色  查询该角色的菜单以及按钮权限
+     * @Params
+     */
+    @RequestMapping("getMenuAndButtonInfoByRoleId")
+    public HttpResult getRoleMenuAndButtonInfo(Long id){
+
+
+
+        return HttpResult.ok();
+    }
 }

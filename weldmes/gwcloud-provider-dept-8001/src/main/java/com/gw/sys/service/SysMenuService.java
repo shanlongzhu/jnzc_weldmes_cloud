@@ -35,4 +35,11 @@ public interface SysMenuService {
      */
     Map<String,Object> getCurrentUserMenuAndButtonInfos();
 
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  修改菜单/按钮权限信息
+     * @Params  menuAndButtonInfo 菜单/按钮权限信息
+     */
+    public void updateMenuOrButtonInfo(SysMenuInfo menuAndButtonInfo);
+
 }
