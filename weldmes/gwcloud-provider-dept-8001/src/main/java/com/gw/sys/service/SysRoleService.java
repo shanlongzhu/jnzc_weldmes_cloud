@@ -1,26 +1,49 @@
 package com.gw.sys.service;
 
-import com.gw.common.PageInfo;
 import com.gw.entities.SysRole;
 
-import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/7/5 10:12
+ * @Description  角色业务层
+ * @Params
+ */
 public interface SysRoleService {
 
     /**
-     * 查询角色分页
-     * @param draw
-     * @param start
-     * @param length
-     * @param sysRole
-     * @return
+     * @Date 2021/7/6 12:51
+     * @Description 角色列表查询
+     * @Params
      */
-    PageInfo<SysRole> getSysRolePage(int draw, int start, int length, SysRole sysRole);
+    public List<SysRole> getRoleInfos();
 
-    int addSysRole(SysRole sysRole);
+    /**
+     * @Date 2021/7/6 12:51
+     * @Description 新增角色信息
+     * @Params sysRole 角色信息
+     */
+    public void addRoleInfo(SysRole sysRole);
 
-    int updateSysRole(SysRole sysRole);
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询角色信息
+     * @Params id 角色id
+     */
+    public SysRole getRoleInfoById(Long id);
 
-    int deleteSysRole(List<BigInteger> idss);
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 修改角色信息
+     * @Params  sysRole 角色信息
+     */
+    public void updateRoleInfo(SysRole sysRole);
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据id删除角色信息
+     * @Params  id 角色id
+     */
+    public void delRoleInfoById(Long id);
 }
