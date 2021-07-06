@@ -2,18 +2,48 @@ package com.shth.das.common;
 
 /**
  * mqtt主题枚举类
+ *
+ * @author zsl
  */
 public enum TopicEnum {
 
-    rtcdata,                //实时数据主题
-    processIssueReturn,     //工艺下发返回
-    processClaimReturn,     //工艺索取返回
-    passwordReturn,         //密码返回
-    commandReturn,          //控制命令返回
+    /**
+     * OTC实时数据主题
+     */
+    rtcdata,
+    /**
+     * 工艺下发返回
+     */
+    processIssueReturn,
+    /**
+     * 工艺索取返回
+     */
+    processClaimReturn,
+    /**
+     * 密码返回
+     */
+    passwordReturn,
+    /**
+     * 控制命令返回
+     */
+    commandReturn,
 
-    processIssue,           //工艺下发
-    processClaim,           //工艺索取
-    passwordIssue,          //密码下发
-    commandIssue;           //控制命令下发
+
+    /**
+     * 工艺下发
+     */
+    processIssue,
+    /**
+     * 工艺索取
+     */
+    processClaim,
+    /**
+     * 密码下发
+     */
+    passwordIssue,
+    /**
+     * 控制命令下发
+     */
+    commandIssue,
 
 }

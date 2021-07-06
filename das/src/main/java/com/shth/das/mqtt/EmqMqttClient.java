@@ -2,16 +2,17 @@ package com.shth.das.mqtt;
 
 import com.shth.das.common.TopicEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 /**
  * mq客户端，连接emq服务器，订阅和发送消息
  */
-@Component
 @Configuration
 @Slf4j
 public class EmqMqttClient {
@@ -66,10 +67,14 @@ public class EmqMqttClient {
                 mqttClient.connect(mqttConnectOptions);
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端启动成功");
-                    subTopic(TopicEnum.processIssue.name()); //工艺下发
-                    subTopic(TopicEnum.processClaim.name()); //工艺索取
-                    subTopic(TopicEnum.passwordIssue.name()); //密码下发
-                    subTopic(TopicEnum.commandIssue.name()); //控制命令下发
+                    //工艺下发
+                    subTopic(TopicEnum.processIssue.name());
+                    //工艺索取
+                    subTopic(TopicEnum.processClaim.name());
+                    //密码下发
+                    subTopic(TopicEnum.passwordIssue.name());
+                    //控制命令下发
+                    subTopic(TopicEnum.commandIssue.name());
                 } else {
                     log.info("mqtt客户端启动失败");
                 }
@@ -89,11 +94,16 @@ public class EmqMqttClient {
     public static void publishMessage(String topic, String message, int qos) {
         try {
             if (null != mqttClient && mqttClient.isConnected()) {
-                MqttMessage mqttMessage = new MqttMessage();
-                mqttMessage.setQos(qos);
-                mqttMessage.setPayload(message.getBytes());
-                mqttClient.publish(topic, mqttMessage);
-                //log.info("消息发布成功：" + topic);
+                synchronized (EmqMqttClient.class) {
+                    if (null != mqttClient && mqttClient.isConnected()) {
+                        MqttMessage mqttMessage = new MqttMessage();
+                        mqttMessage.setQos(qos);
+                        mqttMessage.setPayload(message.getBytes());
+                        mqttClient.publish(topic, mqttMessage);
+                    } else {
+                        reConnectMqtt();
+                    }
+                }
             } else {
                 reConnectMqtt();
             }

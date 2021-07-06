@@ -1,7 +1,7 @@
 package com.shth.das.mqtt;
 
 import com.alibaba.fastjson.JSON;
-import com.shth.das.business.JNRtDataProtocol;
+import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.TopicEnum;
 import com.shth.das.netty.NettyServerHandler;
@@ -18,8 +18,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * mqtt消息回调
@@ -51,12 +49,7 @@ public class EmqMqttCallback implements MqttCallback {
         log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload()));
         try {
             String message = new String(mqttMessage.getPayload());
-            CommonDbData.executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    messageManage(topic, message);
-                }
-            });
+            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> messageManage(topic, message));
         } catch (Exception e) {
             log.error("messageArrived Exception:{}", e.getMessage());
         }
@@ -78,8 +71,8 @@ public class EmqMqttCallback implements MqttCallback {
                     for (JNProcessIssue issue : list) {
                         String gatherNo = issue.getGatherNo();
                         //Java对象解析成16进制字符串
-                        String str = JNRtDataProtocol.jnIssueProtocol(issue);
-                        String clientIp = getClientIpByGatherNo(gatherNo);
+                        String str = JnRtDataProtocol.jnIssueProtocol(issue);
+                        String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
                         if (CommonUtils.isNotEmpty(str) && CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(clientIp)) {
                             Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
                             //判断该焊机通道是否打开、是否活跃、是否可写
@@ -97,8 +90,8 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnProcessClaim) {
                     String gatherNo = jnProcessClaim.getGatherNo();
                     //Java对象解析成16进制字符串
-                    String str = JNRtDataProtocol.jnClaimProtocol(jnProcessClaim);
-                    String clientIp = getClientIpByGatherNo(gatherNo);
+                    String str = JnRtDataProtocol.jnClaimProtocol(jnProcessClaim);
+                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
                     if (CommonUtils.isNotEmpty(str) && CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(clientIp)) {
                         Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
                         //判断该焊机通道是否打开、是否活跃、是否可写
@@ -115,8 +108,8 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnPasswordIssue) {
                     String gatherNo = jnPasswordIssue.getGatherNo();
                     //java对象转16进制字符串
-                    String str = JNRtDataProtocol.jnPasswordProtocol(jnPasswordIssue);
-                    String clientIp = getClientIpByGatherNo(gatherNo);
+                    String str = JnRtDataProtocol.jnPasswordProtocol(jnPasswordIssue);
+                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
                     if (CommonUtils.isNotEmpty(str) && CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(clientIp)) {
                         Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
                         //判断该焊机通道是否打开、是否活跃、是否可写
@@ -133,8 +126,8 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnCommandIssue) {
                     String gatherNo = jnCommandIssue.getGatherNo();
                     //java对象转16进制字符串
-                    String str = JNRtDataProtocol.jnCommandProtocol(jnCommandIssue);
-                    String clientIp = getClientIpByGatherNo(gatherNo);
+                    String str = JnRtDataProtocol.jnCommandProtocol(jnCommandIssue);
+                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
                     if (CommonUtils.isNotEmpty(str) && CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(clientIp)) {
                         Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
                         //判断该焊机通道是否打开、是否活跃、是否可写
@@ -148,30 +141,6 @@ public class EmqMqttCallback implements MqttCallback {
         } catch (Exception e) {
             log.error("messageManage error:{}", e.getMessage());
         }
-    }
-
-    /**
-     * 根据采集编号查找采集盒IP地址
-     *
-     * @param gatherNo 采集编号
-     * @return 返回采集盒IP地址
-     */
-    public static String getClientIpByGatherNo(String gatherNo) {
-        String clientIp = "";
-        if (CommonUtils.isNotEmpty(gatherNo)) {
-            synchronized (NettyServerHandler.gatherAndIpMap) {
-                Set<Map.Entry<String, String>> entries = NettyServerHandler.gatherAndIpMap.entrySet();
-                //循环查找value（采集编号）的key（IP地址）
-                for (Map.Entry<String, String> entry : entries) {
-                    String gatherno = entry.getValue(); //采集编号
-                    if (Integer.valueOf(gatherNo).equals(Integer.valueOf(gatherno))) {
-                        clientIp = entry.getKey(); //采集盒IP地址
-                        break;
-                    }
-                }
-            }
-        }
-        return clientIp;
     }
 
     /**

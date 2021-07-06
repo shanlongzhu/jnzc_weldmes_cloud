@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class BeanContext implements ApplicationContextAware {
 
-    // Spring应用上下文环境
+    /**
+     * Spring应用上下文环境
+     */
     private static ApplicationContext applicationContext;
 
-    /*
+    /**
      * 实现了ApplicationContextAware 接口，必须实现该方法；
      * 通过传递applicationContext参数初始化成员变量applicationContext
      */

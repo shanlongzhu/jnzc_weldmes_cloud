@@ -1,54 +1,40 @@
 package com.shth.das.netty;
 
-import com.alibaba.fastjson.JSONArray;
-import com.shth.das.business.JNRtDataProtocol;
-import com.shth.das.common.TopicEnum;
-import com.shth.das.mqtt.EmqMqttClient;
-import com.shth.das.pojo.JNRtDataUI;
-import com.shth.das.pojo.WeldOnOffTime;
-import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
-import com.shth.das.util.BeanContext;
-import com.shth.das.util.DateTimeUtils;
+import com.shth.das.business.JnRtDataProtocol;
+import com.shth.das.common.ServerPort;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelId;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 
-import java.math.BigDecimal;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Netty服务端处理器
- * ChannelInboundHandlerAdapter：channelread 不会自动释放，需要手动释放
+ * ChannelInboundHandlerAdapter：channelRead 不会自动释放，需要手动释放
  * SimpleChannelInboundHandler:继承了ChannelInboundHandlerAdapter，
  * channelRead0 获取消息会自动释放资源，获取的消息必须是指定的泛型。
  */
 @Slf4j
-@Configuration
-@Sharable
+@Sharable  //表明当前Handler是共享的，只有一个Handler实例
 public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
-     * key:采集盒IP地址
+     * key:客户端IP地址
      * value:连接通道
      * 保存连接进服务端的通道数量
      */
     public static final ConcurrentHashMap<String, ChannelHandlerContext> MAP = new ConcurrentHashMap<>();
 
     /**
-     * key:采集盒IP地址
+     * key:客户端IP地址
      * value:采集编号
      * 采集盒的IP地址和采集编号对应关系(用来向前端发送关机数据)
      */
-    public static final ConcurrentHashMap<String, String> gatherAndIpMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, String> CLIENT_IP_GATHER_NO_MAP = new ConcurrentHashMap<>();
 
     /**
      * 服务端收到消息执行的方法
@@ -59,15 +45,22 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
-        String clientIp = insocket.getAddress().getHostAddress();//IP地址
-        int port = insocket.getPort();//端口
-        ChannelId channelId = ctx.channel().id();
+        //客户端IP地址
+        String clientIp = insocket.getAddress().getHostAddress();
+        //客户端端口
+        int clientPort = insocket.getPort();
+        InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
+        //服务端端口
+        int serverPort = inetSocket.getPort();
         if (msg == null) {
             log.info("客户端响应空的消息");
             ctx.flush();
             return;
         }
-        JNRtDataProtocol.rtDataManage(clientIp, msg);
+        //端口为otcPort，则为江南版OTC通讯协议
+        if (serverPort == ServerPort.otcPort) {
+            JnRtDataProtocol.jnRtDataManage(clientIp, msg);
+        }
         ctx.flush();
     }
 
@@ -80,8 +73,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         int clientPort = insocket.getPort();
-        // 唯一标识
-        //ChannelId channelId = ctx.channel().id();
         //如果map中不包含此连接，就保存连接
         if (MAP.containsKey(clientIp)) {
             log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + MAP.size());
@@ -93,42 +84,28 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * @param ctx
-     * 有客户端终止连接服务器会触发此函数
+     * @param ctx 有客户端终止连接服务器会触发此函数
      * @return: void
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
+        InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
+        //客户端IP地址
         String clientIp = insocket.getAddress().getHostAddress();
-        int port = insocket.getPort();
-        //ChannelId channelId = ctx.channel().id();
+        //客户端端口
+        int clientPort = insocket.getPort();
+        //服务端端口
+        int serverPort = inetSocket.getPort();
         //包含此客户端才去删除
         if (MAP.containsKey(clientIp)) {
             //删除连接
             MAP.remove(clientIp);
-            log.info("终止连接:" + clientIp + "：" + port + "--->连接通道数量: " + MAP.size());
+            log.info("终止连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + MAP.size());
         }
-        //有客户端终止连接则发送关机数据到mq，刷新实时界面
-        if (gatherAndIpMap.containsKey(clientIp)) {
-            List<JNRtDataUI> dataList = new ArrayList<>();
-            JNRtDataUI jnRtDataUI = new JNRtDataUI();
-            String gatherNo = gatherAndIpMap.get(clientIp); //采集编号
-            jnRtDataUI.setGatherNo(gatherNo);
-            jnRtDataUI.setWeldStatus(-1);   //-1 为关机
-            jnRtDataUI.setElectricity(BigDecimal.ZERO);
-            jnRtDataUI.setVoltage(BigDecimal.ZERO);
-            dataList.add(jnRtDataUI);
-            String dataArray = JSONArray.toJSONString(dataList);
-            EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), dataArray, 0);
-            log.info("关机数据：" + "：{}", TopicEnum.rtcdata.name() + ":" + dataArray);
-            gatherAndIpMap.remove(clientIp);
-            //新增设备关机时间
-            WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
-            WeldOnOffTime onOffTime = new WeldOnOffTime();
-            onOffTime.setGatherNo(gatherNo);
-            onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
-            onOffTimeService.insertWeldOnOffTime(onOffTime);
+        //端口为otcPort，则为江南版OTC通讯协议
+        if (serverPort == ServerPort.otcPort) {
+            JnRtDataProtocol.jnWeldOffDataManage(clientIp);
         }
         ctx.disconnect();
         ctx.channel().close();

@@ -8,6 +8,7 @@ public interface TaskService {
 
     /**
      * 查询所有任务信息不分页
+     *
      * @return
      */
     List<TaskModel> getTaskModelAll();

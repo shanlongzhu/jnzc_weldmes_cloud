@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(value = "ds1TransactionManager")
+@Transactional(value = "ds1TransactionManager", rollbackFor = Exception.class)
 public class WelderServiceImpl implements WelderService {
 
     @Autowired

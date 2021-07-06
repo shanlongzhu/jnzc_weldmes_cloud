@@ -23,13 +23,27 @@ import java.math.BigInteger;
 @Accessors(chain = true)
 @TableName(value = "weld_on_off_time")
 public class WeldOnOffTime implements Serializable {
-
+    /**
+     *  ID
+     */
     @TableId(type = IdType.AUTO)
-    private BigInteger id;      //ID
+    private BigInteger id;
+    /**采集编号*/
     @TableField("gather_no")
-    private String gatherNo;    //采集编号
+    private String gatherNo;
+    /**开机时间*/
     @TableField("start_time")
-    private String startTime;   //开机时间
+    private String startTime;
+    /**关机时间*/
     @TableField("end_time")
-    private String endTime;     //关机时间
+    private String endTime;
+    /**设备id(根据类型来区分)*/
+    @TableField("machine_id")
+    private BigInteger machineId;
+    /**设备类型(默认0:OTC,1:松下)*/
+    @TableField("machine_type")
+    private int machineType;
+    /**设备IP地址(只存松下)*/
+    @TableField("weldsx_ip")
+    private String weldsxIp;
 }

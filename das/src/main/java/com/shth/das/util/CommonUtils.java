@@ -44,7 +44,7 @@ public class CommonUtils {
      *
      * @return
      */
-    public static boolean isNotEmpty(List list) {
+    public static boolean isNotEmpty(List<?> list) {
         return null != list && list.size() > 0;
     }
 
@@ -55,13 +55,13 @@ public class CommonUtils {
      * @return
      */
     public static String strTo16(String s) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
-            int ch = (int) s.charAt(i);
+            int ch = s.charAt(i);
             String s4 = Integer.toHexString(ch);
-            str = str + s4;
+            str.append(s4);
         }
-        return str;
+        return str.toString();
     }
 
     /**
@@ -74,6 +74,27 @@ public class CommonUtils {
     public static String lengthJoint(String str, int length) {
         if (isNotEmpty(str)) {
             str = Integer.toHexString(Integer.parseInt(str));
+            if (str.length() < length) {
+                StringBuilder stringBuilder = new StringBuilder(str);
+                for (int i = 0; i < (length - str.length()); i++) {
+                    stringBuilder.insert(0, "0");
+                }
+                str = stringBuilder.toString();
+            }
+        }
+        return str;
+    }
+
+    /**
+     * 16进制字符串转10进制，再进行长度拼接
+     *
+     * @param str    16进制字符串
+     * @param length 要拼接的长度
+     * @return 10进制字符串
+     */
+    public static String hexToDecLengthJoint(String str, int length) {
+        if (isNotEmpty(str)) {
+            str = String.valueOf(Integer.parseInt(str, 16));
             if (str.length() < length) {
                 StringBuilder stringBuilder = new StringBuilder(str);
                 for (int i = 0; i < (length - str.length()); i++) {
@@ -124,6 +145,56 @@ public class CommonUtils {
 
     private static byte toByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    /**
+     * ASCII码转16进制
+     *
+     * @param str ASCII码
+     * @return 16进制
+     */
+    public static String convertStringToHex(String str) {
+        char[] chars = str.toCharArray();
+        StringBuilder hex = new StringBuilder();
+        for (char aChar : chars) {
+            hex.append(Integer.toHexString(aChar));
+        }
+        return hex.toString();
+    }
+
+    /**
+     * 16进制转ASCII码
+     *
+     * @param hex 16进制
+     * @return ASCII码
+     */
+    public static String convertHexToString(String hex) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hex.length() - 1; i += 2) {
+            String output = hex.substring(i, (i + 2));
+            int decimal = Integer.parseInt(output, 16);
+            sb.append((char) decimal);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 数组转16进制字符串
+     *
+     * @param bArray 数组
+     * @return String
+     */
+    public static String bytesToHexString(byte[] bArray) {
+        StringBuilder sb = new StringBuilder(bArray.length);
+        String sTemp;
+        for (byte b : bArray) {
+            sTemp = Integer.toHexString(0xFF & b);
+            if (sTemp.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(sTemp.toUpperCase());
+        }
+        return sb.toString();
     }
 
 }
