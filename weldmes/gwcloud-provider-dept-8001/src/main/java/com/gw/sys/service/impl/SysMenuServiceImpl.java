@@ -152,13 +152,13 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public Map<String,Object> getCurrentUserMenuAndButtonInfos() {
 
-        /*Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = SecurityUtils.getSubject();
 
         //获取当前用户信息
-        UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();*/
+        UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
 
         //获取当前用户角色id
-        List<Long> rolesIds = userRolesAndPerDao.queryUserRoleIds(1L);
+        List<Long> rolesIds = userRolesAndPerDao.queryUserRoleIds(userInfo.getId());
 
         Map<String,Object> map = new HashMap<>();
 
