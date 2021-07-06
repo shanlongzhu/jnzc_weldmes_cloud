@@ -10,7 +10,7 @@ import java.util.List;
  * @Description   目录/菜单/按钮 信息实体类
  */
 @Data
-public class MenuAndButtonInfo {
+public class SysMenuInfo {
 
     /**
      * 目录/菜单/按钮 父级id
@@ -65,16 +65,16 @@ public class MenuAndButtonInfo {
     /**
      * 子菜单列表
      */
-    List<MenuAndButtonInfo> menus;
+    List<SysMenuInfo> menus;
 
     /**
      * 三级菜单列表
      */
-    List<MenuAndButtonInfo> threeLevelMenuInfos;
+    List<SysMenuInfo> threeLevelMenuInfos;
 
     /**
      * 按钮列表
      */
-    List<MenuAndButtonInfo> buttons;
+    List<SysMenuInfo> buttons;
 
 }
