@@ -163,17 +163,4 @@ public class SysMenuController {
         return HttpResult.ok(list);
     }
 
-    /**
-     * @Date 2021/7/6 10:49
-     * @Description  根据角色  查询该角色的菜单以及按钮权限
-     * @Params
-     */
-    @RequestMapping("getRoleMenuAndButtonInfo")
-    public HttpResult getRoleMenuAndButtonInfo(){
-
-
-
-        return HttpResult.ok();
-    }
-
 }
