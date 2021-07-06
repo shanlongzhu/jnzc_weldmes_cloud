@@ -18,6 +18,11 @@ public class SysMenuInfo {
     private Long parentId;
 
     /**
+     * 目录/菜单/按钮 父级名称
+     */
+    private String parentName;
+
+    /**
      * 目录/菜单/按钮 id
      */
     private Long id;
