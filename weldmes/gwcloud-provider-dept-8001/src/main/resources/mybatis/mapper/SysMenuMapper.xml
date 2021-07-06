@@ -42,7 +42,7 @@
 
     <!--查询子菜单信息列表-->
     <select id="selectChildrenMenuInfoListByMenuId" parameterType="Long" resultMap="MenuAndButtonMap">
-        select id,parent_id,label,type,mark from `sys_menu` sysMenu
+        select id,parent_id,label,`type`,mark from `sys_menu` sysMenu
         where parent_id = #{id}
     </select>
 
@@ -50,4 +50,15 @@
     <delete id="deleteMenuOrButtonInfoById" parameterType="Long">
         delete from sys_menu where id = #{id}
     </delete>
+
+    <!--通过菜单id 查询 菜单目录信息-->
+    <select id="queryMenuInfoByMenuId" resultMap="MenuAndButtonMap">
+        select id,label,parent_id,`type`,mark
+        from sys_menu
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>
