@@ -100,13 +100,13 @@
 	d2.value_name value_namess,
 	d3.value_name value_namesss,
 	d4.value_name value_namessss
-    from
+   from
 	wps_norm w
-	left join sys_dictionary d  on w.control_arc=d.id
-	left join sys_dictionary d1 on w.welding_stick_texture=d1.id
-	left join sys_dictionary d2 on w.gases=d2.id
-	left join sys_dictionary d3 on w.welding_stick_diameter=d3.id
-	left join sys_dictionary d4 on w.welding_process=d4.id
+	left join sys_dictionary d  on w.control_arc=d.`value` and w.control_arc_type=d.type
+	left join sys_dictionary d1 on w.welding_stick_texture=d1.`value` and w.welding_stick_texture_type=d1.type
+	left join sys_dictionary d2 on w.gases=d2.`value` and w.gases_type=d2.type
+	left join sys_dictionary d3 on w.welding_stick_diameter=d3.`value` and w.welding_stick_diameter_type=d3.type
+	left join sys_dictionary d4 on w.welding_process=d4.`value` and w.welding_process_type=d4.type
     where w.wps_library_id=#{id}
     </select>
 

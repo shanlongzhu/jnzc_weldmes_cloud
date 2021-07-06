@@ -24,8 +24,8 @@
     <!--新增角色信息-->
     <insert id="insertRoleInfo" parameterType="com.gw.entities.SysRole">
         insert into sys_role(`name`,remark,create_by,create_time,last_update_by,last_update_time,del_flag)
-        values(sysRole.name,sysRole.remark,sysRole.createBy,
-               sysRole.createTime,sysRole.lastUpdateBy,sysRole.lastUpdateTime,sysRole.delFlag)
+        values(#{sysRole.name},#{sysRole.remark},#{sysRole.createBy},
+               #{sysRole.createTime},#{sysRole.lastUpdateBy},#{sysRole.lastUpdateTime},#{sysRole.delFlag})
     </insert>
 
     <!--通过角色id获取角色信息-->
