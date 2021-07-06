@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,5 +161,43 @@ public class SysMenuServiceImpl implements SysMenuService {
 
         sysMenuDao.updateMenuOrButtonInfo(menuAndButtonInfo);
 
+    }
+
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  根据id查询菜单/按钮信息
+     * @Params id  菜单/按钮id
+     */
+    @Override
+    public SysMenuInfo getMenuOrButtonInfoById(Long id) {
+
+        //用id列表查询菜单信息  所以通过  list包装
+        List<Long> list = new ArrayList<>();
+
+        SysMenuInfo sysMenuInfo = new SysMenuInfo();
+
+        list.add(id);
+
+        List<SysMenuInfo> menus = sysMenuDao.queryMenuInfoByMenuId(list);
+
+        if(ObjectUtils.isEmpty(menus)){
+
+            return sysMenuInfo;
+        }
+
+        //获取到该id对应的菜单信息
+        sysMenuInfo = menus.get(0);
+
+        list.clear();
+
+        list.add(sysMenuInfo.getParentId());
+
+        List<SysMenuInfo> menuList = sysMenuDao.queryMenuInfoByMenuId(list);
+
+        SysMenuInfo sysParentMenuInfo = menuList.get(0);
+
+        sysMenuInfo.setParentName(sysParentMenuInfo.getLabel());
+
+        return sysMenuInfo;
     }
 }

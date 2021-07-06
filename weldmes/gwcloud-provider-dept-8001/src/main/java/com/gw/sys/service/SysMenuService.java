@@ -42,4 +42,11 @@ public interface SysMenuService {
      */
     public void updateMenuOrButtonInfo(SysMenuInfo menuAndButtonInfo);
 
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  根据id查询菜单/按钮信息
+     * @Params id  菜单/按钮id
+     */
+    public SysMenuInfo getMenuOrButtonInfoById(Long id);
+
 }

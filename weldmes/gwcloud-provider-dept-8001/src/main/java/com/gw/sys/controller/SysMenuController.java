@@ -91,6 +91,19 @@ public class SysMenuController {
 
     /**
      * @Date 2021/7/6 10:49
+     * @Description  根据id查询菜单/按钮信息
+     * @Params id  菜单/按钮id
+     */
+    @RequestMapping("getMenuAndButtonInfoById")
+    public HttpResult getRoleMenuAndButtonInfoById(Long id){
+
+        SysMenuInfo sysMenuInfo = sysMenuService.getMenuOrButtonInfoById(id);
+
+        return HttpResult.ok(sysMenuInfo);
+    }
+
+    /**
+     * @Date 2021/7/6 10:49
      * @Description  根据角色  查询该角色的菜单以及按钮权限
      * @Params
      */

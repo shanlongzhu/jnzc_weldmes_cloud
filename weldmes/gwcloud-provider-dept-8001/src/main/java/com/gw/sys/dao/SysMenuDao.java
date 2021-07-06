@@ -58,4 +58,5 @@ public interface SysMenuDao {
      */
     public void updateMenuOrButtonInfo(@Param("sysMenuInfo") SysMenuInfo sysMenuInfo);
 
+
 }
