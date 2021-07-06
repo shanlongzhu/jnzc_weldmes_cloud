@@ -67,14 +67,4 @@ public class SysMenuInfo {
      */
     List<SysMenuInfo> menus;
 
-    /**
-     * 三级菜单列表
-     */
-    List<SysMenuInfo> threeLevelMenuInfos;
-
-    /**
-     * 按钮列表
-     */
-    List<SysMenuInfo> buttons;
-
 }
