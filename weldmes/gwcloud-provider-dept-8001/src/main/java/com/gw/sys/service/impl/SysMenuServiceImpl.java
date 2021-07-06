@@ -72,18 +72,18 @@ public class SysMenuServiceImpl implements SysMenuService {
                     if(buttonOrThreeLevelMenuInfo.getType().equals(ConstantInfo.BUTTON_FLAG)){
 
                         //不存在三级菜单时  直接将按钮信息放入子菜单中
-                        childrenMenuInfo.setButtons(buttonOrThreeLevelMenuInfos);
+                        childrenMenuInfo.setMenus(buttonOrThreeLevelMenuInfos);
                         break;
                     }
 
                     List<SysMenuInfo> threeLevelMenuButtonInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(buttonOrThreeLevelMenuInfo.getId());
 
                     //存在三级菜单时   将按钮信息放入三级菜单中
-                    buttonOrThreeLevelMenuInfo.setButtons(threeLevelMenuButtonInfos);
+                    buttonOrThreeLevelMenuInfo.setMenus(threeLevelMenuButtonInfos);
 
                 }
                 //将三级菜单信息放入子菜单中
-                childrenMenuInfo.setThreeLevelMenuInfos(buttonOrThreeLevelMenuInfos);
+                childrenMenuInfo.setMenus(buttonOrThreeLevelMenuInfos);
             }
 
             //将子菜单信息放入顶级菜单中
