@@ -1,687 +1,224 @@
 <template>
-    <div>
-        <!-- <div />
-    <div>
-      <el-row>
-        <el-table
-          id="out-table"
-          :data="list"
-          stripe
-          style="width: 100%"
-          align="center"
-          border
-          size="medium"
-          width="80%"
-          :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+
+    <div
+        style="height:calc(100vh - 86px)"
+        class="flex-c"
+    >
+        <div
+            class="buttons"
+            style="border-bottom:1px solid #ddd;padding:10px"
         >
-          <el-table-column prop="taskNo" label="采 集 模 块 编 号" align="center" width="100" />
-          <el-table-column prop="gradeIdToStr" label="所 属 项 目" align="center" width="100" />
-          <el-table-column prop="deptName" label="采 集 模 块 状 态" align="center" width="100" />
-          <el-table-column prop="welderName" label="采 集 模 块 通 讯 协 议" align="center" width="100" />
-          <el-table-column prop="planStarttime" label="采 集 模 块 IP 地 址" align="center" width="120" />
-          <el-table-column prop="realityStarttime" label="采 集 模 块 MAC 地 址" align="center" width="120" />
-          <el-table-column prop="planEndtime" label="采 集 模 块 出 厂 时 间" align="center" width="120" />
-          <el-table-column label="操 作" align="center" class-name="small-padding fixed-width">
-            <template>
-              <el-button
-                size="mini"
-                type="primary"
-                plain
-              >
-                修改
-              </el-button>
-              <el-button size="mini" type="danger" plain>
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-    </div>
-    <div class="block">
-      <el-pagination
-        :current-page.sync="currentPage1"
-        :page-size="10"
-        align="center"
-        layout="total, prev, pager, next"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div> -->
-    <div class="buttons" style="border-bottom:1px solid #ddd;padding:10px">
-            <el-button size="small" @click="append">添加顶级菜单</el-button>
+            <el-button
+                size="small"
+                @click="append"
+            >添加顶级菜单</el-button>
         </div>
-        <el-tree
-            :data="data"
-            show-checkbox
-            node-key="id"
-            ref="tree"
-            default-expand-all
-            :expand-on-click-node="false"
+        <div
+            class="table-con"
+            style="flex:1;height:0px; overflow-y:auto"
         >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>          
-          <span>
-            <span class="span-mark">{{ data.mark}}</span>
-            <el-button
-              type="text"
-              size="mini"
-              v-show="data.type==1"
-              @click="() => append(data,node)">
-              <i style="font-size:16px;" class="el-icon-plus"></i>
-            </el-button>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => remove(node, data)">
-              <i style="font-size:16px;color:red" class="el-icon-delete"></i>
-            </el-button>
-          </span>
-        </span>
-        </el-tree>
-        <div class="buttons">
-            <el-button @click="getCheckedNodes">通过 node 获取</el-button>
-            <el-button @click="getCheckedKeys">通过 key 获取</el-button>
-            <el-button @click="setCheckedNodes">通过 node 设置</el-button>
-            <el-button @click="setCheckedKeys">通过 key 设置</el-button>
-            <el-button @click="resetChecked">清空</el-button>
+            <el-tree
+                :data="data"
+                v-loading="loading"
+                show-checkbox
+                node-key="id"
+                ref="tree"
+                :props="defaultProps"
+                default-expand-all
+                :expand-on-click-node="false"
+            >
+                <span
+                    class="custom-tree-node"
+                    slot-scope="{ node, data }"
+                >
+                    <span>{{ node.label }}</span>
+                    <span>
+                        <span class="span-mark">{{ data.mark}}</span>
+                        <el-button
+                            type="text"
+                            size="mini"
+                            @click="() => editFun(data,node)"
+                        >
+                            <i
+                                style="font-size:16px;"
+                                class="el-icon-edit"
+                            ></i>
+                        </el-button>
+                        <el-button
+                            type="text"
+                            size="mini"
+                            v-show="data.type=='1'"
+                            @click="() => append(data,node)"
+                        >
+                            <i
+                                style="font-size:16px;"
+                                class="el-icon-plus"
+                            ></i>
+                        </el-button>
+                        <el-button
+                            type="text"
+                            size="mini"
+                            @click="() => remove(node, data)"
+                        >
+                            <i
+                                style="font-size:16px;color:red"
+                                class="el-icon-delete"
+                            ></i>
+                        </el-button>
+                    </span>
+                </span>
+            </el-tree>
+            <div class="buttons">
+                <el-button @click="getCheckedNodes">通过 node 获取</el-button>
+                <el-button @click="getCheckedKeys">通过 key 获取</el-button>
+                <el-button @click="setCheckedNodes">通过 node 设置</el-button>
+                <el-button @click="setCheckedKeys">通过 key 设置</el-button>
+                <el-button @click="resetChecked">清空</el-button>
+            </div>
         </div>
-        <el-dialog title="新增/编辑资源" :visible.sync="sourceVisible">
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="上级目录" prop="parentName">
-              <el-input disabled v-model="ruleForm.parentName"></el-input>
-            </el-form-item>
-            <el-form-item label="资源类型" prop="type">
-              <el-select v-model="ruleForm.type" placeholder="请选择活动区域">
-                <el-option label="菜单" value="1"></el-option>
-                <el-option label="按钮" value="2"></el-option>
-              </el-select>              
-            </el-form-item>
-            <el-form-item label="名称" prop="label">
-                <el-input v-model="ruleForm.label"></el-input>
-              </el-form-item>
-              <el-form-item label="权限标识" prop="mark">
-                <el-input v-model="ruleForm.label"></el-input>
-              </el-form-item>
-            
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-              <el-button @click="resetForm('ruleForm')">重置</el-button>
-            </el-form-item>
-          </el-form>
+        <el-dialog
+            :title="title"
+            :visible.sync="sourceVisible"
+        >
+            <el-form
+                :model="ruleForm"
+                :rules="rules"
+                ref="ruleForm"
+                label-width="100px"
+                class="demo-ruleForm"
+            >
+                <el-form-item
+                    label="上级目录"
+                    prop="parentName"
+                >
+                    <el-input
+                        disabled
+                        v-model="ruleForm.parentName"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="资源类型"
+                    prop="type"
+                >
+                    <el-select
+                        v-model="ruleForm.type"
+                        placeholder="请选择活动区域"
+                    >
+                        <el-option
+                            label="菜单"
+                            value="1"
+                        ></el-option>
+                        <el-option
+                            label="按钮"
+                            value="2"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="名称"
+                    prop="label"
+                >
+                    <el-input v-model="ruleForm.label"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="权限标识"
+                    prop="mark"
+                >
+                    <el-input v-model="ruleForm.mark"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button
+                        type="primary"
+                        @click="submitForm('ruleForm')"
+                    >保存</el-button>
+                    <el-button @click="resetForm('ruleForm')">取消</el-button>
+                </el-form-item>
+            </el-form>
         </el-dialog>
     </div>
 </template>
 
 <script>
+
+import { getMenuList, addMenu, editMenu, getMenuDetail } from '_api/system/systemApi'
+
 let id = 1000;
 
 export default {
     data () {
         return {
-            data: [{
-                id: 1,
-                label: '生产设备管理',
-                type: "1",
-                mark: "1",
-                children: [{
-                    id: 101,
-                    label: '采集模块管理',
-                    mark: "101",
-                    type: "1",
-                    parentId: 1,
-                    children: [{
-                        id: 1011,
-                        parentId: 101,
-                        mark: "101_add",
-                        type: "2",
-                        label: '新增'
-                    }, {
-                        id: 1012,
-                        parentId: 101,
-                        mark: "101_del",
-                        type: "2",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 102,
-                    label: '生产设备管理',
-                    mark: "102",
-                    type: "menu",
-                    parentId: 1,
-                    children: [{
-                        id: 1021,
-                        parentId: 102,
-                        mark: "102_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 1022,
-                        parentId: 102,
-                        mark: "102_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 103,
-                    label: '设备厂商及型号绑定',
-                    mark: "103",
-                    type: "menu",
-                    parentId: 1,
-                    children: [{
-                        id: 1031,
-                        parentId: 103,
-                        mark: "103_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 1032,
-                        parentId: 103,
-                        mark: "103_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
+            defaultProps: {
+                children: 'menus'
             },
-            {
-                id: 2,
-                label: '生产工艺管理',
-                type: "menu",
-                mark: "2",
-                children: [{
-                    id: 201,
-                    label: '工艺管理',
-                    mark: "201",
-                    type: "menu",
-                    parentId: 2,
-                    children: [{
-                        id: 2011,
-                        parentId: 201,
-                        mark: "201_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 2012,
-                        parentId: 201,
-                        mark: "201_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 202,
-                    label: '焊机参数管理',
-                    mark: "202",
-                    type: "menu",
-                    parentId: 2,
-                    children: [{
-                        id: 2021,
-                        parentId: 202,
-                        mark: "202_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 2022,
-                        parentId: 202,
-                        mark: "202_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 203,
-                    label: '模拟设备参数设置',
-                    mark: "203",
-                    type: "menu",
-                    parentId: 2,
-                    children: [{
-                        id: 2031,
-                        parentId: 203,
-                        mark: "203_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 2032,
-                        parentId: 203,
-                        mark: "203_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
-            },
-            {
-                id: 3,
-                label: '生产过程管理',
-                type: "menu",
-                mark: "3",
-                children: [{
-                    id: 301,
-                    label: '焊工管理',
-                    mark: "301",
-                    type: "menu",
-                    parentId: 3,
-                    children: [{
-                        id: 3011,
-                        parentId: 301,
-                        mark: "301_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 3012,
-                        parentId: 301,
-                        mark: "301_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 302,
-                    label: '任务工单管理',
-                    mark: "302",
-                    type: "menu",
-                    parentId: 3,
-                    children: [{
-                        id: 3021,
-                        parentId: 302,
-                        mark: "302_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 3022,
-                        parentId: 302,
-                        mark: "302_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
-            },
-            {
-                id: 4,
-                label: '生产过程记录',
-                type: "menu",
-                mark: "4",
-                children: [{
-                    id: 401,
-                    label: '生产任务详情',
-                    mark: "401",
-                    type: "menu",
-                    parentId: 4,
-                    children: [{
-                        id: 4011,
-                        parentId: 401,
-                        mark: "401_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 4012,
-                        parentId: 401,
-                        mark: "401_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 402,
-                    label: '故障表',
-                    mark: "402",
-                    type: "menu",
-                    parentId: 4,
-                    children: [{
-                        id: 4021,
-                        parentId: 402,
-                        mark: "402_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 4022,
-                        parentId: 402,
-                        mark: "402_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 403,
-                    label: '历史回溯',
-                    mark: "403",
-                    type: "menu",
-                    parentId: 4,
-                    children: [{
-                        id: 4031,
-                        parentId: 403,
-                        mark: "403_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 4032,
-                        parentId: 403,
-                        mark: "403_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
-            },
-            {
-                id: 5,
-                label: '生产数据统计',
-                type: "menu",
-                mark: "5",
-                children: [{
-                    id: 501,
-                    label: '人员生产数据统计',
-                    mark: "501",
-                    type: "menu",
-                    parentId: 5,
-                    children: [{
-                        id: 5011,
-                        parentId: 501,
-                        mark: "501_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 5012,
-                        parentId: 501,
-                        mark: "501_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 502,
-                    label: '工件生产数据统计',
-                    mark: "502",
-                    type: "menu",
-                    parentId: 5,
-                    children: [{
-                        id: 5021,
-                        parentId: 502,
-                        mark: "502_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 5022,
-                        parentId: 502,
-                        mark: "502_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 503,
-                    label: '设备生产数据统计',
-                    mark: "503",
-                    type: "menu",
-                    parentId: 5,
-                    children: [{
-                        id: 5031,
-                        parentId: 503,
-                        mark: "503_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 5032,
-                        parentId: 503,
-                        mark: "503_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 504,
-                    label: '班组生产数据统计',
-                    mark: "504",
-                    type: "menu",
-                    parentId: 5,
-                    children: [{
-                        id: 5041,
-                        parentId: 504,
-                        mark: "504_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 5042,
-                        parentId: 504,
-                        mark: "504_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
-            },
-            {
-                id: 6,
-                label: '生产数据详情分析',
-                type: "menu",
-                mark: "6",
-                children: [{
-                    id: 601,
-                    label: '焊工',
-                    mark: "601",
-                    type: "menu",
-                    parentId: 6,
-                    children: [{
-                        id: 6011,
-                        parentId: 601,
-                        mark: "6011",
-                        type: "menu",
-                        label: '焊工工效',
-                        children: [{
-                            id: 601101,
-                            parentId: 6011,
-                            mark: "6011_add",
-                            type: "btn",
-                            label: '新增'
-                        }, {
-                            id: 601102,
-                            parentId: 6011,
-                            mark: "6011_del",
-                            type: "btn",
-                            label: '删除'
-                        }]
-                    }]
-                }, {
-                    id: 602,
-                    label: '任务/工件',
-                    mark: "602",
-                    type: "menu",
-                    parentId: 6,
-                    children: [{
-                        id: 6021,
-                        parentId: 602,
-                        mark: "6021",
-                        type: "menu",
-                        label: '任务焊接工程',
-                        children: [{
-                            id: 602101,
-                            parentId: 6021,
-                            mark: "6021_add",
-                            type: "btn",
-                            label: '新增'
-                        }, {
-                            id: 602102,
-                            parentId: 6021,
-                            mark: "6021_del",
-                            type: "btn",
-                            label: '删除'
-                        }]
-                    }]
-                }, {
-                    id: 603,
-                    label: '焊机',
-                    mark: "603",
-                    type: "menu",
-                    parentId: 6,
-                    children: [{
-                        id: 6031,
-                        parentId: 603,
-                        mark: "6031",
-                        type: "menu",
-                        label: '负载率',
-                        children: [{
-                            id: 603101,
-                            parentId: 6031,
-                            mark: "6031_add",
-                            type: "btn",
-                            label: '新增'
-                        }, {
-                            id: 603102,
-                            parentId: 6031,
-                            mark: "6031_del",
-                            type: "btn",
-                            label: '删除'
-                        }]
-                    }]
-                }]
-            },
-            {
-                id: 7,
-                label: '系统设置',
-                type: "menu",
-                mark: "7",
-                children: [{
-                    id: 701,
-                    label: '用户管理',
-                    mark: "701",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7011,
-                        parentId: 701,
-                        mark: "701_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7012,
-                        parentId: 701,
-                        mark: "701_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 702,
-                    label: '角色管理',
-                    mark: "702",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7021,
-                        parentId: 702,
-                        mark: "702_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7022,
-                        parentId: 702,
-                        mark: "702_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
 
-                }, {
-                    id: 703,
-                    label: '菜单管理',
-                    mark: "703",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7031,
-                        parentId: 703,
-                        mark: "703_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7032,
-                        parentId: 703,
-                        mark: "703_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 704,
-                    label: '字典管理',
-                    mark: "704",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7041,
-                        parentId: 704,
-                        mark: "704_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7042,
-                        parentId: 704,
-                        mark: "704_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 705,
-                    label: '组织机构管理',
-                    mark: "705",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7051,
-                        parentId: 705,
-                        mark: "705_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7052,
-                        parentId: 705,
-                        mark: "705_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }, {
-                    id: 706,
-                    label: '邮件下发管理',
-                    mark: "706",
-                    type: "menu",
-                    parentId: 7,
-                    children: [{
-                        id: 7061,
-                        parentId: 706,
-                        mark: "706_add",
-                        type: "btn",
-                        label: '新增'
-                    }, {
-                        id: 7062,
-                        parentId: 706,
-                        mark: "706_del",
-                        type: "btn",
-                        label: '删除'
-                    }]
-                }]
-            }
-            ],
+            data: [],
+            loading: false,
+            //层标题
+            title: '',
             //树形新增点击数据
-            hanldObj:{},
+            hanldObj: {},
             //model资源编辑层
-            sourceVisible:false,
+            sourceVisible: false,
             //form
-            objRuleForm:{
-              parentId:'',//父级id
-              parentName:'',//父级名称
-              type:'1',//新增资源类型
-              label:'',//新增资源名称
-              mark:''//权限标识
+            objRuleForm: {
+
             },
-            ruleForm:{
+            ruleForm: {
+                parentId: '',//父级id
+                parentName: '',//父级名称
+                type: '1',//新增资源类型
+                label: '',//新增资源名称
+                mark: ''//权限标识
             },
             //
-            rules:{}
+            rules: {
+                label: [
+                    { required: true, message: '名称不能为空', trigger: 'blur' }
+                ],
+                mark: [
+                    { required: true, message: '表示不能为空', trigger: 'blur' }
+                ],
+            }
         }
     },
 
     created () {
+        this.objRuleForm = { ...this.ruleForm };
+        this.getList();
     },
     methods: {
-        append (data) {
-          this.hanldObj = {...data};
-          this.ruleForm = {...this.objRuleForm};
-          this.ruleForm.parentName = data.label||"顶级";
-          this.ruleForm.parentId = data.id||0;
-          this.sourceVisible = true;
-          console.log(data)
-            const newChild = { id: id++, label: 'testtest', children: [] };
-            if (!data.children) {
-                this.$set(data, 'children', []);
+
+        //获取资源列表
+        async getList () {
+            this.loading = true;
+            let { code, data } = await getMenuList();
+            this.loading = false;
+            if (code == 200) {
+                this.data = data || [];
             }
-            data.children.push(newChild);
+        },
+
+        append (data) {
+            this.title = '新增资源';
+            this.hanldObj = { ...data };
+            this.ruleForm = { ...this.objRuleForm };
+            this.ruleForm.parentName = data.label || "顶级";
+            this.ruleForm.parentId = data.id || 0;
+            this.sourceVisible = true;
+        },
+
+        editFun (data) {
+            this.title = '编辑资源';
+            this.findIdDetail(data.id);
+        },
+        //根据id获取资源明细
+        async findIdDetail (id) {
+            let { data, code } = await getMenuDetail({ id });
+            if (code == 200) {
+                this.sourceVisible = true;
+                this.ruleForm = data || {};
+            }
         },
 
         remove (node, data) {
@@ -692,7 +229,7 @@ export default {
         },
 
         getCheckedNodes () {
-            console.log(this.$refs.tree.getCheckedNodes(false,true));
+            console.log(this.$refs.tree.getCheckedNodes(false, true));
         },
         getCheckedKeys () {
             console.log(this.$refs.tree.getCheckedKeys());
@@ -711,6 +248,31 @@ export default {
         },
         resetChecked () {
             this.$refs.tree.setCheckedKeys([]);
+        },
+
+        submitForm (formName) {
+            this.$refs[formName].validate(async (valid) => {
+                if (valid) {
+                    if (this.ruleForm.hasOwnProperty("id")) {
+                        let { data, code } = await editMenu({ ...this.ruleForm });
+                        if (code == 200) {
+                            this.$message.success("修改成功");
+                            this.sourceVisible = false;
+                            this.getList();
+                        }
+                    } else {
+                        let { data, code } = await addMenu({ ...this.ruleForm });
+                        if (code == 200) {
+                            this.$message.success("保存成功");
+                            this.sourceVisible = false;
+                            this.getList();
+                        }
+                    }
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
         }
     }
 }
@@ -726,8 +288,11 @@ export default {
     padding-right: 8px;
 }
 
-.span-mark{
-  display: inline-block;
-  width: 200px; 
+.span-mark {
+    display: inline-block;
+    width: 200px;
+}
+.el-tree-node {
+    border-top: 1px solid #eee;
 }
 </style>

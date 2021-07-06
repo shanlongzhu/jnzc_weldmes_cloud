@@ -107,7 +107,7 @@ export const asyncRoutes = [
     meta: {
       title: '生产设备管理',
       icon: 'tree',
-      roles: ['admin', 'user']
+      mark:'1'
     },
     children: [
       {
@@ -116,7 +116,7 @@ export const asyncRoutes = [
         name: 'PagePermission',
         meta: {
           title: '采集模块管理',
-          roles: ['admin', 'user']
+          mark:'101'
         }
       },
       {
@@ -125,7 +125,7 @@ export const asyncRoutes = [
         name: 'DirectivePermission',
         meta: {
           title: '生产设备管理',
-          roles: ['admin', 'user']
+          mark:'102'
         }
       },
       {
@@ -134,7 +134,7 @@ export const asyncRoutes = [
         name: 'RolePermission',
         meta: {
           title: '设备厂商及型号绑定',
-          roles: ['admin', 'user']
+          mark:'103'
         }
       }
     ]
@@ -148,7 +148,7 @@ export const asyncRoutes = [
     meta: {
       title: '生产工艺管理',
       icon: 'example',
-      roles: ['admin', 'user']
+      mark:'9999'
     },
     children: [
       {

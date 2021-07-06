@@ -9,18 +9,19 @@
             >
                 <vxe-table-column
                     type="seq"
-                    width="60"
+                    width="50"
+                    title="序号"
                 >
                 </vxe-table-column>
                 <vxe-table-column
                     field="channelNo"
                     title="通道号"
-                    min-width="120"
+                    min-width="60"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="initialCondition"
                     title="初期条件"
-                    min-width="120"
+                    min-width="70"
                 >
                     <template #default="{row}">
                         {{row.initialCondition?'是':'否'}}
@@ -29,7 +30,7 @@
                 <vxe-table-column
                     field="fusionControl"
                     title="熔深控制"
-                    min-width="120"
+                    min-width="70"
                 >
                 <template #default="{row}">
                         {{row.fusionControl?'是':'否'}}
@@ -38,7 +39,7 @@
                 <vxe-table-column
                     field="unitarySeveral"
                     title="一元/个别"
-                    min-width="120"
+                    min-width="80"
                 >
                 <template #default="{row}">
                         {{row.unitarySeveral?'个别':'一元'}}
@@ -47,7 +48,7 @@
                 <vxe-table-column
                     field="controlArc"
                     title="收弧"
-                    min-width="120"
+                    min-width="70"
                 >
                 <template #default="{row}">
                          {{row.sysDictionary.valueName}}
@@ -56,13 +57,13 @@
                 <vxe-table-column
                     field="arcCharacter"
                     title="电弧特性"
-                    min-width="120"
+                    min-width="70"
                 >
                 </vxe-table-column>
                 <vxe-table-column
                     field="softArcSchema"
                     title="柔软电弧模式"
-                    min-width="120"
+                    min-width="100"
                 >
                 <template #default="{row}">
                           {{row.softArcSchema?'是':'否'}}
@@ -71,7 +72,7 @@
                 <vxe-table-column
                     field="weldingStickTexture"
                     title="焊丝材质"
-                    min-width="120"
+                    min-width="90"
                 >
                 <template #default="{row}">
                          {{row.sysDictionary.valueNames}}
@@ -80,7 +81,7 @@
                 <vxe-table-column
                     field="gases"
                     title="气体"
-                    min-width="120"
+                    min-width="60"
                 >
                 <template #default="{row}">
                          {{row.sysDictionary.valueNamess}}
@@ -89,7 +90,7 @@
                 <vxe-table-column
                     field="weldingStickDiameter"
                     title="焊丝直径"
-                    min-width="120"
+                    min-width="70"
                 >
                 <template #default="{row}">
                          {{row.sysDictionary.valueNamesss}}
@@ -98,7 +99,7 @@
                 <vxe-table-column
                     field="weldingProcess"
                     title="焊接过程"
-                    min-width="120"
+                    min-width="70"
                 >
                 <template #default="{row}">
                          {{row.sysDictionary.valueNamessss}}
@@ -107,121 +108,121 @@
                 <vxe-table-column
                     field="spotWeldingTime"
                     title="点焊时间"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="inAdvanceAspirated"
                     title="提前送气"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="hysteresisAspirated"
                     title="滞后送气"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="initialEle"
                     title="初期电流"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="initialVol"
                     title="初期电压"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="initialVolUnitary"
                     title="初期电压一元"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="weldingEle"
                     title="焊接电流"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="weldingVol"
                     title="焊接电压"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="weldingVolUnitary"
                     title="焊接电压一元"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="arcEle"
                     title="收弧电流"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="arcVol"
                     title="收弧电压"
-                    min-width="120"
+                    min-width="70"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="arcVolUnitary"
                     title="收弧电压一元"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="weldingEleAdjust"
                     title="焊接电流微调"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="weldingVolAdjust"
                     title="焊接电压微调"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="arcEleAdjust"
                     title="收弧电流微调"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="arcVolAdjust"
                     title="收弧电压微调"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="alarmsEleMax"
                     title="报警电流上限"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="alarmsEleMin"
                     title="报警电流下限"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="alarmsVolMax"
                     title="报警电压上限"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
                 <vxe-table-column
                     field="alarmsVolMin"
                     title="报警电压下限"
-                    min-width="120"
+                    min-width="100"
                 >                
                 </vxe-table-column>
 

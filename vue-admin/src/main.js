@@ -11,7 +11,6 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
-
 import '@/styles/index.scss' // global css
 
 import App from './App'
