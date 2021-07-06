@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -142,5 +143,19 @@ public class SysMenuController {
 
         return HttpResult.ok("删除成功!");
     }
+
+    /**
+     * @Date 2021/7/5 16:34
+     * @Description  根据当前用户角色 查询用户的菜单以及按钮权限
+     * @Params
+     */
+    @RequestMapping("getCurrentUserMenuAndButtonInfo")
+    public HttpResult getCurrentUserMenuAndButtonInfo(){
+
+        Map<String,Object> list = sysMenuService.getCurrentUserMenuAndButtonInfos();
+
+        return HttpResult.ok(list);
+    }
+
 
 }

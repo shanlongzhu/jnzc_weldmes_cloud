@@ -9,19 +9,31 @@ import com.gw.common.DateTimeUtil;
 import com.gw.common.PageInfo;
 import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysMenu;
+import com.gw.entities.UserLoginInfo;
+import com.gw.entities.UserOfSys;
 import com.gw.sys.dao.SysMenuDao;
+import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysMenuService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SysMenuServiceImpl implements SysMenuService {
 
     @Autowired
     SysMenuDao sysMenuDao;
+
+    @Autowired
+    UserRolesAndPerDao userRolesAndPerDao;
 
     @Override
     public PageInfo<SysMenu> getSysMenuPage(int draw, int start, int length, SysMenu sysMenu) {
@@ -130,5 +142,45 @@ public class SysMenuServiceImpl implements SysMenuService {
 
         sysMenuDao.deleteMenuOrButtonInfoById(id);
 
+    }
+
+    /**
+     * @Date 2021/7/5 16:34
+     * @Description  根据当前用户角色 查询用户的菜单以及按钮权限
+     * @Params
+     */
+    @Override
+    public Map<String,Object> getCurrentUserMenuAndButtonInfos() {
+
+        /*Subject currentUser = SecurityUtils.getSubject();
+
+        //获取当前用户信息
+        UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();*/
+
+        //获取当前用户角色id
+        List<Long> rolesIds = userRolesAndPerDao.queryUserRoleIds(1L);
+
+        Map<String,Object> map = new HashMap<>();
+
+        if(ObjectUtils.isEmpty(rolesIds)){
+
+            map.put("menus","当前用户暂未分配角色");
+
+            return map;
+        }
+        //获取菜单/按钮id
+        for (Long rolesId : rolesIds) {
+
+            //获取 菜单Id列表
+            List<Long> menuIds = userRolesAndPerDao.queryMenuIdByRoleId(rolesId);
+
+            //获取菜单信息列表
+            List<MenuAndButtonInfo> menus = sysMenuDao.queryMenuInfoByMenuId(menuIds);
+
+            map.put("menus",menus);
+
+        }
+
+        return map;
     }
 }

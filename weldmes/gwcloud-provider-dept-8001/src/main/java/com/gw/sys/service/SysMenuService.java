@@ -6,6 +6,7 @@ import com.gw.entities.SysMenu;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 public interface SysMenuService {
 
@@ -45,5 +46,12 @@ public interface SysMenuService {
      * @Params id 菜单/按钮id
      */
     void delMenuOrButoonInfoById(Long id);
+
+    /**
+     * @Date 2021/7/5 15:33
+     * @Description  查询当前用户的菜单/按钮权限信息
+     * @Params
+     */
+    Map<String,Object> getCurrentUserMenuAndButtonInfos();
 
 }
