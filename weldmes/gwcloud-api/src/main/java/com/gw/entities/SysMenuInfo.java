@@ -4,59 +4,43 @@ import lombok.Data;
 
 import java.util.List;
 
-
 /**
  * @Author zhanghan
- * @Date 2021/6/7 13:07
- * @Description  系统菜单信息类
+ * @Date 2021/6/25 16:23
+ * @Description   目录/菜单/按钮 信息实体类
  */
 @Data
 public class SysMenuInfo {
 
     /**
-     * 用户id
-     */
-    private Long userId;
-
-    /**
-     * 主键id
-     */
-    private Long id;
-
-    /**
-     * 菜单名称
-     */
-    private String name;
-
-    /**
-     * 父菜单ID，一级菜单为0
+     * 目录/菜单/按钮 父级id
      */
     private Long parentId;
 
     /**
-     * 菜单URL
+     * 目录/菜单/按钮 父级名称
      */
-    private String url;
+    private String parentName;
 
     /**
-     * 授权(多个用逗号分隔，如：user:view,user:create)
+     * 目录/菜单/按钮 id
      */
-    private String perms;
+    private Long id;
 
     /**
-     * 类型   0：目录   1：菜单   2：按钮
+     * 目录/菜单/按钮 名字
      */
-    private int type;
+    private String label;
 
     /**
-     * 菜单图标
+     * 目录/菜单/按钮 标识
      */
-    private String icon;
+    private String mark;
 
     /**
-     * 排序
+     * 目录/菜单/按钮 类型
      */
-    private int orderNum;
+    private String type;
 
     /**
      * 创建人
@@ -79,22 +63,13 @@ public class SysMenuInfo {
     private String lastUpdateTime;
 
     /**
-     * 是否删除 -1：已删除  0：正常
+     * 是否删除  -1：已删除  0：正常
      */
-    private int del_flag;
+    private int delFlag;
 
     /**
-     * 二级菜单信息
+     * 子菜单列表
      */
-    private List<SysMenuInfo> secondMenuInfos;
+    List<SysMenuInfo> menus;
 
-    /**
-     * 子菜单信息
-     */
-    private List<SysMenuInfo> childrenMenuInfos;
-
-    /**
-     * 按钮信息
-     */
-    private List<SysMenuInfo> menuButtonInfos;
 }

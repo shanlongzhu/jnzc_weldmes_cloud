@@ -1,6 +1,5 @@
 package com.gw.sys.service;
 
-import com.gw.entities.SysMenuInfo;
 import com.gw.entities.UserOfSys;
 
 import java.util.List;
@@ -40,11 +39,5 @@ public interface UserRolesAndPerService {
      */
     public List<Long> queryUserMenuIdList(Long roleId);
 
-    /**
-     * @Date 2021/6/7 14:23
-     * @Description 通过用户菜单id 查询 菜单信息(菜单目录/子菜单项/菜单功能按钮)
-     * @Params ids 菜单id列表  roleIds 角色id列表
-     */
-    public List<SysMenuInfo> queryMenuInfo(List<Long> menuIds,List<Long> roleIds);
 
 }

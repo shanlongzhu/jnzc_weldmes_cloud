@@ -4,11 +4,11 @@ import com.gw.common.HttpResult;
 
 import com.gw.entities.Token;
 import com.gw.entities.UserLoginInfo;
+import com.gw.sys.service.SysMenuService;
 import com.gw.sys.service.SysUserService;
 import com.gw.sys.service.UserRolesAndPerService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author zhanghan
@@ -40,6 +38,9 @@ public class LoginController {
 
     @Autowired
     UserRolesAndPerService userRolesAndPerService;
+
+    @Autowired
+    SysMenuService sysMenuService;
 
     //登录身份认证
     @RequestMapping("/sysUser/login")
@@ -73,11 +74,6 @@ public class LoginController {
 
                 //将 当前用户 的sessionId 作为 token 返回给前端  存于浏览器请求头中的 Authorization 中
                 Token token = new Token(sessionId);
-
-                /*Map<String,Object> map = new HashMap<>();
-                map.put("username",username);
-                map.put("password",password);
-                currentUser.getSession().setAttribute("sessionId",map);*/
 
                 return HttpResult.ok(token);
 
@@ -126,15 +122,8 @@ public class LoginController {
         if(ObjectUtils.isEmpty(userLoginInfo)){
             return HttpResult.ok("当前用户信息为空!");
         }
-        //获取用户的权限信息
-        //拿到用户的角色id的列表,获取其中的 最小的id值
-        Long roleId = Collections.min(userLoginInfo.getRoleIds());
 
-
-        //通过 用户角色id 获取 菜单id/按钮id 列表
-        List<Long> menuIds = userRolesAndPerService.queryUserMenuIdList(roleId);
-
-
+        Map<String,Object> menus = sysMenuService.getCurrentUserMenuAndButtonInfos();
 
 
         Map<String,Object> map = new HashMap<>();
@@ -142,6 +131,7 @@ public class LoginController {
         map.put("id",userLoginInfo.getId());
         map.put("userName",userLoginInfo.getUserName());
         map.put("roles",userLoginInfo.getRoles());
+        map.put("menus",menus);
 
         return HttpResult.ok(map);
     }

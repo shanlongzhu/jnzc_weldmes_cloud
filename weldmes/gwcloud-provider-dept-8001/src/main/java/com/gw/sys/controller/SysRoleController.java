@@ -1,22 +1,22 @@
 package com.gw.sys.controller;
 
-import com.gw.common.CommonUtil;
-import com.gw.common.DateTimeUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
-import com.gw.common.PageInfo;
-import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysRole;
 import com.gw.sys.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/7/5 10:12
+ * @Description  角色控制器
+ * @Params
+ */
 @RestController
-@RequestMapping(value = "sysRole")
 @CrossOrigin
 public class SysRoleController {
 
@@ -24,90 +24,72 @@ public class SysRoleController {
     SysRoleService sysRoleService;
 
     /**
-     * 角色查询分页
-     *
-     * @param request
-     * @param sysRole
-     * @return
+     * @Date 2021/7/6 11:18
+     * @Description 角色列表查询
+     * @Params
      */
-    @GetMapping
-    public PageInfo<SysRole> getSysDictionaryPage(HttpServletRequest request, SysRole sysRole) {
-        //DataTables参数
-        String draw = request.getParameter("draw");
-        String start = request.getParameter("start");
-        String length = request.getParameter("length");
-        int intDraw = draw == null ? 0 : Integer.parseInt(draw);
-        int intStart = start == null ? 0 : Integer.parseInt(start);
-        int intLength = length == null ? 10 : Integer.parseInt(length);
-        //封装 DataTables 需要的数据
-        return sysRoleService.getSysRolePage(intDraw, intStart, intLength, sysRole);
+    @RequestMapping(value = "role/list" ,method = RequestMethod.GET)
+    public HttpResult getRolesInfos(@RequestParam(value="pn",defaultValue = "1")Integer pn) {
+
+        PageHelper.startPage(pn,10);
+
+        List<SysRole> list = sysRoleService.getRoleInfos();
+
+        PageInfo<SysRole> page = new PageInfo(list,10);
+
+        return HttpResult.ok(page);
     }
 
-    @PostMapping
-    public HttpResult addRole(SysRole sysRole) {
-        try {
-            HttpResult result = new HttpResult();
-            if (null != sysRole) {
-                sysRole.setCreateBy("admin");
-                sysRole.setCreateTime(DateTimeUtil.sdf.format(System.currentTimeMillis()));
-                int i = sysRoleService.addSysRole(sysRole);
-                if (i > 0) {
-                    result.setMsg("新增角色成功");
-                } else {
-                    result.setMsg("新增角色失败");
-                }
-            } else {
-                result.setMsg("角色信息为空，新增失败");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
-        }
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 角色新增
+     * @Params
+     */
+    @RequestMapping(value = "role/addRoleInfo")
+    public HttpResult addRolesInfos(@RequestBody SysRole sysRole) {
+
+        sysRoleService.addRoleInfo(sysRole);
+
+        return HttpResult.ok("角色新增成功!");
     }
 
-    @PutMapping
-    public HttpResult updateSysRole(SysRole sysRole){
-        try {
-            HttpResult result = new HttpResult();
-            if (null != sysRole) {
-                int i = sysRoleService.updateSysRole(sysRole);
-                if (i > 0) {
-                    result.setMsg("修改角色成功");
-                } else {
-                    result.setMsg("修改角色失败");
-                }
-            } else {
-                result.setMsg("角色信息为空，修改失败");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
-        }
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询角色信息
+     * @Params id 角色id
+     */
+    @RequestMapping(value = "role/getRoleInfoById")
+    public HttpResult getRolesInfoById(Long id) {
+
+        SysRole sysRole = sysRoleService.getRoleInfoById(id);
+
+        return HttpResult.ok(sysRole);
     }
 
-    @DeleteMapping("/{ids}")
-    public HttpResult deleteSysRole(@PathVariable("ids") String ids){
-        try {
-            HttpResult result = new HttpResult();
-            List<BigInteger> idss = new ArrayList<>();
-            if (CommonUtil.isNotEmpty(ids)){
-                String[] idList = ids.split(",");
-                for (String id : idList) {
-                    idss.add(new BigInteger(id));
-                }
-                int addUser = sysRoleService.deleteSysRole(idss);
-                if (addUser > 0) {
-                    result.setMsg("删除用户成功!");
-                } else {
-                    result.setMsg("删除用户失败!");
-                }
-            } else {
-                result.setMsg("不能删除空数据");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
-        }
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 修改角色信息
+     * @Params sysRole 角色信息
+     */
+    @RequestMapping(value = "role/updateRoleInfo")
+    public HttpResult updateRoleInfo(@RequestBody SysRole sysRole) {
+
+        sysRoleService.updateRoleInfo(sysRole);
+
+        return HttpResult.ok("角色信息修改成功");
+    }
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据id删除角色信息
+     * @Params  id 角色id
+     */
+    @RequestMapping(value = "role/delRoleInfoById")
+    public HttpResult delRolesInfoById(Long id) {
+
+        sysRoleService.delRoleInfoById(id);
+
+        return HttpResult.ok("角色信息删除成功");
     }
 
 }

@@ -12,12 +12,17 @@
         <result property="fusionControl" column="fusion_control"></result>
         <result property="unitarySeveral" column="unitary_several"></result>
         <result property="controlArc" column="control_arc"></result>
+		<result property="controlArcType" column="control_arc_type"></result>
         <result property="arcCharacter" column="arc_character"></result>
         <result property="softArcSchema" column="soft_arc_schema"></result>
         <result property="weldingStickTexture" column="welding_stick_texture"></result>
+		<result property="weldingStickTextureType" column="welding_stick_texture_type"></result>
         <result property="gases" column="gases"></result>
+		<result property="gasesType" column="gases_type"></result>
         <result property="weldingStickDiameter" column="welding_stick_diameter"></result>
+		<result property="weldingStickDiameterType" column="welding_stick_diameter_type"></result>
         <result property="weldingProcess" column="welding_process"></result>
+		<result property="weldingProcessType" column="welding_process_type"></result>
         <result property="spotWeldingTime" column="spot_welding_time"></result>
         <result property="inAdvanceAspirated" column="in_advance_aspirated"></result>
         <result property="hysteresisAspirated" column="hysteresis_aspirated"></result>
@@ -59,12 +64,17 @@
 	w.fusion_control,
 	w.unitary_several,
 	w.control_arc,
+	w.control_arc_type,
 	w.arc_character,
 	w.soft_arc_schema,
 	w.welding_stick_texture,
+	w.welding_stick_texture_type,
 	w.gases,
+	w.gases_type,
 	w.welding_stick_diameter,
+	w.welding_stick_diameter_type,
 	w.welding_process,
+	w.welding_process_type,
 	w.spot_welding_time,
 	w.in_advance_aspirated,
 	w.hysteresis_aspirated,
@@ -86,32 +96,32 @@
 	w.alarms_vol_max,
 	w.alarms_vol_min,
 	d.value_name,
-    d1.value_name	value_names,
+    d1.value_name value_names,
 	d2.value_name value_namess,
 	d3.value_name value_namesss,
 	d4.value_name value_namessss
-    from
+   from
 	wps_norm w
-	left join sys_dictionary d  on w.control_arc=d.id
-	left join sys_dictionary d1 on w.welding_stick_texture=d1.id
-	left join sys_dictionary d2 on w.gases=d2.id
-	left join sys_dictionary d3 on w.welding_stick_diameter=d3.id
-	left join sys_dictionary d4 on w.welding_process=d4.id
+	left join sys_dictionary d  on w.control_arc=d.`value` and w.control_arc_type=d.type
+	left join sys_dictionary d1 on w.welding_stick_texture=d1.`value` and w.welding_stick_texture_type=d1.type
+	left join sys_dictionary d2 on w.gases=d2.`value` and w.gases_type=d2.type
+	left join sys_dictionary d3 on w.welding_stick_diameter=d3.`value` and w.welding_stick_diameter_type=d3.type
+	left join sys_dictionary d4 on w.welding_process=d4.`value` and w.welding_process_type=d4.type
     where w.wps_library_id=#{id}
     </select>
 
     <insert id="addCraft">
-        insert into wps_norm(wps_library_id,channel_no,control_arc,unitary_several,initial_condition
+        insert into wps_norm(wps_library_id,channel_no,control_arc,control_arc_type,unitary_several,initial_condition
         ,fusion_control,soft_arc_schema,arc_character,spot_welding_time,welding_stick_texture
-        ,welding_stick_diameter,in_advance_aspirated,hysteresis_aspirated,gases
-        ,welding_process,initial_ele,welding_ele,arc_ele,initial_vol,welding_vol
+        ,welding_stick_texture_type,welding_stick_diameter,welding_stick_diameter_type,in_advance_aspirated,hysteresis_aspirated,gases
+        ,gases_type,welding_process,welding_process_type,initial_ele,welding_ele,arc_ele,initial_vol,welding_vol
         ,arc_vol,welding_vol_unitary,arc_vol_unitary,initial_vol_unitary
         ,welding_ele_adjust,arc_ele_adjust,welding_vol_adjust,arc_vol_adjust
         ,alarms_ele_max,alarms_ele_min,alarms_vol_max,alarms_vol_min)
-        values(#{wpsLibraryId},#{channelNo},#{controlArc},#{unitarySeveral},#{initialCondition}
+        values(#{wpsLibraryId},#{channelNo},#{controlArc},#{controlArcType},#{unitarySeveral},#{initialCondition}
         ,#{fusionControl},#{softArcSchema},#{arcCharacter},#{spotWeldingTime},#{weldingStickTexture}
-        ,#{weldingStickDiameter},#{inAdvanceAspirated},#{hysteresisAspirated},#{gases}
-        ,#{weldingProcess},#{initialEle},#{weldingEle},#{arcEle},#{initialVol},#{weldingVol}
+        ,#{weldingStickTextureType},#{weldingStickDiameter},#{weldingStickDiameterType},#{inAdvanceAspirated},#{hysteresisAspirated},#{gases}
+        ,#{gasesType},#{weldingProcess},#{weldingProcessType},#{initialEle},#{weldingEle},#{arcEle},#{initialVol},#{weldingVol}
         ,#{arcVol},#{weldingVolUnitary},#{arcVolUnitary},#{initialVolUnitary}
         ,#{weldingEleAdjust},#{arcEleAdjust},#{weldingVolAdjust},#{arcVolAdjust}
         ,#{alarmsEleMax},#{alarmsEleMin},#{alarmsVolMax},#{alarmsVolMin})
@@ -124,12 +134,17 @@
 	fusion_control,
 	unitary_several,
 	control_arc,
+	control_arc_type,
 	arc_character,
 	soft_arc_schema,
 	welding_stick_texture,
+	welding_stick_texture_type,
 	gases,
+	gases_type,
 	welding_stick_diameter,
+	welding_stick_diameter_type,
 	welding_process,
+	welding_process_type,
 	spot_welding_time,
 	in_advance_aspirated,
 	hysteresis_aspirated,

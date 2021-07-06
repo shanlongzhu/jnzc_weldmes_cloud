@@ -4,8 +4,21 @@
 
 <mapper namespace="com.gw.sys.dao.SysMenuDao">
 
+    <resultMap id="MenuAndButtonMap" type="com.gw.entities.SysMenuInfo">
+        <id property="id" column="id"></id>
+        <result property="parentId" column="parent_id"></result>
+        <result property="label" column="label"></result>
+        <result property="mark" column="mark"></result>
+        <result property="type" column="type"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="last_update_by"></result>
+        <result property="lastUpdateTime" column="last_update_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+    </resultMap>
+
     <!-- 根据角色id查询菜单列表 -->
-    <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenu">
+    <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenuInfo">
         SELECT m.* from sys_menu m,sys_role_menu rm
         WHERE m.id = rm.menu_id
         <if test="roleId != null">
@@ -14,11 +27,55 @@
     </select>
 
     <!--插入 目录/菜单/按钮信息-->
-    <insert id="insertMenuAndButtonInfo" parameterType="com.gw.entities.MenuAndButtonInfo">
+    <insert id="insertMenuAndButtonInfo" parameterType="com.gw.entities.SysMenuInfo">
         insert into sys_menu(label,parent_id,`type`,mark,create_time)
         values(#{menuAndButtonInfo.label},#{menuAndButtonInfo.parentId},
         #{menuAndButtonInfo.type},#{menuAndButtonInfo.mark},#{menuAndButtonInfo.createTime})
     </insert>
 
+    <!--查询菜单信息列表-->
+    <select id="selectMenuInfoList" resultMap="MenuAndButtonMap">
+        select id,parent_id,label,`type`,mark from `sys_menu` sysMenu
+        where exists
+        (select id from `sys_menu` where parent_id = 0 and sysMenu.id = sys_menu.id)
+    </select>
+
+    <!--查询子菜单信息列表-->
+    <select id="selectChildrenMenuInfoListByMenuId" parameterType="Long" resultMap="MenuAndButtonMap">
+        select id,parent_id,label,`type`,mark from `sys_menu` sysMenu
+        where parent_id = #{id}
+    </select>
+
+    <!--根据id 删除菜单/按钮-->
+    <delete id="deleteMenuOrButtonInfoById" parameterType="Long">
+        delete from sys_menu where id = #{id}
+    </delete>
+
+    <!--通过菜单id 查询 菜单目录信息-->
+    <select id="queryMenuInfoByMenuId" resultMap="MenuAndButtonMap">
+        select id,label,parent_id,`type`,mark
+        from sys_menu
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--修改菜单/按钮信息-->
+    <update id="updateMenuOrButtonInfo" parameterType="com.gw.entities.SysMenuInfo">
+        update sys_menu
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysMenuInfo.parentId != null and sysMenuInfo.parentId !=''">`parent_id` = #{sysMenuInfo.parentId},</if>
+            <if test="sysMenuInfo.label != null and sysMenuInfo.label !=''">label = #{sysMenuInfo.label},</if>
+            <if test="sysMenuInfo.mark != null and sysMenuInfo.mark !=''">mark = #{sysMenuInfo.mark},</if>
+            <if test="sysMenuInfo.type != null and sysMenuInfo.type !=''">`type` = #{sysMenuInfo.type},</if>
+            <if test="sysMenuInfo.createBy != null and sysMenuInfo.createBy !=''">create_by = #{sysMenuInfo.createBy},</if>
+            <if test="sysMenuInfo.createTime != null and sysMenuInfo.createTime !=''">create_time = #{sysMenuInfo.createTime},</if>
+            <if test="sysMenuInfo.lastUpdateBy != null and sysMenuInfo.lastUpdateBy !=''">last_update_by = #{sysMenuInfo.lastUpdateBy},</if>
+            <if test="sysMenuInfo.lastUpdateTime != null and sysMenuInfo.lastUpdateTime !=''">last_update_time = #{sysMenuInfo.lastUpdateTime},</if>
+            <if test="sysMenuInfo.delFlag != null and sysMenuInfo.delFlag !=''">del_flag = #{sysMenuInfo.delFlag},</if>
+        </trim>
+        where id = #{sysMenuInfo.id}
+    </update>
 
 </mapper>
