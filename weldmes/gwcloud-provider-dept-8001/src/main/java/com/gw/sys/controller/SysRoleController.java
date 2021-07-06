@@ -4,7 +4,6 @@ import com.gw.common.CommonUtil;
 import com.gw.common.DateTimeUtil;
 import com.gw.common.HttpResult;
 import com.gw.common.PageInfo;
-import com.gw.entities.MenuAndButtonInfo;
 import com.gw.entities.SysRole;
 import com.gw.sys.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,13 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/7/5 10:12
+ * @Description  角色控制器
+ * @Params
+ */
 @RestController
-@RequestMapping(value = "sysRole")
 @CrossOrigin
 public class SysRoleController {
 
@@ -24,11 +28,9 @@ public class SysRoleController {
     SysRoleService sysRoleService;
 
     /**
-     * 角色查询分页
-     *
-     * @param request
-     * @param sysRole
-     * @return
+     * @Date 2021/7/6 11:18
+     * @Description 角色列表查询
+     * @Params
      */
     @GetMapping
     public PageInfo<SysRole> getSysDictionaryPage(HttpServletRequest request, SysRole sysRole) {
@@ -108,6 +110,19 @@ public class SysRoleController {
         } catch (Exception e) {
             return HttpResult.error();
         }
+    }
+
+    /**
+     * @Date 2021/7/6 10:49
+     * @Description  根据角色  查询该角色的菜单以及按钮权限
+     * @Params
+     */
+    @RequestMapping("getRoleMenuAndButtonInfo")
+    public HttpResult getRoleMenuAndButtonInfo(){
+
+
+
+        return HttpResult.ok();
     }
 
 }

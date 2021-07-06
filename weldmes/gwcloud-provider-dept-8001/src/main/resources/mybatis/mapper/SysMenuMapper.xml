@@ -4,7 +4,7 @@
 
 <mapper namespace="com.gw.sys.dao.SysMenuDao">
 
-    <resultMap id="MenuAndButtonMap" type="com.gw.entities.MenuAndButtonInfo">
+    <resultMap id="MenuAndButtonMap" type="com.gw.entities.SysMenuInfo">
         <id property="id" column="id"></id>
         <result property="parentId" column="parent_id"></result>
         <result property="label" column="label"></result>
@@ -18,7 +18,7 @@
     </resultMap>
 
     <!-- 根据角色id查询菜单列表 -->
-    <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenu">
+    <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenuInfo">
         SELECT m.* from sys_menu m,sys_role_menu rm
         WHERE m.id = rm.menu_id
         <if test="roleId != null">
@@ -27,7 +27,7 @@
     </select>
 
     <!--插入 目录/菜单/按钮信息-->
-    <insert id="insertMenuAndButtonInfo" parameterType="com.gw.entities.MenuAndButtonInfo">
+    <insert id="insertMenuAndButtonInfo" parameterType="com.gw.entities.SysMenuInfo">
         insert into sys_menu(label,parent_id,`type`,mark,create_time)
         values(#{menuAndButtonInfo.label},#{menuAndButtonInfo.parentId},
         #{menuAndButtonInfo.type},#{menuAndButtonInfo.mark},#{menuAndButtonInfo.createTime})
