@@ -136,8 +136,6 @@
     </select>
 
     <!--修改任务信息-->
-
-
     <update id="updateTaskInfo" parameterType="com.gw.entities.TaskInfo">
         update task_info
         <trim prefix="set" suffixOverrides=",">
