@@ -1,7 +1,7 @@
 package com.gw.config;
 
 import com.gw.entities.UserLoginInfo;
-import com.gw.entities.UserOfSys;
+import com.gw.entities.SysUser;
 import com.gw.sys.service.UserRolesAndPerService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -59,7 +59,7 @@ public class UserRealm extends AuthorizingRealm {
         String userName = userToken.getUsername();
 
         //从数据库中获取用户
-        UserOfSys sysUser = userRolesAndPerService.queryUserInfoByUserNameAndPwd(userName);
+        SysUser sysUser = userRolesAndPerService.queryUserInfoByUserNameAndPwd(userName);
 
         //查询 用户数据 为空
         if(ObjectUtils.isEmpty(sysUser)){
@@ -90,6 +90,8 @@ public class UserRealm extends AuthorizingRealm {
         userLoginInfo.setPassWord(sysUser.getPassword());
 
         userLoginInfo.setStatus(sysUser.getStatus());
+
+        userLoginInfo.setDeptId(sysUser.getDeptId());
 
         //将 用户角色 绑定到当前用户中
         userLoginInfo.setRoles(roleNames);

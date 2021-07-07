@@ -105,8 +105,8 @@
     </select>
 
     <!--通过部门Id获取作业区-->
-    <select id="queryDeptNameList" parameterType="java.lang.Long" resultMap="deptInfoMap">
-        select id,`name` from sys_dept where `id`=#{deptId}
+    <select id="queryDeptNameListById" parameterType="java.lang.Long" resultMap="deptInfoMap">
+        select id,`name`,parent_id from sys_dept where `id`=#{deptId}
     </select>
 
     <!--通过工作区父级id获取班组列表-->

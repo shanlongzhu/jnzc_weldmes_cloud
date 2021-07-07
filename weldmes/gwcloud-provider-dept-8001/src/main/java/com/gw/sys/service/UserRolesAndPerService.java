@@ -1,6 +1,6 @@
 package com.gw.sys.service;
 
-import com.gw.entities.UserOfSys;
+import com.gw.entities.SysUser;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface UserRolesAndPerService {
      * @Description  通过用户名 和密码 查询用户信息
      * @Params userName 用户名
      */
-    public UserOfSys queryUserInfoByUserNameAndPwd(String userName);
+    public SysUser queryUserInfoByUserNameAndPwd(String userName);
 
     /**
      * @Date 2021/6/7 16:55

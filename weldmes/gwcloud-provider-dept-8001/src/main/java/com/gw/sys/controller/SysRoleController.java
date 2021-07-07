@@ -3,6 +3,7 @@ package com.gw.sys.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
+import com.gw.entities.ManageRoleMenuInfo;
 import com.gw.entities.SysRole;
 import com.gw.sys.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,19 @@ public class SysRoleController {
         sysRoleService.delRoleInfoById(id);
 
         return HttpResult.ok("角色信息删除成功");
+    }
+
+    /**
+     * @Date 2021/7/7 11:50
+     * @Description 给角色分配权限
+     * @Params  manageRoleMenuInfo 角色的菜单权限信息
+     */
+    @RequestMapping(value = "role/manageRoleMenuAndButtonInfo")
+    public HttpResult manageRoleMenuAndButtonInfo(@RequestBody ManageRoleMenuInfo manageRoleMenuInfo) {
+
+        sysRoleService.addRoleMenuInfo(manageRoleMenuInfo);
+
+        return HttpResult.ok("角色成功绑定菜单信息");
     }
 
 }

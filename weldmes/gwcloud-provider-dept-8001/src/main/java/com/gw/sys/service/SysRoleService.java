@@ -1,5 +1,6 @@
 package com.gw.sys.service;
 
+import com.gw.entities.ManageRoleMenuInfo;
 import com.gw.entities.SysRole;
 
 import java.util.List;
@@ -46,4 +47,11 @@ public interface SysRoleService {
      * @Params  id 角色id
      */
     public void delRoleInfoById(Long id);
+
+    /**
+     * @Date 2021/7/7 11:50
+     * @Description 给角色分配权限
+     * @Params  manageRoleMenuInfo 角色的菜单权限信息
+     */
+    public void addRoleMenuInfo(ManageRoleMenuInfo manageRoleMenuInfo);
 }

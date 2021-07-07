@@ -1,73 +1,79 @@
 package com.gw.sys.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.gw.common.CommonUtil;
-import com.gw.common.PageInfo;
-import com.gw.entities.SysUser;
-import com.gw.sys.dao.SysUserDao;
+
+import com.gw.entities.SysDeptInfo;
+import com.gw.entities.UserLoginInfo;
+import com.gw.process.dispatch.dao.DispatchDao;
+import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
-import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/6/4 10:12
+ * @Description  用户业务实现层
+ * @Params
+ */
 @Service
 public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
-    SysUserDao sysUserDao;
+    UserRolesAndPerDao userRolesAndPerDao;
 
-    @Override
-    public PageInfo<SysUser> UserPage(int draw, int start, int length, SysUser sysUser) {
-        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
-        wrapper.like(CommonUtil.isNotEmpty(sysUser.getName()),"name",sysUser.getName());
-        start = (start / length) + 1;//当前页码
-        IPage<SysUser> page = new Page<>(start, length);
-        IPage<SysUser> sysUserIPage = sysUserDao.selectPage(page, wrapper);
-        PageInfo<SysUser> pageInfo = new PageInfo<>();
-        pageInfo.setDraw(draw);
-        pageInfo.setData(sysUserIPage.getRecords());//数据结果
-        pageInfo.setRecordsTotal(sysUserIPage.getTotal());//总数
-        pageInfo.setRecordsFiltered(sysUserIPage.getRecords().size());////过滤后的总记录数
-        return pageInfo;
-    }
+    @Autowired
+    DispatchDao dispatchDao;
 
+    /**
+     * @Date 2021/7/7 10:40
+     * @Description  获取集团班组树状图信息
+     * @Params
+     */
     @Override
-    public int addUser(SysUser sysUser) {
-        return sysUserDao.insert(sysUser);
-    }
+    public SysDeptInfo getGradeInfo() {
 
-    @Override
-    public SysUser getUserById(SysUser sysUser) {
-        return sysUserDao.selectById(sysUser.getId());
-    }
+        Subject currentUser = SecurityUtils.getSubject();
 
-    @Override
-    public int updateUser(SysUser sysUser) {
-        return sysUserDao.updateById(sysUser);
-    }
+        //获取到当前用户
+        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
 
-    @Override
-    public int deleteUser(List<BigInteger> ids) {
-        return sysUserDao.deleteBatchIds(ids);
-    }
+        //获取到当前用户所属的机构信息
+        SysDeptInfo sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
 
-    @Override
-    public boolean login(SysUser sysUser) {
-        try {
-            if (CommonUtil.isNotEmpty(sysUser.getName()) && CommonUtil.isNotEmpty(sysUser.getPassword())) {
-                QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq("name", sysUser.getName());
-                queryWrapper.and(wrapper -> wrapper.eq("password", sysUser.getPassword()));
-                int countUser = sysUserDao.selectCount(queryWrapper);
-                return countUser > 0;
+        //获取二级部门信息列表
+        List<SysDeptInfo> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
+
+        if(!ObjectUtils.isEmpty(sysSecondDeptInfos)){
+
+            for (SysDeptInfo sysSecondDeptInfo : sysSecondDeptInfos) {
+
+                //获取三级部门信息列表
+                List<SysDeptInfo> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
+
+                if(!ObjectUtils.isEmpty(sysThirdDeptInfos)){
+
+                    for (SysDeptInfo sysThirdDeptInfo : sysThirdDeptInfos) {
+
+                        //获取四级部门信息列表
+                        List<SysDeptInfo> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
+
+                        if(!ObjectUtils.isEmpty(sysFourthDeptInfos)){
+
+                            //将四级部门信息放入三级部门信息中
+                            sysThirdDeptInfo.setList(sysFourthDeptInfos);
+                        }
+                    }
+                    sysSecondDeptInfo.setList(sysThirdDeptInfos);
+                }
             }
-            return false;
-        } catch (Exception e) {
-            return false;
+            sysDeptInfo.setList(sysSecondDeptInfos);
         }
+
+        return sysDeptInfo;
     }
 }

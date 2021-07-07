@@ -44,5 +44,11 @@ public class UserLoginInfo implements Serializable {
      */
     private int status;
 
+    /**
+     * 部门id
+     */
+    private Long deptId;
+
+
 
 }

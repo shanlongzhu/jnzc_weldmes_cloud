@@ -1,6 +1,6 @@
 package com.gw.sys.service.impl;
 
-import com.gw.entities.UserOfSys;
+import com.gw.entities.SysUser;
 import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.UserRolesAndPerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ public class UserRolesAndPerServiceImpl implements UserRolesAndPerService {
      * @Params userName 用户名
      */
     @Override
-    public UserOfSys queryUserInfoByUserNameAndPwd(String userName) {
+    public SysUser queryUserInfoByUserNameAndPwd(String userName) {
 
-        UserOfSys sysUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(userName);
+        SysUser sysUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(userName);
 
         return sysUser;
     }
