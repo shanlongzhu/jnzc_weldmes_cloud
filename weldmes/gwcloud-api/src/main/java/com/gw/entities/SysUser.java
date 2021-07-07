@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * @Author zhanghan
  * @Date 2021/6/4 14:02
- * @Description 系统用户表
+ * @Description 系统用户实体类
  */
 @Data
 public class SysUser {
@@ -52,6 +52,11 @@ public class SysUser {
     private Long deptId;
 
     /**
+     * 部门名称
+     */
+    private String deptName;
+
+    /**
      * 创建人
      */
     private String createBy;
@@ -75,4 +80,14 @@ public class SysUser {
      * 是否删除  -1：已删除  0：正常
      */
     private int delFlag;
+
+    /**
+     * 登录名
+     */
+    private String loginName;
+
+    /**
+     * 岗位
+     */
+    private String position;
 }
