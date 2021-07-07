@@ -105,7 +105,7 @@
     </select>
 
     <!--通过部门Id获取作业区-->
-    <select id="queryDeptNameList" parameterType="java.lang.Long" resultMap="deptInfoMap">
+    <select id="queryDeptNameListById" parameterType="java.lang.Long" resultMap="deptInfoMap">
         select id,`name` from sys_dept where `id`=#{deptId}
     </select>
 
