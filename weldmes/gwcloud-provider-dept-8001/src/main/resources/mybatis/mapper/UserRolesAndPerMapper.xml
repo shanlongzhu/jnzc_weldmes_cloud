@@ -15,22 +15,6 @@
         <result property="delFlag" column="del_flag"></result>
     </resultMap>
 
-    <resultMap id="sysUserMap" type="com.gw.entities.SysUser">
-        <id property="id" column="id"></id>
-        <result property="name" column="name"></result>
-        <result property="password" column="password"></result>
-        <result property="deptId" column="salt"></result>
-        <result property="salt" column="email"></result>
-        <result property="mobile" column="mobile"></result>
-        <result property="status" column="status"></result>
-        <result property="deptId" column="dept_id"></result>
-        <result property="createBy" column="create_by"></result>
-        <result property="createTime" column="create_time"></result>
-        <result property="lastUpdateBy" column="last_update_by"></result>
-        <result property="lastUpdateTime" column="last_update_time"></result>
-        <result property="delFlag" column="del_flag"></result>
-    </resultMap>
-
     <!--获取角色信息列表-->
     <select id="selectRolesInfos" resultMap="SysRoleMap">
         select id,`name`,remark,create_by,create_time,last_update_by,last_update_time,del_flag
