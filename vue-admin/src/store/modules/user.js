@@ -6,7 +6,7 @@ const state = {
   token: getToken(),
   user: {},
   roles: [],
-  menu:[]
+  menus:[]
 }
 
 const mutations = {
@@ -20,7 +20,7 @@ const mutations = {
     state.roles = roles
   },
   SET_MENU:(state, menus) =>{
-    state.menu = menus
+    state.menus = menus
   }
 }
 
@@ -45,7 +45,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        commit('SET_ROLES', data.menus.menus)
+        commit('SET_ROLES', data.roles)
         commit('SET_USER', data)
         commit('SET_MENU',data.menus.menus)
         resolve(data)

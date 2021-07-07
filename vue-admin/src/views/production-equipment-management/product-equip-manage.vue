@@ -140,10 +140,12 @@
                     size="small"
                     icon="el-icon-plus"
                     @click="addFun"
+                    v-has="'add'"
                 >新增</el-button>
             </div>
             <div class="con-w">
                 <el-upload
+                     v-has="'import'"
                     :action="importUrl"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
@@ -159,6 +161,7 @@
             </div>
             <div class="con-w">
                 <el-button
+                    v-has="'exprot'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="exportExcelFun"
@@ -304,6 +307,7 @@
                             size="mini"
                             type="primary"
                             plain
+                            v-has="'edit'"
                             @click="editFun(scope.row.id)"
                         >
                             修改
@@ -312,6 +316,7 @@
                             size="mini"
                             type="danger"
                             plain
+                            v-has="'del'"
                             @click="delFun(scope.row.id)"
                         >
                             删除
@@ -320,6 +325,7 @@
                             size="mini"
                             type="danger"
                             plain
+                            v-has="'record'"
                         >
                             维修记录
                         </el-button>
