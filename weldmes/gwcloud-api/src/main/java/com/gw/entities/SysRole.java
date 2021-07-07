@@ -1,12 +1,16 @@
 package com.gw.entities;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
 import lombok.experimental.Accessors;
 import java.io.Serializable;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/6/25 16:23
+ * @Description   角色 信息实体类
+ */
 @Data
 @Accessors(chain=true)
 public class SysRole implements Serializable {
