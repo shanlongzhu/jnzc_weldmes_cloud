@@ -639,7 +639,7 @@ export default {
                 initialCondition: false,//初期条件
                 fusionControl: false,//熔深控制
                 unitarySeveral: 1,//一元/个别
-                controlArc: '1',//收弧方式
+                controlArc: '000',//收弧方式
                 controlArcType: '7',//收弧方式
                 softArcSchema: false,//柔软电弧模式
                 arcCharacter: 0,//电弧特性
@@ -802,16 +802,16 @@ export default {
         //电焊时间是否禁用
         spotWeldingTimeDisabled () {
             //收弧方式选择点焊可填
-            return this.ruleForm2.controlArc !== 28
+            return this.ruleForm2.controlArc !== '100'
         },
         //初期电流是否禁用
         initialEleDisabled () {
             //初期条件且收弧方式有或反复
-            return !this.ruleForm2.initialCondition || this.ruleForm2.controlArc !== 26 && this.ruleForm2.controlArc !== 27
+            return !this.ruleForm2.initialCondition || this.ruleForm2.controlArc !== '001' && this.ruleForm2.controlArc !== '011'
         },
         //收弧是否可填
         arcDisabled () {
-            return this.ruleForm2.controlArc !== 26 && this.ruleForm2.controlArc !== 27
+            return this.ruleForm2.controlArc !== '001' && this.ruleForm2.controlArc !== '011'
         },       
 
     },

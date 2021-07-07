@@ -86,7 +86,7 @@ export const constantRoutes = [
         path: '/',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '导航菜单', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   }
@@ -385,6 +385,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'Charts',
     meta: {
+      mark:'7',
       title: '系统管理',
       roles: ['admin'],
       icon: 'el-icon-view'
@@ -395,6 +396,7 @@ export const asyncRoutes = [
         component: () => import('@/views/production-equipment-management/user-manage'),
         name: 'KeyboardChart',
         meta: {
+          mark:'701',
           title: '用户管理',
           roles: ['admin'],
           noCache: true }
@@ -404,13 +406,14 @@ export const asyncRoutes = [
         component: () => import('@/views/production-equipment-management/RolesManager'),
         name: 'KeyboardChart',
         meta: {
+          mark:'702',
           title: '角色管理',
           roles: ['admin'],
           noCache: true }
       },
       {
         path: 'keyboard5',
-        component: () => import('@/views/production-equipment-management/RolesManager'),
+        component: () => import('@/views/production-equipment-management/menusManager'),
         name: 'KeyboardChart',
         meta: {
           title: '菜单管理',

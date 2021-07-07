@@ -1,84 +1,182 @@
 <template>
-
     <div
         style="height:calc(100vh - 86px)"
-        class="flex-c"
+        class="flex"
     >
+
         <div
-            class="buttons"
-            style="border-bottom:1px solid #ddd;padding:10px"
+            class="roles-l flex-c"
+            style="height:100%; flex:1; width:0px"
         >
-            <el-button
-                size="small"
-                @click="append"
-            >添加顶级菜单</el-button>
+            <div class="p10">
+                <el-button
+                    size="mini"
+                    plain
+                    @click="addRolsFun"
+                    v-has="'add'"
+                >新增角色</el-button>
+            </div>
+            <div
+                class=""
+                style="flex:1;height:0px"
+            >
+                <vxe-table
+                    ref="xTable"
+                    border
+                    :data="list"
+                    :loading="loading"
+                    size="mini"
+                    height="auto"
+                    auto-resize
+                    resizable
+                    stripe
+                    highlight-current-row
+                    @current-change="selectTableData"
+                >
+                    <vxe-table-column
+                        type="seq"
+                        width="50"
+                        title="序号"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="name"
+                        title="角色名"
+                        min-width="120"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="remark"
+                        title="描述"
+                        min-width="120"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="createTime"
+                        title="操作"
+                        width="100"
+                    >
+                        <template #default="{row,rowIndex}">
+                            <span @click.stop="editFun(row.id,rowIndex)">
+                                <i
+                                    style="font-size:16px; color:#1890ff;cursor:pointer;margin-left:10px"
+                                    class="el-icon-edit"
+                                ></i>
+                            </span>
+                            <span @click.stop="delFun(row.id)">
+                                <i
+                                    style="font-size:16px;color:red;cursor:pointer;margin-left:10px"
+                                    class="el-icon-delete"
+                                ></i>
+                            </span>
+                        </template>
+                    </vxe-table-column>
+                </vxe-table>
+            </div>
+            <el-pagination
+                class="p10"
+                :current-page.sync="page"
+                :page-size="10"
+                align="right"
+                background
+                layout="total, prev, pager, next"
+                :total="total"
+                @current-change="handleCurrentChange"
+            />
+
         </div>
         <div
-            class="table-con"
-            style="flex:1;height:0px; overflow-y:auto"
+            class="roles-r flex-c"
+            style="height:100%; flex:1; width:0px"
         >
-            <el-tree
-                :data="data"
-                v-loading="loading"
-                show-checkbox
-                node-key="id"
-                ref="tree"
-                :props="defaultProps"
-                default-expand-all
-                :expand-on-click-node="false"
+            <el-tabs
+                v-model="activeName"
+                @tab-click="handleClick"
+                class="flex-c"
+                style="height:100%;"
             >
-                <span
-                    class="custom-tree-node"
-                    slot-scope="{ node, data }"
+                <el-tab-pane
+                    label="权限分配"
+                    name="first"
                 >
-                    <span>{{ node.label }}</span>
-                    <span>
-                        <span class="span-mark">{{ data.mark}}</span>
+                    <div
+                        class="p10"
+                        style="border-bottom:1px solid #ddd"
+                    >
                         <el-button
-                            type="text"
                             size="mini"
-                            @click="() => editFun(data,node)"
+                            type="default"
+                            plain
+                            @click="saveAuth"
+                        >保存权限</el-button>
+                    </div>
+                    <div
+                        class=""
+                        style="flex:1;height:0px;overflow-y:auto"
+                        v-loading="menusLoading"
+                    >
+                        <el-tree
+                            :data="menuList"
+                            show-checkbox
+                            check-strictly
+                            node-key="id"
+                            ref="tree"
+                            :props="defaultProps"
+                            default-expand-all
+                            :expand-on-click-node="false"
                         >
-                            <i
-                                style="font-size:16px;"
-                                class="el-icon-edit"
-                            ></i>
-                        </el-button>
+                        </el-tree>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane
+                    label="用户列表"
+                    name="second"
+                >
+                    <!-- <div
+                        class="p10"
+                        style="border-bottom:1px solid #ddd"
+                    >
                         <el-button
-                            type="text"
                             size="mini"
-                            v-show="data.type=='1'"
-                            @click="() => append(data,node)"
-                        >
-                            <i
-                                style="font-size:16px;"
-                                class="el-icon-plus"
-                            ></i>
-                        </el-button>
-                        <el-button
-                            type="text"
+                            type="default"
+                            plain
+                            @click="saveAuth"
+                        >添加用户</el-button>
+                    </div> -->
+                    <div
+                        class=""
+                        style="flex:1;height:0px"
+                    >
+                        <vxe-table
+                            ref="xTable"
+                            border
+                            :data="list"
+                            :loading="loading"
                             size="mini"
-                            @click="() => remove(node, data)"
+                            height="auto"
+                            auto-resize
+                            resizable
+                            stripe
                         >
-                            <i
-                                style="font-size:16px;color:red"
-                                class="el-icon-delete"
-                            ></i>
-                        </el-button>
-                    </span>
-                </span>
-            </el-tree>
-            <div class="buttons">
-                <el-button @click="getCheckedNodes">通过 node 获取</el-button>
-                <el-button @click="getCheckedKeys">通过 key 获取</el-button>
-                <el-button @click="setCheckedNodes">通过 node 设置</el-button>
-                <el-button @click="setCheckedKeys">通过 key 设置</el-button>
-                <el-button @click="resetChecked">清空</el-button>
-            </div>
+                            <vxe-table-column
+                                type="seq"
+                                width="50"
+                                title="序号"
+                            >
+                            </vxe-table-column>
+                            <vxe-table-column
+                                field="name"
+                                title="用户名"
+                                min-width="120"
+                            ></vxe-table-column>
+                        </vxe-table>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
         </div>
         <el-dialog
             :title="title"
             :visible.sync="sourceVisible"
+            width="500px"
+            :close-on-click-modal='false'
         >
             <el-form
                 :model="ruleForm"
@@ -88,45 +186,24 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="上级目录"
-                    prop="parentName"
+                    label="角色名"
+                    prop="name"
                 >
                     <el-input
-                        disabled
-                        v-model="ruleForm.parentName"
+                        v-model="ruleForm.name"
+                        style="width:250px"
                     ></el-input>
                 </el-form-item>
-                <el-form-item
-                    label="资源类型"
-                    prop="type"
-                >
-                    <el-select
-                        v-model="ruleForm.type"
-                        placeholder="请选择活动区域"
-                    >
-                        <el-option
-                            label="菜单"
-                            value="1"
-                        ></el-option>
-                        <el-option
-                            label="按钮"
-                            value="2"
-                        ></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="名称"
-                    prop="label"
-                >
-                    <el-input v-model="ruleForm.label"></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="权限标识"
-                    prop="mark"
-                >
-                    <el-input v-model="ruleForm.mark"></el-input>
-                </el-form-item>
 
+                <el-form-item
+                    label="描述"
+                    prop="remark"
+                >
+                    <el-input
+                        v-model="ruleForm.remark"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
                 <el-form-item>
                     <el-button
                         type="primary"
@@ -141,19 +218,24 @@
 
 <script>
 
-import { getMenuList, addMenu, editMenu, getMenuDetail } from '_api/system/systemApi'
-
-let id = 1000;
-
+import { getRoleList, getMenuList, addRole, editRole, delRole, getRoleDetail, getCurrentRoleList, saveRoleList } from '_api/system/systemApi'
 export default {
+    name: 'RolesManager',
     data () {
         return {
             defaultProps: {
                 children: 'menus'
             },
-
-            data: [],
+            //角色列表
+            list: [],
+            page: 1,
+            total: 0,
             loading: false,
+
+            //目录权限资源
+            menuList: [],
+            menusLoading: false,
+            activeName: 'first',
             //层标题
             title: '',
             //树形新增点击数据
@@ -165,21 +247,20 @@ export default {
 
             },
             ruleForm: {
-                parentId: '',//父级id
-                parentName: '',//父级名称
-                type: '1',//新增资源类型
-                label: '',//新增资源名称
-                mark: ''//权限标识
+                name: '',//角色名
+                remark: ''//描述
             },
             //
             rules: {
-                label: [
+                name: [
                     { required: true, message: '名称不能为空', trigger: 'blur' }
-                ],
-                mark: [
-                    { required: true, message: '表示不能为空', trigger: 'blur' }
-                ],
-            }
+                ]
+            },
+
+            //定位新增，编辑当前角色高亮
+            editRowIndex: '',
+            //当前选中的角色id
+            selectId: '',
         }
     },
 
@@ -188,80 +269,115 @@ export default {
         this.getList();
     },
     methods: {
-
-        //获取资源列表
+        //获取角色列表
         async getList () {
             this.loading = true;
-            let { code, data } = await getMenuList();
+            this.resetData();
+            let req = {
+                pn: this.page
+            }
+            let { code, data } = await getRoleList(req);
             this.loading = false;
             if (code == 200) {
-                this.data = data || [];
+                this.list = data.list || [];
+                this.total = data.total;
+                this.setHightRow();
             }
         },
-
-        append (data) {
-            this.title = '新增资源';
-            this.hanldObj = { ...data };
+        resetData () {
+            this.menuList = [];
+            this.selectId = [];
+        },
+        //新增角色
+        addRolsFun () {
+            this.title = '新增角色';
             this.ruleForm = { ...this.objRuleForm };
-            this.ruleForm.parentName = data.label || "顶级";
-            this.ruleForm.parentId = data.id || 0;
             this.sourceVisible = true;
         },
-
-        editFun (data) {
-            this.title = '编辑资源';
-            this.findIdDetail(data.id);
-        },
-        //根据id获取资源明细
-        async findIdDetail (id) {
-            let { data, code } = await getMenuDetail({ id });
+        //编辑角色
+        async editFun (id, index) {
+            this.editRowIndex = index;
+            this.title = '编辑角色';
+            let { data, code } = await getRoleDetail({ id });
             if (code == 200) {
                 this.sourceVisible = true;
                 this.ruleForm = data || {};
             }
         },
-
-        remove (node, data) {
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
+        //删除角色
+        delFun (id) {
+            this.$confirm('确定要删除吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                let { data, code } = await delRole({ id });
+                if (code == 200) {
+                    this.$message.success('操作成功')
+                    this.getList()
+                }
+            }).catch(() => { })
         },
 
-        getCheckedNodes () {
-            console.log(this.$refs.tree.getCheckedNodes(false, true));
+        //高亮编辑的角色
+        setHightRow () {
+            if (this.editRowIndex || this.editRowIndex === 0) {
+                this.$refs.xTable.setCurrentRow(this.list[this.editRowIndex]);
+                this.selectTableData({ row: this.list[this.editRowIndex], rowIndex: this.editRowIndex });
+            }
         },
-        getCheckedKeys () {
-            console.log(this.$refs.tree.getCheckedKeys());
+
+        //获取资源列表
+        async getMenuList () {
+            this.menusLoading = true;
+            this.menuList = [];
+            let { data, code } = await getMenuList();
+            this.menusLoading = false;
+            if (code == 200) {
+                this.menuList = data || [];
+            }
         },
-        setCheckedNodes () {
-            this.$refs.tree.setCheckedNodes([{
-                id: 5,
-                label: '二级 2-1'
-            }, {
-                id: 9,
-                label: '三级 1-1-1'
-            }]);
+        async getRoleMenuAndBtn (id) {
+            let { data, code } = await getCurrentRoleList({ id })
+            if (code == 200) {
+                let ids = (data || []).filter(item => item.id).map(item => item.id);
+                this.$nextTick(() => {
+                    this.$refs.tree.setCheckedKeys(ids);
+                })
+            }
         },
-        setCheckedKeys () {
-            this.$refs.tree.setCheckedKeys([3]);
+        async saveAuth () {
+            if (this.selectId && this.selectId != "") {
+                let req = {
+                    'roleId': this.selectId,
+                    'menuIds': this.$refs.tree.getCheckedKeys()
+                }
+                this.$message.warning('保存中...');
+                let { data, code } = await saveRoleList(req);
+                if (code == 200) {                    
+                    this.$message.success("保存成功");
+                    this.getList();
+                }
+            } else {
+                this.$message.error("请选择要分配权限的角色");
+            }
         },
-        resetChecked () {
-            this.$refs.tree.setCheckedKeys([]);
-        },
+
+
 
         submitForm (formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty("id")) {
-                        let { data, code } = await editMenu({ ...this.ruleForm });
+                        let { data, code } = await editRole({ ...this.ruleForm });
                         if (code == 200) {
                             this.$message.success("修改成功");
                             this.sourceVisible = false;
                             this.getList();
                         }
                     } else {
-                        let { data, code } = await addMenu({ ...this.ruleForm });
+                        this.editRowIndex = this.list.length;
+                        let { data, code } = await addRole({ ...this.ruleForm });
                         if (code == 200) {
                             this.$message.success("保存成功");
                             this.sourceVisible = false;
@@ -273,6 +389,23 @@ export default {
                     return false;
                 }
             });
+        },
+
+        //角色点击
+        selectTableData ({ row, rowIndex }) {
+            this.activeName = 'first';
+            this.getMenuList();
+            this.getRoleMenuAndBtn(row.id);
+            this.selectId = row.id;
+            this.editRowIndex = rowIndex;
+        },
+
+
+
+        //角色分页
+        handleCurrentChange (p) {
+            this.page = p;
+            this.getList();
         }
     }
 }
@@ -294,5 +427,38 @@ export default {
 }
 .el-tree-node {
     border-top: 1px solid #eee;
+}
+.roles-l {
+}
+.roles-r {
+    border: 1px solid #ddd;
+    margin-left: 10px;
+}
+.roles-r *{
+    font-size: 12px;
+}
+
+.roles-r .el-tabs__content {
+    flex: 1;
+    height: 0px;
+}
+.roles-r .el-tabs__content .el-tab-pane {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+.roles-r .el-tabs__header {
+    margin-bottom: 0px;
+}
+.roles-r .el-tabs__header .el-tabs__nav-wrap {
+    padding-left: 10px;
+}
+.roles-r .el-tabs__header .el-tabs__item {
+    line-height: 34px;
+    height: 34px;
+}
+
+.vxe-table--render-default .vxe-body--row.row--current {
+    background-color: #aadef7;
 }
 </style>
