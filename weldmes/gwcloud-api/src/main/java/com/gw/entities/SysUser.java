@@ -1,48 +1,78 @@
 package com.gw.entities;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigInteger;
 
 
-@AllArgsConstructor
-@NoArgsConstructor//生成一个无参构造函数
+/**
+ * @Author zhanghan
+ * @Date 2021/6/4 14:02
+ * @Description 系统用户表
+ */
 @Data
-@ToString
-@Accessors(chain = true)
-@TableName(value = "sys_user")//指定表名
-public class SysUser extends Model<SysUser> implements Serializable {
-    @TableId(type = IdType.AUTO)        //主见注解，数据库ID自增
-    private BigInteger id;
-    @TableField("`name`")
+public class SysUser {
+
+    /**
+     * 用户id
+     */
+    private Long id;
+
+    /**
+     * 用户名
+     */
     private String name;
-    @TableField("`password`")
+
+    /**
+     * 用户密码
+     */
     private String password;
+
+    /**
+     * 盐
+     */
     private String salt;
+
+    /**
+     * 邮箱
+     */
     private String email;
+
+    /**
+     * 手机号
+     */
     private String mobile;
-    @TableField(exist = false)   //不为数据库字段，不存入数据库
-    private String userStatus;
-    @TableField("`status`")
-    private BigInteger status;
-    @TableField(value = "dept_id")
-    private BigInteger deptId;
-    @TableField(value = "create_by")
+
+    /**
+     * 状态  0：禁用   1：正常'
+     */
+    private int status;
+
+    /**
+     * 部门id
+     */
+    private Long deptId;
+
+    /**
+     * 创建人
+     */
     private String createBy;
-    @TableField("create_time")
+
+    /**
+     * 创建时间
+     */
     private String createTime;
-    @TableField("last_update_by")
+
+    /**
+     * 更新人
+     */
     private String lastUpdateBy;
-    @TableField("last_update_time")
+
+    /**
+     * 更新时间
+     */
     private String lastUpdateTime;
-    @TableLogic("del_flag")
-    private BigInteger delFlag;
 
-
+    /**
+     * 是否删除  -1：已删除  0：正常
+     */
+    private int delFlag;
 }
