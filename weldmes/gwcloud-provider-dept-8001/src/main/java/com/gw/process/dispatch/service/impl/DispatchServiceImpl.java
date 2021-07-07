@@ -79,7 +79,7 @@ public class DispatchServiceImpl implements DispatchService{
         }
 
         //通过部门Id查询工作区
-        SysDeptInfo workArea = dispatchDao.queryDeptNameList(deptId);
+        SysDeptInfo workArea = dispatchDao.queryDeptNameListById(deptId);
 
         //通过工作区的父级id查询班组列表
         List<SysDeptInfo> gradeList = dispatchDao.queryGradeList(deptId);

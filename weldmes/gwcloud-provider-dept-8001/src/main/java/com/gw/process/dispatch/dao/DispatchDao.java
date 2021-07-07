@@ -55,7 +55,7 @@ public interface DispatchDao {
      * @Description 通过部门Id 获取作业区
      * @Params deptId 部门Id
      */
-    public SysDeptInfo queryDeptNameList(@Param("deptId")Long deptId);
+    public SysDeptInfo queryDeptNameListById(@Param("deptId")Long deptId);
 
     /**
      * @Date 2021/5/27 14:45
