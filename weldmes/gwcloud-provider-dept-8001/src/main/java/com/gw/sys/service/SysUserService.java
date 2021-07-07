@@ -1,30 +1,28 @@
 package com.gw.sys.service;
 
-import com.gw.common.PageInfo;
-import com.gw.entities.SysUser;
-import java.math.BigInteger;
+
+import com.gw.entities.SysDeptInfo;
+
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/6/4 10:12
+ * @Description  用户业务层
+ * @Params
+ */
 public interface SysUserService {
 
     /**
-     * 查询用户分页
-     * @param draw
-     * @param start
-     * @param length
-     * @param sysUser
-     * @return
+     * @Date 2021/7/7 10:40
+     * @Description  获取集团班组树状图信息
+     * @Params
      */
-    PageInfo<SysUser> UserPage(int draw, int start, int length, SysUser sysUser);
+    public SysDeptInfo getGradeInfo();
 
-    int addUser(SysUser sysUser);
 
-    SysUser getUserById(SysUser sysUser);
 
-    int updateUser(SysUser sysUser);
 
-    int deleteUser(List<BigInteger> ids);
 
-    boolean login(SysUser sysUser);
 
 }

@@ -112,11 +112,14 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     /**
      * @Date 2021/7/7 11:50
-     * @Description 给角色分配权限
+     * @Description 给角色添加权限
      * @Params  manageRoleMenuInfo 角色的菜单权限信息
      */
     @Override
     public void addRoleMenuInfo(ManageRoleMenuInfo manageRoleMenuInfo) {
+
+        //先清除当前角色所拥有的菜单权限
+        userRolesAndPerDao.deleteMenuIdByRoleId(manageRoleMenuInfo.getRoleId());
 
         for (Long menuId : manageRoleMenuInfo.getMenuIds()) {
 

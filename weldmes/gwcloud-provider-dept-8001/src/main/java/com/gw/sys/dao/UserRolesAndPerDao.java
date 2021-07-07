@@ -86,5 +86,13 @@ public interface UserRolesAndPerDao {
      */
     public void insertRoleMenuInfo(@Param("roleId")Long roleId,@Param("menuId")Long menuId,@Param("time")String time);
 
+    /**
+     * @Date 2021/7/7 11:50
+     * @Description 通过角色id删除  菜单id
+     * @Params  id  角色id
+     */
+    public void deleteMenuIdByRoleId(@Param("roleId")Long roleId);
+
+
 
 }
