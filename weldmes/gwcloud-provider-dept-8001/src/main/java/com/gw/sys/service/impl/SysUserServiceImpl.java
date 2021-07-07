@@ -2,9 +2,12 @@ package com.gw.sys.service.impl;
 
 
 import com.gw.entities.SysDeptInfo;
+import com.gw.entities.UserLoginInfo;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -34,16 +37,13 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public SysDeptInfo getGradeInfo() {
 
-        /*Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = SecurityUtils.getSubject();
 
         //获取到当前用户
-        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();*/
-
-        //根据用户部门id 获取到该用户所属部门的下属部门信息
-        //List<DeptTreeInfo> deptTreeInfos = userRolesAndPerDao.selectGradeInfo(1L);
+        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
 
         //获取到当前用户所属的机构信息
-        SysDeptInfo sysDeptInfo = dispatchDao.queryDeptNameListById(1L);
+        SysDeptInfo sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
 
         //获取二级部门信息列表
         List<SysDeptInfo> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
