@@ -1,6 +1,7 @@
 package com.gw.sys.service.impl;
 
 import com.gw.common.DateTimeUtil;
+import com.gw.entities.ManageRoleMenuInfo;
 import com.gw.entities.SysRole;
 import com.gw.entities.UserLoginInfo;
 import com.gw.sys.dao.UserRolesAndPerDao;
@@ -52,11 +53,11 @@ public class SysRoleServiceImpl implements SysRoleService {
         sysRole.setCreateTime(time);
 
         //获取到当前用户
-        /*Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = SecurityUtils.getSubject();
 
         UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
 
-        sysRole.setCreateBy(userInfo.getUserName());*/
+        sysRole.setCreateBy(userInfo.getUserName());
 
         userRolesAndPerDao.insertRoleInfo(sysRole);
 
@@ -87,11 +88,11 @@ public class SysRoleServiceImpl implements SysRoleService {
         String time = DateTimeUtil.getCurrentTime();
 
         //获取到当前用户
-        /*Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = SecurityUtils.getSubject();
 
         UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
 
-        sysRole.setCreateBy(userInfo.getUserName());*/
+        sysRole.setCreateBy(userInfo.getUserName());
 
         sysRole.setLastUpdateTime(time);
 
@@ -107,5 +108,21 @@ public class SysRoleServiceImpl implements SysRoleService {
     public void delRoleInfoById(Long id) {
 
         userRolesAndPerDao.deleteRoleInfoById(id);
+    }
+
+    /**
+     * @Date 2021/7/7 11:50
+     * @Description 给角色分配权限
+     * @Params  manageRoleMenuInfo 角色的菜单权限信息
+     */
+    @Override
+    public void addRoleMenuInfo(ManageRoleMenuInfo manageRoleMenuInfo) {
+
+        for (Long menuId : manageRoleMenuInfo.getMenuIds()) {
+
+            String time = DateTimeUtil.getCurrentTime();
+
+            userRolesAndPerDao.insertRoleMenuInfo(manageRoleMenuInfo.getRoleId(),menuId,time);
+        }
     }
 }

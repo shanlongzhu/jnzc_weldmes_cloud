@@ -217,8 +217,13 @@ public class SysMenuServiceImpl implements SysMenuService {
         //获取 菜单Id列表
         List<Long> menuIds = userRolesAndPerDao.queryMenuIdByRoleId(id);
 
+        List<SysMenuInfo> menus = new ArrayList<>();
+
+        if(ObjectUtils.isEmpty(menuIds)){
+            return menus;
+        }
         //获取菜单信息列表
-        List<SysMenuInfo> menus = sysMenuDao.queryMenuInfoByMenuId(menuIds);
+        menus = sysMenuDao.queryMenuInfoByMenuId(menuIds);
 
         return menus;
     }

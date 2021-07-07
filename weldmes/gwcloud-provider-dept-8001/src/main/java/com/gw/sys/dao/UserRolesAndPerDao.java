@@ -1,7 +1,7 @@
 package com.gw.sys.dao;
 
 import com.gw.entities.SysRole;
-import com.gw.entities.UserOfSys;
+import com.gw.entities.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -56,7 +56,7 @@ public interface UserRolesAndPerDao {
      * @Description 通过 用户名 查询用户信息
      * @Params userName 用户名
      */
-    public UserOfSys queryUserInfoByUserNameAndPwd(@Param("userName")String userName);
+    public SysUser queryUserInfoByUserNameAndPwd(@Param("userName")String userName);
 
     /**
      * @Date 2021/6/7 16:56
@@ -78,6 +78,13 @@ public interface UserRolesAndPerDao {
      * @Params
      */
     public List<Long> queryMenuIdByRoleId(@Param("id")Long id);
+
+    /**
+     * @Date 2021/7/7 11:50
+     * @Description 给角色分配权限
+     * @Params  id  角色id
+     */
+    public void insertRoleMenuInfo(@Param("roleId")Long roleId,@Param("menuId")Long menuId,@Param("time")String time);
 
 
 }
