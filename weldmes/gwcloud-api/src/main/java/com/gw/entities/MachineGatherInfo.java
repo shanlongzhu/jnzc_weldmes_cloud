@@ -21,16 +21,14 @@ public class MachineGatherInfo implements Serializable {
     private String gatherNo;
     private int status;
     private long deptId;
-    private Timestamp productionDate;
+    private String productionDate;
     private String ipPath;
     private String macPath;
     private int protocol;
     private String createBy;
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String createTime;
     private String lastUpdateBy;
-    private Timestamp lastUpdateTime;
+    private String lastUpdateTime;
     private SysDictionary sysDictionary;
     private SysDept sysDept;
 
