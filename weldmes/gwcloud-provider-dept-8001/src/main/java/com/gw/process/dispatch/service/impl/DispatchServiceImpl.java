@@ -79,14 +79,14 @@ public class DispatchServiceImpl implements DispatchService{
         }
 
         //通过部门Id查询工作区
-        SysDeptInfo workArea = dispatchDao.queryDeptNameListById(deptId);
+        SysDept workArea = dispatchDao.queryDeptNameListById(deptId);
 
         //通过工作区的父级id查询班组列表
-        List<SysDeptInfo> gradeList = dispatchDao.queryGradeList(deptId);
+        List<SysDept> gradeList = dispatchDao.queryGradeList(deptId);
 
         workArea.setList(gradeList);
 
-        List<SysDeptInfo> list = new ArrayList<>();
+        List<SysDept> list = new ArrayList<>();
 
         list.add(workArea);
         //获取到 任务状态 字符串
@@ -363,11 +363,11 @@ public class DispatchServiceImpl implements DispatchService{
         Long deptId = dispatchDao.queryUserDeptId(username,password);
 
         //通过部门id获取到作业区的id
-        List<SysDeptInfo> workArea = dispatchDao.queryGradeList(deptId);
+        List<SysDept> workArea = dispatchDao.queryGradeList(deptId);
 
-        for (SysDeptInfo workSpace : workArea) {
+        for (SysDept workSpace : workArea) {
 
-            List<SysDeptInfo> gradeList = dispatchDao.queryGradeList(workSpace.getId());
+            List<SysDept> gradeList = dispatchDao.queryGradeList(workSpace.getId());
 
             workSpace.setList(gradeList);
         }

@@ -1,7 +1,7 @@
 package com.gw.sys.service;
 
 
-import com.gw.entities.SysDeptInfo;
+import com.gw.entities.SysDept;
 import com.gw.entities.SysUser;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface SysUserService {
      * @Description  获取集团班组树状图信息
      * @Params
      */
-    public SysDeptInfo getGradeInfo();
+    public SysDept getGradeInfo();
 
     /**
      * @Date 2021/7/7 16:29

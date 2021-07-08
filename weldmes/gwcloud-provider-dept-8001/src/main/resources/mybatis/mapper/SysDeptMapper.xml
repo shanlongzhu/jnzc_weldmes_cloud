@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.sys.dao.SysDeptDao">
+
+    <resultMap id="deptMap" type="com.gw.entities.SysDept">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="parentId" column="parent_id"></result>
+        <result property="orderNum" column="order_num"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="last_update_by"></result>
+        <result property="lastUpdateTime" column="last_update_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+    </resultMap>
+
+    <!--查询组织机构列表信息-->
+    <select id="selectDeptInfos" resultMap="deptMap">
+        select id,`name`,parent_id,order_num,create_by,create_time,last_update_by,last_update_time
+        from sys_dept
+    </select>
+
+    <!--根据id查询组织机构信息-->
+    <select id="selectDeptInfoById" parameterType="com.gw.entities.SysDept" resultType="com.gw.entities.SysDept">
+        select id,`name`,parent_id,order_num,create_by,create_time,last_update_by,last_update_time
+        from sys_dept
+        where id = #{id}
+    </select>
+
+    <!--修改组织机构信息-->
+    <update id="updateDeptInfo" parameterType="com.gw.entities.SysDept">
+        update sys_dept
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysDept.name != null and sysDept.name !=''">`name` = #{sysDept.name},</if>
+            <if test="sysDept.parentId != null and sysDept.parentId !=''">parent_id = #{sysDept.parentId},</if>
+            <if test="sysDept.orderNum != null and sysDept.orderNum !=''">order_num = #{sysDept.orderNum},</if>
+            <if test="sysDept.createBy != null and sysDept.createBy !=''">create_by = #{sysDept.createBy},</if>
+            <if test="sysDept.createTime != null and sysDept.createTime !=''">create_time = #{sysDept.createTime},</if>
+            <if test="sysDept.lastUpdateBy != null and sysDept.lastUpdateBy !=''">last_update_by = #{sysDept.lastUpdateBy},</if>
+            <if test="sysDept.lastUpdateTime != null and sysDept.lastUpdateTime !=''">last_update_time = #{sysDept.lastUpdateTime},</if>
+            <if test="sysDept.delFlag != null and sysDept.delFlag !=''">del_flag = #{sysDept.delFlag},</if>
+        </trim>
+        where id = #{sysDept.id}
+    </update>
+
+    <!--根据id删除组织机构信息-->
+    <delete id="deleteDeptInfoById" parameterType="Long">
+        delete from sys_dept where id =#{id}
+    </delete>
+
+    <!--新增组织机构信息-->
+    <insert id="insertDeptInfo" parameterType="com.gw.entities.SysDept">
+        insert into sys_dept(`name`,parent_id,create_by,create_time)
+        values(#{sysDept.name},#{sysDept.parentId},#{sysDept.createBy},#{sysDept.createTime})
+    </insert>
+
+    <!--根据父级id查询组织机构信息-->
+    <select id="selectDeptInfosByParentId" resultMap="deptMap">
+        select id,`name`
+        from sys_dept
+        where parent_id = #{id}
+    </select>
+</mapper>

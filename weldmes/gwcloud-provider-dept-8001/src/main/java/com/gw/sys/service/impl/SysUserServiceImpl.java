@@ -41,7 +41,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @Params
      */
     @Override
-    public SysDeptInfo getGradeInfo() {
+    public SysDept getGradeInfo() {
 
         Subject currentUser = SecurityUtils.getSubject();
 
@@ -49,24 +49,24 @@ public class SysUserServiceImpl implements SysUserService {
         UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
 
         //获取到当前用户所属的机构信息
-        SysDeptInfo sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
+        SysDept sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
 
         //获取二级部门信息列表
-        List<SysDeptInfo> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
+        List<SysDept> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
 
         if(!ObjectUtils.isEmpty(sysSecondDeptInfos)){
 
-            for (SysDeptInfo sysSecondDeptInfo : sysSecondDeptInfos) {
+            for (SysDept sysSecondDeptInfo : sysSecondDeptInfos) {
 
                 //获取三级部门信息列表
-                List<SysDeptInfo> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
+                List<SysDept> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
 
                 if(!ObjectUtils.isEmpty(sysThirdDeptInfos)){
 
-                    for (SysDeptInfo sysThirdDeptInfo : sysThirdDeptInfos) {
+                    for (SysDept sysThirdDeptInfo : sysThirdDeptInfos) {
 
                         //获取四级部门信息列表
-                        List<SysDeptInfo> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
+                        List<SysDept> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
 
                         if(!ObjectUtils.isEmpty(sysFourthDeptInfos)){
 

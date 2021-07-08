@@ -3,7 +3,7 @@ package com.gw.sys.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.*;
-import com.gw.entities.SysDeptInfo;
+import com.gw.entities.SysDept;
 import com.gw.entities.SysUser;
 import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysUserService;
@@ -35,7 +35,7 @@ public class SysUserController {
     @RequestMapping(value = "user/gradeInfos")
     public HttpResult getCurrentGradeInfos() {
 
-        SysDeptInfo sysDeptInfo = sysUserService.getGradeInfo();
+        SysDept sysDeptInfo = sysUserService.getGradeInfo();
 
         return HttpResult.ok(sysDeptInfo);
 
@@ -54,9 +54,9 @@ public class SysUserController {
         List<SysUser> list = sysUserService.getUserInfosByDeptId(id);
 
         //将查询结果进行分页
-        com.github.pagehelper.PageInfo<TaskInfo> page=new PageInfo(list,10);
+        PageInfo<TaskInfo> page=new PageInfo(list,10);
 
-        return HttpResult.ok(list);
+        return HttpResult.ok(page);
 
     }
 
