@@ -70,7 +70,11 @@
                 <vxe-table-column
                     field="weldModel"
                     title="焊机型号"
-                ></vxe-table-column>
+                >
+                <template #default={row}>
+                    {{row.sysDictionary.valueName}}
+                </template>
+                </vxe-table-column>
                 <vxe-table-column
                     field="createTime"
                     title="创建日期"
@@ -85,7 +89,7 @@
                             size="mini"
                             type="warning"
                             plain
-                            @click="issueOrders(row.id)"
+                            @click="issueOrders(row)"
                         >
                             工艺库下发
                         </el-button>
@@ -204,6 +208,8 @@
             ref="addTech"
             @throwData="submitLibary"
         ></add-tech>
+        <!-- 工艺库下发 -->
+        <issue-orders ref="issueOrdersRef"></issue-orders>
     </div>
 </template>
 
@@ -213,9 +219,10 @@ import { getTeam, getDictionaries, getProcesLibraryList, getProcesLibraryDetail,
 import { getWeldingModel } from '_api/productionEquipment/production'
 import expandTable from './components/expandTable.vue';
 import AddTech from './components/addTech.vue';
+import IssueOrders from './components/issueOrders.vue';
 
 export default {
-    components: { expandTable, AddTech },
+    components: { expandTable, AddTech, IssueOrders },
     data () {
         return {
             visable1: false,
@@ -263,7 +270,7 @@ export default {
         this.getList();
     },
     mounted () {
-        this.PahoMQTTFun();
+        // this.PahoMQTTFun();
     },
     methods: {
         //建立连接
@@ -295,13 +302,15 @@ export default {
         onConnectionLost (responseObject) {
             console.log("onConnectionLost:" + responseObject.errorMessage);
         },
-        async issueOrders (id) {
+        async issueOrders (row) {
+            this.$refs.issueOrdersRef.init(row);
+            return
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                let { data, code } = await getProcesLibraryChild({ id });
+                let { data, code } = await getProcesLibraryChild({ id:row.id });
                 if (code == 200) {
                     if (data.list && data.list.length > 0) {
                         this.messageObj = this.$message({
@@ -322,20 +331,20 @@ export default {
         testProcessIssue (arr) {
             let dataArray = (arr || []).map(item => {
                 let obj = {};
-                obj['gatherNo'] = "0001";//采集模块编号
+                obj['gatherNo'] = "0011";//采集模块编号
                 obj['channelNo'] = item.channelNo;//通道号
-                obj['spotWeldTime'] = item.spotWeldingTime;//点焊时间
-                obj['preflowTime'] = item.inAdvanceAspirated;//提前送气
+                obj['spotWeldTime'] = item.spotWeldingTime * 10;//点焊时间
+                obj['preflowTime'] = item.inAdvanceAspirated * 10;//提前送气
                 obj['initialEle'] = item.initialEle;//初期电流
-                obj['initialVol'] = item.initialVol;//初期电压
+                obj['initialVol'] = item.initialVol * 10;//初期电压
                 obj['initialVolUnitary'] = item.initialVolUnitary;//初期电压一元
                 obj['weldElectricity'] = item.weldingEle;//焊接电流
-                obj['weldVoltage'] = item.weldingVol;//焊接电压
+                obj['weldVoltage'] = item.weldingVol * 10;//焊接电压
                 obj['weldVoltageUnitary'] = item.weldingVolUnitary;//焊接电压一元
                 obj['extinguishArcEle'] = item.arcEle;//收弧电流
-                obj['extinguishArcVol'] = item.arcVol;//收弧电压
+                obj['extinguishArcVol'] = item.arcVol * 10;//收弧电压
                 obj['extinguishArcVolUnitary'] = item.arcVolUnitary;//收弧电压一元
-                obj['hysteresisAspirated'] = item.hysteresisAspirated;//滞后送气
+                obj['hysteresisAspirated'] = item.hysteresisAspirated * 10;//滞后送气
                 obj['arcPeculiarity'] = item.arcCharacter;//电弧特性
                 obj['gases'] = item.gases;//气体
                 obj['wireDiameter'] = item.weldingStickDiameter;//直径
@@ -343,37 +352,33 @@ export default {
                 obj['weldProcess'] = item.weldingProcess;//焊接过程
                 obj['controlInfo'] = this.issueOrdersStr(item);//控制信息
                 obj['weldEleAdjust'] = item.weldingEleAdjust;//焊接电流微调
-                obj['weldVolAdjust'] = item.weldingVolAdjust;//焊接电压微调
+                obj['weldVolAdjust'] = item.weldingVolAdjust * 10;//焊接电压微调
                 obj['extinguishArcEleAdjust'] = item.arcEleAdjust;//收弧电流微调
-                obj['extinguishArcVolAdjust'] = item.arcVolAdjust;//收弧电压微调
+                obj['extinguishArcVolAdjust'] = item.arcVolAdjust * 10;//收弧电压微调
                 obj['alarmsElectricityMax'] = item.alarmsEleMax;//报警电流上限
                 obj['alarmsElectricityMin'] = item.alarmsEleMin;//报警电流下限
                 obj['alarmsVoltageMax'] = item.alarmsVolMax;//报警电压上限
                 obj['alarmsVoltageMin'] = item.alarmsVolMin;//报警电压下限
                 return obj;
-            })            
+            })
             //集合转字符串
             const message = JSON.stringify(dataArray);
             console.log(message)
             //工艺参数下发测试
-            const topic = new PahoMQTT.Message(message);
-            topic.destinationName = "processIssue";
-            mqttClient.send(topic);
+            // const topic = new PahoMQTT.Message(message);
+            // topic.destinationName = "processIssue";
+            // mqttClient.send(topic);
 
+            console.log(this.mqttClient)
+            this.mqttClient.publish('processIssue', message, 0)
 
-            this.mqttClient.publish(topic, payload, qos, error => {
-                if (error) {
-                console.log('Publish error', error)
-                }
-            })
-
-            testIssueReturn();
+            this.testIssueReturn();
         },
 
         //测试下发返回
         testIssueReturn () {
             //主题订阅
-            mqttClient.subscribe("processIssueReturn", {
+            this.mqttClient.subscribe("processIssueReturn", {
                 qos: 0,
                 onSuccess: function (e) {
                     console.log("下发返回主题订阅成功：processIssueReturn");
@@ -384,7 +389,7 @@ export default {
             });
             //5秒后执行下发超时显示
             var onTaskTimeout = window.setTimeout(function () {
-                mqttClient.unsubscribe("processIssueReturn", {
+                this.mqttClient.unsubscribe("processIssueReturn", {
                     onSuccess: function (e) {
                         console.log("下发返回主题取消订阅成功");
                     },
@@ -394,7 +399,8 @@ export default {
                 });
                 alert("下发超时");
             }, 5000);
-            mqttClient.onMessageArrived = function (message) {
+            this.mqttClient.onMessageArrived = function (message) {
+                console.log(message)
                 if ("processIssueReturn" === message.destinationName) {
                     var datajson = JSON.parse(message.payloadString);
                     if (datajson.flag === 0) {
@@ -402,7 +408,7 @@ export default {
                     } else {
                         alert("采集编号：" + datajson.gatherNo + "--通道：" + datajson.channelNo + "-->下发失败");
                     }
-                    mqttClient.unsubscribe("processIssueReturn", {
+                    this.mqttClient.unsubscribe("processIssueReturn", {
                         onSuccess: function (e) {
                             console.log("下发返回主题取消订阅成功");
                         },
@@ -423,8 +429,8 @@ export default {
             let bit5 = item.unitarySeveral;//一元/个别
             let bit6 = item.fusionControl;//熔深控制
             let bit7 = item.softArcSchema;//柔软电弧模式
-            let str = bit7+''+ bit6+''+ bit5+''+ bit4+''+ bit1 +''+ bit0;
-            return parseInt(str,2);            
+            let str = bit7 + '' + bit6 + '' + bit5 + '' + bit4 + '' + bit1 + '' + bit0;
+            return parseInt(str, 2);
         },
 
 

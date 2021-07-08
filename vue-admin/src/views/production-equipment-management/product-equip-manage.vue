@@ -567,21 +567,7 @@ export default {
             total: 0,
 
             visable1: false,
-            ruleFormObj: {
-                id: '',
-                machineNo: '',//编号
-                status: 17,//状态
-                type:'',//设备类型
-                firm:'',//厂商
-                model:'',//设备型号
-                deptId: '',//项目（机构id）
-                isNetwork: 0,//是否联网
-                gid: '',//采集id
-                protocol: '',//通讯协议
-                createTime: '',//入厂时间
-                ipPath: '',//ip
-                area:'',
-                bay:''
+            ruleFormObj: {                
             },
             ruleForm: {
                 id: '',
@@ -652,6 +638,7 @@ export default {
     },
 
     created () {
+        this.ruleFormObj = {...this.ruleForm};
         // 获取班组        
         this.getTeamList();        
         this.getList();

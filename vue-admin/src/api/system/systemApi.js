@@ -94,9 +94,27 @@ export function getCurrentRoleList(params = {}) {
 
 //设置角色权限
 export function saveRoleList(data = {}) {
-    return request({
-      url: "/role/manageRoleMenuAndButtonInfo",
-      method: "post",
-      data
-    });
-  }
+  return request({
+    url: "/role/manageRoleMenuAndButtonInfo",
+    method: "post",
+    data
+  });
+}
+
+//*******************用户模块***************************** */
+//获取部门tree数据
+export function getUserTree() {
+  return request({
+    url: "/user/gradeInfos",
+    method: "get"
+  });
+}
+
+//根据部门id获取用户列表
+export function findByIdUserList(params={}) {
+  return request({
+    url: "/user/getUserInfosByOpt",
+    method: "get",
+    params
+  });
+}
