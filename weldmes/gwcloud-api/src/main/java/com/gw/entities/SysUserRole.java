@@ -42,7 +42,7 @@ public class SysUserRole implements Serializable {
     /**
      * 创建时间
      */
-    private Timestamp createTime;
+    private String createTime;
 
     /**
      * 更新人
@@ -52,7 +52,7 @@ public class SysUserRole implements Serializable {
     /**
      * 更新时间
      */
-    private Timestamp lastUpdateTime;
+    private String lastUpdateTime;
 
 
 }

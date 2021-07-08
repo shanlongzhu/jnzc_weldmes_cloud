@@ -12,6 +12,11 @@ import lombok.Data;
 public class SysUser {
 
     /**
+     * 角色id
+     */
+    private Long roleId;
+
+    /**
      * 用户id
      */
     private Long id;
