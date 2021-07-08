@@ -146,7 +146,7 @@ public class WelderController {
             Cell ipPathCell=row.createCell(9);
             ipPathCell.setCellValue("");
             Cell getValueNamesssCell=row.createCell(10);
-            getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamesss());
+            getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamessss());
 
         }
         try {

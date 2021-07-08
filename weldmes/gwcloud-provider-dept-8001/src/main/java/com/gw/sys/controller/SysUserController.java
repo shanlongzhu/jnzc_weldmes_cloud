@@ -1,8 +1,11 @@
 package com.gw.sys.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gw.common.*;
 import com.gw.entities.SysDeptInfo;
 import com.gw.entities.SysUser;
+import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +47,14 @@ public class SysUserController {
      * @Params id 部门id
      */
     @RequestMapping(value = "user/getUserInfosByOpt")
-    public HttpResult getUserInfosByDeptId(Long id) {
+    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long id) {
+
+        PageHelper.startPage(pn,10);
 
         List<SysUser> list = sysUserService.getUserInfosByDeptId(id);
+
+        //将查询结果进行分页
+        com.github.pagehelper.PageInfo<TaskInfo> page=new PageInfo(list,10);
 
         return HttpResult.ok(list);
 

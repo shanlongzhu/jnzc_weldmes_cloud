@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.sys.dao.SysDictionaryDao">
+
+    <resultMap id="dictionaryMap" type="com.gw.entities.SysDictionary">
+        <id property="id" column="id"></id>
+        <result property="type" column="type"></result>
+        <result property="typeName" column="type_name"></result>
+        <result property="value" column="value"></result>
+        <result property="valueName" column="value_name"></result>
+        <result property="remarks" column="remarks"></result>
+    </resultMap>
+
+    <!--条件查询字典信息列表-->
+    <select id="selectDictionaryInfos" parameterType = "com.gw.entities.SysDictionary" resultMap="dictionaryMap">
+        select id,`type`,type_name,`value`,value_name,remarks
+        from sys_dictionary
+        where 1=1
+        <if test="type != null and type != ''">
+            and `type` = #{type}
+        </if>
+        <if test="typeName != null and typeName != ''">
+            and `type_name` = #{typeName}
+        </if>
+        <if test="value != null and value != ''">
+            and `value` = #{value}
+        </if>
+        <if test="valueName != null and valueName != ''">
+            and value_name = #{valueName}
+        </if>
+    </select>
+
+    <!--根据id查询字典信息-->
+    <select id="selectDictionaryInfoById" parameterType = "Long" resultMap="dictionaryMap">
+        select id,`type`,type_name,`value`,value_name,remarks
+        from sys_dictionary
+        where id = #{id}
+    </select>
+
+    <!--修改字典信息-->
+    <update id="updateDictionaryInfo" parameterType="com.gw.entities.SysDictionary">
+        update sys_dictionary
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysDictionary.type != null and sysDictionary.type !=''">`type` = #{sysDictionary.type},</if>
+            <if test="sysDictionary.typeName != null and sysDictionary.typeName !=''">type_name = #{sysDictionary.typeName},</if>
+            <if test="sysDictionary.value != null and sysDictionary.value !=''">`value` = #{sysDictionary.value},</if>
+            <if test="sysDictionary.valueName != null and sysDictionary.valueName !=''">value_name = #{sysDictionary.valueName},</if>
+            <if test="sysDictionary.remarks != null and sysDictionary.remarks !=''">remarks = #{sysDictionary.remarks},</if>
+        </trim>
+        where id = #{sysDictionary.id}
+    </update>
+
+    <!--根据id删除字典信息-->
+    <delete id="deleteDictionaryInfoById" parameterType="Long">
+        delete from sys_dictionary where id = #{id}
+    </delete>
+
+    <!--新增字典信息-->
+    <insert id="insertDictionaryInfo" parameterType="com.gw.entities.SysDictionary">
+        insert into sys_dictionary(`type`,type_name,`value`,value_name,remarks)
+        values(#{sysDictionary.type},#{sysDictionary.typeName},#{sysDictionary.value},#{sysDictionary.valueName},#{sysDictionary.remarks})
+    </insert>
+
+</mapper>

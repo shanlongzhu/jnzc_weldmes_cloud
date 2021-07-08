@@ -1,19 +1,19 @@
 package com.gw.sys.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.gw.common.CommonUtil;
-import com.gw.common.PageInfo;
 import com.gw.entities.SysDictionary;
 import com.gw.sys.dao.SysDictionaryDao;
 import com.gw.sys.service.SysDictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * @Author zhanghan
+ * @Date 2021/6/4 10:12
+ * @Description  字典业务实现层
+ * @Params
+ */
 @Service
 public class SysDictionaryServiceImpl implements SysDictionaryService {
 
@@ -21,35 +21,64 @@ public class SysDictionaryServiceImpl implements SysDictionaryService {
     @Autowired
     SysDictionaryDao sysDictionaryDao;
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  条件查询字典信息列表
+     * @Params sysDictionary 字典信息
+     */
     @Override
-    public PageInfo<SysDictionary> getSysDictionaryPage(int draw, int start, int length, SysDictionary sysDictionary) {
-        QueryWrapper<SysDictionary> wrapper = new QueryWrapper<>();
-        wrapper.like(CommonUtil.isNotEmpty(sysDictionary.getType()), "type", sysDictionary.getType()).
-                or().like(CommonUtil.isNotEmpty(sysDictionary.getType()), "value", sysDictionary.getType())
-                .or().like(CommonUtil.isNotEmpty(sysDictionary.getType()), "label", sysDictionary.getType());
-        start = (start / length) + 1;//当前页码
-        IPage<SysDictionary> page = new Page<>(start, length);
-        IPage<SysDictionary> sysDictionaryIPage = sysDictionaryDao.selectPage(page, wrapper);
-        PageInfo<SysDictionary> pageInfo = new PageInfo<>();
-        pageInfo.setDraw(draw);
-        pageInfo.setData(sysDictionaryIPage.getRecords());//数据结果
-        pageInfo.setRecordsTotal(sysDictionaryIPage.getTotal());//总数
-        pageInfo.setRecordsFiltered(sysDictionaryIPage.getRecords().size());////过滤后的总记录数
-        return pageInfo;
+    public List<SysDictionary> getDictionaryInfos(String type,String typeName,String value,String valueName) {
+
+        List<SysDictionary> list = sysDictionaryDao.selectDictionaryInfos(type,typeName,value,valueName);
+
+        return list;
     }
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据id查询字典信息
+     * @Params id 字典id
+     */
     @Override
-    public int addSysDictionary(SysDictionary sysDictionary) {
-        return sysDictionaryDao.insert(sysDictionary);
+    public SysDictionary getDictionaryInfoById(Long id) {
+
+        SysDictionary sysDictionary = sysDictionaryDao.selectDictionaryInfoById(id);
+
+        return sysDictionary;
     }
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  修改字典信息
+     * @Params sysDictionary 字典信息
+     */
     @Override
-    public int updateSysDictionary(SysDictionary sysDictionary) {
-        return sysDictionaryDao.updateById(sysDictionary);
+    public void updateDictionaryInfo(SysDictionary sysDictionary) {
+
+        sysDictionaryDao.updateDictionaryInfo(sysDictionary);
+
     }
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据id删除字典信息
+     * @Params id 字典id
+     */
     @Override
-    public int deleteSysDictionary(List<BigInteger> ids) {
-        return sysDictionaryDao.deleteBatchIds(ids);
+    public void delDictionaryInfoById(Long id) {
+
+        sysDictionaryDao.deleteDictionaryInfoById(id);
+    }
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  新增字典信息
+     * @Params sysDictionary 字典信息
+     */
+    @Override
+    public void addDictionaryInfo(SysDictionary sysDictionary) {
+
+        sysDictionaryDao.insertDictionaryInfo(sysDictionary);
+
     }
 }

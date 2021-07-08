@@ -53,9 +53,9 @@
     </select>
 
     <insert id="addCollection" parameterType="com.gw.entities.MachineGatherInfo">
-        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,create_time)
+        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,production_date)
          values (#{machineGatherInfo.gatherNo},#{machineGatherInfo.deptId},#{machineGatherInfo.status},#{machineGatherInfo.protocol},
-         #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.createTime})
+         #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.productionDate})
     </insert>
 
 
