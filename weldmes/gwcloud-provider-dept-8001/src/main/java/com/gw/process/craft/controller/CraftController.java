@@ -22,8 +22,9 @@ public class CraftController {
 
     //根据工艺库id列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long id){
-        PageHelper.startPage(pn,10);
+    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                              @RequestParam(value="pageSize",defaultValue = "10") Integer pageSize,Long id){
+        PageHelper.startPage(pn,pageSize);
         List<WpsNorm> list=craftService.getList(id);
         PageInfo page=new PageInfo(list,5);
         return HttpResult.ok(page);

@@ -3,7 +3,6 @@ package com.gw.sys.controller;
 import com.gw.common.*;
 import com.gw.entities.SysDeptInfo;
 import com.gw.entities.SysUser;
-import com.gw.entities.UpdateUserInfo;
 import com.gw.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +40,10 @@ public class SysUserController {
 
     /**
      * @Date 2021/7/7 16:29
-     * @Description 通过部门id查询用户信息
+     * @Description 条件查询用户信息
      * @Params id 部门id
      */
-    @RequestMapping(value = "user/getUserInfosByDeptId")
+    @RequestMapping(value = "user/getUserInfosByOpt")
     public HttpResult getUserInfosByDeptId(Long id) {
 
         List<SysUser> list = sysUserService.getUserInfosByDeptId(id);
@@ -70,12 +69,12 @@ public class SysUserController {
     /**
      * @Date 2021/7/7 18:04
      * @Description 修改用户信息
-     * @Params sysUser 用户信息
+     * @Params sysUser 用户信息  roleId 角色id
      */
     @RequestMapping(value = "user/updateUserInfo")
-    public HttpResult updateUserInfos(@RequestBody UpdateUserInfo updateUserInfo) {
+    public HttpResult updateUserInfos(@RequestBody SysUser sysUser) {
 
-        sysUserService.updateUserInfo(updateUserInfo);
+        sysUserService.updateUserInfo(sysUser);
 
         return HttpResult.ok("用户信息修改成功!");
 
@@ -89,7 +88,7 @@ public class SysUserController {
     @RequestMapping(value = "user/delUserInfo")
     public HttpResult delUserInfo(Long id) {
 
-
+        sysUserService.delUserInfoById(id);
 
         return HttpResult.ok("用户信息删除成功!");
 
@@ -97,8 +96,16 @@ public class SysUserController {
 
     /**
      * @Date 2021/7/7 18:04
-     * @Description 拉取角色列表
-     * @Params id 用户id
+     * @Description 新增用户
+     * @Params sysUser 用户信息
      */
+    @RequestMapping(value = "user/addUserInfo")
+    public HttpResult addUserInfo(@RequestBody SysUser sysUser) {
+
+        sysUserService.addUserInfo(sysUser);
+
+        return HttpResult.ok("用户信息添加成功!");
+
+    }
 
 }

@@ -17,7 +17,7 @@ public interface SysUserDao {
 
     /**
      * @Date 2021/7/7 16:29
-     * @Description 通过部门id查询用户信息
+     * @Description 条件查询用户信息
      * @Params id 部门id
      */
     List<SysUser> selectUserInfosByDeptId(@Param("id") Long id);
@@ -38,10 +38,10 @@ public interface SysUserDao {
 
     /**
      * @Date 2021/7/7 18:04
-     * @Description 删除用户信息    逻辑删除
-     * @Params id 用户id
+     * @Description 新增用户
+     * @Params sysUser 用户信息
      */
-    void deleteUserInfoById(@Param("id") Long id);
+    void insertUserInfo(@Param("sysUser") SysUser sysUser);
 
 
 }

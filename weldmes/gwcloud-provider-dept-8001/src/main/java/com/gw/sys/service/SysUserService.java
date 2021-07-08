@@ -3,7 +3,6 @@ package com.gw.sys.service;
 
 import com.gw.entities.SysDeptInfo;
 import com.gw.entities.SysUser;
-import com.gw.entities.UpdateUserInfo;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public interface SysUserService {
 
     /**
      * @Date 2021/7/7 16:29
-     * @Description 通过部门id查询用户信息
+     * @Description 条件查询用户信息
      * @Params id 部门id
      */
     public List<SysUser> getUserInfosByDeptId(Long id);
@@ -42,7 +41,7 @@ public interface SysUserService {
      * @Description 修改用户信息
      * @Params sysUser 用户信息
      */
-    public void updateUserInfo(UpdateUserInfo updateUserInfo);
+    public void updateUserInfo(SysUser sysUser);
 
     /**
      * @Date 2021/7/7 18:04
@@ -51,9 +50,11 @@ public interface SysUserService {
      */
     void delUserInfoById(Long id);
 
-
-
-
-
+    /**
+     * @Date 2021/7/7 18:04
+     * @Description 新增用户
+     * @Params sysUser 用户信息
+     */
+    void addUserInfo(SysUser sysUser);
 
 }

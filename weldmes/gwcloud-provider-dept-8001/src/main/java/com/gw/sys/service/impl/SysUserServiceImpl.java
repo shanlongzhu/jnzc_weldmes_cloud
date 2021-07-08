@@ -31,6 +31,9 @@ public class SysUserServiceImpl implements SysUserService {
     @Autowired
     DispatchDao dispatchDao;
 
+    @Autowired
+    UserRolesAndPerDao userRolesAndPerDao;
+
 
     /**
      * @Date 2021/7/7 10:40
@@ -82,7 +85,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * @Date 2021/7/7 16:29
-     * @Description 通过部门id查询用户信息
+     * @Description 条件查询用户信息
      * @Params id 部门id
      */
     @Override
@@ -109,17 +112,30 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * @Date 2021/7/7 18:04
      * @Description 修改用户信息
-     * @Params sysUser 用户信息
+     * @Params sysUser 用户信息  roleId 角色id
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     @Override
-    public void updateUserInfo(UpdateUserInfo updateUserInfo) {
+    public void updateUserInfo(SysUser sysUser) {
+
+        SysUserRole sysUserRole = new SysUserRole();
+
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        sysUser.setLastUpdateTime(time);
+
+        sysUserRole.setUserId(sysUser.getId());
+
+        sysUserRole.setRoleId(sysUser.getRoleId());
+
+        sysUserRole.setLastUpdateTime(time);
 
         //修改用户信息
-        sysUserDao.updateUserInfo(updateUserInfo.getSysUser());
-
+        sysUserDao.updateUserInfo(sysUser);
 
         //修改用户角色信息
+        userRolesAndPerDao.updateRoleIdByUserId(sysUserRole);
 
     }
 
@@ -144,6 +160,41 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setDelFlag(-1);
 
         sysUserDao.updateUserInfo(sysUser);
+
+    }
+
+    /**
+     * @Date 2021/7/7 18:04
+     * @Description 新增用户
+     * @Params sysUser 用户信息 roleId 角色id
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void addUserInfo(SysUser sysUser) {
+
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        //将时间放入用户信息
+        sysUser.setCreateTime(time);
+
+        //新增用户信息
+        sysUserDao.insertUserInfo(sysUser);
+
+        //获取新增用户的id
+        SysUser addUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(sysUser.getName());
+
+        SysUserRole sysUserRole = new SysUserRole();
+
+        //将新增角色信息时需要的信息 放入用户角色实体类
+        sysUserRole.setUserId(addUser.getId());
+
+        sysUserRole.setRoleId(sysUser.getRoleId());
+
+        sysUserRole.setCreateTime(time);
+
+        //新增用户角色信息
+        userRolesAndPerDao.insertUserRoleInfo(sysUserRole);
 
     }
 }

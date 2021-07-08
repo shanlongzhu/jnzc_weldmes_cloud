@@ -22,13 +22,16 @@
         <result property="position" column="position"></result>
     </resultMap>
 
-    <!--通过部门id查询用户信息-->
+    <!--条件查询用户信息-->
     <select id="selectUserInfosByDeptId" resultMap="sysUserMap">
         select sysUser.id,sysUser.`name`,sysUser.mobile,sysUser.email,sysUser.status,
         sysUser.login_name,sysUser.`position`,sys_dept.name deptName
         from sys_user sysUser
         left join sys_dept on sysUser.dept_id = sys_dept.id
-        where sysUser.del_flag = 0 and sysUser.dept_id = #{id}
+        where 1=1 and sysUser.del_flag = 0
+        <if test="id != null and id != ''">
+            and sysUser.dept_id = #{id}
+        </if>
     </select>
 
     <!--通过用户id查询用户信息-->
@@ -53,11 +56,17 @@
             <if test="sysUser.status != null and sysUser.status !=''">status = #{sysUser.status},</if>
             <if test="sysUser.deptId != null and sysUser.deptId !=''">dept_id = #{sysUser.deptId},</if>
             <if test="sysUser.delFlag != null and sysUser.delFlag !=''">del_flag = #{sysUser.delFlag},</if>
+            <if test="sysUser.lastUpdateTime != null and sysUser.lastUpdateTime !=''">last_update_time = #{sysUser.lastUpdateTime},</if>
         </trim>
         where id = #{sysUser.id}
     </update>
 
-    <!--删除用户信息-->
+    <!--新增用户信息-->
+    <insert id="insertUserInfo" parameterType="com.gw.entities.SysUser">
+        insert into sys_user(`name`,password,email,mobile,login_name,`position`,dept_id,status,create_time,del_flag)
+        values(#{sysUser.name},#{sysUser.password},#{sysUser.email},#{sysUser.mobile},
+        #{sysUser.loginName},#{sysUser.position},#{sysUser.deptId},#{sysUser.status},#{sysUser.createTime},0)
+    </insert>
 
 
 

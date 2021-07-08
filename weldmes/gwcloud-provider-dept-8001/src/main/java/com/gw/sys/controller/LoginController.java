@@ -81,25 +81,25 @@ public class LoginController {
 
                 logger.info("登陆失败: 此用户 >>> "+userToken.getPrincipal()+" 不存在");
 
-                return HttpResult.ok("登陆失败,用户不存在");
+                return HttpResult.error("登陆失败,用户不存在");
 
             }catch(IncorrectCredentialsException ice){
 
                 logger.info("登陆失败: 此用户 >>> "+userToken.getPrincipal()+" 密码不正确");
 
-                return HttpResult.ok("登陆失败,密码不正确");
+                return HttpResult.error("登陆失败,密码不正确");
 
             }catch(LockedAccountException lae){
 
                 logger.info("登陆失败: 此用户 >>> "+userToken.getPrincipal()+" 已被锁定");
 
-                return HttpResult.ok("登陆失败,用户已被锁定");
+                return HttpResult.error("登陆失败,用户已被锁定");
 
             }catch(AuthenticationException ate){
 
                 logger.info("此用户 >>> "+userToken.getPrincipal()+" 登陆失败");
 
-                return HttpResult.ok("用户登陆失败");
+                return HttpResult.error("用户登陆失败");
             }
         }
 

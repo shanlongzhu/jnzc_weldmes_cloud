@@ -58,7 +58,7 @@
     <!--根据用户名查询用户登录信息-->
     <select id="queryUserInfoByUserNameAndPwd" resultType="com.gw.entities.SysUser">
         select id,`name`,password,status,dept_id from sys_user where `name` = #{userName}
-        where del_flag = 0 and status = 1
+        and del_flag = 0 and status = 1
     </select>
 
     <!--通过用户id查询用户角色id-->
@@ -89,6 +89,20 @@
     <delete id="deleteMenuIdByRoleId" parameterType="Long">
         delete from sys_role_menu where role_id = #{roleId}
     </delete>
+
+    <!--根据用户id修改角色id-->
+    <update id="updateRoleIdByUserId" parameterType="com.gw.entities.SysUserRole">
+        update sys_user_role set role_id = #{sysUserRole.roleId},
+        last_update_time = #{sysUserRole.lastUpdateTime}
+        where user_id = #{sysUserRole.userId}
+    </update>
+
+    <!--新增用户角色信息-->
+    <insert id="insertUserRoleInfo" parameterType="com.gw.entities.SysUserRole">
+        insert into sys_user_role(user_id,role_id,create_by,create_time)
+        values(#{sysUserRole.userId},#{sysUserRole.roleId},#{sysUserRole.createBy},#{sysUserRole.createTime})
+    </insert>
+
 
 
 </mapper>
