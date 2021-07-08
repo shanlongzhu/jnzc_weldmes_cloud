@@ -1,7 +1,10 @@
 package com.gw.sys.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.entities.SysMenuInfo;
+import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +46,16 @@ public class SysMenuController {
      * @Params
      */
     @RequestMapping("getMenuOrButtonInfo")
-    public HttpResult getMenuInfoList(){
+    public HttpResult getMenuInfoList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+
+        PageHelper.startPage(pn,10);
 
         List<SysMenuInfo> list = sysMenuService.getMenuInfoList();
 
-        return HttpResult.ok(list);
+        //将查询结果进行分页
+        PageInfo<TaskInfo> page=new PageInfo(list,10);
+
+        return HttpResult.ok(page);
     }
 
     /**

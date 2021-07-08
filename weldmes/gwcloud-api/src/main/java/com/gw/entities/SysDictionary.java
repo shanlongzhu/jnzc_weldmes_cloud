@@ -1,40 +1,51 @@
 package com.gw.entities;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.sql.Timestamp;
 
-
-@AllArgsConstructor
-@NoArgsConstructor//生成一个无参构造函数
+/**
+ * @Author zhanghan
+ * @Date 2021/6/4 10:12
+ * @Description  字典实体类
+ * @Params
+ */
 @Data
-@Accessors(chain=true)
-@TableName(value = "sys_dictionary")//指定表名
-public class SysDictionary implements Serializable {
-    @TableId(type = IdType.AUTO)      //主见注解，数据库ID自增
-    private BigInteger id;
+public class SysDictionary{
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 类型
+     */
     private String type;
+
+    /**
+     * 类型名称
+     */
     private String typeName;
+
+    /**
+     * 值
+     */
     private String value;
+
+    /**
+     * 描述
+     */
     private String valueName;
+
+    /**
+     * 备注
+     */
     private String remarks;
+
     private String valueNames;
+
     private String valueNamess;
+
     private String valueNamesss;
     private String valueNamessss;
 
-
- public void setCreateBy(String admin) {
-    }
-
-    public void setCreateTime(String format) {
-    }
 }

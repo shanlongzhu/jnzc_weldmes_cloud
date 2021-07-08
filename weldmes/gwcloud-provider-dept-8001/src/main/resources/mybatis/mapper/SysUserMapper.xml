@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.sys.dao.SysUserDao">
+
+    <resultMap id="sysUserMap" type="com.gw.entities.SysUser">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="password" column="password"></result>
+        <result property="salt" column="salt"></result>
+        <result property="email" column="email"></result>
+        <result property="mobile" column="mobile"></result>
+        <result property="status" column="status"></result>
+        <result property="deptId" column="dept_id"></result>
+        <result property="createBy" column="create_by"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="lastUpdateBy" column="last_update_by"></result>
+        <result property="lastUpdateTime" column="last_update_time"></result>
+        <result property="delFlag" column="del_flag"></result>
+        <result property="loginName" column="login_name"></result>
+        <result property="position" column="position"></result>
+    </resultMap>
+
+    <!--条件查询用户信息-->
+    <select id="selectUserInfosByDeptId" resultMap="sysUserMap">
+        select sysUser.id,sysUser.`name`,sysUser.mobile,sysUser.email,sysUser.status,
+        sysUser.login_name,sysUser.`position`,sys_dept.name deptName
+        from sys_user sysUser
+        left join sys_dept on sysUser.dept_id = sys_dept.id
+        where 1=1 and sysUser.del_flag = 0
+        <if test="id != null and id != ''">
+            and sysUser.dept_id = #{id}
+        </if>
+    </select>
+
+    <!--通过用户id查询用户信息-->
+    <select id="selectUserInfosById" resultMap="sysUserMap">
+        select sysUser.id,sysUser.password,sysUser.`name`,sysUser.mobile,sysUser.email,sysUser.status,
+        sysUser.login_name,sysUser.`position`,sys_dept.name deptName
+        from sys_user sysUser
+        left join sys_dept on sysUser.dept_id = sys_dept.id
+        where sysUser.del_flag = 0 and sysUser.id = #{id}
+    </select>
+
+    <!--修改用户信息-->
+    <update id="updateUserInfo" parameterType="com.gw.entities.SysUser">
+        update sys_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysUser.name != null and sysUser.name !=''">`name` = #{sysUser.name},</if>
+            <if test="sysUser.loginName != null and sysUser.loginName !=''">login_name = #{sysUser.loginName},</if>
+            <if test="sysUser.password != null and sysUser.password !=''">password = #{sysUser.password},</if>
+            <if test="sysUser.email != null and sysUser.email !=''">email = #{sysUser.email},</if>
+            <if test="sysUser.mobile != null and sysUser.mobile !=''">mobile = #{sysUser.mobile},</if>
+            <if test="sysUser.position != null and sysUser.position !=''">`position` = #{sysUser.position},</if>
+            <if test="sysUser.status != null and sysUser.status !=''">status = #{sysUser.status},</if>
+            <if test="sysUser.deptId != null and sysUser.deptId !=''">dept_id = #{sysUser.deptId},</if>
+            <if test="sysUser.delFlag != null and sysUser.delFlag !=''">del_flag = #{sysUser.delFlag},</if>
+            <if test="sysUser.lastUpdateTime != null and sysUser.lastUpdateTime !=''">last_update_time = #{sysUser.lastUpdateTime},</if>
+        </trim>
+        where id = #{sysUser.id}
+    </update>
+
+    <!--新增用户信息-->
+    <insert id="insertUserInfo" parameterType="com.gw.entities.SysUser">
+        insert into sys_user(`name`,password,email,mobile,login_name,`position`,dept_id,status,create_time,del_flag)
+        values(#{sysUser.name},#{sysUser.password},#{sysUser.email},#{sysUser.mobile},
+        #{sysUser.loginName},#{sysUser.position},#{sysUser.deptId},#{sysUser.status},#{sysUser.createTime},0)
+    </insert>
+
+
+
+</mapper>

@@ -1,15 +1,17 @@
 package com.gw.sys.service.impl;
 
 
-import com.gw.entities.SysDeptInfo;
-import com.gw.entities.UserLoginInfo;
+import com.gw.common.DateTimeUtil;
+import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
+import com.gw.sys.dao.SysUserDao;
 import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysUserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -24,10 +26,14 @@ import java.util.List;
 public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
-    UserRolesAndPerDao userRolesAndPerDao;
+    SysUserDao sysUserDao;
 
     @Autowired
     DispatchDao dispatchDao;
+
+    @Autowired
+    UserRolesAndPerDao userRolesAndPerDao;
+
 
     /**
      * @Date 2021/7/7 10:40
@@ -75,5 +81,120 @@ public class SysUserServiceImpl implements SysUserService {
         }
 
         return sysDeptInfo;
+    }
+
+    /**
+     * @Date 2021/7/7 16:29
+     * @Description 条件查询用户信息
+     * @Params id 部门id
+     */
+    @Override
+    public List<SysUser> getUserInfosByDeptId(Long id) {
+
+        List<SysUser> sysUsers = sysUserDao.selectUserInfosByDeptId(id);
+
+        return sysUsers;
+    }
+
+    /**
+     * @Date 2021/7/7 16:29
+     * @Description 通过用户id查询用户信息
+     * @Params id 用户id
+     */
+    @Override
+    public SysUser getUserInfosById(Long id) {
+
+        SysUser sysUser = sysUserDao.selectUserInfosById(id);
+
+        return sysUser;
+    }
+
+    /**
+     * @Date 2021/7/7 18:04
+     * @Description 修改用户信息
+     * @Params sysUser 用户信息  roleId 角色id
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void updateUserInfo(SysUser sysUser) {
+
+        SysUserRole sysUserRole = new SysUserRole();
+
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        sysUser.setLastUpdateTime(time);
+
+        sysUserRole.setUserId(sysUser.getId());
+
+        sysUserRole.setRoleId(sysUser.getRoleId());
+
+        sysUserRole.setLastUpdateTime(time);
+
+        //修改用户信息
+        sysUserDao.updateUserInfo(sysUser);
+
+        //修改用户角色信息
+        userRolesAndPerDao.updateRoleIdByUserId(sysUserRole);
+
+    }
+
+    /**
+     * @Date 2021/7/7 18:04
+     * @Description 删除用户信息    逻辑删除
+     * @Params id 用户id
+     */
+    @Override
+    public void delUserInfoById(Long id) {
+
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        SysUser sysUser = new SysUser();
+
+        sysUser.setId(id);
+
+        sysUser.setLastUpdateTime(time);
+
+        //是否删除  -1：已删除  0：正常
+        sysUser.setDelFlag(-1);
+
+        sysUserDao.updateUserInfo(sysUser);
+
+    }
+
+    /**
+     * @Date 2021/7/7 18:04
+     * @Description 新增用户
+     * @Params sysUser 用户信息 roleId 角色id
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void addUserInfo(SysUser sysUser) {
+
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        //将时间放入用户信息
+        sysUser.setCreateTime(time);
+
+        //新增用户信息
+        sysUserDao.insertUserInfo(sysUser);
+
+        //获取新增用户的id
+        SysUser addUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(sysUser.getName());
+
+        SysUserRole sysUserRole = new SysUserRole();
+
+        //将新增角色信息时需要的信息 放入用户角色实体类
+        sysUserRole.setUserId(addUser.getId());
+
+        sysUserRole.setRoleId(sysUser.getRoleId());
+
+        sysUserRole.setCreateTime(time);
+
+        //新增用户角色信息
+        userRolesAndPerDao.insertUserRoleInfo(sysUserRole);
+
     }
 }

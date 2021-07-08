@@ -2,6 +2,7 @@ package com.gw.sys.dao;
 
 import com.gw.entities.SysRole;
 import com.gw.entities.SysUser;
+import com.gw.entities.SysUserRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -92,6 +93,22 @@ public interface UserRolesAndPerDao {
      * @Params  id  角色id
      */
     public void deleteMenuIdByRoleId(@Param("roleId")Long roleId);
+
+    /**
+     * @Date 2021/7/8 8:47
+     * @Description 通过用户id  修改用户角色id
+     * @Params sysUserRole
+     */
+    public void updateRoleIdByUserId(@Param("sysUserRole")SysUserRole sysUserRole);
+
+    /**
+     * @Date 2021/7/8 9:44
+     * @Description 新增用户角色信息
+     * @Params
+     */
+    void insertUserRoleInfo(@Param("sysUserRole")SysUserRole sysUserRole);
+
+
 
 
 
