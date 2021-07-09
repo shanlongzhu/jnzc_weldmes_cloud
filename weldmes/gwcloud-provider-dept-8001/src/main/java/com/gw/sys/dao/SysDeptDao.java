@@ -19,9 +19,9 @@ public interface SysDeptDao{
     /**
      * @Date 2021/7/8 16:38
      * @Description 查询组织机构信息列表
-     * @Params
+     * @Params  id 部门id   name 部门名称
      */
-    public List<SysDept> selectDeptInfos();
+    public List<DeptTreeInfo> selectDeptInfos(@Param("id")Long id,@Param("name")String name);
 
     /**
      * @Date 2021/7/8 16:38
@@ -51,10 +51,4 @@ public interface SysDeptDao{
      */
     public void insertDeptInfo(@Param("sysDept")SysDept sysDept);
 
-    /**
-     * @Date 2021/7/8 16:38
-     * @Description 树状图-查询组织机构信息
-     * @Params id 组织机构id
-     */
-    public List<DeptTreeInfo> selectDeptInfosByParentId(@Param("id")Long id);
 }

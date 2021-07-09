@@ -6,7 +6,10 @@ import com.gw.sys.service.SysDictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -80,5 +83,33 @@ public class SysDictionaryServiceImpl implements SysDictionaryService {
 
         sysDictionaryDao.insertDictionaryInfo(sysDictionary);
 
+    }
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  获取字典类型信息
+     * @Params
+     */
+    @Override
+    public Set<SysDictionary> getDictionaryTypeInfo() {
+
+        List<SysDictionary> types = sysDictionaryDao.selectDictionaryTypeInfo();
+
+        Set<SysDictionary> set = new HashSet<>(types);
+
+        return set;
+    }
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据id查询字典信息
+     * @Params type 字典类型
+     */
+    @Override
+    public List<SysDictionary> getDictionaryInfoByType(String type) {
+
+        List<SysDictionary> types = sysDictionaryDao.selectDictionaryInfoByType(type);
+
+        return types;
     }
 }

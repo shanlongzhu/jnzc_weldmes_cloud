@@ -50,7 +50,6 @@ public class SysMenuController {
 
         List<SysMenuInfo> list = sysMenuService.getMenuInfoList();
 
-
         return HttpResult.ok(list);
     }
 

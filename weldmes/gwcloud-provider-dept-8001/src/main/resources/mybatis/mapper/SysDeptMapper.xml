@@ -16,11 +16,11 @@
         <result property="delFlag" column="del_flag"></result>
     </resultMap>
 
-    <!--查询组织机构列表信息-->
+    <!--&lt;!&ndash;查询组织机构列表信息&ndash;&gt;
     <select id="selectDeptInfos" resultMap="deptMap">
         select id,`name`,parent_id,order_num,create_by,create_time,last_update_by,last_update_time
         from sys_dept
-    </select>
+    </select>-->
 
     <!--根据id查询组织机构信息-->
     <select id="selectDeptInfoById" parameterType="com.gw.entities.SysDept" resultType="com.gw.entities.SysDept">
@@ -56,12 +56,18 @@
         values(#{sysDept.name},#{sysDept.parentId},#{sysDept.createBy},#{sysDept.createTime})
     </insert>
 
-    <!--根据父级id查询组织机构信息-->
-    <select id="selectDeptInfosByParentId" resultType="com.gw.entities.DeptTreeInfo">
+    <!--根据id查询部门信息列表-->
+    <select id="selectDeptInfos" resultType="com.gw.entities.DeptTreeInfo">
         select dept3.`name` parentName,dept1.id,dept1.`name`,dept2.id childrenId,dept2.`name` childrenName
         from `sys_dept` dept1
         left join `sys_dept` dept2 on dept1.id = dept2.parent_id
         left join `sys_dept` dept3 on dept1.parent_id = dept3.id
-        where dept1.id = #{id}
+        where 1=1
+        <if test="id != null and id != ''">
+            and dept1.id = #{id}
+        </if>
+        <if test="name != null and name != ''">
+            and dept1.`name` like "%"#{name}"%"
+        </if>
     </select>
 </mapper>

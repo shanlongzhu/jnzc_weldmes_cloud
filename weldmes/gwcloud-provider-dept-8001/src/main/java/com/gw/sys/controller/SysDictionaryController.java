@@ -4,12 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.entities.SysDictionary;
-import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysDictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -38,7 +38,7 @@ public class SysDictionaryController {
         List<SysDictionary> list = sysDictionaryService.getDictionaryInfos(type,typeName,value,valueName);
 
         //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(list,10);
+        PageInfo<SysDictionary> page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }
@@ -95,7 +95,30 @@ public class SysDictionaryController {
         return HttpResult.ok("字典信息新增成功!");
     }
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  获取字典类型信息
+     * @Params
+     */
+    @RequestMapping("dictionary/getDictionaryTypeInfo")
+    public HttpResult getDictionaryTypeInfo(){
 
+        Set<SysDictionary> list = sysDictionaryService.getDictionaryTypeInfo();
 
+        return HttpResult.ok(list);
+    }
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据类型查询字典信息列表
+     * @Params id 字典id
+     */
+    @RequestMapping("dictionary/getDictionaryInfoByType")
+    public HttpResult getDictionaryInfoByType(String type){
+
+        List<SysDictionary> list = sysDictionaryService.getDictionaryInfoByType(type);
+
+        return HttpResult.ok(list);
+    }
 
 }

@@ -51,4 +51,19 @@ public interface SysDictionaryDao{
      */
     public void insertDictionaryInfo(@Param("sysDictionary") SysDictionary sysDictionary);
 
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  获取字典类型信息
+     * @Params
+     */
+    public List<SysDictionary> selectDictionaryTypeInfo();
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据id查询字典信息
+     * @Params type 字典类型
+     */
+    public List<SysDictionary> selectDictionaryInfoByType(@Param("type") String type);
+
+
 }

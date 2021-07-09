@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
-import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +30,15 @@ public class SysDeptController {
      * @Params
      */
     @RequestMapping("dept/getDeptInfos")
-    public HttpResult getDictionaryInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+    public HttpResult getDictionaryInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                                         @RequestParam(value="id",defaultValue = "1")Long id,String name){
 
         PageHelper.startPage(pn,10);
 
-        List<SysDept> list = sysDeptService.getDeptInfos();
+        List<DeptTreeInfo> list = sysDeptService.getDeptInfos(id,name);
 
         //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(list,10);
+        PageInfo<DeptTreeInfo> page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }
@@ -93,19 +93,6 @@ public class SysDeptController {
         sysDeptService.addDeptInfo(sysDept);
 
         return HttpResult.ok("组织机构信息新增成功!");
-    }
-
-    /**
-     * @Date 2021/7/8 16:38
-     * @Description 树状图-查询组织机构信息
-     * @Params id 组织机构id
-     */
-    @RequestMapping("dept/getTreeDeptInfo")
-    public HttpResult getTreeDeptInfo(Long id){
-
-        List<DeptTreeInfo> list = sysDeptService.getTreeDeptInfos(id);
-
-        return HttpResult.ok(list);
     }
 
 

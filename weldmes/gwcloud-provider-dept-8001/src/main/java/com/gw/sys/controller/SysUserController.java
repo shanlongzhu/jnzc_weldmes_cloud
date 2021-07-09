@@ -4,9 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.*;
 import com.gw.entities.SysDept;
-import com.gw.entities.SysRole;
+
 import com.gw.entities.SysUser;
-import com.gw.entities.TaskInfo;
+
 import com.gw.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +56,7 @@ public class SysUserController {
         List<SysUser> list = sysUserService.getUserInfosByDeptId(deptId,userName,loginName,mobile,roleId);
 
         //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(list,10);
+        PageInfo<SysUser> page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
 
