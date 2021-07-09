@@ -182,13 +182,10 @@ public class SysUserServiceImpl implements SysUserService {
         //新增用户信息
         sysUserDao.insertUserInfo(sysUser);
 
-        //获取新增用户的id
-        SysUser addUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(sysUser.getName());
-
         SysUserRole sysUserRole = new SysUserRole();
 
         //将新增角色信息时需要的信息 放入用户角色实体类
-        sysUserRole.setUserId(addUser.getId());
+        sysUserRole.setUserId(sysUser.getId());
 
         sysUserRole.setRoleId(sysUser.getRoleId());
 

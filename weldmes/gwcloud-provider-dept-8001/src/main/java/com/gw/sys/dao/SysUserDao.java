@@ -41,7 +41,7 @@ public interface SysUserDao {
      * @Description 新增用户
      * @Params sysUser 用户信息
      */
-    void insertUserInfo(@Param("sysUser") SysUser sysUser);
+    Long insertUserInfo(@Param("sysUser") SysUser sysUser);
 
     /**
      * @Date 2021/7/6 11:18

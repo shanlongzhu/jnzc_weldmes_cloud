@@ -81,7 +81,7 @@
     </update>
 
     <!--新增用户信息-->
-    <insert id="insertUserInfo" parameterType="com.gw.entities.SysUser">
+    <insert id="insertUserInfo" parameterType="com.gw.entities.SysUser" useGeneratedKeys="true" keyProperty="id">
         insert into sys_user(`name`,password,email,mobile,login_name,`position`,dept_id,status,create_time,del_flag)
         values(#{sysUser.name},#{sysUser.password},#{sysUser.email},#{sysUser.mobile},
         #{sysUser.loginName},#{sysUser.position},#{sysUser.deptId},#{sysUser.status},#{sysUser.createTime},0)
