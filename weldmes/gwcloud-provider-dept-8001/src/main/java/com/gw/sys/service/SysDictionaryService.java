@@ -3,6 +3,7 @@ package com.gw.sys.service;
 import com.gw.entities.SysDictionary;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -46,5 +47,19 @@ public interface SysDictionaryService {
      * @Params sysDictionary 字典信息
      */
     public void addDictionaryInfo(SysDictionary sysDictionary);
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  获取字典类型信息
+     * @Params
+     */
+    public Set<SysDictionary> getDictionaryTypeInfo();
+
+    /**
+     * @Date 2021/7/8 13:39
+     * @Description  根据id查询字典信息
+     * @Params type 字典类型
+     */
+    public List<SysDictionary> getDictionaryInfoByType(String type);
 
 }

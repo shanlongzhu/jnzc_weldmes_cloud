@@ -63,4 +63,15 @@
         values(#{sysDictionary.type},#{sysDictionary.typeName},#{sysDictionary.value},#{sysDictionary.valueName},#{sysDictionary.remarks})
     </insert>
 
+    <!--获取字典类型信息-->
+    <select id="selectDictionaryTypeInfo" resultMap="dictionaryMap">
+        select `type`,type_name from sys_dictionary
+    </select>
+
+    <!--根据字典类型查询信息列表-->
+    <select id="selectDictionaryInfoByType" parameterType = "String" resultMap="dictionaryMap">
+        select id,`type`,type_name,`value`,value_name,remarks
+        from sys_dictionary
+        where type = #{type}
+    </select>
 </mapper>

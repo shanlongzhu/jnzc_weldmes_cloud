@@ -3,9 +3,10 @@ package com.gw.sys.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.*;
-import com.gw.entities.SysDeptInfo;
+import com.gw.entities.SysDept;
+
 import com.gw.entities.SysUser;
-import com.gw.entities.TaskInfo;
+
 import com.gw.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class SysUserController {
     @RequestMapping(value = "user/gradeInfos")
     public HttpResult getCurrentGradeInfos() {
 
-        SysDeptInfo sysDeptInfo = sysUserService.getGradeInfo();
+        SysDept sysDeptInfo = sysUserService.getGradeInfo();
 
         return HttpResult.ok(sysDeptInfo);
 
@@ -44,19 +45,20 @@ public class SysUserController {
     /**
      * @Date 2021/7/7 16:29
      * @Description 条件查询用户信息
-     * @Params id 部门id
+     * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @RequestMapping(value = "user/getUserInfosByOpt")
-    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long id) {
+    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long deptId,String userName,
+                                           String loginName,String mobile,Long roleId) {
 
         PageHelper.startPage(pn,10);
 
-        List<SysUser> list = sysUserService.getUserInfosByDeptId(id);
+        List<SysUser> list = sysUserService.getUserInfosByDeptId(deptId,userName,loginName,mobile,roleId);
 
         //将查询结果进行分页
-        com.github.pagehelper.PageInfo<TaskInfo> page=new PageInfo(list,10);
+        PageInfo<SysUser> page=new PageInfo(list,10);
 
-        return HttpResult.ok(list);
+        return HttpResult.ok(page);
 
     }
 
@@ -114,6 +116,23 @@ public class SysUserController {
 
         return HttpResult.ok("用户信息添加成功!");
 
+    }
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询用户信息列表
+     * @Params id 角色id
+     */
+    @RequestMapping(value = "user/getUserInfosByRoleId")
+    public HttpResult getUserInfosByRoleId(@RequestParam(value="pn",defaultValue = "1")Integer pn,Long id) {
+
+        PageHelper.startPage(pn,10);
+
+        List<SysUser> list = sysUserService.getUserInfosByRoleId(id);
+
+        PageInfo<SysUser> page = new PageInfo(list,10);
+
+        return HttpResult.ok(page);
     }
 
 }

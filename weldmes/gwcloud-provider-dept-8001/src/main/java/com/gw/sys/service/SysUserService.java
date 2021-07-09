@@ -1,7 +1,7 @@
 package com.gw.sys.service;
 
 
-import com.gw.entities.SysDeptInfo;
+import com.gw.entities.SysDept;
 import com.gw.entities.SysUser;
 
 import java.util.List;
@@ -20,14 +20,15 @@ public interface SysUserService {
      * @Description  获取集团班组树状图信息
      * @Params
      */
-    public SysDeptInfo getGradeInfo();
+    public SysDept getGradeInfo();
 
     /**
      * @Date 2021/7/7 16:29
      * @Description 条件查询用户信息
-     * @Params id 部门id
+     * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
-    public List<SysUser> getUserInfosByDeptId(Long id);
+    public List<SysUser> getUserInfosByDeptId(Long deptId,String userName,
+                                              String loginName,String mobile,Long roleId);
 
     /**
      * @Date 2021/7/7 16:29
@@ -56,5 +57,12 @@ public interface SysUserService {
      * @Params sysUser 用户信息
      */
     void addUserInfo(SysUser sysUser);
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询用户信息列表
+     * @Params id 角色id
+     */
+    public List<SysUser> getUserInfosByRoleId(Long id);
 
 }

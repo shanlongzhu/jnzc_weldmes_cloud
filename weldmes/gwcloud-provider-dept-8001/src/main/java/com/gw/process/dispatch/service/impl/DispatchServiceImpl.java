@@ -78,17 +78,35 @@ public class DispatchServiceImpl implements DispatchService{
             return map;
         }
 
-        //通过部门Id查询工作区
-        SysDeptInfo workArea = dispatchDao.queryDeptNameListById(deptId);
+        //通过部门Id查询一级列表
+        SysDept group = dispatchDao.queryDeptNameListById(deptId);
 
-        //通过工作区的父级id查询班组列表
-        List<SysDeptInfo> gradeList = dispatchDao.queryGradeList(deptId);
+        //通过部门Id查询二级列表
+        List<SysDept> deptList = dispatchDao.queryGradeList(deptId);
 
-        workArea.setList(gradeList);
+        for (SysDept sysDept : deptList) {
 
-        List<SysDeptInfo> list = new ArrayList<>();
+            //查询三级列表
+            List<SysDept> workAreaList = dispatchDao.queryGradeList(sysDept.getId());
 
-        list.add(workArea);
+            if(!ObjectUtils.isEmpty(workAreaList)){
+
+                for (SysDept workArea : workAreaList) {
+
+                    //查询四级列表
+                    List<SysDept> gradeList = dispatchDao.queryGradeList(workArea.getId());
+
+                    workArea.setList(gradeList);
+
+                }
+            }
+            sysDept.setList(workAreaList);
+        }
+        group.setList(deptList);
+
+        List<SysDept> list = new ArrayList<>();
+
+        list.add(group);
         //获取到 任务状态 字符串
         String taskStatus = DictionaryEnum.TASK_STATUS_FINISH.getType();
 
@@ -130,14 +148,6 @@ public class DispatchServiceImpl implements DispatchService{
     @Override
     public void addTaskInfo(TaskInfo taskInfo) {
 
-       /* //根据等级获取等级id
-        byte grade = dispatchDao.queryTaskGradeIdByValueName(taskInfo.getGradeIdToStr());
-        //根据班组获取班组id
-        Long deptId = dispatchDao.queryDeptIdByWorkArea(taskInfo.getDeptName());
-
-        taskInfo.setGrade(grade);
-        taskInfo.setDeptId(deptId);*/
-
         dispatchDao.addTaskInfo(taskInfo);
 
     }
@@ -162,16 +172,6 @@ public class DispatchServiceImpl implements DispatchService{
      */
     @Override
     public void updateTaskInfo(TaskInfo taskInfo) {
-
-        /*//通过任务等级获取主键
-        byte gradeId = dispatchDao.queryTaskGradeIdByValueName(taskInfo.getGradeIdToStr());
-
-        taskInfo.setGrade(gradeId);
-
-        //通过所属班组获取主键
-        Long deptId = dispatchDao.queryDeptIdByWorkArea(taskInfo.getDeptName());
-
-        taskInfo.setDeptId(deptId);*/
 
         dispatchDao.updateTaskInfo(taskInfo);
 
@@ -362,15 +362,35 @@ public class DispatchServiceImpl implements DispatchService{
         //通过用户名和密码拿到部门id
         Long deptId = dispatchDao.queryUserDeptId(username,password);
 
-        //通过部门id获取到作业区的id
-        List<SysDeptInfo> workArea = dispatchDao.queryGradeList(deptId);
+        //通过部门Id查询一级列表
+        SysDept group = dispatchDao.queryDeptNameListById(deptId);
 
-        for (SysDeptInfo workSpace : workArea) {
+        //通过部门Id查询二级列表
+        List<SysDept> deptList = dispatchDao.queryGradeList(deptId);
 
-            List<SysDeptInfo> gradeList = dispatchDao.queryGradeList(workSpace.getId());
+        for (SysDept sysDept : deptList) {
 
-            workSpace.setList(gradeList);
+            //查询三级列表
+            List<SysDept> workAreaList = dispatchDao.queryGradeList(sysDept.getId());
+
+            if(!ObjectUtils.isEmpty(workAreaList)){
+
+                for (SysDept workArea : workAreaList) {
+
+                    //查询四级列表
+                    List<SysDept> gradeList = dispatchDao.queryGradeList(workArea.getId());
+
+                    workArea.setList(gradeList);
+
+                }
+            }
+            sysDept.setList(workAreaList);
         }
+        group.setList(deptList);
+
+        List<SysDept> workArea = new ArrayList<>();
+
+        workArea.add(group);
 
         //获取到 任务状态 字符串
         String taskStatus = DictionaryEnum.TASK_STATUS_FINISH.getType();

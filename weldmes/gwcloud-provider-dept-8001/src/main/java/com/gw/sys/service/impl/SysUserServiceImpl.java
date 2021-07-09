@@ -41,7 +41,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @Params
      */
     @Override
-    public SysDeptInfo getGradeInfo() {
+    public SysDept getGradeInfo() {
 
         Subject currentUser = SecurityUtils.getSubject();
 
@@ -49,24 +49,24 @@ public class SysUserServiceImpl implements SysUserService {
         UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
 
         //获取到当前用户所属的机构信息
-        SysDeptInfo sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
+        SysDept sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
 
         //获取二级部门信息列表
-        List<SysDeptInfo> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
+        List<SysDept> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
 
         if(!ObjectUtils.isEmpty(sysSecondDeptInfos)){
 
-            for (SysDeptInfo sysSecondDeptInfo : sysSecondDeptInfos) {
+            for (SysDept sysSecondDeptInfo : sysSecondDeptInfos) {
 
                 //获取三级部门信息列表
-                List<SysDeptInfo> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
+                List<SysDept> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
 
                 if(!ObjectUtils.isEmpty(sysThirdDeptInfos)){
 
-                    for (SysDeptInfo sysThirdDeptInfo : sysThirdDeptInfos) {
+                    for (SysDept sysThirdDeptInfo : sysThirdDeptInfos) {
 
                         //获取四级部门信息列表
-                        List<SysDeptInfo> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
+                        List<SysDept> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
 
                         if(!ObjectUtils.isEmpty(sysFourthDeptInfos)){
 
@@ -86,12 +86,13 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * @Date 2021/7/7 16:29
      * @Description 条件查询用户信息
-     * @Params id 部门id
+     * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @Override
-    public List<SysUser> getUserInfosByDeptId(Long id) {
+    public List<SysUser> getUserInfosByDeptId(Long deptId,String userName,
+                                              String loginName,String mobile,Long roleId) {
 
-        List<SysUser> sysUsers = sysUserDao.selectUserInfosByDeptId(id);
+        List<SysUser> sysUsers = sysUserDao.selectUserInfosByDeptId(deptId,userName,loginName,mobile,roleId);
 
         return sysUsers;
     }
@@ -181,13 +182,10 @@ public class SysUserServiceImpl implements SysUserService {
         //新增用户信息
         sysUserDao.insertUserInfo(sysUser);
 
-        //获取新增用户的id
-        SysUser addUser = userRolesAndPerDao.queryUserInfoByUserNameAndPwd(sysUser.getName());
-
         SysUserRole sysUserRole = new SysUserRole();
 
         //将新增角色信息时需要的信息 放入用户角色实体类
-        sysUserRole.setUserId(addUser.getId());
+        sysUserRole.setUserId(sysUser.getId());
 
         sysUserRole.setRoleId(sysUser.getRoleId());
 
@@ -196,5 +194,18 @@ public class SysUserServiceImpl implements SysUserService {
         //新增用户角色信息
         userRolesAndPerDao.insertUserRoleInfo(sysUserRole);
 
+    }
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询用户信息列表
+     * @Params id 角色id
+     */
+    @Override
+    public List<SysUser> getUserInfosByRoleId(Long id) {
+
+        List<SysUser> list = sysUserDao.selectUserInfosByRoleId(id);
+
+        return list;
     }
 }

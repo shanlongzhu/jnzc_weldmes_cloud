@@ -1,39 +1,68 @@
 package com.gw.entities;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import java.io.Serializable;
-import java.math.BigInteger;
 
+import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor//生成一个无参构造函数
+/**
+ * @Author zhanghan
+ * @Date 2021/6/29 9:12
+ * @Description  部门信息实体类
+ */
 @Data
-@Accessors(chain=true)
-@TableName(value = "sys_dept")//指定表名
-public class SysDept implements Serializable {
-    @TableId(type = IdType.AUTO)        //主见注解，数据库ID自增
-    private BigInteger id;
+public class SysDept {
+
+    /**
+     * id
+     */
+    private Long id;
+
+    /**
+     * 机构名称
+     */
     private String name;
-    @TableField(value = "parent_id")
-    private BigInteger parentId;
-    @TableField(value = "order_num")
-    private BigInteger orderNum;
-    @TableField(value = "create_by")
+
+    /**
+     * 上级机构ID，一级机构为0
+     */
+    private Long parentId;
+
+    /**
+     * 排序
+     */
+    private int orderNum;
+
+    /**
+     * 创建人
+     */
     private String createBy;
-    @TableField("create_time")
+
+    /**
+     * 创建时间
+     */
     private String createTime;
-    @TableField("last_update_by")
+
+    /**
+     * 更新人
+     */
     private String lastUpdateBy;
-    @TableField("last_update_time")
+
+    /**
+     * 更新时间
+     */
     private String lastUpdateTime;
-    @TableField("del_flag")
-    private BigInteger delFlag;
+
+    /**
+     * 是否删除  -1：已删除  0：正常
+     */
+    private int delFlag;
+
+    /**
+     * 机构列表
+     */
+    private List<SysDept> list;
+
+
+
 
 }

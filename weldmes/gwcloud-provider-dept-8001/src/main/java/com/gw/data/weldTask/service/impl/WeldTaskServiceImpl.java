@@ -3,12 +3,10 @@ package com.gw.data.weldTask.service.impl;
 import com.gw.data.weldTask.dao.WeldTaskDao;
 import com.gw.data.weldTask.service.WeldTaskService;
 import com.gw.entities.RealtimeData;
-import com.gw.entities.SysDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class WeldTaskServiceImpl implements WeldTaskService {

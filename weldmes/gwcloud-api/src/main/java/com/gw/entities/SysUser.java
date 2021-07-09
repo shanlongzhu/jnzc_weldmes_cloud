@@ -95,4 +95,9 @@ public class SysUser {
      * 岗位
      */
     private String position;
+
+    /**
+     * 角色名
+     */
+    private String roleName;
 }
