@@ -26,17 +26,54 @@ mybatis-plus:
 spring:
   application:
     name: gwcloud-dept
+#  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+#    driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
+#    url: jdbc:mysql://119.3.100.103:3306/jnzc?characterEncoding=utf-8&serverTimezone=GMT%2B8     # 数据库名称
+#    username: root
+#    password: ZJokvtdZ4O0
+#    dbcp2:
+#      min-idle: 5                                           # 数据库连接池的最小维持连接数
+#      initial-size: 5                                       # 初始化连接数
+#      max-total: 5                                          # 最大连接数
+#      max-wait-millis: 200                                  # 等待连接获取的最大超时时间
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
-    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
-    url: jdbc:mysql://119.3.100.103:3306/jnzc?characterEncoding=utf-8&serverTimezone=GMT%2B8     # 数据库名称
-    username: root
-    password: ZJokvtdZ4O0
-    dbcp2:
-      min-idle: 5                                           # 数据库连接池的最小维持连接数
-      initial-size: 5                                       # 初始化连接数
-      max-total: 5                                          # 最大连接数
-      max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+    ds1: #数据源1
+      type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+      driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
+      url: jdbc:mysql://119.3.100.103:3306/jnzc?characterEncoding=utf-8&serverTimezone=GMT%2B8        # 数据库名称
+      username: root
+      password: ZJokvtdZ4O0
+      initialSize: 10
+      minIdle: 10
+      maxActive: 200
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      #合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+    ds2: # 数据源2
+      type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+      driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
+      url: jdbc:mysql://119.3.100.103:3306/weldmes-rtdata?characterEncoding=utf-8&serverTimezone=GMT%2B8        # 数据库名称
+      username: root
+      password: ZJokvtdZ4O0
+      initialSize: 10
+      minIdle: 10
+      maxActive: 200
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      #合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
 
 eureka:
   client: #客户端注册进eureka服务列表内

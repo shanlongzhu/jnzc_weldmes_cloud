@@ -33,9 +33,9 @@ public class WelderModel implements Serializable {
     private Integer status;
     @TableField("dept_id")
     private BigInteger deptId;
-    private String idcard;
+//    private String idcard;
     private Integer gender;
-    private Integer attribute;
+//    private Integer attribute;
     private String cellphone;
     @TableField("`rank`")
     private Integer rank;
