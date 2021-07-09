@@ -103,10 +103,9 @@ public class SysDeptServiceImpl implements SysDeptService {
     @Override
     public SysDept getTreeDeptInfos(Long id) {
 
-
         SysDept sysDept = sysDeptDao.selectDeptInfoById(id);
 
-        List<SysDept> list = sysDeptDao.selectDeptInfosByParentId(sysDept.getParentId());
+        List<SysDept> list = sysDeptDao.selectDeptInfosByParentId(id);
 
         sysDept.setList(list);
 

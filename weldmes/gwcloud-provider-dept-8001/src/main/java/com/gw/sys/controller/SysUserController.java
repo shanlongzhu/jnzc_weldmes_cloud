@@ -44,14 +44,15 @@ public class SysUserController {
     /**
      * @Date 2021/7/7 16:29
      * @Description 条件查询用户信息
-     * @Params id 部门id
+     * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @RequestMapping(value = "user/getUserInfosByOpt")
-    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long id) {
+    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long deptId,String userName,
+                                           String loginName,String mobile,Long roleId) {
 
         PageHelper.startPage(pn,10);
 
-        List<SysUser> list = sysUserService.getUserInfosByDeptId(id);
+        List<SysUser> list = sysUserService.getUserInfosByDeptId(deptId,userName,loginName,mobile,roleId);
 
         //将查询结果进行分页
         PageInfo<TaskInfo> page=new PageInfo(list,10);

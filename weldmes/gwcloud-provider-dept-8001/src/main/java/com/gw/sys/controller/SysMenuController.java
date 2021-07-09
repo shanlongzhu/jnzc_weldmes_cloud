@@ -46,16 +46,12 @@ public class SysMenuController {
      * @Params
      */
     @RequestMapping("getMenuOrButtonInfo")
-    public HttpResult getMenuInfoList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
-
-        PageHelper.startPage(pn,10);
+    public HttpResult getMenuInfoList(){
 
         List<SysMenuInfo> list = sysMenuService.getMenuInfoList();
 
-        //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(list,10);
 
-        return HttpResult.ok(page);
+        return HttpResult.ok(list);
     }
 
     /**

@@ -26,7 +26,7 @@ public class SysRoleController {
 
     /**
      * @Date 2021/7/6 11:18
-     * @Description 角色列表查询
+     * @Description 角色列表查询-分页
      * @Params
      */
     @RequestMapping(value = "role/list" ,method = RequestMethod.GET)
@@ -39,6 +39,19 @@ public class SysRoleController {
         PageInfo<SysRole> page = new PageInfo(list,10);
 
         return HttpResult.ok(page);
+    }
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 角色列表查询
+     * @Params
+     */
+    @RequestMapping(value = "role/roleInfos" ,method = RequestMethod.GET)
+    public HttpResult roleInfos() {
+
+        List<SysRole> list = sysRoleService.getRoleInfos();
+
+        return HttpResult.ok(list);
     }
 
     /**
