@@ -381,17 +381,8 @@ export default {
             grade: '',
             visable1: false,
             ruleFormObj: {
-                id: '',
-                taskNo: '',
-                gradeIdToStr: '',
-                grade: '',
-                deptName: '',
-                deptId: '',
-                planStarttime: '',
-                planEndtime: ''
             },
             ruleForm: {
-                id: '',
                 taskNo: '',
                 gradeIdToStr: '',
                 grade: '',
@@ -455,6 +446,7 @@ export default {
     },
 
     created () {
+        this.ruleFormObj = {...this.ruleForm};
         this.getList()
         this.getUserRoles()
         if (this.levelArr.length == 0) {

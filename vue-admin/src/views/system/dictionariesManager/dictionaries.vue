@@ -8,14 +8,6 @@
             class="roles-l flex-c"
             style="height:100%; flex:1; width:0px"
         >
-            <div class="p10">
-                <el-button
-                    size="mini"
-                    plain
-                    @click="addRolsFun"
-                    v-has="'add'"
-                >新增角色</el-button>
-            </div>
             <div
                 class=""
                 style="flex:1;height:0px"
@@ -23,7 +15,7 @@
                 <vxe-table
                     ref="xTable"
                     border
-                    :data="list"
+                    :data="typeList"
                     :loading="loading"
                     size="mini"
                     height="auto"
@@ -40,16 +32,16 @@
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="name"
-                        title="角色名"
+                        field="typeName"
+                        title="类型"
                         min-width="120"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="remark"
-                        title="描述"
+                        field="type"
+                        title="值"
                         min-width="120"
                     ></vxe-table-column>
-                    <vxe-table-column
+                    <!-- <vxe-table-column
                         field="createTime"
                         title="操作"
                         width="100"
@@ -68,116 +60,70 @@
                                 ></i>
                             </span>
                         </template>
-                    </vxe-table-column>
+                    </vxe-table-column> -->
                 </vxe-table>
             </div>
-            <el-pagination
-                class="p10"
-                :current-page.sync="page"
-                :page-size="10"
-                align="right"
-                background
-                layout="total, prev, pager, next"
-                :total="total"
-                @current-change="handleCurrentChange"
-            />
 
         </div>
         <div
             class="roles-r flex-c"
-            style="height:100%; flex:1; width:0px"
+            style="height:100%; flex:1;width:0px"
         >
-            <el-tabs
-                v-model="activeName"
-                @tab-click="handleClick"
-                class="flex-c"
-                style="height:100%;"
+            <div
+                class="p10"
+                style="padding-left:0px"
             >
-                <el-tab-pane
-                    label="权限分配"
-                    name="first"
+                <el-button
+                    size="mini"
+                    plain
+                    @click="addRolsFun"
+                    v-has="'add'"
+                >新增</el-button>
+            </div>
+            <div style="flex:1;height:0px">
+                <vxe-table
+                    ref="xTable"
+                    border
+                    :data="userList"
+                    :loading="loading"
+                    size="mini"
+                    height="auto"
+                    auto-resize
+                    resizable
+                    stripe
                 >
-                    <div
-                        class="p10"
-                        style="border-bottom:1px solid #ddd"
+                    <vxe-table-column
+                        type="seq"
+                        width="50"
+                        title="序号"
                     >
-                        <el-button
-                            size="mini"
-                            type="default"
-                            plain
-                            @click="saveAuth"
-                        >保存权限</el-button>
-                    </div>
-                    <div
-                        class=""
-                        style="flex:1;height:0px;overflow-y:auto"
-                        v-loading="menusLoading"
-                    >
-                        <el-tree
-                            :data="menuList"
-                            show-checkbox
-                            check-strictly
-                            node-key="id"
-                            ref="tree"
-                            :props="defaultProps"
-                            default-expand-all
-                            :expand-on-click-node="false"
-                            check-on-click-node
-                        >
-                        </el-tree>
-                    </div>
-                </el-tab-pane>
-                <el-tab-pane
-                    label="用户列表"
-                    name="second"
-                >
-                    <div
-                        class="flex-c"
-                        style="flex:1"
-                    >
-                        <div style="flex:1;height:0px">
-                            <vxe-table
-                                ref="xTable"
-                                border
-                                :data="userList"
-                                :loading="loading"
-                                size="mini"
-                                height="auto"
-                                auto-resize
-                                resizable
-                                stripe
-                            >
-                                <vxe-table-column
-                                    type="seq"
-                                    width="50"
-                                    title="序号"
-                                >
-                                </vxe-table-column>
-                                <vxe-table-column
-                                    field="name"
-                                    title="用户名"
-                                    min-width="120"
-                                ></vxe-table-column>
-                                <vxe-table-column
-                                    field="loginName"
-                                    title="登录名"
-                                    min-width="120"
-                                ></vxe-table-column>
-                            </vxe-table>
-                        </div>
-                        <el-pagination
-                            class="p10"
-                            :current-page.sync="page2"
-                            :page-size="10"
-                            align="right"
-                            background
-                            layout="total, prev, pager, next"
-                            :total="total2"
-                            @current-change="handleCurrentChange2"
-                        />
-                    </div>
-                </el-tab-pane>
-            </el-tabs>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="name"
+                        title="名称"
+                        min-width="120"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="loginName"
+                        title="值"
+                        width="100"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="loginName"
+                        title="类型"
+                    ></vxe-table-column>
+                </vxe-table>
+            </div>
+            <el-pagination
+                class="p10"
+                :current-page.sync="page2"
+                :page-size="10"
+                align="right"
+                background
+                layout="total, prev, pager, next"
+                :total="total2"
+                @current-change="handleCurrentChange2"
+            />
         </div>
         <el-dialog
             :title="title"
@@ -193,21 +139,41 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="角色名"
-                    prop="name"
+                    label="名称"
+                    prop="value"
                 >
                     <el-input
-                        v-model="ruleForm.name"
+                        v-model="ruleForm.value"
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
 
                 <el-form-item
-                    label="描述"
-                    prop="remark"
+                    label="值"
+                    prop="valueName"
                 >
                     <el-input
-                        v-model="ruleForm.remark"
+                        v-model="ruleForm.valueName"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="类型名称"
+                    prop="typeName"
+                >
+                    <el-input
+                        disabled
+                        v-model="ruleForm.typeName"
+                        style="width:250px"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="类型标识"
+                    prop="type"
+                >
+                    <el-input
+                        disabled
+                        v-model="ruleForm.type"
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
@@ -225,14 +191,18 @@
 
 <script>
 
-import { getRoleList, getMenuList, addRole, editRole, delRole, getRoleDetail, getCurrentRoleList, saveRoleList, getRoleUserList } from '_api/system/systemApi'
+import { findTypeList, getRoleUserList, getDicType,addDic,findDicIdInfo,delDic,editDic } from '_api/system/systemApi'
 export default {
-    name: 'RolesManager',
+    name: 'dictionaries',
     data () {
         return {
             defaultProps: {
                 children: 'menus'
             },
+            //字典类型
+            typeList:[],
+            selectType:{},
+
             //角色列表
             list: [],
             page: 1,
@@ -258,13 +228,18 @@ export default {
 
             },
             ruleForm: {
-                name: '',//角色名
-                remark: ''//描述
+                value:'',
+                valueName:'',
+                typeName: '',//角色名
+                type: ''//描述
             },
             //
             rules: {
-                name: [
-                    { required: true, message: '名称不能为空', trigger: 'blur' }
+                value: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
+                ],
+                valueName: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ]
             },
 
@@ -280,48 +255,63 @@ export default {
     created () {
         this.objRuleForm = { ...this.ruleForm };
         this.getList();
+        this.getDicTypeFun();
     },
     methods: {
-        //获取角色列表
+        //获取字典类型
+        async getDicTypeFun () {
+            let { data, code } = await getDicType();
+            if (code == 200) {
+                this.typeList = (data || []).sort((a, b) => {
+                    return b.type - a.type
+                });
+            }
+        },
+
+
+        //获取字典列表
         async getList () {
             this.loading = true;
-            this.resetData();
             let req = {
-                pn: this.page
+                pn: this.page,
+                ...this.selectType
             }
-            let { code, data } = await getRoleList(req);
+            let { code, data } = await findTypeList(req);
             this.loading = false;
             if (code == 200) {
                 this.list = data.list || [];
                 this.total = data.total;
-                this.setHightRow();
             }
         },
         resetData () {
-            this.menuList = [];
-            this.selectId = [];
         },
-        //新增角色
+
+
+        //新增字典
         addRolsFun () {
-            this.title = '新增角色';            
+            if(JSON.stringify(this.selectType)=='{}'){
+                return this.$message.error("请先选择字典类型");
+            }
+            this.title = '新增字典';            
             this.sourceVisible = true;
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
                 this.ruleForm = { ...this.objRuleForm };
+                this.ruleForm.typeName = this.selectType.typeName;
+                this.ruleForm.type = this.selectType.type;
                 Reflect.deleteProperty(this.ruleForm, "id");
-            })            
+            })
         },
-        //编辑角色
+        //编辑字典
         async editFun (id, index) {
-            this.editRowIndex = index;
-            this.title = '编辑角色';
-            let { data, code } = await getRoleDetail({ id });
+            this.title = '编辑字典';
+            let { data, code } = await findDicIdInfo({ id });
             if (code == 200) {
                 this.sourceVisible = true;
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data || {};
-                })               
+                })  
             }
         },
         //删除角色
@@ -331,7 +321,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                let { data, code } = await delRole({ id });
+                let { data, code } = await delDic({ id });
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.getList()
@@ -347,57 +337,23 @@ export default {
             }
         },
 
-        //获取资源列表
-        async getMenuList () {
-            this.menusLoading = true;
-            this.menuList = [];
-            let { data, code } = await getMenuList();
-            this.menusLoading = false;
-            if (code == 200) {
-                this.menuList = data || [];
-            }
-        },
-        async getRoleMenuAndBtn (id) {
-            let { data, code } = await getCurrentRoleList({ id })
-            if (code == 200) {
-                let ids = (data || []).filter(item => item.id).map(item => item.id);
-                this.$nextTick(() => {
-                    this.$refs.tree.setCheckedKeys(ids);
-                })
-            }
-        },
-        async saveAuth () {
-            if (this.selectId && this.selectId != "") {
-                let req = {
-                    'roleId': this.selectId,
-                    'menuIds': this.$refs.tree.getCheckedKeys()
-                }
-                this.$message.warning('保存中...');
-                let { data, code } = await saveRoleList(req);
-                if (code == 200) {
-                    this.$message.success("保存成功");
-                    this.getList();
-                }
-            } else {
-                this.$message.error("请选择要分配权限的角色");
-            }
-        },
+        
 
+        
 
 
         submitForm (formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty("id")) {
-                        let { data, code } = await editRole({ ...this.ruleForm });
+                        let { data, code } = await editDic({ ...this.ruleForm });
                         if (code == 200) {
                             this.$message.success("修改成功");
                             this.sourceVisible = false;
                             this.getList();
                         }
                     } else {
-                        this.editRowIndex = this.list.length;
-                        let { data, code } = await addRole({ ...this.ruleForm });
+                        let { data, code } = await addDic({ ...this.ruleForm });
                         if (code == 200) {
                             this.$message.success("保存成功");
                             this.sourceVisible = false;
@@ -411,15 +367,11 @@ export default {
             });
         },
 
-        //角色点击
-        selectTableData ({ row, rowIndex }) {
-            this.activeName = 'first';
-            this.getMenuList();
-            this.selectId = row.id;
-            this.editRowIndex = rowIndex;
+        //类型点击
+        selectTableData ({ row }) {
+            this.selectType = row;
             this.$nextTick(() => {
-                this.getRoleMenuAndBtn(row.id);
-                this.getUserListFun();
+                this.getList();
             })
         },
 
@@ -466,7 +418,6 @@ export default {
     width: 200px;
 }
 .roles-r {
-    border: 1px solid #ddd;
     margin-left: 10px;
 }
 .roles-r * {
