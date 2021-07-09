@@ -1,5 +1,6 @@
 package com.gw.sys.service;
 
+import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -53,6 +54,6 @@ public interface SysDeptService {
      * @Description 树状图-查询组织机构信息
      * @Params id 组织机构id
      */
-    public SysDept getTreeDeptInfos(Long id);
+    public List<DeptTreeInfo> getTreeDeptInfos(Long id);
 
 }

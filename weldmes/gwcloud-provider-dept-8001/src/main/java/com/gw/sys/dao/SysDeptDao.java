@@ -1,5 +1,6 @@
 package com.gw.sys.dao;
 
+import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -55,5 +56,5 @@ public interface SysDeptDao{
      * @Description 树状图-查询组织机构信息
      * @Params id 组织机构id
      */
-    public List<SysDept> selectDeptInfosByParentId(@Param("id")Long id);
+    public List<DeptTreeInfo> selectDeptInfosByParentId(@Param("id")Long id);
 }

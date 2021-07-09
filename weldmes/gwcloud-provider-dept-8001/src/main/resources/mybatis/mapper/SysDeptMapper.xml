@@ -57,9 +57,11 @@
     </insert>
 
     <!--根据父级id查询组织机构信息-->
-    <select id="selectDeptInfosByParentId" resultMap="deptMap">
-        select id,`name`
-        from sys_dept
-        where parent_id = #{id}
+    <select id="selectDeptInfosByParentId" resultType="com.gw.entities.DeptTreeInfo">
+        select dept3.`name` parentName,dept1.id,dept1.`name`,dept2.id childrenId,dept2.`name` childrenName
+        from `sys_dept` dept1
+        left join `sys_dept` dept2 on dept1.id = dept2.parent_id
+        left join `sys_dept` dept3 on dept1.parent_id = dept3.id
+        where dept1.id = #{id}
     </select>
 </mapper>

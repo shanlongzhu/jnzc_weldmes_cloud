@@ -3,6 +3,7 @@ package com.gw.sys.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
+import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysDeptService;
@@ -102,9 +103,9 @@ public class SysDeptController {
     @RequestMapping("dept/getTreeDeptInfo")
     public HttpResult getTreeDeptInfo(Long id){
 
-        SysDept sysDept = sysDeptService.getTreeDeptInfos(id);
+        List<DeptTreeInfo> list = sysDeptService.getTreeDeptInfos(id);
 
-        return HttpResult.ok(sysDept);
+        return HttpResult.ok(list);
     }
 
 

@@ -1,15 +1,12 @@
 package com.gw.sys.service.impl;
 
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.gw.common.DateTimeUtil;
+import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.service.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -101,14 +98,10 @@ public class SysDeptServiceImpl implements SysDeptService {
      * @Params id 组织机构id
      */
     @Override
-    public SysDept getTreeDeptInfos(Long id) {
+    public List<DeptTreeInfo> getTreeDeptInfos(Long id) {
 
-        SysDept sysDept = sysDeptDao.selectDeptInfoById(id);
+        List<DeptTreeInfo> list = sysDeptDao.selectDeptInfosByParentId(id);
 
-        List<SysDept> list = sysDeptDao.selectDeptInfosByParentId(id);
-
-        sysDept.setList(list);
-
-        return sysDept;
+        return list;
     }
 }
