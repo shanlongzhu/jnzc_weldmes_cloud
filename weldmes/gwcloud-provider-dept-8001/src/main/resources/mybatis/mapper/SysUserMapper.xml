@@ -21,6 +21,8 @@
         <result property="loginName" column="login_name"></result>
         <result property="position" column="position"></result>
         <result property="roleName" column="roleName"></result>
+        <result property="deptId" column="deptId"></result>
+        <result property="roleId" column="roleId"></result>
     </resultMap>
 
     <!--条件查询用户信息-->
@@ -42,7 +44,7 @@
             and sysUser.login_name = #{loginName}
         </if>
         <if test="mobile != null and mobile != ''">
-            and sysUser.mobile = "%"#{mobile}"%"
+            and sysUser.mobile like "%"#{mobile}"%"
         </if>
         <if test="roleId != null and roleId != ''">
             and sys_user_role.role_id = #{roleId}
@@ -52,9 +54,11 @@
     <!--通过用户id查询用户信息-->
     <select id="selectUserInfosById" resultMap="sysUserMap">
         select sysUser.id,sysUser.password,sysUser.`name`,sysUser.mobile,sysUser.email,sysUser.status,
-        sysUser.login_name,sysUser.`position`,sys_dept.name deptName
+        sysUser.login_name,sysUser.`position`,sys_dept.name deptName,
+        sys_dept.id deptId,sys_user_role.role_id roleId
         from sys_user sysUser
         left join sys_dept on sysUser.dept_id = sys_dept.id
+        left join sys_user_role on sysUser.id = sys_user_role.user_id
         where sysUser.del_flag = 0 and sysUser.id = #{id}
     </select>
 
@@ -82,6 +86,14 @@
         values(#{sysUser.name},#{sysUser.password},#{sysUser.email},#{sysUser.mobile},
         #{sysUser.loginName},#{sysUser.position},#{sysUser.deptId},#{sysUser.status},#{sysUser.createTime},0)
     </insert>
+
+    <!--通过角色id查询用户信息列表-->
+    <select id="selectUserInfosByRoleId" parameterType="Long" resultMap="sysUserMap">
+        select sys_user.`name`,sys_user.login_name
+        from sys_user
+        left join sys_user_role on sys_user_role.user_id = sys_user.id
+        where sys_user_role.role_id = #{roleId}
+    </select>
 
 
 

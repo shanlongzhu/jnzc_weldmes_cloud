@@ -78,17 +78,35 @@ public class DispatchServiceImpl implements DispatchService{
             return map;
         }
 
-        //通过部门Id查询工作区
-        SysDept workArea = dispatchDao.queryDeptNameListById(deptId);
+        //通过部门Id查询一级列表
+        SysDept group = dispatchDao.queryDeptNameListById(deptId);
 
-        //通过工作区的父级id查询班组列表
-        List<SysDept> gradeList = dispatchDao.queryGradeList(deptId);
+        //通过部门Id查询二级列表
+        List<SysDept> deptList = dispatchDao.queryGradeList(deptId);
 
-        workArea.setList(gradeList);
+        for (SysDept sysDept : deptList) {
+
+            //查询三级列表
+            List<SysDept> workAreaList = dispatchDao.queryGradeList(sysDept.getId());
+
+            if(!ObjectUtils.isEmpty(workAreaList)){
+
+                for (SysDept workArea : workAreaList) {
+
+                    //查询四级列表
+                    List<SysDept> gradeList = dispatchDao.queryGradeList(sysDept.getId());
+
+                    workArea.setList(gradeList);
+
+                }
+            }
+            sysDept.setList(workAreaList);
+        }
+        group.setList(deptList);
 
         List<SysDept> list = new ArrayList<>();
 
-        list.add(workArea);
+        list.add(group);
         //获取到 任务状态 字符串
         String taskStatus = DictionaryEnum.TASK_STATUS_FINISH.getType();
 

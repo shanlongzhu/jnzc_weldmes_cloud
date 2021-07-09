@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.*;
 import com.gw.entities.SysDept;
+import com.gw.entities.SysRole;
 import com.gw.entities.SysUser;
 import com.gw.entities.TaskInfo;
 import com.gw.sys.service.SysUserService;
@@ -115,6 +116,23 @@ public class SysUserController {
 
         return HttpResult.ok("用户信息添加成功!");
 
+    }
+
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询用户信息列表
+     * @Params id 角色id
+     */
+    @RequestMapping(value = "user/getUserInfosByRoleId")
+    public HttpResult getUserInfosByRoleId(@RequestParam(value="pn",defaultValue = "1")Integer pn,Long id) {
+
+        PageHelper.startPage(pn,10);
+
+        List<SysUser> list = sysUserService.getUserInfosByRoleId(id);
+
+        PageInfo<SysUser> page = new PageInfo(list,10);
+
+        return HttpResult.ok(page);
     }
 
 }

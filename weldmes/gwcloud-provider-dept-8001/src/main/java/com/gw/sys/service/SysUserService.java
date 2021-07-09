@@ -58,4 +58,11 @@ public interface SysUserService {
      */
     void addUserInfo(SysUser sysUser);
 
+    /**
+     * @Date 2021/7/6 11:18
+     * @Description 根据角色id查询用户信息列表
+     * @Params id 角色id
+     */
+    public List<SysUser> getUserInfosByRoleId(Long id);
+
 }
