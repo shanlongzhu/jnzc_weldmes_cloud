@@ -20,15 +20,17 @@
         <result property="delFlag" column="del_flag"></result>
         <result property="loginName" column="login_name"></result>
         <result property="position" column="position"></result>
+        <result property="roleName" column="roleName"></result>
     </resultMap>
 
     <!--条件查询用户信息-->
     <select id="selectUserInfosByDeptId" resultMap="sysUserMap">
         select sysUser.id,sysUser.`name`,sysUser.mobile,sysUser.email,sysUser.status,sysUser.dept_id,
-        sysUser.login_name,sysUser.`position`,sys_dept.name deptName,sys_user_role.role_id
+        sysUser.login_name,sysUser.`position`,sys_dept.name deptName,sys_user_role.role_id,sys_role.name roleName
         from sys_user sysUser
         left join sys_dept on sysUser.dept_id = sys_dept.id
         left join sys_user_role on sysUser.id = sys_user_role.user_id
+        left join sys_role on sys_role.id = sys_user_role.role_id
         where 1=1 and sysUser.del_flag = 0
         <if test="deptId != null and deptId != ''">
             and sysUser.dept_id = #{deptId}
