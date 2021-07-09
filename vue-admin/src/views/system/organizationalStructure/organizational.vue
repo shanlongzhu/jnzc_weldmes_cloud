@@ -15,12 +15,14 @@
                 <div style="height:calc(100% - 34px);overflow-y:auto">
                     <el-tree
                         :data="treeData"
-                        v-loading="treeLoading"
+                        ref="treeDom"
                         :expand-on-click-node="false"
+                        v-loading="treeLoading"
                         :props="defaultProps"
                         default-expand-all
                         @current-change="currentChangeTree"
                         highlight-current
+                        node-key="id"
                     ></el-tree>
                 </div>
             </div>
@@ -30,46 +32,13 @@
             >
                 <div class="top-con flex-n">
                     <div class="con-w">
-                        <span>用户名：</span>
-                        <el-input
-                            size="small"
-                            class="w100"
-                            v-model="searchObj.userName"
-                        ></el-input>
-                    </div>
-                    <div class="con-w">
-                        <span>登录名：</span>
-                        <el-input
-                            size="small"
-                            class="w100"
-                            v-model="searchObj.loginName"
-                        ></el-input>
-                    </div>
-                    <div class="con-w">
-                        <span>手机号：</span>
+                        <span>名称：</span>
                         <el-input
                             size="small"
                             class="w150"
-                            v-model="searchObj.mobile"
+                            v-model="searchObj.name"
                         ></el-input>
-                    </div>
-                    <div class="con-w">
-                        <span>角色：</span>
-                        <el-select
-                            v-model="searchObj.roleId"
-                            placeholder="请选择"
-                            clearable
-                            filterable
-                            style="width:150px"
-                        >
-                            <el-option
-                                v-for="item in rolesArr"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            />
-                        </el-select>
-                    </div>
+                    </div>                    
                     <div class="con-w">
                         <el-button
                             size="small"
@@ -89,6 +58,7 @@
                 <div style="flex:1;height:0">
                     <vxe-table
                         border
+                        stripe
                         :data="list"
                         size="mini"
                         height="auto"
@@ -101,62 +71,27 @@
                             width="50"
                         ></vxe-table-column>
                         <vxe-table-column
-                            field="name"
-                            title="用户名"
-                            width="100"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="loginName"
-                            title="登录名"
-                            width="120"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="mobile"
-                            title="手机号"
-                            width="120"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="email"
-                            title="邮箱"
-                            width="140"
+                            field="childrenName"
+                            title="名称"
+                            min-width="100"
                         >
-                        </vxe-table-column>
-                        <vxe-table-column
-                            field="position"
-                            title="岗位"
-                            width="120"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="deptName"
-                            title="部门名称"
-                            width="120"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="status"
-                            title="状态"
-                            width="80"
-                        >
-                            <template #default={row}>
-                                <span
-                                    v-if="row.status"
-                                    style="color:#42a3fd"
-                                >正常</span>
-                                <span
-                                    v-else
-                                    style="color:red"
-                                >禁用</span>
+                            <template #default = {row}>
+                                {{row.childrenName||row.name}}
                             </template>
                         </vxe-table-column>
-
                         <vxe-table-column
-                            field="roleName"
-                            title="角色"
-                            width="120"
-                        ></vxe-table-column>
+                            field="name"
+                            title="上级项目"
+                            min-width="140"
+                        >
+                        <template #default = {row}>
+                                {{row.childrenName?row.name:row.parentName}}
+                            </template>
+                        </vxe-table-column>
                         <vxe-table-column
                             field="createTime"
                             title="操作"
-                            min-width="150px"
+                            width="150px"
                             fixed="right"
                         >
                             <template #default="{row}">
@@ -164,7 +99,7 @@
                                     size="mini"
                                     type="primary"
                                     plain
-                                    @click="editFun(row.id)"
+                                    @click="editFun(row.childrenId||row.id)"
                                 >
                                     修改
                                 </el-button>
@@ -172,7 +107,7 @@
                                     size="mini"
                                     type="danger"
                                     plain
-                                    @click="delFun(row.id)"
+                                    @click="delFun(row.childrenId||row.id)"
                                 >
                                     删除
                                 </el-button>
@@ -208,7 +143,7 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="用户名"
+                    label="名称"
                     prop="name"
                 >
                     <el-input
@@ -216,92 +151,21 @@
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
+                             
                 <el-form-item
-                    label="登录名"
-                    prop="loginName"
-                >
-                    <el-input
-                        v-model="ruleForm.loginName"
-                        style="width:250px"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="密码"
-                    prop="password"
-                >
-                    <el-input
-                        v-model="ruleForm.password"
-                        style="width:250px"
-                        type="password"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="电话"
-                    prop="mobile"
-                >
-                    <el-input
-                        v-model="ruleForm.mobile"
-                        style="width:250px"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="邮箱"
-                    prop="email"
-                >
-                    <el-input
-                        v-model="ruleForm.email"
-                        style="width:250px"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="岗位"
-                    prop="position"
-                >
-                    <el-input
-                        v-model="ruleForm.position"
-                        style="width:250px"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="部门"
-                    prop="deptId"
+                    label="上级部门"
+                    prop="parentId"
                 >
                     <el-cascader
-                        v-model="ruleForm.deptId"
+                        v-model="ruleForm.parentId"
                         style="width:250px"
                         clearable
                         :options="teamArr"
                         :props="defalutProps"
                         :show-all-levels="false"
                     />
-                </el-form-item>
-                <el-form-item
-                    label="角色"
-                    prop="roleId"
-                >
-                    <el-select
-                        v-model="ruleForm.roleId"
-                        filterable
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in rolesArr"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="状态"
-                    prop="status"
-                >
-                    <el-radio-group v-model="ruleForm.status">
-                        <el-radio :label="1">启用</el-radio>
-                        <el-radio :label="0">禁用</el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                </el-form-item>              
+                
                 <el-form-item>
                     <el-button
                         type="primary"
@@ -316,19 +180,11 @@
 
 <script>
 import { getTeam } from '_api/productionProcess/process'
-import { getUserTree, findByIdUserList, getRolesListNoPage, addUser, editUser, delUser, findIdUserInfo } from '_api/system/systemApi'
+import { getUserTree,getTreeDeptInfo,addDept,findIdDeptInfo,editDept,delDept } from '_api/system/systemApi'
 export default {
-    name: 'user-manage',
+    name: 'organizational',
     data () {
-        let validatorPhone = function (rule, value, callback) {
-            if (value === '') {
-                callback()
-            } else if (!/^1\d{10}$/.test(value)) {
-                callback(new Error('手机号格式错误'))
-            } else {
-                callback()
-            }
-        }
+        
         return {
             list: [],
             //分页
@@ -337,11 +193,8 @@ export default {
 
             //搜索条件
             searchObj: {
-                deptId: '',//部门id
-                userName: '',//用户名
-                loginName: '',//登录名
-                mobile: '',//手机号
-                roleId: '',//角色
+                id:'',
+                name: '',//机构名称
             },
 
             visable1: false,
@@ -349,37 +202,18 @@ export default {
 
             },
             ruleForm: {
-                name: '',//用户名
-                password: '',//密码
-                email: '',//邮箱
-                mobile: '',//手机号
-                status: 1,//状态
-                deptId: '',//部门ID
-                loginName: '',//登录名
-                position: '',//岗位
-                roleId: ''//角色
+                name: '',//机构名称
+                parentId: '',//父级机构id
             },
             rules: {
                 name: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                loginName: [
+                parentId: [
                     { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                mobile: [
-                    { validator: validatorPhone, trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                position: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                deptId: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
+                ],                
             },
-            title: '新建用户',
+            title: '新建机构',
 
             //机构数据
             teamArr: [],
@@ -394,7 +228,7 @@ export default {
             loading: false,
 
             //部门tree数据
-            treeLoading: false,
+            treeLoading:false,
             treeData: [],
             defaultProps: {
                 children: 'list',
@@ -409,19 +243,9 @@ export default {
         this.ruleFormObj = { ...this.ruleForm };
         this.getList();
         this.getUserTreeFun();
-        this.getRolesListFun();
         this.getTeamList();
     },
     methods: {
-        //获取角色下拉列表
-        async getRolesListFun () {
-            let { data, code } = await getRolesListNoPage();
-            if (code == 200) {
-                this.rolesArr = data || []
-            }
-        },
-
-
         search () {
             this.page = 1;
             this.getList();
@@ -433,6 +257,9 @@ export default {
             this.treeLoading = false;
             if (code == 200) {
                 this.treeData = [data] || [];
+                this.$nextTick(()=>{
+                    this.$refs.treeDom.setCurrentKey(this.searchObj.id)
+                })
             }
         },
 
@@ -443,7 +270,7 @@ export default {
                 ...this.searchObj
             }
             this.loading = true;
-            let { code, data } = await findByIdUserList(req);
+            let { code, data } = await getTreeDeptInfo(req);
             this.loading = false;
             if (code == 200) {
                 this.list = data.list
@@ -452,7 +279,7 @@ export default {
         },
         //新增
         addFun () {
-            this.title = "新建用户"
+            this.title = "新建机构"
             this.visable1 = true;
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
@@ -463,9 +290,9 @@ export default {
         },
         //修改
         async editFun (id) {
-            this.title = "编辑用户"
+            this.title = "编辑机构"
             this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await findIdUserInfo({ id });
+            let { data, code } = await findIdDeptInfo({ id });
             if (code == 200) {
                 this.visable1 = true;
                 this.$nextTick(() => {
@@ -481,10 +308,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                let { code, data } = await delUser({ id })
+                let { code, data } = await delDept({ id })
                 if (code == 200) {
                     this.$message.success('操作成功')
-                    this.getList()
+                    this.getList();
+                    this.getUserTreeFun();
                 }
             }).catch(() => { })
 
@@ -508,21 +336,23 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await editUser(req)
+                        req.parentId = req.parentId && req.parentId.length > 0 ? req.parentId.slice(-1).join('') : req.parentId
+                        const { data, code } = await editDept(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
                             this.visable1 = false
-                            this.getList()
+                            this.getList();
+                            this.getUserTreeFun();
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await addUser(req);
+                        req.parentId = req.parentId && req.parentId.length > 0 ? req.parentId.slice(-1).join('') : req.parentId
+                        const { data, code } = await addDept(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
                             this.visable1 = false
-                            this.getList()
+                            this.getList();
+                            this.getUserTreeFun();
                         }
                     }
                 } else {
@@ -532,7 +362,7 @@ export default {
             })
         },
         currentChangeTree (v) {
-            this.searchObj.deptId = v.id;
+            this.searchObj.id = v.id;
             this.search();
         },
 
@@ -553,5 +383,3 @@ export default {
     border-bottom: 1px solid #ddd;
 }
 </style>
-
-

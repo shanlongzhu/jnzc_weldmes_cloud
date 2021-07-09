@@ -267,9 +267,7 @@ export default {
     display: inline-block;
     width: 200px;
 }
-.el-tree-node {
-    border-top: 1px solid #eee;
-}
+
 .tree-top-wrap{
     justify-content: space-between;background:#f8f8f8;
     line-height:36px;

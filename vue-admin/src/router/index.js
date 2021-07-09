@@ -422,7 +422,7 @@ export const asyncRoutes = [
       },
       {
         path: 'keyboard6',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/system/dictionariesManager/dictionaries'),
         name: 'KeyboardChart',
         meta: {
           title: '字典管理',
@@ -431,9 +431,10 @@ export const asyncRoutes = [
       },
       {
         path: 'keyboard7',
-        component: () => import('@/views/charts/keyboard'),
+        component: () => import('@/views/system/organizationalStructure/organizational'),
         name: 'KeyboardChart',
         meta: {
+          mark:'705',
           title: '组织机构管理',
           roles: ['admin'],
           noCache: true }

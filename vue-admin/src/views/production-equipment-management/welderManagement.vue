@@ -381,18 +381,9 @@ export default {
             },
 
             visable1: false,
-            ruleFormObj: {
-                id: '',
-                welderNo: '',//编号
-                welderName: '',//姓名
-                deptId: '',//项目（机构id）
-                cellphone: '',//手机号
-                rank: '',//级别
-                certification: '',//资质
-                remarks: ''//备注
+            ruleFormObj: {                
             },
             ruleForm: {
-                id: '',
                 welderNo: '',//编号
                 welderName: '',//姓名
                 deptId: '',//项目（机构id）
@@ -438,6 +429,7 @@ export default {
     },
 
     created () {
+        this.ruleFormObj = {...this.ruleForm};
         // 获取班组
         if (this.teamArr.length == 0) {
             this.getTeamList()

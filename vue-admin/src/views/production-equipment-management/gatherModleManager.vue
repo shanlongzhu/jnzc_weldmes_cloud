@@ -308,18 +308,9 @@ export default {
             gatherNo: '',//所属项目
 
             visable1: false,
-            ruleFormObj: {
-                id: '',
-                gatherNo: '',//编号
-                status: '',//状态
-                deptId: '',//项目（机构id）
-                ipPath: '',//ip
-                macPath: '',//mac
-                protocol: '',//通讯协议
-                createTime: ''//出厂时间
+            ruleFormObj: {                
             },
             ruleForm: {
-                id: '',
                 gatherNo: '',//编号
                 status: '',//状态
                 deptId: '',//项目（机构id）
@@ -366,6 +357,7 @@ export default {
     },
 
     created () {
+        this.ruleFormObj = {...this.ruleForm};
         // 获取班组
         if (this.teamArr.length == 0) {
             this.getTeamList()

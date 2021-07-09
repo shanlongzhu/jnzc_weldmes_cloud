@@ -228,13 +228,8 @@ export default {
             visable1: false,
             title: '新增工艺',
             ruleFormObj: {
-                id: '',
-                wpsName: '',//工艺库名称
-                weldModel: '',//设备型号
-                firmId: ''
             },
             ruleForm: {
-                id: '',
                 wpsName: '',//工艺库名称
                 weldModel: '',//设备型号
                 firmId: ''
@@ -266,6 +261,7 @@ export default {
     },
 
     created () {
+        this.ruleFormObj = {...this.ruleForm};
         this.getDicFun();
         this.getList();
     },
