@@ -23,7 +23,7 @@ import javax.sql.DataSource;
  * 多数据源配置依赖数据源配置
  */
 @Configuration
-@MapperScan(basePackages = MybatisPlusConfigds1.PACKAGE, sqlSessionTemplateRef = "ds1SqlSessionTemplate")
+@MapperScan(basePackages = MybatisPlusConfigds1.PACKAGE, sqlSessionFactoryRef = "ds1SqlSessionFactory")
 public class MybatisPlusConfigds1 {
 
     static final String PACKAGE = "com.shth.das.sys.weldmesdb.mapper";
