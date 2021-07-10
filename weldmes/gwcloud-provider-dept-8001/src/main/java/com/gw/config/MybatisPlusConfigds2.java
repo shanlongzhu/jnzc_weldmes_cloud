@@ -12,7 +12,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -22,12 +21,10 @@ import javax.sql.DataSource;
  * 多数据源配置依赖数据源配置
  */
 @Configuration
-@MapperScan(MybatisPlusConfigds2.HISTORICALCURVE)
+@MapperScan(basePackages = MybatisPlusConfigds2.HISTORICALCURVE, sqlSessionFactoryRef = "ds2SqlSessionFactory")
 public class MybatisPlusConfigds2 {
 
     static final String HISTORICALCURVE = "com.gw.data.historicalCurve.dao";
-
-    static final String MAPPER_LOCATION = "classpath*:mybatis/mapper/*.xml";
 
     //ds2数据源
     @Bean("ds2SqlSessionFactory")
@@ -42,8 +39,6 @@ public class MybatisPlusConfigds2 {
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().
-                getResources(MAPPER_LOCATION));
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setBanner(false));
         return sqlSessionFactory.getObject();
     }

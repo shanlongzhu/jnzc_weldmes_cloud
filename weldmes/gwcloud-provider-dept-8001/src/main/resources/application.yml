@@ -12,7 +12,7 @@ mybatis-plus:
   # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml
   # 如果是放在resource目录 classpath:/mapper/*Mapper.xml
   config-location: classpath:mybatis/mybatis.cfg.xml
-  mapper-locations: classpath:mybatis/mapper/*Mapper.xml
+  mapper-locations: classpath:/mybatis/**/*Mapper.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: com.gw.entities
   global-config:
@@ -41,7 +41,7 @@ spring:
     ds1: #数据源1
       type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
       driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
-      url: jdbc:mysql://119.3.100.103:3306/jnzc?characterEncoding=utf-8&serverTimezone=GMT%2B8        # 数据库名称
+      url: jdbc:mysql://119.3.100.103:3306/jnzc?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8        # 数据库名称
       username: root
       password: ZJokvtdZ4O0
       initialSize: 10
@@ -59,7 +59,7 @@ spring:
     ds2: # 数据源2
       type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
       driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
-      url: jdbc:mysql://119.3.100.103:3306/weldmes-rtdata?characterEncoding=utf-8&serverTimezone=GMT%2B8        # 数据库名称
+      url: jdbc:mysql://119.3.100.103:3306/weldmes-rtdata?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8        # 数据库名称
       username: root
       password: ZJokvtdZ4O0
       initialSize: 10

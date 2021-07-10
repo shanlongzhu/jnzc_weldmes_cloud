@@ -50,7 +50,7 @@ public class DataSourceConfig {
     }
 
     //第二个ds2数据源
-    @Bean("ds2DataSource")
+    @Bean(name = "ds2DataSource")
     public DataSource ds2DataSource(@Qualifier("ds2DataSourceProperties") DataSourceProperties dataSourceProperties) {
         DruidDataSource build = (DruidDataSource) dataSourceProperties.initializeDataSourceBuilder().build();
         List<Filter> filters = new ArrayList<>();

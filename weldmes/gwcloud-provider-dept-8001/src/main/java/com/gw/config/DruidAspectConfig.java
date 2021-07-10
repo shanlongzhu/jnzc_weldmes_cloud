@@ -26,7 +26,7 @@ public class DruidAspectConfig {
     public JdkRegexpMethodPointcut druidStatPointcut() {
         JdkRegexpMethodPointcut pointcut = new JdkRegexpMethodPointcut();
         //扫描所有的mapper和service（com.gw.sys.dao.*）
-        pointcut.setPatterns("com.gw.sys.dao.*", "");
+        pointcut.setPatterns("com.gw.sys.dao.*", "com.gw.sys.service.*");
         return pointcut;
     }
 

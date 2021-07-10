@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -24,14 +23,21 @@ import javax.sql.DataSource;
  * 多数据源配置依赖数据源配置
  */
 @Configuration
-//@MapperScan(basePackages = MybatisPlusConfigds1.PACKAGE, sqlSessionTemplateRef = "ds1SqlSessionTemplate")
-//@MapperScan({MybatisPlusConfigds1.COLLECTION,MybatisPlusConfigds1.WELDER,MybatisPlusConfigds1.CRAFT,MybatisPlusConfigds1.DISPATCH,
-//        MybatisPlusConfigds1.SOLDERER,MybatisPlusConfigds1.SYSDEPT,MybatisPlusConfigds1.ARTIFACT,MybatisPlusConfigds1.DEVICE,
-//        MybatisPlusConfigds1.PERSON,MybatisPlusConfigds1.PRODUCTIONTASK,MybatisPlusConfigds1.TEAM,MybatisPlusConfigds1.WELDTASK})
-
 @MapperScans(
         value = {
-                @MapperScan(basePackages = "",sqlSessionFactoryRef = "")
+                @MapperScan(basePackages = MybatisPlusConfigds1.COLLECTION, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.WELDER, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.CRAFT, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.DISPATCH, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.SOLDERER, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.SYSDEPT, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.ARTIFACT, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.DEVICE, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.PERSON, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.PRODUCTIONTASK, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.TEAM, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.WELDTASK, sqlSessionFactoryRef = "ds1SqlSessionFactory"),
+                @MapperScan(basePackages = MybatisPlusConfigds1.DEPT, sqlSessionFactoryRef = "ds1SqlSessionFactory")
         }
 )
 public class MybatisPlusConfigds1 {
@@ -48,8 +54,7 @@ public class MybatisPlusConfigds1 {
     static final String PRODUCTIONTASK = "com.gw.data.person.dao";
     static final String TEAM = "com.gw.data.team.dao";
     static final String WELDTASK = "com.gw.data.weldTask.dao";
-
-    static final String MAPPER_LOCATION = "classpath*:mybatis/mapper/*.xml";
+    static final String DEPT = "com.gw.dao";
 
     //主数据源 ds1数据源
     @Primary
@@ -65,8 +70,6 @@ public class MybatisPlusConfigds1 {
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().
-                getResources(MAPPER_LOCATION));
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setBanner(false));
         return sqlSessionFactory.getObject();
     }

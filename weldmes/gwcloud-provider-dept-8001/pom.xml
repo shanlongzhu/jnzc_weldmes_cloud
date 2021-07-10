@@ -40,7 +40,8 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
 <!--            <version>5.1.46</version>-->
-            <version>8.0.15</version>
+<!--            <version>8.0.15</version>-->
+            <version>5.1.47</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -75,6 +76,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.4.0</version>
         </dependency>
         <!-- mybatis-plus代码生成器与模板引擎的依赖  -->
         <dependency>
