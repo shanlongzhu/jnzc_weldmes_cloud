@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'index',
+  name: 'parentMain',
   computed: {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews

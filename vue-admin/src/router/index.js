@@ -4,6 +4,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import parentMain from '@/layout/components/parentMain'
 
 /* Router Modules */
 // eslint-disable-next-line no-unused-vars
@@ -101,7 +102,7 @@ export const asyncRoutes = [
   {
     path: '/per',
     component: Layout,
-    redirect: '/per/page',
+    redirect: 'page',
     alwaysShow: true,
     name: 'Permission',
     meta: {
@@ -111,7 +112,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/page',
+        path: 'page',
         component: () => import('@/views/production-equipment-management/gatherModleManager'),
         name: 'PagePermission',
         meta: {
@@ -142,22 +143,22 @@ export const asyncRoutes = [
   {
     path: '/pro',
     component: Layout,
-    redirect: '/permission/page',
+    redirect: 'pa',
     alwaysShow: true,
     name: 'Permission',
     meta: {
       title: '生产工艺管理',
       icon: 'example',
-      mark:'9999'
+      mark:'2'
     },
     children: [
       {
         path: 'pa',
         component: () => import('@/views/production-equipment-management/technology-manage'),
-        name: 'PagePermission',
+        name: 'tech',
         meta: {
           title: '工艺管理',
-          roles: ['admin', 'user']
+          mark:'201'
         }
       },
       {
@@ -166,7 +167,7 @@ export const asyncRoutes = [
         name: 'DirectivePermission',
         meta: {
           title: '焊机参数管理',
-          roles: ['admin', 'user']
+          mark:'202'
         }
       },
       {
@@ -175,7 +176,7 @@ export const asyncRoutes = [
         name: 'RolePermission',
         meta: {
           title: '模拟设备参数设置',
-          roles: ['admin', 'user']
+          mark:'203'
         }
       }
     ]
@@ -183,12 +184,12 @@ export const asyncRoutes = [
   {
     path: '/cha',
     component: Layout,
-    redirect: 'noRedirect',
+    redirect: 'welderManagement',
     alwaysShow: true,
     name: 'Charts',
     meta: {
       title: '生产过程管理',
-      roles: ['admin', 'user'],
+      mark:'3',
       icon: 'tree-table'
     },
     children: [
@@ -198,7 +199,7 @@ export const asyncRoutes = [
         name: 'welderManagement',
         meta: {
           title: '焊工管理',
-          roles: ['admin', 'user'],
+          mark:'301',
           noCache: true
         }
       },
@@ -208,7 +209,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '任务工单管理',
-          roles: ['admin', 'user'],
+          mark:'302',
           noCache: true }
       }
     ]
@@ -220,16 +221,15 @@ export const asyncRoutes = [
     name: 'Table',
     meta: {
       title: '生产过程记录',
-      roles: ['admin', 'user'],
+      mark:'4',
       icon: 'table'
     },
     children: [
       {
         path: 'table',
         component: () => import('@/views/charts/keyboard'),
-        name: 'DynamicTable',
-        roles: ['admin', 'user'],
-        meta: { title: '生产任务详情' }
+        name: 'DynamicTable',        
+        meta: { title: '生产任务详情',mark:'401' }
       },
       {
         path: 'drag-table1',
@@ -237,7 +237,7 @@ export const asyncRoutes = [
         name: 'DragTable',
         meta: {
           title: '故障表',
-          roles: ['admin', 'user']
+          mark:'402'
         }
       },
       {
@@ -246,7 +246,7 @@ export const asyncRoutes = [
         name: 'DragTable',
         meta: {
           title: '历史回溯',
-          roles: ['admin', 'user']
+          mark:'403',
         }
       }
     ]
@@ -259,7 +259,7 @@ export const asyncRoutes = [
     name: 'Charts',
     meta: {
       title: '生产数据统计',
-      roles: ['admin', 'user'],
+      mark:'5',
       icon: 'chart'
     },
     children: [
@@ -269,7 +269,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '人员生产数据统计',
-          roles: ['admin', 'user'],
+          mark:'501',
           noCache: true }
       },
       {
@@ -278,7 +278,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '工件生产数据统计',
-          roles: ['admin', 'user'],
+          mark:'502',
           noCache: true }
       },
       {
@@ -287,7 +287,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '设备生产数据统计',
-          roles: ['admin', 'user'],
+          mark:'503',
           noCache: true }
       },
       {
@@ -296,40 +296,41 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '班组生产数据统计',
-          roles: ['admin', 'user'],
+          mark:'504',
           noCache: true }
       }
     ]
   },
   {
-    path: '/abdQ',
+    path: '/product-data',
     component: Layout,
-    redirect: 'noRedirect',
+    redirect: 'welder-history-line',
     alwaysShow: true,
-    name: 'Charts',
+    name: 'productData',
     meta: {
       title: '生产数据详情分析',
-      roles: ['admin', 'user'],
+      mark:'6',
       icon: 'el-icon-s-tools'
     },
     children: [
       {
-        path: 'keyboard31',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart1',
+        path: 'welder',
+        component: parentMain,
+        redirect: 'welder-history-line',
+        name: 'Welder',
         meta: {
           title: '焊工',
-          roles: ['admin', 'user'],
+          mark:'601',
           noCache: true },
         alwaysShow: true,
         children: [
           {
-            path: 'keyboard23',
-            component: () => import('@/views/charts/keyboard'),
-            name: 'KeyboardChart',
+            path: 'welder-history-line',
+            component: () => import('@/views/productionDataAnalysis/welder/historyLine'),
+            name: 'welderHistoryLine',
             meta: {
-              title: '焊工工效',
-              roles: ['admin', 'user'],
+              title: '焊工历史曲线',
+              mark:'6011',
               noCache: true }
           }
         ]
@@ -340,7 +341,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart2',
         meta: {
           title: '任务/工件',
-          roles: ['admin', 'user'],
+          mark:'602',
           noCache: true },
         alwaysShow: true,
         children: [
@@ -350,28 +351,28 @@ export const asyncRoutes = [
             name: 'KeyboardChart',
             meta: {
               title: '任务焊接工时',
-              roles: ['admin', 'user'],
+              mark:'6021',
               noCache: true }
           }
         ]
       },
       {
-        path: 'keyboard3',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart',
+        path: 'welding-machine',
+        component: parentMain,
+        name: 'weldingMachine',
         meta: {
           title: '焊机',
-          roles: ['admin', 'user'],
+          mark:'603',
           noCache: true },
         alwaysShow: true,
         children: [
           {
-            path: 'keyboard31',
-            component: () => import('@/views/charts/keyboard'),
-            name: 'KeyboardChart',
+            path: 'history-line',
+            component: () => import('@/views/productionDataAnalysis/weldingMachine/historyLine'),
+            name: 'historyLine',
             meta: {
-              title: '负载率',
-              roles: ['admin', 'user'],
+              title: '焊机历史曲线',
+              mark:'6031',
               noCache: true }
           }
         ]
@@ -381,9 +382,9 @@ export const asyncRoutes = [
   {
     path: '/ch',
     component: Layout,
-    redirect: 'noRedirect',
+    redirect: 'user-manager',
     alwaysShow: true,
-    name: 'Charts',
+    name: 'system',
     meta: {
       mark:'7',
       title: '系统管理',
@@ -392,9 +393,9 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'keyboard',
+        path: 'user-manager',
         component: () => import('@/views/production-equipment-management/user-manage'),
-        name: 'KeyboardChart',
+        name: 'userManager',
         meta: {
           mark:'701',
           title: '用户管理',
@@ -417,7 +418,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '菜单管理',
-          roles: ['admin'],
+          mark:'703',
           noCache: true }
       },
       {
@@ -426,7 +427,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '字典管理',
-          roles: ['admin'],
+          mark:'704',
           noCache: true }
       },
       {
@@ -445,7 +446,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '邮件下发管理',
-          roles: ['admin'],
+          mark:'706',
           noCache: true }
       }
     ]
