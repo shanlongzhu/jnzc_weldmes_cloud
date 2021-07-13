@@ -165,6 +165,9 @@ aside {
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
   background-color: #aadef7;
 }
+.vxe-table--render-default .vxe-body--row.row--current{
+  background-color: #aadef7;
+}
 
 .el-dialog__body{
   padding: 10px 20px 20px;

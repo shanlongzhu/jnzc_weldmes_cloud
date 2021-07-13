@@ -252,17 +252,26 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/abdT',
+    path: '/production-data-statistics',
     component: Layout,
-    redirect: 'noRedirect',
+    redirect: 'team-data-stat',
     alwaysShow: true,
-    name: 'Charts',
+    name: 'productionDataStatistics',
     meta: {
       title: '生产数据统计',
       mark:'5',
       icon: 'chart'
     },
     children: [
+      {
+        path: 'team-data-stat',
+        component: () => import('@/views/productionDataStatistics/teamProDataStatistics'),
+        name: 'teamDataStat',
+        meta: {
+          title: '班组生产数据统计',
+          mark:'504',
+          noCache: true }
+      },
       {
         path: 'keyboard1',
         component: () => import('@/views/charts/keyboard'),
@@ -289,16 +298,7 @@ export const asyncRoutes = [
           title: '设备生产数据统计',
           mark:'503',
           noCache: true }
-      },
-      {
-        path: 'keyboard4',
-        component: () => import('@/views/production-equipment-management/grade-product-data-manage'),
-        name: 'KeyboardChart',
-        meta: {
-          title: '班组生产数据统计',
-          mark:'504',
-          noCache: true }
-      }
+      }      
     ]
   },
   {
@@ -314,69 +314,14 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'welder',
-        component: parentMain,
-        redirect: 'welder-history-line',
-        name: 'Welder',
-        meta: {
-          title: '焊工',
-          mark:'601',
-          noCache: true },
-        alwaysShow: true,
-        children: [
-          {
-            path: 'welder-history-line',
-            component: () => import('@/views/productionDataAnalysis/welder/historyLine'),
-            name: 'welderHistoryLine',
-            meta: {
-              title: '焊工历史曲线',
-              mark:'6011',
-              noCache: true }
-          }
-        ]
-      },
-      {
-        path: 'keyboard2',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart2',
-        meta: {
-          title: '任务/工件',
-          mark:'602',
-          noCache: true },
-        alwaysShow: true,
-        children: [
-          {
-            path: 'keyboard13',
-            component: () => import('@/views/charts/keyboard'),
-            name: 'KeyboardChart',
-            meta: {
-              title: '任务焊接工时',
-              mark:'6021',
-              noCache: true }
-          }
-        ]
-      },
-      {
-        path: 'welding-machine',
-        component: parentMain,
-        name: 'weldingMachine',
-        meta: {
-          title: '焊机',
-          mark:'603',
-          noCache: true },
-        alwaysShow: true,
-        children: [
-          {
-            path: 'history-line',
-            component: () => import('@/views/productionDataAnalysis/weldingMachine/historyLine'),
-            name: 'historyLine',
-            meta: {
-              title: '焊机历史曲线',
-              mark:'6031',
-              noCache: true }
-          }
-        ]
-      }
+        path: 'welder-history-line',
+          component: () => import('@/views/productionDataAnalysis/historyLine'),
+          name: 'welderHistoryLine',
+          meta: {
+            title: '历史曲线',
+            mark:'601',
+            noCache: true }
+      }     
     ]
   },
   {

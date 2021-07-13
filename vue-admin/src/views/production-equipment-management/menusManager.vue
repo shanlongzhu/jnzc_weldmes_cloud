@@ -132,7 +132,7 @@
                         type="primary"
                         @click="submitForm('ruleForm')"
                     >保存</el-button>
-                    <el-button @click="resetForm('ruleForm')">取消</el-button>
+                    <el-button @click="sourceVisible=false">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -141,7 +141,7 @@
 
 <script>
 
-import { getMenuList, addMenu, editMenu, getMenuDetail } from '_api/system/systemApi'
+import { getMenuList, addMenu, editMenu, getMenuDetail,delMenu } from '_api/system/systemApi'
 export default {
     name:'menusManager',
     data () {
@@ -220,10 +220,18 @@ export default {
         },
 
         remove (node, data) {
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
+            const id = data.id||"";
+            this.$confirm('确定要删除吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                let {code} = await delMenu({id});
+                if (code == 200) {
+                    this.$message.success('操作成功')
+                    this.getList()
+                }
+            }).catch(() => { })
         },        
 
         submitForm (formName) {
