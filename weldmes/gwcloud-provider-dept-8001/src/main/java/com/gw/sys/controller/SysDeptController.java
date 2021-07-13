@@ -3,7 +3,6 @@ package com.gw.sys.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
-import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import com.gw.sys.service.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +30,14 @@ public class SysDeptController {
      */
     @RequestMapping("dept/getDeptInfos")
     public HttpResult getDictionaryInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,
-                                         @RequestParam(value="id",defaultValue = "1")Long id,String name){
+                                         @RequestParam(value="id",defaultValue = "1")Long id){
 
         PageHelper.startPage(pn,10);
 
-        List<DeptTreeInfo> list = sysDeptService.getDeptInfos(id,name);
+        List<SysDept> list = sysDeptService.getDeptInfos(id);
 
         //将查询结果进行分页
-        PageInfo<DeptTreeInfo> page=new PageInfo(list,10);
+        PageInfo<SysDept> page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }
@@ -95,5 +94,23 @@ public class SysDeptController {
         return HttpResult.ok("组织机构信息新增成功!");
     }
 
+    /**
+     * @Date 2021/7/13 13:28
+     * @Description  根据部门id以及部门名称筛选信息列表
+     * @Params id 部门id   name  部门名称
+     */
+    @RequestMapping("dept/getDeptInfosByDeptIdAndName")
+    public HttpResult getDeptInfosByDeptIdAndName(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                                                  Long id,String name){
+
+        PageHelper.startPage(pn,10);
+
+        List<SysDept> list = sysDeptService.getDeptInfosByIdAndName(id,name);
+
+        //将查询结果进行分页
+        PageInfo<SysDept> page=new PageInfo(list,10);
+
+        return HttpResult.ok(page);
+    }
 
 }

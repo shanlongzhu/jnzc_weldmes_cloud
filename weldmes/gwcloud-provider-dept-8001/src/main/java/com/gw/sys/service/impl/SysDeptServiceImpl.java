@@ -1,13 +1,13 @@
 package com.gw.sys.service.impl;
 
 import com.gw.common.DateTimeUtil;
-import com.gw.entities.DeptTreeInfo;
 import com.gw.entities.SysDept;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.service.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,12 +26,22 @@ public class SysDeptServiceImpl implements SysDeptService {
     /**
      * @Date 2021/7/8 16:38
      * @Description 查询组织机构信息列表
-     * @Params  id 部门id   name 部门名称
+     * @Params  id 部门id
      */
     @Override
-    public List<DeptTreeInfo> getDeptInfos(Long id,String name) {
+    public List<SysDept> getDeptInfos(Long id) {
 
-        List<DeptTreeInfo> list = sysDeptDao.selectDeptInfos(id,name);
+        List<SysDept> list = new ArrayList<>();
+
+        //根据parentId查询部门信息
+        List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(id);
+
+        //根据id查询部门信息
+        SysDept sysDept = sysDeptDao.selectDeptInfoById(id);
+
+        list.add(sysDept);
+
+        list.addAll(sysDeptInfos);
 
         return list;
     }
@@ -93,15 +103,29 @@ public class SysDeptServiceImpl implements SysDeptService {
     }
 
     /**
-     * @Date 2021/7/8 16:38
-     * @Description 树状图-查询组织机构信息
-     * @Params id 部门id   name 部门名称
-     *//*
+     * @Date 2021/7/13 13:28
+     * @Description  根据部门id以及部门名称筛选信息列表
+     * @Params id 部门id   name  部门名称
+     */
     @Override
-    public List<DeptTreeInfo> getTreeDeptInfos(Long id,String name) {
+    public List<SysDept> getDeptInfosByIdAndName(Long id, String name) {
 
-        List<DeptTreeInfo> list = sysDeptDao.selectDeptInfos(id,name);
+        //通过部门名称模糊 获取部门信息列表
+        List<SysDept> deptInfos = sysDeptDao.selectDeptInfosByName(name);
+
+        List<SysDept> list = new ArrayList<>();
+
+        //根据父级id进行筛选
+        for (SysDept deptInfo : deptInfos)
+        {
+            if(deptInfo.getParentId() == id){
+
+                list.add(deptInfo);
+
+            }
+        }
 
         return list;
-    }*/
+    }
+
 }
