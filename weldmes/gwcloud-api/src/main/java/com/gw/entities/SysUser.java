@@ -2,6 +2,8 @@ package com.gw.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 /**
  * @Author zhanghan
@@ -9,7 +11,7 @@ import lombok.Data;
  * @Description 系统用户实体类
  */
 @Data
-public class SysUser {
+public class SysUser implements Serializable {
 
     /**
      * 角色id

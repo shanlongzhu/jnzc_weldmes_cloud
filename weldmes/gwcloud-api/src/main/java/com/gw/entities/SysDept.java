@@ -28,6 +28,11 @@ public class SysDept {
     private Long parentId;
 
     /**
+     * 上级机构名称
+     */
+    private String parentName;
+
+    /**
      * 排序
      */
     private int orderNum;
@@ -61,8 +66,5 @@ public class SysDept {
      * 机构列表
      */
     private List<SysDept> list;
-
-
-
 
 }
