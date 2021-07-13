@@ -5,9 +5,11 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
 import com.gw.entities.RealtimeData;
+import com.gw.entities.RtData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @CrossOrigin
@@ -20,10 +22,15 @@ public class HistoricalCurveController {
 
     //历史曲线展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,RealtimeData realtimeData) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String startTime, String endTime) throws ParseException {
         PageHelper.startPage(pn, 10);
-        List<RealtimeData> list = historicalCurveService.getList(realtimeData);
+        List<RtData> list = historicalCurveService.getList(startTime,endTime);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
+    }
+    @RequestMapping("test")
+    public HttpResult get(){
+        List<RtData>list= historicalCurveService.get();
+        return HttpResult.ok(list);
     }
 }
