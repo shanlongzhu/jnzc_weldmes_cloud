@@ -1,5 +1,6 @@
 <template>
-  <!-- 新增/修改工艺 -->
+    <div>
+        <!-- 新增/修改工艺 -->
         <el-dialog
             :title="title2"
             :visible.sync="visable2"
@@ -613,22 +614,169 @@
                 >
                     <el-button
                         type="primary"
+                        @click="requestSpec"
+                    >索取规范</el-button>
+                    <el-button
+                        type="primary"
                         @click="submitForm2('ruleForm2')"
                     >保存</el-button>
                     <el-button @click="visable2 = false">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
+
+        <!-- 选择设备 -->
+
+        <el-dialog
+            title="选择设备"
+            :visible.sync="model2"
+            :close-on-click-modal="false"
+            width="800px"
+            class="procces-wrap"
+        >
+                <div class="top-con flex-n">
+                    <div class="con-w">
+                        <span>班组：</span>
+                        <el-cascader
+                            v-model="searchObj.grade"
+                            size="small"
+                            style="width:180px"
+                            clearable
+                            :options="teamArr"
+                            :props="defalutProps"
+                            :show-all-levels="false"
+                            @change="search"
+                            popper-class="teamList"
+                        />
+                    </div>
+                </div>
+                <vxe-table
+                    border
+                    show-overflow
+                    auto-resize
+                    size="mini"
+                    height="300"
+                    :loading="loading2"
+                    highlight-hover-row
+                    highlight-current-row
+                    resizable
+                    stripe
+                    :data="list"
+                    row-id="id"
+                    :radio-config="{ trigger: 'row',highlight: true}"
+                    @cell-click="radioChangeEvent"
+                >
+                    <vxe-table-column
+                        type="radio"
+                        title="请选择"
+                        width="60"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="machineNo"
+                        title="固定资产编号"
+                        width="100"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="deptName"
+                        title="设备类型"
+                        width="100"
+                    >
+                        <template #default="{row}">
+                            {{row.sysDictionary.valueName}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="welderName"
+                        title="所属项目"
+                        width="100"
+                    >
+                        <template #default="{row}">
+                            {{row.sysDept.name}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="status"
+                        title="状态"
+                        width="60"
+                    >
+                        <template #default="{row}">
+                            {{row.sysDictionary.valueNames}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="macPath"
+                        title="厂家"
+                        width="100"
+                    >
+                        <template #default="{row}">
+                            {{row.sysDictionary.valueNamess}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="gatherNo"
+                        title="采集序号"
+                        min-width="100"
+                    >
+                        <template #default="{row}">
+                            {{row.machineGatherInfo.gatherNo}}
+                        </template>
+                    </vxe-table-column>
+                </vxe-table>
+                <div
+                    class="p10 flex"
+                    style="justify-content: space-between;"
+                >
+                    <el-pagination
+                        :current-page.sync="page"
+                        :page-size="10"
+                        align="right"
+                        background
+                        small
+                        layout="total, prev, pager, next"
+                        :total="total2"
+                        @current-change="handleCurrentChange"
+                    />
+                    <div>
+                        <el-button
+                            size="small"
+                            type="primary"
+                            @click="submitIssue"
+                        >确定</el-button>
+                        <el-button
+                            size="small"
+                            @click="model2=false"
+                        >取消</el-button>
+                    </div>
+
+                </div>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
+import mqtt from 'mqtt'
 import { getTeam, getDictionaries, getProcesLibraryList, getProcesLibraryDetail, delProcesLibrary, editProcesLibrary, addProcesLibrary, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
+
+import { getWelderList } from '_api/productionEquipment/production'
 export default {
-  components:{},
-  props:{},
-  data(){
-    return {
-        //工艺层
+    components: {},
+    props: {},
+    data () {
+        return {
+            //mqtt
+            client: {},
+            options: {
+                timeout: 50,
+                keepAliveInterval: 60,
+                cleanSession: false,
+                useSSL: false,
+                reconnect: true,
+                clientId: "adminTest" + new Date().getTime()
+            },
+            timeout: '',
+
+
+            //工艺层
             visable2: false,
             title2: '新增工艺',
             ruleFormObj2: {},
@@ -645,9 +793,9 @@ export default {
                 arcCharacter: 0,//电弧特性
                 spotWeldingTime: 3,//点焊时间
                 weldingStickTexture: '0',//焊丝材质
-                weldingStickTextureType:'8',//焊丝材质Type
+                weldingStickTextureType: '8',//焊丝材质Type
                 weldingStickDiameter: '12',//焊丝直径
-                weldingStickDiameterType:'10',//焊丝直径Type
+                weldingStickDiameterType: '10',//焊丝直径Type
                 inAdvanceAspirated: 0.1,//提前送气
                 hysteresisAspirated: 0.1,//滞后送气
                 gases: '0',//气体
@@ -739,7 +887,7 @@ export default {
                 arcVolUnitary: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                initialVolUnitary:[
+                initialVolUnitary: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
             },
@@ -749,10 +897,10 @@ export default {
             //焊丝材质
             weldingStickTextureArr: [],
             //气体
-            gasesArr:[],
+            gasesArr: [],
             gasesArrSource: [],
             //焊丝直径
-            weldingStickDiameterArr:[],
+            weldingStickDiameterArr: [],
             weldingStickDiameterArrSource: [],
             //焊接过程
             weldingProcessArr: [],
@@ -795,10 +943,30 @@ export default {
                 },
             ],
             channelNoArr: [],
-    }
-  },
-  watch:{},
-  computed: {
+
+            //选择设备
+            model2: false,
+            searchObj: {
+                grade: '',
+                model: ''
+            },
+            loading2: false,
+            page: 1,
+            total2: 0,
+            list: [],
+            teamArr: [],
+            // 级联下拉配置
+            defalutProps: {
+                label: 'name',
+                value: 'id',
+                children: 'list'
+            },
+            //选中的设备
+            selectModel: {}
+        }
+    },
+    watch: {},
+    computed: {
         //电焊时间是否禁用
         spotWeldingTimeDisabled () {
             //收弧方式选择点焊可填
@@ -812,11 +980,87 @@ export default {
         //收弧是否可填
         arcDisabled () {
             return this.ruleForm2.controlArc !== '001' && this.ruleForm2.controlArc !== '011'
-        },       
+        },
 
     },
-  methods:{
-      //获取数据字典
+    methods: {
+        //mqtt创建
+        createConnection () {
+            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
+            try {
+                this.client = mqtt.connect(connectUrl, this.options)
+            } catch (error) {
+                console.log('连接失败', error)
+            }
+            this.client.on('connect', () => {
+                this.doSubscribe();
+
+            })
+            this.client.on('error', error => {
+                console.log('连接失败', error)
+            })
+            this.client.on('message', (topic, message) => {
+                if (topic == 'processClaimReturn') {
+                    clearTimeout(this.timeout);
+                    console.log(`${message}`)
+                    var datajson = JSON.parse(`${message}`);
+                    this.ruleForm2.spotWeldingTime = datajson['spotWeldTime'] / 10;//点焊时间
+                    this.ruleForm2.inAdvanceAspirated = datajson['preflowTime'] / 10;//提前送气
+                    this.ruleForm2.initialEle = datajson['initialEle'];//初期电流
+                    this.ruleForm2.initialVol = datajson['initialVol'] / 10;//初期电压
+                    this.ruleForm2.initialVolUnitary = datajson['initialVolUnitary'];//初期电压一元
+                    this.ruleForm2.weldingEle = datajson['weldElectricity'];//焊接电流
+                    this.ruleForm2.weldingVol = datajson['weldVoltage'] / 10;//焊接电压
+                    this.ruleForm2.weldingVolUnitary = datajson['weldVoltageUnitary'];//焊接电压一元
+                    this.ruleForm2.arcEle = datajson['extinguishArcEle'];//收弧电流
+                    this.ruleForm2.arcVol = datajson['extinguishArcVol'] / 10;//收弧电压
+                    this.ruleForm2.arcVolUnitary = datajson['extinguishArcVolUnitary'];//收弧电压一元
+                    this.ruleForm2.hysteresisAspirated = datajson['hysteresisAspirated'] / 10;//滞后送气
+                    this.ruleForm2.arcCharacter = datajson['arcPeculiarity'];//电弧特性
+                    this.ruleForm2.gases = datajson['gases'];//气体
+                    this.ruleForm2.weldingStickDiameter = datajson['wireDiameter'];//直径
+                    this.ruleForm2.weldingStickTexture = datajson['wireMaterials'];//材质
+                    this.ruleForm2.weldingProcess = datajson['weldProcess'];//焊接过程
+                    this.ruleForm2.weldingEleAdjust = datajson['weldEleAdjust'];//焊接电流微调
+                    this.ruleForm2.weldingVolAdjust = datajson['weldVolAdjust'] / 10;//焊接电压微调
+                    this.ruleForm2.arcEleAdjust = datajson['extinguishArcEleAdjust'];//收弧电流微调
+                    this.ruleForm2.arcVolAdjust = datajson['extinguishArcVolAdjust'] / 10;//收弧电压微调
+                    this.ruleForm2.alarmsEleMax = datajson['alarmsElectricityMax'];//报警电流上限
+                    this.ruleForm2.alarmsEleMin = datajson['alarmsElectricityMin'];//报警电流下限
+                    this.ruleForm2.alarmsVolMax = datajson['alarmsVoltageMax'];//报警电压上限
+                    this.ruleForm2.alarmsVolMin = datajson['alarmsVoltageMin'];//报警电压下限
+                    this.deconstruction(datajson['controlInfo']);
+
+                    this.issueTimeOut();
+
+
+                }
+            })
+        },
+
+        deconstruction (str) {
+            console.log(parseFloat(str).toString(2))
+        },
+
+        //订阅主题
+        doSubscribe () {
+            this.client.subscribe('processClaimReturn', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
+                    return
+                }
+            })
+        },
+
+        doPublish (msg) {
+            this.client.publish('processClaim', msg, 0)
+        },
+
+
+
+
+
+        //获取数据字典
         async getDicFun () {
             let { data, code } = await getDictionaries({ "types": ["7", "8", "9", "10", "11"] });
             if (code == 200) {
@@ -826,7 +1070,7 @@ export default {
                 this.weldingStickTextureArr = data['8'] || [];
                 //气体
                 this.gasesArrSource = data['9'] || [];
-                this.gasesArr = (data['9'] || []).filter(item => item.value=='0'||item.value=='1');
+                this.gasesArr = (data['9'] || []).filter(item => item.value == '0' || item.value == '1');
                 //焊丝直径
                 this.weldingStickDiameterArrSource = data['10'] || [];
                 this.weldingStickDiameterArr = data['10'] || [];
@@ -834,7 +1078,7 @@ export default {
                 this.weldingProcessArr = data['11'] || [];
 
             }
-        },       
+        },
 
         //选择柔软电弧模式
         changeSoftArcSchema (v) {
@@ -889,12 +1133,12 @@ export default {
         changeWelderType (v) {
             console.log(v)
         },
-        
+
         submitForm2 (formName) {
-            this.$refs[formName].validate(async (valid) => {                
+            this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     const req = { ...this.ruleForm2 }
-                    this.$emit('throwData',req)
+                    this.$emit('throwData', req)
                 } else {
                     console.log('error submit!!')
                     return false
@@ -903,7 +1147,7 @@ export default {
         },
 
         //切换材质过滤直径和气体
-        changekDiameter (v) {           
+        changekDiameter (v) {
             switch (v) {
                 case '0'://低碳钢实芯焊丝
                     this.weldingStickDiameterArr = this.weldingStickDiameterArrSource.filter(item => ['8', '9', '10', '12', '14', '16'].includes(item.value));
@@ -924,15 +1168,98 @@ export default {
             }
         },
 
+        //索取规范
+        requestSpec () {
+            if (this.ruleForm2.channelNo && this.ruleForm2.channelNo != '') {
+                this.model2 = true;
+                this.getList();
+            } else {
+                return this.$message.error("请先选择通道号！！！");
+            }
+        },
 
-  },
-  created(){
-      this.ruleFormObj2 = {...this.ruleForm2}
-      this.getDicFun();
-  },
-  mounted(){}
+        //获取设备
+        async getList () {
+            let req = {
+                pn: this.page,
+                ...this.searchObj
+            }
+            // req.model = this.libray.weldModel;
+            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
+            this.loading2 = true;
+            let { data, code } = await getWelderList(req);
+            this.loading2 = false;
+            if (code == 200) {
+                this.list = data.list
+                this.total2 = data.total
+            }
+        },
+
+        // 获取班组
+        async getTeamList () {
+            const { data, code } = await getTeam()
+            this.teamArr = data.workArea || [];
+        },
+        search () {
+            this.page = 1;
+            this.getList();
+        },
+        //分页
+        handleCurrentChange (p) {
+            this.page = p;
+            this.getList();
+        },
+        //设备选中
+        radioChangeEvent ({ row }) {
+            console.log(row)
+            this.selectModel = { ...row };
+        },
+
+        submitIssue () {
+            if (JSON.stringify(this.selectModel) == "{}") {
+                return this.$message.error("请选择设备!!");
+            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
+                this.createConnection();
+                setTimeout(() => {
+                    let msg = {}
+                    msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
+                    msg['channelNo'] = this.ruleForm2.channelNo;
+                    this.doPublish(JSON.stringify(msg));
+                    this.issueTimeOut(1);
+                }, 500);
+            } else {
+                return this.$message.error("选择的设备请先绑定采集编号!!");
+            }
+        },
+
+        //下发超时
+        issueTimeOut (n) {
+            this.timeout = setTimeout(() => {
+                this.client.unsubscribe('processClaimReturn', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
+                })
+                this.client.end();
+                if (n) {
+                    this.$message.error("下发超时")
+                }
+                clearTimeout(this.timeout)
+            }, 5000)
+        },
+
+    },
+    created () {
+        this.ruleFormObj2 = { ...this.ruleForm2 }
+        this.getDicFun();
+        this.getTeamList();
+    },
+    mounted () { }
 }
 </script>
-<style lang="scss" scoped>
-.wrapper{}
+<style>
+.teamList {
+    z-index: 9999 !important;
+}
 </style>

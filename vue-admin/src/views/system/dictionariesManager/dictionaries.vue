@@ -16,7 +16,7 @@
                     ref="xTable"
                     border
                     :data="typeList"
-                    :loading="loading"
+                    :loading="menusLoading"
                     size="mini"
                     height="auto"
                     auto-resize
@@ -84,7 +84,7 @@
                 <vxe-table
                     ref="xTable"
                     border
-                    :data="userList"
+                    :data="list"
                     :loading="loading"
                     size="mini"
                     height="auto"
@@ -99,31 +99,57 @@
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="name"
+                        field="valueName"
                         title="名称"
                         min-width="120"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="loginName"
+                        field="value"
                         title="值"
                         width="100"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="loginName"
+                        field="typeName"
                         title="类型"
+                        width="100"
                     ></vxe-table-column>
+                    <vxe-table-column
+                            field="createTime"
+                            title="操作"
+                            width="150px"
+                            fixed="right"
+                        >
+                            <template #default="{row}">
+                                <el-button
+                                    size="mini"
+                                    type="primary"
+                                    plain
+                                    @click="editFun(row.id)"
+                                >
+                                    修改
+                                </el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    plain
+                                    @click="delFun(row.id)"
+                                >
+                                    删除
+                                </el-button>
+                            </template>
+                        </vxe-table-column>
                 </vxe-table>
             </div>
-            <el-pagination
+            <!-- <el-pagination
                 class="p10"
-                :current-page.sync="page2"
+                :current-page.sync="page"
                 :page-size="10"
                 align="right"
                 background
                 layout="total, prev, pager, next"
-                :total="total2"
-                @current-change="handleCurrentChange2"
-            />
+                :total="total"
+                @current-change="handleCurrentChange"
+            /> -->
         </div>
         <el-dialog
             :title="title"
@@ -140,20 +166,20 @@
             >
                 <el-form-item
                     label="名称"
-                    prop="value"
+                    prop="valueName"
                 >
                     <el-input
-                        v-model="ruleForm.value"
+                        v-model="ruleForm.valueName"
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
 
                 <el-form-item
                     label="值"
-                    prop="valueName"
+                    prop="value"
                 >
                     <el-input
-                        v-model="ruleForm.valueName"
+                        v-model="ruleForm.value"
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
@@ -209,20 +235,15 @@ export default {
             total: 0,
             loading: false,
 
-            //用户分页
-            page2: 1,
-            total2: 0,
-
-            //目录权限资源
+            //字典右侧明细
             menuList: [],
             menusLoading: false,
-            activeName: 'first',
             //层标题
             title: '',
             //树形新增点击数据
             hanldObj: {},
             //model资源编辑层
-            sourceVisible: false,
+            sourceVisible: false, 
             //form
             objRuleForm: {
 
@@ -242,13 +263,6 @@ export default {
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ]
             },
-
-            //定位新增，编辑当前角色高亮
-            editRowIndex: '',
-            //当前选中的角色id
-            selectId: '',
-            //用户列表
-            userList: []
         }
     },
 
@@ -260,7 +274,9 @@ export default {
     methods: {
         //获取字典类型
         async getDicTypeFun () {
+            this.menusLoading = true;
             let { data, code } = await getDicType();
+            this.menusLoading = false;
             if (code == 200) {
                 this.typeList = (data || []).sort((a, b) => {
                     return b.type - a.type
@@ -279,7 +295,7 @@ export default {
             let { code, data } = await findTypeList(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data.list || [];
+                this.list = data || [];
                 this.total = data.total;
             }
         },
@@ -314,7 +330,7 @@ export default {
                 })  
             }
         },
-        //删除角色
+        //删除字典数据
         delFun (id) {
             this.$confirm('确定要删除吗?', '提示', {
                 confirmButtonText: '确定',
@@ -327,14 +343,6 @@ export default {
                     this.getList()
                 }
             }).catch(() => { })
-        },
-
-        //高亮编辑的角色
-        setHightRow () {
-            if (this.editRowIndex || this.editRowIndex === 0) {
-                this.$refs.xTable.setCurrentRow(this.list[this.editRowIndex]);
-                this.selectTableData({ row: this.list[this.editRowIndex], rowIndex: this.editRowIndex });
-            }
         },
 
         
@@ -380,25 +388,7 @@ export default {
             this.page = p;
             this.getList();
         },
-
-        //用户分页
-        handleCurrentChange2 (p) {
-            this.page2 = p;
-            this.getUserListFun();
-        },
-
-        //根据角色Id获取用户列表
-        async getUserListFun () {
-            let req = {
-                id: this.selectId,
-                pn: this.page2
-            }
-            let { data, code } = await getRoleUserList(req);
-            if (code == 200) {
-                this.userList = data.list || [];
-                this.total2 = data.total;
-            }
-        }
+        
     }
 }
 </script>

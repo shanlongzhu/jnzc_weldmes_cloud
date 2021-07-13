@@ -78,6 +78,7 @@
         <el-dialog
             :title="title"
             :visible.sync="sourceVisible"
+            :close-on-click-modal="false"
         >
             <el-form
                 :model="ruleForm"

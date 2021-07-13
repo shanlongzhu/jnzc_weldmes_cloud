@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-07-08 16:47:09
+ * @LastEditTime: 2021-07-12 15:48:23
 -->
 
 <template>
@@ -12,7 +12,7 @@
         <vxe-modal
             title="选择工艺"
             v-model="model"
-            width="700"
+            width="1000"
         >
             <template #default>
                 <vxe-table
@@ -382,6 +382,76 @@
                 </div>
             </template>
         </vxe-modal>
+
+        <!-- 下发结果显示 -->
+        <vxe-modal
+            title="下发结果"
+            v-model="model3"
+            width="700"
+        >
+            <template #default>
+                <vxe-table
+                    border
+                    show-overflow
+                    auto-resize
+                    size="mini"
+                    height="300"
+                    highlight-hover-row
+                    resizable
+                    stripe
+                    :data="newEqu"
+                    row-id="id"
+                >
+                    <vxe-table-column
+                        field="gatherNo"
+                        title="采集序号"
+                        min-width="100"
+                    >
+                        <template #default="{row}">
+                            {{row[0].gatherNo}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="channelNo"
+                        title="下发通道号"
+                        min-width="100"
+                    >
+                        <template #default="{row}">
+                            {{row.map(item => item.channelNo).join('，')}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="channelNo"
+                        title="下发成功通道号"
+                        min-width="100"
+                    >
+                        <template #default="{row}">
+                            <span style="color:#13ce66">
+                                {{row.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
+                            </span>
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="channelNo"
+                        title="下发失败通道号"
+                        min-width="100"
+                    >
+                        <template #default="{row}">
+                            <span style="color:#f00">
+                                {{row.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
+                            </span>
+                        </template>
+                    </vxe-table-column>
+                </vxe-table>
+                <div class="p10 tr">
+                    <el-button
+                        size="small"
+                        type="primary"
+                        @click="model3=false"
+                    >确定</el-button>
+                </div>
+            </template>
+        </vxe-modal>
     </div>
 </template>
 
@@ -404,8 +474,6 @@ export default {
                 reconnect: true,
                 clientId: "adminTest" + new Date().getTime()
             },
-            subscribeSuccess: false,
-            messageObj: '',
             //工艺
             model: false,
             tableData: [],
@@ -442,8 +510,15 @@ export default {
             selectEquipment: {},
             //发送mqtt数据
             newEqu: [],
-            //接受mqtt返回
-            backMqttData: [],
+            //记录发送mqtt总条数
+            reqMqttNum: 0,
+            //mqtt返回数据总条数
+            backMqttNum: 0,
+            //下发结果显示层
+            model3: false,
+            //订阅超时
+            timeout: '',
+
 
         }
     },
@@ -467,17 +542,18 @@ export default {
             })
             this.client.on('message', (topic, message) => {
                 if (topic == 'processIssueReturn') {
+                    clearTimeout(this.timeout);
                     console.log(`${message}`)
-                    this.backMqttData.push(`${message}`);
-                    if (this.backMqttData.length == this.newEqu.length) {
-                        //取消订阅
-                        this.client.unsubscribe('processIssueReturn', error => {
-                            if (error) {
-                                console.log('取消订阅失败', error)
+                    var datajson = JSON.parse(`${message}`);
+                    this.backMqttNum++;
+                    this.newEqu.forEach(item => {
+                        item.forEach(v => {
+                            if (parseInt(v.gatherNo) === parseInt(datajson.gatherNo) && parseInt(v.channelNo) === parseInt(datajson.channelNo)) {
+                                v.isSuccessStatus = datajson.flag === 0 ? 1 : 2;
                             }
                         })
-                    }
-                    // console.log(this.backMqttData)
+                    });
+                    this.issueTimeOut();
                 }
             })
         },
@@ -489,18 +565,18 @@ export default {
                     console.log('Subscribe to topics error', error)
                     return
                 }
-                this.subscribeSuccess = true
             })
         },
 
         doPublish (msg) {
-            console.log(msg)
             this.client.publish('processIssue', msg, 0)
         },
 
 
         init (row) {
             this.model = true;
+            this.selectTechnology = [];
+            this.selectEquipment = [];
             this.libray = { ...row };
             this.getExpandDetail(row.id);
         },
@@ -619,28 +695,21 @@ export default {
         },
         //命令下发
         submitIssue () {
-            let equipmentArr = []
+            let equipmentArr = [];
+            this.reqMqttNum = 0;
+            this.backMqttNum = 0;
             for (let item in this.selectEquipment) {
                 if (this.selectEquipment[item] && this.selectEquipment[item].length > 0) {
                     equipmentArr = [...equipmentArr, ...this.selectEquipment[item]]
                 }
             }
+            if (equipmentArr.length == 0) {
+                return this.$message.error("请选择设备");
+            }
             //检查选择的设备采集编号是否存在空值
             if (equipmentArr.filter(item => !item.machineGatherInfo.gatherNo || item.machineGatherInfo.gatherNo == '').length > 0) {
                 return this.$message.error("选择的设备存在采集序号为空");
             }
-
-            //选择的工艺数据
-            let techArr = this.formatTechnoloay(this.selectTechnology);
-            this.newEqu = [];
-            equipmentArr.forEach(item => {
-                techArr.forEach(v => {
-                    let objItem = { ...v };
-                    objItem['gatherNo'] = item.machineGatherInfo.gatherNo;
-                    this.newEqu.push(objItem);
-                })
-            });
-            const msg = JSON.stringify(this.newEqu);
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -648,12 +717,46 @@ export default {
             }).then(async () => {
                 this.createConnection();
                 setTimeout(() => {
-                    this.doPublish(msg);
-                }, 500)
-
+                    //选择的工艺数据
+                    let techArr = this.formatTechnoloay(this.selectTechnology);
+                    this.newEqu = equipmentArr.map(item => {
+                        let msgData = techArr.map(v => {
+                            let objItem = { ...v };
+                            objItem['gatherNo'] = item.machineGatherInfo.gatherNo;
+                            objItem['isSuccessStatus'] = 0;//记录发送状态
+                            this.reqMqttNum++;//记录发送总条数
+                            return objItem;
+                        })
+                        const msg = JSON.stringify(msgData);
+                        this.doPublish(msg);
+                        return msgData
+                    });
+                    this.issueTimeOut();
+                }, 500);
+                this.model = false;
+                this.model2 = false;
+                this.model3 = true;
             }).catch(() => { })
 
-        }
+        },
+
+        //下发超时
+        issueTimeOut () {
+            this.timeout = setTimeout(() => {
+                this.client.unsubscribe('processIssueReturn', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
+                })
+                this.client.end();
+                if (this.backMqttNum !== this.reqMqttNum) {
+                    this.$message.error("下发超时")
+                    clearTimeout(this.timeout)
+                }
+            }, 5000)
+        },
+
     },
     created () {
         this.getTeamList();

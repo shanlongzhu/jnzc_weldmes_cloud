@@ -260,25 +260,27 @@ export function editDic(data={}) {
 //根据字典Type查询列表
 export function findTypeList(params={}) {
   return request({
-    url: "/dictionary/getDictionaryInfoById",
+    url: "/dictionary/getDictionaryInfoByType",
     method: "get",
     params
   });
 }
 
 //根据id查询字典明细
-export function findDicIdInfo() {
+export function findDicIdInfo(params={}) {
   return request({
     url: "/dictionary/getDictionaryInfoById",
-    method: "get"
+    method: "get",
+    params
   });
 }
 
-//根据id查询字典明细
-export function delDic() {
+//删除字典明细
+export function delDic(params = {}) {
   return request({
     url: "/dictionary/delDictionaryInfo",
-    method: "get"
+    method: "get",
+    params
   });
 }
 
