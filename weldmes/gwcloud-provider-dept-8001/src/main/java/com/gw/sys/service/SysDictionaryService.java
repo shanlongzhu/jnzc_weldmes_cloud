@@ -57,7 +57,7 @@ public interface SysDictionaryService {
 
     /**
      * @Date 2021/7/8 13:39
-     * @Description  根据id查询字典信息
+     * @Description  根据字典类型查询字典信息
      * @Params type 字典类型
      */
     public List<SysDictionary> getDictionaryInfoByType(String type);

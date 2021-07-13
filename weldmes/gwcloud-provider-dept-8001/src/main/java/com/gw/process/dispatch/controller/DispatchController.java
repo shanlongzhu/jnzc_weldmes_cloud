@@ -294,7 +294,7 @@ public class DispatchController {
 
     /**
      * @Date 2021/6/30 11:08
-     * @Description 通过 type 获取字典表信息
+     * @Description 通过 type列表 获取字典表信息
      * @Params types 类型列表
      */
     @RequestMapping(value = "sysDictionary/getInfoByType")
@@ -310,5 +310,17 @@ public class DispatchController {
         }
 
         return HttpResult.ok(map);
+    }
+
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  获取历史曲线中任务id,编号列表
+     * @Params
+     */
+    @RequestMapping(value = "task/historyTaskInfos")
+    public HttpResult historyTaskInfos(){
+
+        List<TaskInfo> list = dispatchService.getIdAndTaskNoOfTaskInfos();
+        return HttpResult.ok(list);
     }
 }

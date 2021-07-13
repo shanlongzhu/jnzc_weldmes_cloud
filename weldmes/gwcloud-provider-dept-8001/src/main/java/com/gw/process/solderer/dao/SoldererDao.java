@@ -26,4 +26,11 @@ public interface SoldererDao {
     Long getDeptId(String deptName);
 
     void save(WelderInfo welderInfo);
+
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊工id、姓名以及编号
+     * @Params
+     */
+    public List<WelderInfo> selectHistoryWelderInfos();
 }

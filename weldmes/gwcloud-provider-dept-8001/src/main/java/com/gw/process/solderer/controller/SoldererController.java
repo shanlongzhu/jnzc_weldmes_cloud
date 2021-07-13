@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
+import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
 import com.gw.process.solderer.service.SoldererService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Date 2021/7/1 10:16
@@ -192,5 +194,18 @@ public class SoldererController {
             result.setMsg("导入失败！");
         }
         return  result;
+    }
+
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊工id、姓名以及编号
+     * @Params
+     */
+    @RequestMapping(value = "historySoldererInfos")
+    public HttpResult historySoldererInfos(){
+
+        Set<WelderInfo> list = soldererService.getHistoryWelderInfos();
+
+        return HttpResult.ok(list);
     }
 }

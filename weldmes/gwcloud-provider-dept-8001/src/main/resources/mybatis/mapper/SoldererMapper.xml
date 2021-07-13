@@ -98,4 +98,10 @@
         insert into welder_info(welder_no,welder_name,cellphone,rank,certification,dept_id,remarks)
         values (#{welderNo},#{welderName},#{cellphone},#{rank},#{certification},#{deptId},#{remarks  })
     </insert>
+
+    <!--获取历史曲线中焊工id、姓名以及编号-->
+    <select id="selectHistoryWelderInfos" resultType="com.gw.entities.WelderInfo">
+        select id,welder_name welderName,welder_no welderNo from welder_info
+    </select>
+
 </mapper>

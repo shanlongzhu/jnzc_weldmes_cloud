@@ -154,4 +154,11 @@ public interface DispatchDao {
      * @Params  type 类型列表
      */
     public List<SysDictionary> queryDictionaryInfos(@Param("type")String type);
+
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  获取历史曲线中任务id,编号列表
+     * @Params
+     */
+    public List<TaskInfo> selectIdAndTaskNoOfTaskInfos();
 }

@@ -7,7 +7,10 @@ import com.gw.process.solderer.service.SoldererService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SoldererServiceImpl implements SoldererService {
@@ -62,4 +65,22 @@ public class SoldererServiceImpl implements SoldererService {
             soldererDao.save(welderInfo);
         }
     }
+
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊工id、姓名以及编号
+     * @Params
+     */
+    @Override
+    public Set<WelderInfo> getHistoryWelderInfos() {
+
+        List<WelderInfo> welderInfos = soldererDao.selectHistoryWelderInfos();
+
+        //去重
+        Set<WelderInfo> set = new HashSet<>(welderInfos);
+
+
+        return set;
+    }
+
 }

@@ -7,6 +7,7 @@ import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.entities.MachineGatherInfo;
 import com.gw.entities.MachineWeldInfo;
+import com.gw.entities.TaskInfo;
 import com.gw.equipment.welder.service.WelderService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -230,6 +231,19 @@ public class WelderController {
             result.setMsg("导入失败！");
         }
         return  result;
+    }
+
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊机id以及设备编号
+     * @Params
+     */
+    @RequestMapping(value = "historyWelderInfos")
+    public HttpResult historyWelderInfos(){
+
+        List<MachineWeldInfo> list = welderService.getIdAndMachineNoOfWelderInfos();
+
+        return HttpResult.ok(list);
     }
 
 }

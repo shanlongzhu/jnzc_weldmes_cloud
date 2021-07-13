@@ -260,20 +260,6 @@ public class DispatchServiceImpl implements DispatchService{
 
 
         }
-
-        /*//任务状态 更改为 进行中
-        if(taskInfo.getStatusStr().equals(DictionaryEnum.TASK_STATUS_NO_GET.getValueName())){
-
-            //获取到 进行中 的任务主键
-            int status = DictionaryEnum.TASK_STATUS_WORKING.getId();
-
-            //更新任务信息表中状态 将 未领取 修改为 进行中
-            taskInfo.setStatus(status);
-
-            //入库操作  修改任务状态
-            dispatchDao.updateTaskInfo(taskInfo);
-
-        }*/
     }
 
     /**
@@ -474,6 +460,24 @@ public class DispatchServiceImpl implements DispatchService{
         return HttpResult.ok("领取失败,暂无该任务信息！");
     }
 
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  获取历史曲线中任务id,编号列表
+     * @Params
+     */
+    @Override
+    public List<TaskInfo> getIdAndTaskNoOfTaskInfos() {
+
+        List<TaskInfo> list = dispatchDao.selectIdAndTaskNoOfTaskInfos();
+
+        return list;
+    }
+
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  将任务信息遍历到Excel单元格中
+     * @Params
+     */
     public void forEachTaskInfoToCell(Row row,TaskInfo taskInfo){
 
         //将 任务编号 字段值插入单元格
@@ -516,6 +520,11 @@ public class DispatchServiceImpl implements DispatchService{
         evaluateStars.setCellValue(taskInfo.getEvaluateStarsIdToStr());
     }
 
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  进行 taskClaim表 入库操作,修改任务状态
+     * @Params
+     */
     public void updateTaskInfoAndAddTaskClaimInfo(TaskInfo taskInfo,TaskClaim taskClaimInfo){
 
         //进行 taskClaim表 入库操作
@@ -532,6 +541,11 @@ public class DispatchServiceImpl implements DispatchService{
 
     }
 
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  遍历Excel中的信息到list中,导入数据库
+     * @Params
+     */
     public void importExcelMethod(MultipartFile uploadFile){
         try {
             //workbook excel

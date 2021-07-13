@@ -44,4 +44,11 @@ public interface WelderDao {
      */
     List<Long> getDeptIdByWelderId(@Param("id")Long id);
 
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊机id以及设备编号
+     * @Params
+     */
+    public List<MachineWeldInfo> selectIdAndMachineNoOfWelderInfos();
+
 }

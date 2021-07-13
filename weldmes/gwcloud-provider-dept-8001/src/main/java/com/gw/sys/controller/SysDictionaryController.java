@@ -110,8 +110,8 @@ public class SysDictionaryController {
 
     /**
      * @Date 2021/7/8 13:39
-     * @Description  根据类型查询字典信息列表
-     * @Params id 字典id
+     * @Description  根据类型查询字典信息列表       任务工单控制器中有根据 类型列表 查询字典信息的接口
+     * @Params type 字典类型
      */
     @RequestMapping("dictionary/getDictionaryInfoByType")
     public HttpResult getDictionaryInfoByType(String type){

@@ -20,7 +20,7 @@ public interface DispatchService {
     /**
      * @Date 2021/5/27 11:25
      * @Description 获取任务列表
-     * @Params
+     * @Params  grade班组id      taskStatus任务状态id
      */
     public List<TaskInfo> queryTaskList(Integer grade,Integer taskStatus);
 
@@ -48,7 +48,7 @@ public interface DispatchService {
     /**
      * @Date 2021/5/28 11:44
      * @Description 根据任务表主键查询任务信息
-     * @Params
+     * @Params  id 任务表主键
      */
     public TaskInfo queryTaskInfoById(Long id);
 
@@ -90,14 +90,14 @@ public interface DispatchService {
     /**
      * @Date 2021/5/28 16:30
      * @Description 任务状态变更
-     * @Params
+     * @Params taskInfo 任务信息
      */
     public void taskStatusChange(TaskInfo taskInfo);
 
     /**
      * @Date 2021/5/28 17:38
      * @Description 导出Excel
-     * @Params
+     * @Params  grade班组id      taskStatus任务状态id
      */
     public void exportExcel(HttpServletResponse response,Integer grade,Integer taskStatus);
 
@@ -119,7 +119,7 @@ public interface DispatchService {
     /**
      * @Date 2021/6/29 9:45
      * @Description  用户为管理员，查询所有的区以及区下班组
-     * @Params
+     * @Params username  用户名   password 密码
      */
     public Map<String,Object> getWorkSpaceAndGradeInfo(String username,String password);
 
@@ -129,4 +129,11 @@ public interface DispatchService {
      * @Params
      */
     public HttpResult updateTaskStatusAndInsertInfo(TaskClaim taskClaimInfo);
+
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  获取历史曲线中任务id,编号列表
+     * @Params
+     */
+    public List<TaskInfo> getIdAndTaskNoOfTaskInfos();
 }

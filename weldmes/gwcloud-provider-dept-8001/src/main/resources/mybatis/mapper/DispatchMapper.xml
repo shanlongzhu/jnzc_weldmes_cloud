@@ -209,4 +209,9 @@
     <select id="queryDictionaryInfos" resultType="com.gw.entities.SysDictionary">
         select `type`,type_name typeName,value_name valueName,id,`value` from sys_dictionary where `type` = #{type}
     </select>
+
+    <!--获取历史曲线中任务id,编号列表-->
+    <select id="selectIdAndTaskNoOfTaskInfos" resultType="com.gw.entities.TaskInfo">
+        select id,task_no from task_info where status = 41
+    </select>
 </mapper>

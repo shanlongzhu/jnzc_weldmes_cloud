@@ -30,4 +30,11 @@ public interface WelderService {
     Byte getModelId(String model);
 
     void importExcel(List<MachineWeldInfo> machineWeldInfoArrayList);
+
+    /**
+     * @Date 2021/7/13 18:01
+     * @Description 获取历史曲线中焊机id以及设备编号
+     * @Params
+     */
+    public List<MachineWeldInfo> getIdAndMachineNoOfWelderInfos();
 }

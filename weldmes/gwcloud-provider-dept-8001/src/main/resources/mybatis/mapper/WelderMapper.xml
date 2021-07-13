@@ -153,4 +153,9 @@
     <select id="getDeptIdByWelderId" parameterType="java.lang.Long" resultType="java.lang.Long">
         select dept_id from welder_info where `id` = #{id}
     </select>
+
+    <!--获取历史曲线中焊机id以及设备编号-->
+    <select id="selectIdAndMachineNoOfWelderInfos" resultType="com.gw.entities.MachineWeldInfo">
+        select id,machine_no machineNo from machine_weld_info
+    </select>
 </mapper>
