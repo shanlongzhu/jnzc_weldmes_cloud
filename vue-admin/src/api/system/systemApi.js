@@ -27,6 +27,15 @@ export function editMenu(data = {}) {
   });
 }
 
+//删除菜单资源
+export function delMenu(params={}) {
+  return request({
+    url: "/sysMenu/delMenuOrButtonInfoById",
+    method: "get",
+    params
+  });
+}
+
 //*******角色模块**************** */
 
 //根据id查询菜单资源明细

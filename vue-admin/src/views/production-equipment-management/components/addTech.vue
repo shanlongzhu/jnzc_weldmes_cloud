@@ -634,121 +634,121 @@
             width="800px"
             class="procces-wrap"
         >
-                <div class="top-con flex-n">
-                    <div class="con-w">
-                        <span>班组：</span>
-                        <el-cascader
-                            v-model="searchObj.grade"
-                            size="small"
-                            style="width:180px"
-                            clearable
-                            :options="teamArr"
-                            :props="defalutProps"
-                            :show-all-levels="false"
-                            @change="search"
-                            popper-class="teamList"
-                        />
-                    </div>
-                </div>
-                <vxe-table
-                    border
-                    show-overflow
-                    auto-resize
-                    size="mini"
-                    height="300"
-                    :loading="loading2"
-                    highlight-hover-row
-                    highlight-current-row
-                    resizable
-                    stripe
-                    :data="list"
-                    row-id="id"
-                    :radio-config="{ trigger: 'row',highlight: true}"
-                    @cell-click="radioChangeEvent"
-                >
-                    <vxe-table-column
-                        type="radio"
-                        title="请选择"
-                        width="60"
-                    ></vxe-table-column>
-                    <vxe-table-column
-                        field="machineNo"
-                        title="固定资产编号"
-                        width="100"
-                    ></vxe-table-column>
-                    <vxe-table-column
-                        field="deptName"
-                        title="设备类型"
-                        width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueName}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="welderName"
-                        title="所属项目"
-                        width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDept.name}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="status"
-                        title="状态"
-                        width="60"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNames}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="macPath"
-                        title="厂家"
-                        width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamess}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="gatherNo"
-                        title="采集序号"
-                        min-width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.machineGatherInfo.gatherNo}}
-                        </template>
-                    </vxe-table-column>
-                </vxe-table>
-                <div
-                    class="p10 flex"
-                    style="justify-content: space-between;"
-                >
-                    <el-pagination
-                        :current-page.sync="page"
-                        :page-size="10"
-                        align="right"
-                        background
-                        small
-                        layout="total, prev, pager, next"
-                        :total="total2"
-                        @current-change="handleCurrentChange"
+            <div class="top-con flex-n">
+                <div class="con-w">
+                    <span>班组：</span>
+                    <el-cascader
+                        v-model="searchObj.grade"
+                        size="small"
+                        style="width:180px"
+                        clearable
+                        :options="teamArr"
+                        :props="defalutProps"
+                        :show-all-levels="false"
+                        @change="search"
+                        popper-class="teamList"
                     />
-                    <div>
-                        <el-button
-                            size="small"
-                            type="primary"
-                            @click="submitIssue"
-                        >确定</el-button>
-                        <el-button
-                            size="small"
-                            @click="model2=false"
-                        >取消</el-button>
-                    </div>
-
                 </div>
+            </div>
+            <vxe-table
+                border
+                show-overflow
+                auto-resize
+                size="mini"
+                height="300"
+                :loading="loading2"
+                highlight-hover-row
+                highlight-current-row
+                resizable
+                stripe
+                :data="list"
+                row-id="id"
+                :radio-config="{ trigger: 'row',highlight: true}"
+                @cell-click="radioChangeEvent"
+            >
+                <vxe-table-column
+                    type="radio"
+                    title="请选择"
+                    width="60"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="machineNo"
+                    title="固定资产编号"
+                    width="100"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="deptName"
+                    title="设备类型"
+                    width="100"
+                >
+                    <template #default="{row}">
+                        {{row.sysDictionary.valueName}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="welderName"
+                    title="所属项目"
+                    width="100"
+                >
+                    <template #default="{row}">
+                        {{row.sysDept.name}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="status"
+                    title="状态"
+                    width="60"
+                >
+                    <template #default="{row}">
+                        {{row.sysDictionary.valueNames}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="macPath"
+                    title="厂家"
+                    width="100"
+                >
+                    <template #default="{row}">
+                        {{row.sysDictionary.valueNamess}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="gatherNo"
+                    title="采集序号"
+                    min-width="100"
+                >
+                    <template #default="{row}">
+                        {{row.machineGatherInfo.gatherNo}}
+                    </template>
+                </vxe-table-column>
+            </vxe-table>
+            <div
+                class="p10 flex"
+                style="justify-content: space-between;"
+            >
+                <el-pagination
+                    :current-page.sync="page"
+                    :page-size="10"
+                    align="right"
+                    background
+                    small
+                    layout="total, prev, pager, next"
+                    :total="total2"
+                    @current-change="handleCurrentChange"
+                />
+                <div>
+                    <el-button
+                        size="small"
+                        type="primary"
+                        @click="submitIssue"
+                    >确定</el-button>
+                    <el-button
+                        size="small"
+                        @click="model2=false"
+                    >取消</el-button>
+                </div>
+
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -1030,16 +1030,26 @@ export default {
                     this.ruleForm2.alarmsVolMax = datajson['alarmsVoltageMax'];//报警电压上限
                     this.ruleForm2.alarmsVolMin = datajson['alarmsVoltageMin'];//报警电压下限
                     this.deconstruction(datajson['controlInfo']);
-
+                    this.$message.success("索取成功！！！");
+                    this.model2 = false;
                     this.issueTimeOut();
-
-
                 }
             })
         },
 
         deconstruction (str) {
-            console.log(parseFloat(str).toString(2))
+            const binaryStr = parseFloat(str).toString(2);
+            let arrStr = binaryStr.split('');
+            while (arrStr.length < 8) {
+                arrStr.unshift('0')
+            }
+            this.ruleForm2.initialCondition = arrStr[7]?false:true;//初期条件
+            this.ruleForm2.controlArc = arrStr[6] + arrStr[5] + arrStr[4];//收弧
+
+            this.ruleForm2.unitarySeveral = parseInt(arrStr[2]);//一元/个别
+            this.ruleForm2.fusionControl = arrStr[1]?false:true;//熔深控制
+            this.ruleForm2.softArcSchema = arrStr[0]?false:true;//柔软电弧模式
+            console.log(this.ruleForm2)
         },
 
         //订阅主题
@@ -1131,7 +1141,6 @@ export default {
 
         //切换一元/个别
         changeWelderType (v) {
-            console.log(v)
         },
 
         submitForm2 (formName) {
@@ -1190,8 +1199,8 @@ export default {
             let { data, code } = await getWelderList(req);
             this.loading2 = false;
             if (code == 200) {
-                this.list = data.list
-                this.total2 = data.total
+                this.list = data.list || [];
+                this.total2 = data.total;
             }
         },
 
@@ -1211,7 +1220,6 @@ export default {
         },
         //设备选中
         radioChangeEvent ({ row }) {
-            console.log(row)
             this.selectModel = { ...row };
         },
 
@@ -1225,6 +1233,8 @@ export default {
                     msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
                     msg['channelNo'] = this.ruleForm2.channelNo;
                     this.doPublish(JSON.stringify(msg));
+                    console.log(msg)
+                    //记时触发下发失败
                     this.issueTimeOut(1);
                 }, 500);
             } else {
@@ -1240,8 +1250,11 @@ export default {
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
-                })
-                this.client.end();
+                    setTimeout(() => {
+                        this.client.end();
+                    },500)
+                });
+
                 if (n) {
                     this.$message.error("下发超时")
                 }
