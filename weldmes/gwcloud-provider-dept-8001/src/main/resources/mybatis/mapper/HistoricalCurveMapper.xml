@@ -21,7 +21,8 @@
 
     <!--焊机历史曲线信息列表-->
     <select id="selectHistoryCurveInfos" resultType="com.gw.entities.RtData">
-        select task.task_no,welder.welder_name,welder.welder_no,weld.machine_no
+        select task.task_no,task.reality_starttime taskRealityStartTime,reality_endtime taskRealityEndTime,
+        welder.welder_name,welder.welder_no,weld.machine_no
         from task_claim claim
         left join task_info task on task.id = claim.task_id
         left join welder_info welder on welder.id = claim.welder_id
