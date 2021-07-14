@@ -72,7 +72,7 @@ public class DispatchController {
      * @Description 获取任务列表
      * @Params
      */
-    @RequestMapping(value = "task/list" ,method = RequestMethod.GET)
+    @RequestMapping(value = "task/list")
     public HttpResult queryTaskListController(@RequestParam(value="pn",defaultValue = "1") Integer pn,Integer grade,Integer taskStatus){
 
         PageHelper.startPage(pn,10);
@@ -128,7 +128,7 @@ public class DispatchController {
      * @Description 任务新增接口
      * @Params taskInfo任务信息
      */
-    @RequestMapping(value = "task/addTaskInfo",method = RequestMethod.POST)
+    @RequestMapping(value = "task/addTaskInfo")
     public HttpResult addTaskInfoController(@RequestBody TaskInfo taskInfo){
 
 
@@ -142,7 +142,7 @@ public class DispatchController {
      * @Description 根据任务id 查询任务信息
      * @Params  id 任务id
      */
-    @RequestMapping(value = "task/queryTaskInfoById",method = RequestMethod.GET)
+    @RequestMapping(value = "task/queryTaskInfoById")
     public HttpResult queryTaskInfoByIdController(Long id){
 
         TaskInfo taskInfo=dispatchService.queryTaskInfoById(id);
@@ -159,7 +159,7 @@ public class DispatchController {
      * @Description 任务修改接口
      * @Params taskInfo任务信息
      */
-    @RequestMapping(value = "task/updateTaskInfo",method = RequestMethod.PUT)
+    @RequestMapping(value = "task/updateTaskInfo")
     public HttpResult updateTaskInfoController(@RequestBody TaskInfo taskInfo){
 
         dispatchService.updateTaskInfo(taskInfo);
@@ -173,7 +173,7 @@ public class DispatchController {
      * @Description 任务删除接口
      * @Params
      */
-    @RequestMapping(value = "task/deleteTaskInfoInfo",method = RequestMethod.DELETE)
+    @RequestMapping(value = "task/deleteTaskInfoInfo")
     public HttpResult deleteTaskInfoController(@RequestBody TaskInfo taskInfo){
 
         dispatchService.deleteTaskInfoById(taskInfo.getId());
