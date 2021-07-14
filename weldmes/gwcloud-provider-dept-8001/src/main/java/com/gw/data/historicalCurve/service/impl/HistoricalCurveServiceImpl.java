@@ -20,28 +20,48 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
     @Override
     public List<RtData> getList(String startTime, String endTime) throws ParseException {
+
         Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
+
         Date endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
+
         List<Date> lDate = new ArrayList<>();
+
         lDate.add(bigTime);
+
         Calendar calBegin = Calendar.getInstance();
+
         calBegin.setTime(bigTime);
+
         Calendar calEnd = Calendar.getInstance();
+
         calEnd.setTime(endTimes);
-        while (endTimes.after(calBegin.getTime()))  {
+
+        while (endTimes.after(calBegin.getTime())) {
+
             calBegin.add(Calendar.DAY_OF_MONTH, 1);
+
             lDate.add(calBegin.getTime());
         }
-        List<String> list = new LinkedList<>();
+
+        List<String> tableNames = new ArrayList<>();
+
+        //获取表名列表
         for (Date date : lDate) {
-            list.add("rtdata"+new SimpleDateFormat("yyyyMMdd").format(date));
+
+            tableNames.add("rtdata" + new SimpleDateFormat("yyyyMMdd").format(date));
         }
-        return historicalCurveDao.getList(startTime, endTime,list);
 
-    }
+        List<RtData> list = new ArrayList<>();
 
-    @Override
-    public List<RtData> get() {
-        return historicalCurveDao.get();
+        for (String tableName : tableNames) {
+
+            List<RtData> tableInfos = historicalCurveDao.getList(startTime, endTime, tableName);
+
+            list.addAll(tableInfos);
+        }
+
+        return list;
+
     }
 }

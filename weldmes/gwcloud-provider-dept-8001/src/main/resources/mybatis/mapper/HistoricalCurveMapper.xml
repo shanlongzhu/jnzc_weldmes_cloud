@@ -4,22 +4,10 @@
 <mapper namespace="com.gw.data.historicalCurve.dao.HistoricalCurveDao">
 
     <select id="getList" resultType="com.gw.entities.RtData">
-        SELECT
-        weldTime,
-        electricity,
-        voltage
-        FROM
-        <foreach collection="list" item="tableName" open="("
-                 close=")" separator="UNION ALL">
-            ${tableName}
-        </foreach>
-        WHERE
-        weldTime &gt;= #{startTime}
-        AND weldTime &lt;= #{endTime}
-
-    </select>
-    <select id="get" resultType="com.gw.entities.RtData">
-        select * from rtdata20210605
+        select weldTime,electricity,voltage
+        from ${tableName}
+        where weldTime &gt;= #{startTime}
+        and weldTime &lt;= #{endTime}
     </select>
 
 </mapper>

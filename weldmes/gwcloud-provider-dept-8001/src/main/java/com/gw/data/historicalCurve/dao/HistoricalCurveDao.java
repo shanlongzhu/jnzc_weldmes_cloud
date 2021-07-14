@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 @DS("slave_1")
 public interface HistoricalCurveDao {
-    List<RtData> getList(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("list") List<String> list);
 
-    List<RtData> get();
+    List<RtData> getList(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("tableName") String tableName);
+
 }

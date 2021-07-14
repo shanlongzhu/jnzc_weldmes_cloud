@@ -7,7 +7,7 @@ import java.text.ParseException;
 import java.util.List;
 
 public interface HistoricalCurveService {
+
     List<RtData> getList(String startTime, String endTime) throws ParseException;
 
-    List<RtData> get();
 }

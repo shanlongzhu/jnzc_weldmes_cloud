@@ -20,17 +20,16 @@ public class HistoricalCurveController {
     @Autowired
     private HistoricalCurveService historicalCurveService;
 
-    //历史曲线展示
+    /**
+     * @Date 2021/7/14 8:57
+     * @Description 焊机历史曲线
+     * @Params
+     */
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String startTime, String endTime) throws ParseException {
         PageHelper.startPage(pn, 10);
         List<RtData> list = historicalCurveService.getList(startTime,endTime);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
-    }
-    @RequestMapping("test")
-    public HttpResult get(){
-        List<RtData>list= historicalCurveService.get();
-        return HttpResult.ok(list);
     }
 }
