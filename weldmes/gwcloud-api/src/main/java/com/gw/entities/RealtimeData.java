@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @Data
 @Accessors(chain=true)
 //没有RealtimeData这个表
-public class RealtimeData implements Serializable {
+public class RealtimeData{
     private Long id;
     private Long fWelderId;
     private String fGatherNo;

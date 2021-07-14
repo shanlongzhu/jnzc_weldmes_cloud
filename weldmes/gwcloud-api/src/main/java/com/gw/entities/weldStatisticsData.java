@@ -43,12 +43,12 @@ public class weldStatisticsData implements Serializable {
     private Integer count3;
     private Integer count4;
     private Integer count5;
-    private BigDecimal utilization;
+    private Double utilization;
     @JsonFormat(pattern="HH:mm:ss",timezone="GMT+8")
     private Timestamp time;
     @JsonFormat(pattern="HH:mm:ss",timezone="GMT+8")
     private Timestamp time2;
-    private BigDecimal utilization2;
+    private Double utilization2;
     private WelderInfo welderInfo;
     private TaskInfo taskInfo;
     private SysDictionary sysDictionary;
