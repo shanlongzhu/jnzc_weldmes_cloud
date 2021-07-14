@@ -4,10 +4,23 @@
 <mapper namespace="com.gw.data.historicalCurve.dao.HistoricalCurveDao">
 
     <select id="getList" resultType="com.gw.entities.RtData">
-        select weldTime,electricity,voltage
-        from ${tableName}
-        where weldTime &gt;= #{startTime}
-        and weldTime &lt;= #{endTime}
+        select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage,
+               task.task_no,task.reality_starttime taskRealityStartTime,task.reality_endtime taskRealityEndTime,
+               welder.welder_name,welder.welder_no,machineWeld.machine_no
+        from ${tableName} tableInfo
+        left join jnzc.task_info task on tableInfo.taskId = task.id
+        left join jnzc.welder_info welder on tableInfo.welderId = welder.id
+        left join jnzc.machine_weld_info machineWeld on tableInfo.machineId = machineWeld.id
+        where tableInfo.weldTime &gt;= #{startTime} and tableInfo.weldTime &lt;= #{endTime}
+        <if test="taskId != null and taskId != ''">
+            and tableInfo.taskId = #{taskId}
+        </if>
+        <if test="welderId != null and welderId != ''">
+            and tableInfo.welderId = #{welderId}
+        </if>
+        <if test="weldMachineId != null and weldMachineId != ''">
+            and tableInfo.machineId = #{weldMachineId}
+        </if>
     </select>
 
 </mapper>

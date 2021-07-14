@@ -18,8 +18,13 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
     @Autowired
     private HistoricalCurveDao historicalCurveDao;
 
+    /**
+     * @Date 2021/7/14 8:57
+     * @Description 焊机历史曲线
+     * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
+     */
     @Override
-    public List<RtData> getList(String startTime, String endTime) throws ParseException {
+    public List<RtData> getList(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId) throws ParseException {
 
         Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
 
@@ -56,7 +61,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         for (String tableName : tableNames) {
 
-            List<RtData> tableInfos = historicalCurveDao.getList(startTime, endTime, tableName);
+            List<RtData> tableInfos = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableName);
 
             list.addAll(tableInfos);
         }
