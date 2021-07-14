@@ -30,4 +30,11 @@ public interface HistoricalCurveDao {
                                             @Param("taskId")Long taskId,@Param("welderId")Long welderId,
                                             @Param("weldMachineId")Long weldMachineId);
 
+    /**
+     * @Date 2021/7/14 17:55
+     * @Description  判断表是否存在
+     * @Params
+     */
+    public Integer tableExistYesOrNo(@Param("tableName")String tableName);
+
 }

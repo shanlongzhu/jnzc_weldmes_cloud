@@ -47,7 +47,7 @@
                dept.name,deptWork.name workSpace,task.plan_starttime,task.plan_endtime,
                task.reality_starttime,task.reality_endtime,
                task.evaluate_content,dictionaryTP.value_name evaluate_stars,dictionaryTP.id startId,
-               task.dept_id,task.welder_id,dictionary.value_name status
+               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
         from task_info task
         left join sys_dept dept on dept.id = task.dept_id
         left join sys_dept deptWork on deptWork.id = dept.parent_id
@@ -75,7 +75,7 @@
         dept.name,task.plan_starttime,task.plan_endtime,
         task.reality_starttime,task.reality_endtime,
         task.evaluate_content,dictionaryTP.value_name evaluate_stars,
-        task.dept_id,task.welder_id,dictionary.value_name status
+        task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
         from task_info task
         left join sys_dept dept on dept.id=task.dept_id
         left join sys_dictionary dictionary on dictionary.id=task.status
@@ -90,7 +90,7 @@
                dept.name,task.plan_starttime,task.plan_endtime,
                task.reality_starttime,task.reality_endtime,
                task.evaluate_content,dictionaryTP.value_name evaluate_stars,
-               task.dept_id,task.welder_id,dictionary.value_name status
+               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
         from task_info task
         left join sys_dept dept on dept.id=task.dept_id
         left join sys_dictionary dictionary on dictionary.id=task.status
@@ -121,15 +121,19 @@
 
     <!--新增任务信息-->
     <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
-        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time)
-        values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},#{taskInfo.planEndtime},52,NOW())
+        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time,
+        eleMax,eleMin,volMax,volMin)
+        values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},
+        #{taskInfo.planEndtime},52,#{taskInfo.createTime},#{taskInfo.eleMax},#{taskInfo.eleMin},
+        #{taskInfo.volMax},#{taskInfo.volMin})
     </insert>
 
     <!--通过任务id查询任务信息-->
     <select id="queryTaskInfoById" parameterType="java.lang.Long" resultMap="taskList">
         select task.id,task.task_no,task.grade,
         task.plan_starttime,task.plan_endtime,
-        task.dept_id,sys_dept.name deptName,sys_dept.parent_id
+        task.dept_id,sys_dept.name deptName,sys_dept.parent_id,
+        task.eleMax,task.eleMin,task.volMax,task.volMin
         from task_info task
         left join sys_dept on task.dept_id = sys_dept.id
         where task.id = #{id}
@@ -148,6 +152,10 @@
             <if test="taskInfo.realityEndtime != null and taskInfo.realityEndtime !=''">reality_endtime = #{taskInfo.realityEndtime},</if>
             <if test="taskInfo.status != null and taskInfo.status !=''">status = #{taskInfo.status},</if>
             <if test="taskInfo.welderId != null and taskInfo.welderId !=''">welder_id = #{taskInfo.welderId},</if>
+            <if test="taskInfo.eleMax != null and taskInfo.eleMax !=''">eleMax = #{taskInfo.eleMax},</if>
+            <if test="taskInfo.eleMin != null and taskInfo.eleMin !=''">eleMin = #{taskInfo.eleMin},</if>
+            <if test="taskInfo.volMax != null and taskInfo.volMax !=''">volMax = #{taskInfo.volMax},</if>
+            <if test="taskInfo.volMin != null and taskInfo.volMin !=''">volMin = #{taskInfo.volMin},</if>
         </trim>
         where id=#{taskInfo.id}
     </update>

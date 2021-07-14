@@ -148,6 +148,11 @@ public class DispatchServiceImpl implements DispatchService{
     @Override
     public void addTaskInfo(TaskInfo taskInfo) {
 
+        //获取当前系统时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        taskInfo.setCreateTime(time);
+
         dispatchDao.addTaskInfo(taskInfo);
 
     }

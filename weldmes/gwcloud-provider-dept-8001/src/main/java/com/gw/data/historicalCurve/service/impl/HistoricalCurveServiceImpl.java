@@ -7,6 +7,7 @@ import com.gw.entities.RtData;
 import com.gw.entities.TaskClaim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,6 +63,11 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         for (String tableName : tableNames) {
 
+            Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
+
+            if(ObjectUtils.isEmpty(rows)){
+                continue;
+            }
             List<RtData> tableInfos = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableName);
 
             list.addAll(tableInfos);

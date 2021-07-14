@@ -5,7 +5,7 @@
 
     <!--焊机历史曲线-->
     <select id="getList" resultType="com.gw.entities.RtData">
-        select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage,
+        select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage
         from ${tableName} tableInfo
         where tableInfo.weldTime &gt;= #{startTime} and tableInfo.weldTime &lt;= #{endTime}
         <if test="taskId != null and taskId != ''">
@@ -37,6 +37,13 @@
         <if test="weldMachineId != null and weldMachineId != ''">
             and tableInfo.machineId = #{weldMachineId}
         </if>
+    </select>
+
+    <!--判断表是否存在-->
+    <select id="tableExistYesOrNo" parameterType="String" resultType="Integer">
+        select table_rows
+        from information_schema.TABLES
+        where `TABLE_NAME` = #{tableName}
     </select>
 
 </mapper>
