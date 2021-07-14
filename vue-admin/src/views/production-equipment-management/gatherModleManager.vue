@@ -93,14 +93,14 @@
                     prop="gatherNo"
                     label="编号"
                     align="left"
-                    min-width="200"
+                    min-width="70"
                     fixed="left"
                 />
                 <el-table-column
                     prop="deptName"
                     label="所属项目"
                     align="left"
-                    min-width="200"
+                    min-width="100"
                 >
                     <template slot-scope="scope">
                         {{scope.row.sysDept.name}}
@@ -203,7 +203,10 @@
                     label="编号"
                     prop="gatherNo"
                 >
-                    <el-input v-model="ruleForm.gatherNo" style="width:250px"></el-input>
+                    <el-input
+                        v-model="ruleForm.gatherNo"
+                        style="width:250px"
+                    ></el-input>
                 </el-form-item>
                 <el-form-item
                     label="所属项目"
@@ -257,13 +260,19 @@
                     label="IP地址"
                     prop="ipPath"
                 >
-                    <el-input v-model="ruleForm.ipPath" style="width:250px"/>
+                    <el-input
+                        v-model="ruleForm.ipPath"
+                        style="width:250px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="MAC地址"
                     prop="macPath"
                 >
-                    <el-input v-model="ruleForm.macPath" style="width:250px"/>
+                    <el-input
+                        v-model="ruleForm.macPath"
+                        style="width:250px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="出厂时间"
@@ -291,12 +300,21 @@
 </template>
 
 <script>
-import { getEquList, getEquDetail, delEqu, exportExcel, addEqu,editEqu } from '_api/productionEquipment/production'
+import { getEquList, getEquDetail, delEqu, exportExcel, addEqu, editEqu } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     name: 'gatherModleManager',
     data () {
+        // 验证采集编号的规则
+        var checkGatherNo = (rule, value, callback) => {
+            // 验证集编号的正则表达式
+            const regGatherNo = /^\d{4}$/
+            if (regGatherNo.test(value)) {
+                return callback()
+            }
+            callback(new Error('请输入四位纯数字'))
+        };
         return {
             list: [],
             //分页
@@ -308,7 +326,7 @@ export default {
             gatherNo: '',//所属项目
 
             visable1: false,
-            ruleFormObj: {                
+            ruleFormObj: {
             },
             ruleForm: {
                 gatherNo: '',//编号
@@ -321,7 +339,8 @@ export default {
             },
             rules: {
                 gatherNo: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
+                    { required: true, message: '不能为空', trigger: 'blur' },
+                    { validator: checkGatherNo, trigger: 'blur' }
                 ],
                 deptId: [
                     { required: true, message: '不能为空', trigger: 'change' }
@@ -348,7 +367,7 @@ export default {
                 value: 'id',
                 children: 'list'
             },
-            loading:false,
+            loading: false,
             importUrl: `${process.env.VUE_APP_BASE_API}/collection/importExcel`,
             headers: {
                 'Authorization': getToken()
@@ -357,7 +376,7 @@ export default {
     },
 
     created () {
-        this.ruleFormObj = {...this.ruleForm};
+        this.ruleFormObj = { ...this.ruleForm };
         // 获取班组
         if (this.teamArr.length == 0) {
             this.getTeamList()
@@ -384,9 +403,9 @@ export default {
                 grade: this.grade && this.grade.length > 0 ? this.grade.slice(-1).join('') : '',
                 gatherNo: this.gatherNo
             }
-            this.loading =true;
+            this.loading = true;
             let { data, code } = await getEquList(req);
-            this.loading =false;
+            this.loading = false;
             if (code == 200) {
                 this.list = data.list
                 this.total = data.total
@@ -457,7 +476,7 @@ export default {
             location.href = exportExcel(req);
         },
         handleAvatarSuccess (res, file) {
-            if(res.code==200){
+            if (res.code == 200) {
                 this.$message.success("导入成功");
                 this.search();
             }
@@ -469,7 +488,7 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await editEqu(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
@@ -478,7 +497,7 @@ export default {
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await addEqu(req);
                         if (code == 200) {
                             this.$message.success('新增成功')

@@ -8,7 +8,7 @@
                 <div class="con-w">
                     <span>任务编号：</span>
                     <el-select
-                        v-model="searchObj.rate"
+                        v-model="searchObj.taskId"
                         placeholder="请选择"
                         clearable
                         style="width:120px"
@@ -24,7 +24,7 @@
                 <div class="con-w">
                     <span>焊工：</span>
                     <el-select
-                        v-model="searchObj.rate"
+                        v-model="searchObj.welderId"
                         placeholder="请选择"
                         clearable
                         style="width:120px"
@@ -35,15 +35,15 @@
                             :label="item.welderName"
                             :value="item.id"
                         >
-                        <span style="float: left; min-width:80px">{{ item.welderName }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.welderNo }}</span>
-                        </el-option>                        
+                            <span style="float: left; min-width:80px">{{ item.welderName }}</span>
+                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.welderNo }}</span>
+                        </el-option>
                     </el-select>
                 </div>
                 <div class="con-w">
                     <span>焊机编号：</span>
                     <el-select
-                        v-model="searchObj.rate"
+                        v-model="searchObj.weldMachineId"
                         placeholder="请选择"
                         clearable
                         style="width:120px"
@@ -88,6 +88,7 @@
                     :loading="loading"
                     highlight-current-row
                     auto-resize
+                    @current-change="currentChangeEvent"
                 >
                     <vxe-table-column
                         type="seq"
@@ -95,46 +96,35 @@
                         width="50"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="name"
+                        field="taskNo"
                         title="任务编号"
                         min-width="150"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="loginName"
+                        field="welderName"
                         title="焊工姓名"
                         min-width="150"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="mobile"
+                        field="welderNo"
                         title="焊工编号"
                         min-width="150"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="email"
+                        field="machineNo"
                         title="焊机编号"
                         min-width="150"
                     >
                     </vxe-table-column>
 
                     <vxe-table-column
-                        field="status"
+                        field="taskRealityStartTime"
                         title="开始时间"
                         min-width="150"
                     >
-                        <template #default={row}>
-                            <span
-                                v-if="row.status"
-                                style="color:#42a3fd"
-                            >正常</span>
-                            <span
-                                v-else
-                                style="color:red"
-                            >禁用</span>
-                        </template>
                     </vxe-table-column>
-
                     <vxe-table-column
-                        field="roleName"
+                        field="taskRealityEndTime"
                         title="终止时间"
                         min-width="150"
                     ></vxe-table-column>
@@ -154,14 +144,14 @@
         </div>
         <div class="history-bottom flex">
             <line-com></line-com>
-            <line-com-2></line-com-2>
+            <line-com-2 :voltageArr="voltageData" :timeArr="timeData"></line-com-2>
 
         </div>
     </div>
 </template>
 
 <script>
-import { getTaskArr, getWelderArr, getWeldingArr } from '_api/productionDataAnalysis/productionDataAnalysisApi'
+import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData } from '_api/productionDataAnalysis/productionDataAnalysisApi'
 import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
 export default {
@@ -171,8 +161,11 @@ export default {
         return {
             list: [],
             dateTime: '',//时间
-            taskCode: '',//任务编号
-            searchObj: {},
+            searchObj: {
+                taskId: '',
+                welderId: '',
+                weldMachineId: ''
+            },
             //分页
             page: 1,
             total: 0,
@@ -183,13 +176,16 @@ export default {
             //焊工下拉数据
             welderArr: [],
             //焊机下拉数据
-            weldingMachineArr: []
-
+            weldingMachineArr: [],
+            //曲线数据
+            timeData: [],
+            voltageData: [],
+            electricityData: []
         }
     },
 
     created () {
-        this.getList();
+        // this.getList();
         this.getTaskListFun();
         this.getWelderListFun();
         this.getWeldingListFun();
@@ -202,13 +198,17 @@ export default {
 
         //获取任务列表
         async getList () {
+            if (this.dateTime.length == 0) {
+                return this.$message.error("请选择搜索时间");
+            }
             let req = {
                 pn: this.page,
-                time1: this.dateTime[0] ? this.dateTime[0] : '',
-                time2: this.dateTime[1] ? this.dateTime[1] : '',
+                startTime: this.dateTime[0] ? this.dateTime[0] : '',
+                endTime: this.dateTime[1] ? this.dateTime[1] : '',
+                ...this.searchObj
             }
             this.loading = true;
-            let { code, data } = await findByIdUserList(req);
+            let { code, data } = await getHistoryList(req);
             this.loading = false;
             if (code == 200) {
                 this.list = data.list
@@ -240,6 +240,24 @@ export default {
             const { data, code } = await getWeldingArr();
             if (code == 200) {
                 this.weldingMachineArr = data || [];
+            }
+        },
+        //选择任务数据
+        async currentChangeEvent ({ row }) {
+            let req = {
+                taskId: row.taskId,
+                welderId: row.welderId,
+                weldMachineId: row.machineId,
+                startTime: row.taskRealityStartTime,
+                endTime: row.taskRealityEndTime
+            }
+
+            let { data, code } = await getHistoryTimeData(req);
+            if (code == 200) {
+                this.timeData = (data.list || []).map(item => item.weldTime);
+                this.voltageData = (data.list || []).map(item => item.voltage);
+                this.electricityData = (data.list || []).map(item => item.electricity);
+                
             }
         }
     }

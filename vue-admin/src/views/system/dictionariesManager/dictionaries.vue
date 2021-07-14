@@ -71,12 +71,12 @@
         >
             <div
                 class="p10"
-                style="padding-left:0px"
             >
                 <el-button
                     size="mini"
                     plain
                     @click="addRolsFun"
+                    type="primary"
                     v-has="'add'"
                 >新增</el-button>
             </div>

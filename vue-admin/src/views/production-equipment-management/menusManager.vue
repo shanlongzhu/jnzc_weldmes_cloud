@@ -79,12 +79,13 @@
             :title="title"
             :visible.sync="sourceVisible"
             :close-on-click-modal="false"
+            width="550px"
         >
             <el-form
                 :model="ruleForm"
                 :rules="rules"
                 ref="ruleForm"
-                label-width="100px"
+                label-width="140px"
                 class="demo-ruleForm"
             >
                 <el-form-item
@@ -94,6 +95,7 @@
                     <el-input
                         disabled
                         v-model="ruleForm.parentName"
+                        style="width:250px"
                     ></el-input>
                 </el-form-item>
                 <el-form-item
@@ -103,6 +105,7 @@
                     <el-select
                         v-model="ruleForm.type"
                         placeholder="请选择"
+                        style="width:250px"
                     >
                         <el-option
                             label="菜单"
@@ -118,13 +121,13 @@
                     label="名称"
                     prop="label"
                 >
-                    <el-input v-model="ruleForm.label"></el-input>
+                    <el-input v-model="ruleForm.label" style="width:250px"></el-input>
                 </el-form-item>
                 <el-form-item
                     label="权限标识"
                     prop="mark"
                 >
-                    <el-input v-model="ruleForm.mark"></el-input>
+                    <el-input v-model="ruleForm.mark" style="width:250px"></el-input>
                 </el-form-item>
 
                 <el-form-item>

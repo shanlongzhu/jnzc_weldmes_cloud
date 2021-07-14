@@ -14,9 +14,5 @@ export function getTeamDataList(params = {}) {
 
 //导出班组统计列表
 export function exportTeamDataList(params = {}) {
-    return request({
-      url: "/team/excel",
-      method: "get",
-      params
-    });
-  }
+  return `${process.env.VUE_APP_BASE_API}/team/excel?${qs.stringify(params)}`;
+}

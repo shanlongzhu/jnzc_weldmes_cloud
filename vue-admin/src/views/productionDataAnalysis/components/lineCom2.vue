@@ -6,53 +6,55 @@
 </template>
 
 <script>
+import moment from 'moment'
 import * as echarts from 'echarts';
 export default {
     name: 'lineCom2',
     components: {},
-    props: {},
-    data () {
-        return {
+    props: {
+        voltageArr: {
+            type: Array,
+            default: []
+        },
+        timeArr: {
+            type: Array,
+            default: []
         }
     },
-    watch: {},
+    data () {
+        return {
+            myChart: {},
+            option: {}
+        }
+    },
+    watch: {
+        voltageArr: {
+            handler: function (val, oldval) {
+                setTimeout(() => {
+                    let option = this.myChart.getOption();
+                    console.log(option)
+                    option.series[0].data = val;
+                    this.myChart.setOption(option)
+                }, 0)
+
+            },
+        }
+    },
     computed: {},
     methods: {},
-    created () { },
+    created () {
+
+    },
     mounted () {
-        let myChart = echarts.init(this.$refs.electricity);
-        var option;
-
-        function randomData () {
-            now = new Date(+now + oneDay);
-            value = value + Math.random() * 21 - 10;
-            return {
-                name: now.toString(),
-                value: [
-                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-                    Math.round(value)
-                ]
-            };
-        }
-
-        var data = [];
-        var now = +new Date(1997, 9, 3);
-        var oneDay = 24 * 3600 * 1000;
-        var value = Math.random() * 1000;
-        for (var i = 0; i < 1000; i++) {
-            data.push(randomData());
-        }
-
-        option = {
+        this.myChart = echarts.init(this.$refs.electricity);
+        this.option = {
             title: {
                 text: '电压'
             },
-            legend: {
-                top: '0',
-                right: '0',
-                bottom: '0',
-                left: '0',
-                show: false
+            grid: {
+                top: '40',
+                right: '15%',
+                bottom: '70'
             },
             tooltip: {
                 trigger: 'axis',
@@ -66,14 +68,23 @@ export default {
                 }
             },
             xAxis: {
-                type: 'time',
+                type: 'category',
                 splitLine: {
                     show: false
-                }
+                },
+                data: this.timeArr,
+                axisLabel: {
+                    color: '#2b6bba',
+                    formatter: function (data) {
+                        return moment(data).format("YYYY/MM/DD") + "\n" + moment(data).format("HH:mm:ss:SSS")
+                    },
+                },
             },
             yAxis: {
                 type: 'value',
                 boundaryGap: [0, '100%'],
+                min: 0,
+                max: 62,
                 splitLine: {
                     show: false
                 }
@@ -82,33 +93,24 @@ export default {
                 type: 'inside',
                 start: 0,
                 end: 10
+            },
+            {
+                type: 'slider',
+                start: 0,
+                end: 10
             }],
             series: [{
                 name: '模拟数据',
                 type: 'line',
                 showSymbol: false,
                 hoverAnimation: false,
-                data: data
+                data: this.voltageArr
             }]
         };
+        this.myChart.setOption(this.option)
 
-        setInterval(function () {
-
-            for (var i = 0; i < 5; i++) {
-                data.shift();
-                data.push(randomData());
-            }
-
-            myChart.setOption({
-                series: [{
-                    data: data
-                }]
-            });
-        }, 1000);
-
-        option && myChart.setOption(option);
         window.addEventListener('resize', function () {
-            myChart.resize()
+            this.myChart.resize()
         });
     }
 }

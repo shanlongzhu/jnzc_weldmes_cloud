@@ -64,71 +64,67 @@
                     align="left"
                     min-width="100"
                     fixed="left"
-                />
+                >
+                <template slot-scope="scope">
+                    {{scope.row.sysDept.name}}
+                </template>
+                </el-table-column>
                 <el-table-column
-                    prop="welderNo"
+                    prop="count1"
                     label="设备总数"
                     align="left"
                     min-width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="cellphone"
+                    prop="count2"
                     label="开机设备数"
                     align="left"
                     min-width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="rank"
+                    prop="count3"
                     label="实焊设备数"
                     align="left"
                     min-width="120"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueName}}
-                    </template>
+                    
                 </el-table-column>
                 <el-table-column
-                    prop="welderNo"
+                    prop="count4"
                     label="未绑定设备数"
                     align="left"
                     min-width="120"
                 />
                 <el-table-column
-                    prop="macPath"
+                    prop="utilization"
                     label="设备利用率(%)"
                     align="left"
                     min-width="120"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNames}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="createTime"
+                    prop="count5"
                     label="焊接任务数"
                     align="left"
                     min-width="170"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDept.name}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="remarks"
+                    prop="time"
                     label="焊接时间"
                     align="left"
                     min-width="170"
                 />
                 <el-table-column
-                    prop="remarks"
+                    prop="time2"
                     label="工作时间"
                     align="left"
                     min-width="170"
                 />
                 <el-table-column
-                    prop="remarks"
+                    prop="utilization2"
                     label="焊接效率(%)"
                     align="left"
                     min-width="170"
@@ -165,7 +161,6 @@ export default {
             dateTime: '',
 
             loading: false,
-            importUrl: `${process.env.VUE_APP_BASE_API}/solderer/importExcel`,
             headers: {
                 'Authorization': getToken()
             }
@@ -191,7 +186,7 @@ export default {
             let { data, code } = await getTeamDataList(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data.list
+                this.list = data.list||[]
                 this.total = data.total
             }
         },

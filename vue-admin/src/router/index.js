@@ -269,8 +269,7 @@ export const asyncRoutes = [
         name: 'teamDataStat',
         meta: {
           title: '班组生产数据统计',
-          mark:'504',
-          noCache: true }
+          mark:'504'}
       },
       {
         path: 'keyboard1',

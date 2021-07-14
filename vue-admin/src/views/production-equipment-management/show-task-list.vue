@@ -117,7 +117,7 @@
                     prop="taskNo"
                     label="任务编号"
                     align="left"
-                    width="150"
+                    min-width="100"
                     fixed="left"
                 />
                 <el-table-column
@@ -130,6 +130,12 @@
                 <el-table-column
                     prop="deptName"
                     label="所属班组"
+                    align="left"
+                    width="130"
+                />
+                <el-table-column
+                    prop="welderName"
+                    label="焊工姓名"
                     align="left"
                     width="130"
                 />
@@ -162,6 +168,30 @@
                     label="实际结束时间"
                     align="left"
                     width="140"
+                />
+                <el-table-column
+                    prop="welderName"
+                    label="电压上限"
+                    align="left"
+                    width="130"
+                />
+                <el-table-column
+                    prop="welderName"
+                    label="电压下限"
+                    align="left"
+                    width="130"
+                />
+                <el-table-column
+                    prop="welderName"
+                    label="电流上限"
+                    align="left"
+                    width="130"
+                />
+                <el-table-column
+                    prop="welderName"
+                    label="电流下限"
+                    align="left"
+                    width="130"
                 />
                 <el-table-column
                     prop="evaluateContent"
@@ -236,14 +266,13 @@
             </el-table>
         </div>
         <el-pagination
-            :current-page.sync="currentPage1"
+            :current-page.sync="page"
             :page-size="10"
             align="right"
             class="p10"
             layout="total, prev, pager, next"
             :total="total"
             background
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
         />
 
@@ -296,6 +325,30 @@
                         :props="defalutProps"
                         :show-all-levels="false"
                     />
+                </el-form-item>
+                <el-form-item
+                    label="电压上限"
+                    prop="taskNo"
+                >
+                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                </el-form-item>
+                <el-form-item
+                    label="电压下限"
+                    prop="taskNo"
+                >
+                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                </el-form-item>
+                <el-form-item
+                    label="电流上限"
+                    prop="taskNo"
+                >
+                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                </el-form-item>
+                <el-form-item
+                    label="电流下限"
+                    prop="taskNo"
+                >
+                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
                 </el-form-item>
                 <el-form-item
                     label="计划时间"
@@ -485,18 +538,6 @@ export default {
             this.loading = false;
             this.list = data.list
             this.total = data.total
-        },
-        getUserRoles () {
-            getInfo().then(res => {
-                console.log(res.data)
-                this.role = res.data.role
-                // if (this.role[0] !== 'admin') {
-                //   this.showButtonDel = false
-                // }
-            })
-        },
-        handleSizeChange (val) {
-            console.log(`每页 ${val} 条`)
         },
         handleCurrentChange (pn) {
             this.page = pn
