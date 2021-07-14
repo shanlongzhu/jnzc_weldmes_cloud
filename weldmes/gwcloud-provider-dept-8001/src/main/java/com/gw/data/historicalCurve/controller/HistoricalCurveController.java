@@ -33,4 +33,22 @@ public class HistoricalCurveController {
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
+
+    /**
+     * @Date 2021/7/14 8:57
+     * @Description 焊机历史曲线信息列表
+     * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
+     */
+    @RequestMapping(value = "getHistoryInfos",method = RequestMethod.GET)
+    public HttpResult getHistoryCurveInfos(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String startTime, String endTime,
+                              Long taskId,Long welderId,Long weldMachineId){
+
+        PageHelper.startPage(pn, 10);
+
+        List<RtData> list = historicalCurveService.getHistoryCurveInfos(startTime,endTime,taskId,welderId,weldMachineId);
+
+        PageInfo page = new PageInfo(list, 5);
+
+        return HttpResult.ok(page);
+    }
 }

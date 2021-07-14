@@ -4,6 +4,7 @@ import com.gw.data.historicalCurve.dao.HistoricalCurveDao;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
 import com.gw.entities.RealtimeData;
 import com.gw.entities.RtData;
+import com.gw.entities.TaskClaim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,5 +69,18 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         return list;
 
+    }
+
+    /**
+     * @Date 2021/7/14 8:57
+     * @Description 焊机历史曲线信息列表
+     * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
+     */
+    @Override
+    public List<RtData> getHistoryCurveInfos(String startTime, String endTime, Long taskId, Long welderId, Long weldMachineId) {
+
+        List<RtData> list = historicalCurveDao.selectHistoryCurveInfos(startTime,endTime,taskId,welderId,weldMachineId);
+
+        return list;
     }
 }
