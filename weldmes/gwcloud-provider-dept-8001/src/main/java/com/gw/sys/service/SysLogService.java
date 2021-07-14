@@ -1,18 +1,21 @@
 package com.gw.sys.service;
 
-import com.gw.common.PageInfo;
+
 import com.gw.entities.SysLog;
 
-import java.math.BigInteger;
-import java.util.List;
-
+/**
+ * @Author zhanghan
+ * @Date 2021/7/14 10:12
+ * @Description  日志业务层
+ * @Params
+ */
 public interface SysLogService {
 
-    PageInfo<SysLog> getSysLogPage(int draw, int start, int length, SysLog sysLog);
+    /**
+     * @Date 2021/7/14 12:43
+     * @Description 日志信息入库
+     * @Params sysLog 日志信息
+     */
+    public void addSysLogInfo(SysLog sysLog);
 
-    int addSysLog(SysLog sysLog);
-
-    int updateSysLog(SysLog sysLog);
-
-    int deleteSysLog(List<BigInteger> ids);
 }
