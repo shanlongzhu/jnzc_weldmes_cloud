@@ -55,4 +55,14 @@ public class RtData implements Serializable {
     private String taskNo;
     private String createTime;
 
+    /**
+     * 任务实际开始时间
+     */
+    private String taskRealityStartTime;
+
+    /**
+     * 任务实际结束时间
+     */
+    private String taskRealityEndTime;
+
 }
