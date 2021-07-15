@@ -24,6 +24,12 @@ export default {
     },
     computed: {},
     methods: {
+        addData(v, t){
+            this.option.series[0].data = this.option.series[0].data.concat(v)
+            this.option.xAxis.data = this.option.xAxis.data.concat(t)
+            this.myChart.setOption(this.option);
+            
+        },
         init (v, t) {
             this.myChart.clear()
             this.option.series[0].data = v;
@@ -34,12 +40,12 @@ export default {
             } else if (v.length <= 500) {
                 this.option.dataZoom[0].end = 70;
                 this.option.dataZoom[1].end = 70;
-            } else if (v.length <= 1000) {
-                this.option.dataZoom[0].end = 40;
-                this.option.dataZoom[1].end = 40;
+            } else if (v.length <= 2000) {
+                this.option.dataZoom[0].end = 30;
+                this.option.dataZoom[1].end = 30;
             }else{
-                this.option.dataZoom[0].end = 20;
-                this.option.dataZoom[1].end = 20;
+                this.option.dataZoom[0].end = 0.5;
+                this.option.dataZoom[1].end = 0.5;
             }
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
@@ -60,7 +66,8 @@ export default {
             },
             grid: {
                 top: '40',
-                right: '15%',
+                right: '50',
+                left:'40',
                 bottom: '70'
             },
             tooltip: {
@@ -101,6 +108,7 @@ export default {
                 end: 30
             },
             {
+                id: 'dataZoomX',
                 type: 'slider',
                 start: 0,
                 end: 30

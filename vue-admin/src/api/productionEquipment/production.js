@@ -123,6 +123,34 @@ export function getWeldingModel(params = {}) {
   });
 }
 
+//根据区域id获取区间
+export function findByIdArea(params = {}) {
+  return request({
+    url: "/library/getBayInfoByArea",
+    method: "get",
+    params
+  });
+}
+
+
+//跨间绑定保存
+export function saveAreaBind(data = {}) {
+  return request({
+    url: "/areaBay/addBayToAreaInfo",
+    method: "post",
+    data
+  });
+}
+
+//设备绑定保存
+export function saveModelBind(data = {}) {
+  return request({
+    url: "/firmMachine/addMachineToFirmInfo",
+    method: "post",
+    data
+  });
+}
+
 
 
 

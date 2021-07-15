@@ -1,6 +1,5 @@
 <template>
-  <img width="1300px" height="660px" src="../../assets/home_images/home.png" />
+  <img width="100%" src="../../assets/home_images/home.jpg" />
 </template>
-
 <script>
 </script>

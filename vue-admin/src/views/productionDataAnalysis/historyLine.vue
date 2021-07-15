@@ -130,33 +130,52 @@
                     ></vxe-table-column>
                 </vxe-table>
             </div>
-            <el-pagination
-                class="p10"
-                :current-page.sync="page"
-                :page-size="10"
-                align="right"
-                background
-                small
-                layout="total, prev, pager, next"
-                :total="total"
-                @current-change="handleCurrentChange"
-            />
+            <div class="flex cz-bot-wrap">
+
+                <span
+                    class="zoom-btn"
+                    @click="zoomFun"
+                ><i class="el-icon-zoom-in"></i></span>
+                <el-pagination
+                    class="p10"
+                    :current-page.sync="page"
+                    :page-size="10"
+                    align="right"
+                    background
+                    small
+                    layout="total, prev, pager, next"
+                    :total="total"
+                    @current-change="handleCurrentChange"
+                />
+            </div>
         </div>
         <div class="history-bottom flex">
             <line-com-e ref="lineComE"></line-com-e>
             <line-com-2 ref="lineCom2"></line-com-2>
-
         </div>
+        <el-dialog
+            title="历史曲线图"
+            :visible.sync="dialogVisible"
+            fullscreen
+        >
+            <div
+                class="flex-c"
+                style="height:calc(100vh - 100px)"
+            >
+                <line-com-e ref="lineComEChild"></line-com-e>
+                <line-com-2 ref="lineCom2Child"></line-com-2>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData } from '_api/productionDataAnalysis/productionDataAnalysisApi'
+import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData, getHistoryRepeat } from '_api/productionDataAnalysis/productionDataAnalysisApi'
 // import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
 import LineComE from './components/lineComE.vue';
 export default {
-    components: {LineCom2, LineComE },
+    components: { LineCom2, LineComE },
     name: 'historyLine',
     data () {
         return {
@@ -178,6 +197,26 @@ export default {
             welderArr: [],
             //焊机下拉数据
             weldingMachineArr: [],
+            dialogVisible: false,
+
+
+            //曲线请求参数
+            curveReq: {
+                taskId: '',
+                welderId: '',
+                weldMachineId: '',
+                startTime: '',
+                endTime: '',
+            },
+            //曲线数据
+            timeData: [],
+            voltageData: [],
+            electricityData: [],
+
+            //记录剩余表明
+            surplusTable: [],
+            surIndex: 0
+
         }
     },
 
@@ -188,6 +227,15 @@ export default {
         this.getWeldingListFun();
     },
     methods: {
+
+        zoomFun () {
+            this.dialogVisible = true;
+            this.$nextTick(() => {
+                this.$refs.lineCom2Child.init(this.voltageData, this.timeData);
+                this.$refs.lineComEChild.init(this.electricityData, this.timeData)
+            })
+        },
+
         search () {
             this.page = 1;
             this.getList();
@@ -241,31 +289,61 @@ export default {
         },
         //选择任务数据
         async currentChangeEvent ({ row }) {
-            let req = {
-                taskId: row.taskId,
-                welderId: row.welderId,
-                weldMachineId: row.machineId,
-                startTime: row.taskRealityStartTime,
-                endTime: row.taskRealityEndTime
-            }
+            this.curveReq.taskId = row.taskId;
+            this.curveReq.welderId = row.welderId;
+            this.curveReq.weldMachineId = row.machineId;
+            this.curveReq.startTime = row.taskRealityStartTime;
+            this.curveReq.endTime = row.taskRealityEndTime;
+
             this.$refs.lineCom2.echartsLoading();
             this.$refs.lineComE.echartsLoading();
+            this.getHistoryCurve();
+        },
+        async getHistoryCurve () {
+            let req = {
+                ...this.curveReq
+            }
             let { data, code } = await getHistoryTimeData(req);
             if (code == 200) {
-                const timeData = (data.list || []).map(item => item.weldTime);
-                const voltageData = (data.list || []).map(item => {
-                    // return [item.weldTime,item.voltage]
+                console.log(data)
+                this.surplusTable = data.tableNames || [];
+                this.timeData = (data.list || []).filter(item => item.weldTime).map(item => item.weldTime);
+                this.voltageData = (data.list || []).filter(item => item.voltage || item.voltage === 0).map((item, index) => {
                     return item.voltage
                 });
 
-                const electricityData = (data.list || []).map(item => {
-                    // return [item.weldTime,item.electricity]
+                this.electricityData = (data.list || []).filter(item => item.electricity || item.electricity === 0).map(item => {
                     return item.electricity;
-                }); 
-                
-                this.$refs.lineCom2.init(voltageData,timeData);
-                this.$refs.lineComE.init(electricityData,timeData)
-                
+                });
+
+                this.$refs.lineCom2.init(this.voltageData, this.timeData);
+                this.$refs.lineComE.init(this.electricityData, this.timeData);
+                this.repeatFun();
+            }
+        },
+        async repeatFun () {
+            this.surIndex++;
+            let req = this.surplusTable[this.surIndex]
+            if (req) {
+                let { data, code } = await getHistoryRepeat(req)
+                if (code == 200) {
+                    this.repeatFun();
+
+                    const timeData = (data.list || []).filter(item => item.weldTime).map(item => item.weldTime);
+                    const voltageData = (data.list || []).filter(item => item.voltage || item.voltage === 0).map((item, index) => {
+                        return item.voltage
+                    });
+
+                    const electricityData = (data.list || []).filter(item => item.electricity || item.electricity === 0).map(item => {
+                        return item.electricity;
+                    });
+                    this.voltageData = this.voltageData.concat(voltageData);
+                    this.electricityData = this.electricityData.concat(electricityData);
+                    this.timeData = this.timeData.concat(timeData);
+                    this.$refs.lineCom2.addData(voltageData, timeData);
+                    this.$refs.lineComE.addData(electricityData, timeData);
+                }
+
             }
         }
     }
@@ -289,6 +367,16 @@ export default {
     flex: 1;
     width: 0px;
     height: 100%;
+}
+
+.cz-bot-wrap {
+    justify-content: space-between;
+    align-items: center;
+}
+.cz-bot-wrap .zoom-btn {
+    font-size: 20px;
+    margin-left: 10px;
+    cursor: pointer;
 }
 </style>
 

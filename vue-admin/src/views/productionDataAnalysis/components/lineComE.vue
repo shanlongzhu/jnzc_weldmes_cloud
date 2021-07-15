@@ -1,8 +1,6 @@
 <template>
-    <div
-        style="height:100%;flex:1"
-        ref="electricity"
-    ></div>
+    <div ref="electricity" style="height:100%;flex:1;">
+        </div>
 </template>
 
 <script>
@@ -24,7 +22,13 @@ export default {
     },
     computed: {},
     methods: {
-        init (elc, t) {
+        addData(elc, t){
+            this.option.series[0].data = this.option.series[0].data.concat(elc)
+            this.option.xAxis.data = this.option.xAxis.data.concat(t)
+            this.myChart.setOption(this.option);
+            
+        },
+        init (elc, t) {            
             this.myChart.clear()
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
@@ -34,12 +38,12 @@ export default {
             } else if (elc.length <= 500) {
                 this.option.dataZoom[0].end = 70;
                 this.option.dataZoom[1].end = 70;
-            } else if (elc.length <= 1000) {
-                this.option.dataZoom[0].end = 40;
-                this.option.dataZoom[1].end = 40;
-            }else{
-                this.option.dataZoom[0].end = 20;
-                this.option.dataZoom[1].end = 20;
+            } else if (elc.length <= 2000) {
+                this.option.dataZoom[0].end = 30;
+                this.option.dataZoom[1].end = 30;
+            } else {
+                this.option.dataZoom[0].end = 0.5;
+                this.option.dataZoom[1].end = 0.5;
             }
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
@@ -59,7 +63,8 @@ export default {
             },
             grid: {
                 top: '40',
-                right: '15%',
+                right: '50',
+                left:'40',
                 bottom: '70'
             },
             tooltip: {

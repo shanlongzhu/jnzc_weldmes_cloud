@@ -74,7 +74,7 @@
                         :value="item.id"
                     />
                 </el-select>
-            </div>            
+            </div>
             <div class="con-w">
                 <span>是否在网：</span>
                 <el-select
@@ -109,7 +109,7 @@
                     class="w150"
                     v-model="searchObj.ipPath"
                 ></el-input>
-            </div>     
+            </div>
             <div class="con-w">
                 <span>设备型号：</span>
                 <el-select
@@ -126,7 +126,7 @@
                         :value="item.id"
                     />
                 </el-select>
-            </div>       
+            </div>
             <div class="con-w">
                 <el-button
                     size="small"
@@ -145,7 +145,7 @@
             </div>
             <div class="con-w">
                 <el-upload
-                     v-has="'import'"
+                    v-has="'import'"
                     :action="importUrl"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
@@ -167,6 +167,22 @@
                     @click="exportExcelFun"
                 >导出</el-button>
             </div>
+            <div class="con-w">
+                <el-button
+                    v-has="'exprot'"
+                    size="small"
+                    icon="el-icon-document-remove"
+                    @click="bindMichFun"
+                >设备绑定</el-button>
+            </div>
+            <div class="con-w">
+                <el-button
+                    v-has="'exprot'"
+                    size="small"
+                    icon="el-icon-document-remove"
+                    @click="bindAreaFun"
+                >区间绑定</el-button>
+            </div>          
 
         </div>
         <div
@@ -283,7 +299,7 @@
                     align="left"
                     min-width="120"
                 >
-                    
+
                 </el-table-column>
                 <el-table-column
                     prop="createTime"
@@ -452,7 +468,7 @@
                     <el-select
                         v-model="ruleForm.gid"
                         placeholder="请选择"
-                        style="width:250px"                        
+                        style="width:250px"
                     >
                         <el-option
                             v-for="item in gatherNos"
@@ -469,7 +485,8 @@
                     <el-select
                         v-model="ruleForm.area"
                         placeholder="请选择"
-                        style="width:250px"                        
+                        style="width:250px"
+                        @change="changeArea"
                     >
                         <el-option
                             v-for="item in areaArr"
@@ -486,7 +503,7 @@
                     <el-select
                         v-model="ruleForm.bay"
                         placeholder="请选择"
-                        style="width:250px"                        
+                        style="width:250px"
                     >
                         <el-option
                             v-for="item in straddleArr"
@@ -504,7 +521,7 @@
                         v-model="ruleForm.ipPath"
                         style="width:250px"
                     />
-                </el-form-item>                
+                </el-form-item>
                 <el-form-item
                     label="状态"
                     prop="status"
@@ -536,28 +553,34 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+
+        <area-bind ref="areaBind"></area-bind>
+        <equipment-bind ref="equipmentBind"></equipment-bind>
     </div>
 </template>
 
 <script>
-import { getWelderList, getWelderDetail, delWelder, exportWelderExcel,getAllGatherNos,addWelder,editWelder,getWeldingModel } from '_api/productionEquipment/production'
+import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel,findByIdArea } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
+import areaBind from './components/areaBind.vue'
+import EquipmentBind from './components/equipmentBind.vue'
 export default {
+    components: { areaBind, EquipmentBind },
     name: 'product-equip-manage',
     data () {
         return {
             //搜索条件
-            searchObj:{
-               machineNo:'', 
-               type:'',
-               grade:'',
-               status:'',
-               firm:'',
-               isNetwork:'',
-               gatherNo:'',
-               ipPath:'',
-               model:''
+            searchObj: {
+                machineNo: '',
+                type: '',
+                grade: '',
+                status: '',
+                firm: '',
+                isNetwork: '',
+                gatherNo: '',
+                ipPath: '',
+                model: ''
             },
             //搜索条件设备型号
             modelArr2: [],
@@ -567,23 +590,23 @@ export default {
             total: 0,
 
             visable1: false,
-            ruleFormObj: {                
+            ruleFormObj: {
             },
             ruleForm: {
                 id: '',
                 machineNo: '',//编号
                 status: 17,//状态
-                type:'',//设备类型
-                firm:'',//厂商
-                model:'',//设备型号
+                type: '',//设备类型
+                firm: '',//厂商
+                model: '',//设备型号
                 deptId: '',//项目（机构id）
                 isNetwork: 0,//是否联网
                 gid: '',//采集id
                 protocol: '',//通讯协议
                 createTime: '',//入厂时间
                 ipPath: '',//ip
-                area:'',
-                bay:''
+                area: '',
+                bay: ''
             },
             rules: {
                 machineNo: [
@@ -619,11 +642,12 @@ export default {
             //厂家
             manufactorArr: [],
             //采集序号下拉
-            gatherNos:[],
+            gatherNos: [],
             //区域
-            areaArr:[],
+            areaArr: [],
             //跨间
-            straddleArr:[],
+            straddleArr: [],
+            straddleArr2: [],
             // 级联下拉配置
             defalutProps: {
                 label: 'name',
@@ -633,14 +657,15 @@ export default {
             importUrl: `${process.env.VUE_APP_BASE_API}/welder/importExcel`,
             headers: {
                 'Authorization': getToken()
-            }
+            },
+
         }
     },
 
     created () {
-        this.ruleFormObj = {...this.ruleForm};
+        this.ruleFormObj = { ...this.ruleForm };
         // 获取班组        
-        this.getTeamList();        
+        this.getTeamList();
         this.getList();
         this.getDicFun();
         this.getAllGatherNosFun();
@@ -648,24 +673,24 @@ export default {
     methods: {
         //获取数据字典
         async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6","16","17"] });
+            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6", "16", "17"] });
             if (code == 200) {
                 this.statusArr = data['4'] || [];
                 this.manufactorArr = data['5'] || [];
                 this.typeArr = data['3'] || [];
-                this.areaArr = data['16']||[];
-                this.straddleArr = data['17']||[];
+                this.areaArr = data['16'] || [];
+                this.straddleArr2 = data['17'] || [];
                 this.modelArr2 = data['6'] || [];
             }
         },
         //获取全部采集序号
-        async getAllGatherNosFun(){
-            let {data,code} = await getAllGatherNos();
-            if(code==200){
-                this.gatherNos = data||[]
+        async getAllGatherNosFun () {
+            let { data, code } = await getAllGatherNos();
+            if (code == 200) {
+                this.gatherNos = data || []
             }
         },
-        search(){
+        search () {
             this.page = 1;
             this.getList();
         },
@@ -684,10 +709,10 @@ export default {
         },
 
         //根据厂家获取关联设备型号
-        async changeFirm(id){
-            let {data,code} = await getWeldingModel({id});
-            if(code==200){
-                this.modelArr = data||[];
+        async changeFirm (id) {
+            let { data, code } = await getWeldingModel({ id });
+            if (code == 200) {
+                this.modelArr = data || [];
             }
         },
 
@@ -769,7 +794,7 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await editWelder(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
@@ -778,7 +803,7 @@ export default {
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await addWelder(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
@@ -793,6 +818,21 @@ export default {
             })
         },
 
+        async changeArea(id){
+            let {code,data} = await findByIdArea({id});
+            if(code==200){
+                this.straddleArr = data||[]
+            }
+        },
+
+        //设备绑定
+        bindMichFun () {
+            this.$refs.equipmentBind.init();
+        },
+        //区间绑定
+        bindAreaFun () {
+            this.$refs.areaBind.init();
+        },
     }
 }
 </script>

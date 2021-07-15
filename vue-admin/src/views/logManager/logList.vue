@@ -66,6 +66,13 @@
                 >
                 </el-table-column>
                 <el-table-column
+                    prop="userName"
+                    label="操作人"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
                     prop="createTime"
                     label="操作时间"
                     align="left"

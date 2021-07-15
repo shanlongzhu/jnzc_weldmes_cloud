@@ -28,19 +28,29 @@ export function getWeldingArr() {
 }
 
 //获取历史曲线列表
-export function getHistoryList(params={}) {
-    return request({
-      url: "/historicalCurve/getHistoryInfos",
-      method: "get",
-      params
-    });
-  }
+export function getHistoryList(params = {}) {
+  return request({
+    url: "/historicalCurve/getHistoryInfos",
+    method: "get",
+    params
+  });
+}
 
-  //获取历史曲线数据
-export function getHistoryTimeData(params={}) {
-    return request({
-      url: "/historicalCurve",
-      method: "get",
-      params
-    });
-  }
+//获取历史曲线数据
+export function getHistoryTimeData(params = {}) {
+  return request({
+    url: "/historicalCurve",
+    method: "get",
+    params
+  });
+}
+
+//根据表面获取历史曲线
+export function getHistoryRepeat(data = {}) {
+  return request({
+    url: "/historicalCurve/HistoricalCurveByTableName",
+    method: "post",
+    data
+  });
+}
+

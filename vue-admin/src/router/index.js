@@ -128,15 +128,6 @@ export const asyncRoutes = [
           title: '生产设备管理',
           mark:'102'
         }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: '设备厂商及型号绑定',
-          mark:'103'
-        }
       }
     ]
   },
@@ -161,24 +152,24 @@ export const asyncRoutes = [
           mark:'201'
         }
       },
-      {
-        path: 'directives',
-        component: () => import('@/views/table/inline-edit-table'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '焊机参数管理',
-          mark:'202'
-        }
-      },
-      {
-        path: 'roe',
-        component: () => import('@/views/table/inline-edit-table'),
-        name: 'RolePermission',
-        meta: {
-          title: '模拟设备参数设置',
-          mark:'203'
-        }
-      }
+      // {
+      //   path: 'directives',
+      //   component: () => import('@/views/table/inline-edit-table'),
+      //   name: 'DirectivePermission',
+      //   meta: {
+      //     title: '焊机参数管理',
+      //     mark:'202'
+      //   }
+      // },
+      // {
+      //   path: 'roe',
+      //   component: () => import('@/views/table/inline-edit-table'),
+      //   name: 'RolePermission',
+      //   meta: {
+      //     title: '模拟设备参数设置',
+      //     mark:'203'
+      //   }
+      // }
     ]
   },
   {
@@ -217,7 +208,8 @@ export const asyncRoutes = [
   {
     path: '/table',
     component: Layout,
-    redirect: '/table/complex-table',
+    redirect: 'welder-history-line',
+    alwaysShow: true,
     name: 'Table',
     meta: {
       title: '生产过程记录',
@@ -225,30 +217,30 @@ export const asyncRoutes = [
       icon: 'table'
     },
     children: [
+      // {
+      //   path: 'table',
+      //   component: () => import('@/views/charts/keyboard'),
+      //   name: 'DynamicTable',        
+      //   meta: { title: '生产任务详情',mark:'401' }
+      // },
+      // {
+      //   path: 'drag-table1',
+      //   component: () => import('@/views/table/drag-table'),
+      //   name: 'DragTable',
+      //   meta: {
+      //     title: '故障表',
+      //     mark:'402'
+      //   }
+      // },
       {
-        path: 'table',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'DynamicTable',        
-        meta: { title: '生产任务详情',mark:'401' }
-      },
-      {
-        path: 'drag-table1',
-        component: () => import('@/views/table/drag-table'),
-        name: 'DragTable',
-        meta: {
-          title: '故障表',
-          mark:'402'
-        }
-      },
-      {
-        path: 'drag-table',
-        component: () => import('@/views/table/drag-table'),
-        name: 'DragTable',
-        meta: {
-          title: '历史回溯',
-          mark:'403',
-        }
-      }
+        path: 'welder-history-line',
+          component: () => import('@/views/productionDataAnalysis/historyLine'),
+          name: 'welderHistoryLine',
+          meta: {
+            title: '历史回溯',
+            mark:'601',
+            noCache: true }
+      }   
     ]
   },
   {
@@ -271,58 +263,58 @@ export const asyncRoutes = [
           title: '班组生产数据统计',
           mark:'504'}
       },
-      {
-        path: 'keyboard1',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart',
-        meta: {
-          title: '人员生产数据统计',
-          mark:'501',
-          noCache: true }
-      },
-      {
-        path: 'keyboard2',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart',
-        meta: {
-          title: '工件生产数据统计',
-          mark:'502',
-          noCache: true }
-      },
-      {
-        path: 'keyboard3',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart',
-        meta: {
-          title: '设备生产数据统计',
-          mark:'503',
-          noCache: true }
-      }      
+      // {
+      //   path: 'keyboard1',
+      //   component: () => import('@/views/charts/keyboard'),
+      //   name: 'KeyboardChart',
+      //   meta: {
+      //     title: '人员生产数据统计',
+      //     mark:'501',
+      //     noCache: true }
+      // },
+      // {
+      //   path: 'keyboard2',
+      //   component: () => import('@/views/charts/keyboard'),
+      //   name: 'KeyboardChart',
+      //   meta: {
+      //     title: '工件生产数据统计',
+      //     mark:'502',
+      //     noCache: true }
+      // },
+      // {
+      //   path: 'keyboard3',
+      //   component: () => import('@/views/charts/keyboard'),
+      //   name: 'KeyboardChart',
+      //   meta: {
+      //     title: '设备生产数据统计',
+      //     mark:'503',
+      //     noCache: true }
+      // }      
     ]
   },
-  {
-    path: '/product-data',
-    component: Layout,
-    redirect: 'welder-history-line',
-    alwaysShow: true,
-    name: 'productData',
-    meta: {
-      title: '生产数据详情分析',
-      mark:'6',
-      icon: 'el-icon-s-tools'
-    },
-    children: [
-      {
-        path: 'welder-history-line',
-          component: () => import('@/views/productionDataAnalysis/historyLine'),
-          name: 'welderHistoryLine',
-          meta: {
-            title: '历史曲线',
-            mark:'601',
-            noCache: true }
-      }     
-    ]
-  },
+  // {
+  //   path: '/product-data',
+  //   component: Layout,
+  //   redirect: 'welder-history-line',
+  //   alwaysShow: true,
+  //   name: 'productData',
+  //   meta: {
+  //     title: '生产数据详情分析',
+  //     mark:'6',
+  //     icon: 'el-icon-s-tools'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'welder-history-line',
+  //         component: () => import('@/views/productionDataAnalysis/historyLine'),
+  //         name: 'welderHistoryLine',
+  //         meta: {
+  //           title: '历史曲线',
+  //           mark:'601',
+  //           noCache: true }
+  //     }     
+  //   ]
+  // },
   {
     path: '/ch',
     component: Layout,
@@ -333,7 +325,7 @@ export const asyncRoutes = [
       mark:'7',
       title: '系统管理',
       roles: ['admin'],
-      icon: 'el-icon-view'
+      icon: 'el-icon-s-tools'
     },
     children: [
       {
@@ -384,15 +376,15 @@ export const asyncRoutes = [
           roles: ['admin'],
           noCache: true }
       },
-      {
-        path: 'keyboard8',
-        component: () => import('@/views/charts/keyboard'),
-        name: 'KeyboardChart',
-        meta: {
-          title: '邮件下发管理',
-          mark:'706',
-          noCache: true }
-      }
+      // {
+      //   path: 'keyboard8',
+      //   component: () => import('@/views/charts/keyboard'),
+      //   name: 'KeyboardChart',
+      //   meta: {
+      //     title: '邮件下发管理',
+      //     mark:'706',
+      //     noCache: true }
+      // }
     ]
   },
   {

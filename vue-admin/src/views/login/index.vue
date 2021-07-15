@@ -47,7 +47,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登 录</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px; height:50px" @click.native.prevent="handleLogin">登 录</el-button>
     </el-form>
   </div>
 </template>
@@ -177,8 +177,8 @@ export default {
     }
 
     .el-form-item {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 1);
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 5px;
       color: #454545;
     }
@@ -193,8 +193,9 @@ export default {
   .login-container {
     min-height: 100%;
     width: 100%;
-    background-color: $bg;
     overflow: hidden;
+    background:url("~@/assets/home_images/loginBg.jpg") no-repeat;
+    background-size: cover;
 
     .login-form {
       position: relative;
