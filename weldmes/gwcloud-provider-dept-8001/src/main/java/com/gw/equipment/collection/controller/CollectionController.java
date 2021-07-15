@@ -216,11 +216,5 @@ public class CollectionController {
 
         return HttpResult.ok(list);
     }
-
-    /**
-     * @Date 2021/7/1 9:00
-     * @Description  拉取
-     * @Params
-     */
 }
 
