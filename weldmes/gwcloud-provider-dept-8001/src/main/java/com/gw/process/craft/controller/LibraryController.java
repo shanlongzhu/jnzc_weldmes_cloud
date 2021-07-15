@@ -107,4 +107,17 @@ public class LibraryController {
         return HttpResult.ok(list);
     }
 
+    /**
+     * @Date 2021/7/15 15:56
+     * @Description 查询关联区域的跨间信息
+     * @Params id 区域字典表id
+     */
+    @RequestMapping("getBayInfoByArea")
+    public HttpResult getBayInfoByArea(Long id){
+
+        List<SysDictionary> list = libraryService.getBayInfoByAreaById(id);
+
+        return HttpResult.ok(list);
+    }
+
 }

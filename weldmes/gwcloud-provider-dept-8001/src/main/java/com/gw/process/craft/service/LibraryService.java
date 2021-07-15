@@ -22,4 +22,11 @@ public interface LibraryService {
      * @Params  id 厂家字典表id
      */
     List<SysDictionary> getMachineInfoByFirmId(Long id);
+
+    /**
+     * @Date 2021/7/1 14:17
+     * @Description  查询关联区域的跨间信息
+     * @Params  id 区域字典表id
+     */
+    List<SysDictionary> getBayInfoByAreaById(Long id);
 }

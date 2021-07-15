@@ -62,4 +62,21 @@ public class LibraryServiceImpl implements LibraryService {
 
         return list;
     }
+
+    /**
+     * @Date 2021/7/1 14:17
+     * @Description  查询关联区域的跨间信息
+     * @Params  id 区域字典表id
+     */
+    @Override
+    public List<SysDictionary> getBayInfoByAreaById(Long id) {
+
+        //通过 区域字典表id 查询 字典表跨间id列表
+        List<Long> ids = libraryDao.queryBayIdByAreaId(id);
+
+        //通过 字典表区域id 查询 跨间描述 value_name
+        List<SysDictionary> list = libraryDao.queryMachineInfoByDictionaryId(ids);
+
+        return list;
+    }
 }

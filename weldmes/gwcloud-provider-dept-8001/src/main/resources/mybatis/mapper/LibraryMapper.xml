@@ -66,4 +66,9 @@
             #{id}
         </foreach>
     </select>
+
+    <!--通过 区域字典表id 查询 字典表跨间id-->
+    <select id="queryBayIdByAreaId" resultType="java.lang.Long">
+        select bay_id from area_bay where area_id = #{id}
+    </select>
 </mapper>

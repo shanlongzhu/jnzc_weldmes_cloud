@@ -32,4 +32,11 @@ public interface LibraryDao {
      * @Params
      */
     List<SysDictionary> queryMachineInfoByDictionaryId(@Param("ids")List<Long> ids);
+
+    /**
+     * @Date 2021/7/1 14:17
+     * @Description  通过 区域字典表id 查询 字典表跨间id
+     * @Params  id 区域字典表id
+     */
+    List<Long> queryBayIdByAreaId(@Param("id") Long id);
 }
