@@ -7,7 +7,7 @@ import qs from "qs";
 export function getMenuList() {
   return request({
     url: "/sysMenu/getMenuOrButtonInfo",
-    method: "post"
+    method: "get"
   });
 }
 //新增菜单资源
@@ -22,7 +22,7 @@ export function addMenu(data = {}) {
 export function editMenu(data = {}) {
   return request({
     url: "/sysMenu/updateMenuAndButtonInfo",
-    method: "post",
+    method: "put",
     data
   });
 }
@@ -31,7 +31,7 @@ export function editMenu(data = {}) {
 export function delMenu(params={}) {
   return request({
     url: "/sysMenu/delMenuOrButtonInfoById",
-    method: "get",
+    method: "delete",
     params
   });
 }
@@ -60,7 +60,7 @@ export function getRoleList(params = {}) {
 export function editRole(data = {}) {
   return request({
     url: "/role/updateRoleInfo",
-    method: "post",
+    method: "put",
     data
   });
 }
@@ -69,7 +69,7 @@ export function editRole(data = {}) {
 export function delRole(params = {}) {
   return request({
     url: "/role/delRoleInfoById",
-    method: "get",
+    method: "delete",
     params
   });
 }
@@ -154,7 +154,7 @@ export function addUser(data={}) {
 export function editUser(data={}) {
   return request({
     url: "/user/updateUserInfo",
-    method: "post",
+    method: "put",
     data
   });
 }
@@ -163,7 +163,7 @@ export function editUser(data={}) {
 export function delUser(params={}) {
   return request({
     url: "/user/delUserInfo",
-    method: "get",
+    method: "delete",
     params
   });
 }
@@ -210,7 +210,7 @@ export function addDept(data={}) {
 export function editDept(data={}) {
   return request({
     url: "/dept/updateDeptInfo",
-    method: "post",
+    method: "put",
     data
   });
 }
@@ -219,7 +219,7 @@ export function editDept(data={}) {
 export function delDept(params={}) {
   return request({
     url: "/dept/delDeptInfo",
-    method: "get",
+    method: "delete",
     params
   });
 }
@@ -260,7 +260,7 @@ export function addDic(data={}) {
 export function editDic(data={}) {
   return request({
     url: "/dictionary/updateDictionaryInfo",
-    method: "post",
+    method: "put",
     data
   });
 }
@@ -288,7 +288,7 @@ export function findDicIdInfo(params={}) {
 export function delDic(params = {}) {
   return request({
     url: "/dictionary/delDictionaryInfo",
-    method: "get",
+    method: "delete",
     params
   });
 }
@@ -304,4 +304,23 @@ export function getDicList(params={}) {
 }
 
 
+//*********日志管理**************** */
+//获取日志列表
+export function getLogList(params={}) {
+  return request({
+    url: "/sysLog/getSysLogInfos",
+    method: "get",
+    params
+  });
+}
+
+
+//日志删除
+export function delLog(params={}) {
+  return request({
+    url: "/sysLog/delSysLogInfoById",
+    method: "delete",
+    params
+  });
+}
 

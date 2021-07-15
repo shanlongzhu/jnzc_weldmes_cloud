@@ -219,6 +219,7 @@ export default {
             if (code == 200) {
                 this.sourceVisible = true;
                 this.ruleForm = data || {};
+                this.ruleForm.parentName = this.ruleForm.parentName || "顶级";
             }
         },
 

@@ -9,7 +9,7 @@
 import moment from 'moment'
 import * as echarts from 'echarts';
 export default {
-    name: 'lineCom2',
+    name: 'lineComE',
     components: {},
     props: {
     },
@@ -24,17 +24,17 @@ export default {
     },
     computed: {},
     methods: {
-        init (v, t) {
+        init (elc, t) {
             this.myChart.clear()
-            this.option.series[0].data = v;
+            this.option.series[0].data = elc;
             this.option.xAxis.data = t;
-            if (v.length <= 100) {
+            if (elc.length <= 100) {
                 this.option.dataZoom[0].end = 100;
                 this.option.dataZoom[1].end = 100;
-            } else if (v.length <= 500) {
+            } else if (elc.length <= 500) {
                 this.option.dataZoom[0].end = 70;
                 this.option.dataZoom[1].end = 70;
-            } else if (v.length <= 1000) {
+            } else if (elc.length <= 1000) {
                 this.option.dataZoom[0].end = 40;
                 this.option.dataZoom[1].end = 40;
             }else{
@@ -43,7 +43,6 @@ export default {
             }
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
-
         },
         echartsLoading () {
             this.myChart.showLoading();
@@ -56,7 +55,7 @@ export default {
         this.myChart = echarts.init(this.$refs.electricity);
         this.option = {
             title: {
-                text: '电压'
+                text: '电流'
             },
             grid: {
                 top: '40',
@@ -66,7 +65,7 @@ export default {
             tooltip: {
                 trigger: 'axis',
                 formatter: function (params) {
-                    return '日期：' + params[0].name + '<br/>电压：' + params[0].value + ' v';
+                    return '日期：' + params[0].name + '<br/>电流：' + params[0].value + ' A';
                 },
                 axisPointer: {
                     animation: false
@@ -90,7 +89,7 @@ export default {
                 type: 'value',
                 boundaryGap: [0, '100%'],
                 min: 0,
-                max: 62,
+                max: 700,
                 splitLine: {
                     show: false
                 }
@@ -114,17 +113,17 @@ export default {
                 orient: 'horizontal',
                 left: 'center',
                 pieces: [{
-                    lte: 12,
+                    lte: 30,
                     color: '#f00',
                     // areaStyle: 'rgba(82,209,176,.2)'
                 }, {
-                    gt: 12,
-                    lte: 50,
-                    color: '#00A1EA',
+                    gt: 30,
+                    lte: 550,
+                    color: '#42b983',
                     // areaStyle: 'rgba(231,177,48,.2)'
                 },
                 {
-                    gt: 50,
+                    gt: 550,
                     color: '#f00'
                 }
                 ],
@@ -140,21 +139,16 @@ export default {
                         width: 1
                     }
                 },
-                itemStyle: {
-                    normal: {
-                        color: '#00A1EA'
-                    }
-                },
 
                 markLine: {
                     symbol: "none",
                     data: [
                         {
-                            yAxis: 50,
+                            yAxis: 550,
                             label: {
                                 show: 'true',
                                 position: 'end',
-                                formatter: '50(V)'
+                                formatter: '550(A)'
                             },
                             lineStyle: {
                                 normal: {
@@ -166,7 +160,7 @@ export default {
 
                         },
                         {
-                            yAxis: 12,
+                            yAxis: 30,
                             lineStyle: {
                                 normal: {
                                     color: "#fe460d",
@@ -177,7 +171,7 @@ export default {
                             label: {
                                 show: 'true',
                                 position: 'end',
-                                formatter: '12(V)'
+                                formatter: '30(A)'
                             },
                         }
                     ]

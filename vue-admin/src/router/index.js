@@ -347,9 +347,9 @@ export const asyncRoutes = [
           noCache: true }
       },
       {
-        path: 'keyboard4',
+        path: 'roles-manager',
         component: () => import('@/views/production-equipment-management/RolesManager'),
-        name: 'KeyboardChart',
+        name: 'RolesManager',
         meta: {
           mark:'702',
           title: '角色管理',
@@ -357,27 +357,27 @@ export const asyncRoutes = [
           noCache: true }
       },
       {
-        path: 'keyboard5',
+        path: 'menus-manager',
         component: () => import('@/views/production-equipment-management/menusManager'),
-        name: 'KeyboardChart',
+        name: 'menusManager',
         meta: {
           title: '菜单管理',
           mark:'703',
           noCache: true }
       },
       {
-        path: 'keyboard6',
+        path: 'dictionaries',
         component: () => import('@/views/system/dictionariesManager/dictionaries'),
-        name: 'KeyboardChart',
+        name: 'dictionariesName',
         meta: {
           title: '字典管理',
           mark:'704',
           noCache: true }
       },
       {
-        path: 'keyboard7',
+        path: 'organizational',
         component: () => import('@/views/system/organizationalStructure/organizational'),
-        name: 'KeyboardChart',
+        name: 'organizationalName',
         meta: {
           mark:'705',
           title: '组织机构管理',
@@ -393,6 +393,28 @@ export const asyncRoutes = [
           mark:'706',
           noCache: true }
       }
+    ]
+  },
+  {
+    path: '/log-manager',
+    component: Layout,
+    redirect: 'log-list',
+    alwaysShow: true,
+    name: 'logManager',
+    meta: {
+      mark:'8',
+      title: '日志管理',
+      icon: 'el-icon-notebook-2'
+    },
+    children: [
+      {
+        path: 'log-list',
+        component: () => import('@/views/logManager/logList'),
+        name: 'logList',
+        meta: {
+          mark:'801',
+          title: '日志列表' }
+      }      
     ]
   },
   /* {

@@ -170,28 +170,28 @@
                     width="140"
                 />
                 <el-table-column
-                    prop="welderName"
+                    prop="volMax"
                     label="电压上限"
                     align="left"
-                    width="130"
+                    width="100"
                 />
                 <el-table-column
-                    prop="welderName"
+                    prop="volMin"
                     label="电压下限"
                     align="left"
-                    width="130"
+                    width="100"
                 />
                 <el-table-column
-                    prop="welderName"
+                    prop="eleMax"
                     label="电流上限"
                     align="left"
-                    width="130"
+                    width="100"
                 />
                 <el-table-column
-                    prop="welderName"
+                    prop="eleMin"
                     label="电流下限"
                     align="left"
-                    width="130"
+                    width="100"
                 />
                 <el-table-column
                     prop="evaluateContent"
@@ -328,27 +328,27 @@
                 </el-form-item>
                 <el-form-item
                     label="电压上限"
-                    prop="taskNo"
+                    prop="volMax"
                 >
-                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                    <el-input v-model="ruleForm.volMax" style="width:200px" />
                 </el-form-item>
                 <el-form-item
                     label="电压下限"
-                    prop="taskNo"
+                    prop="volMin"
                 >
-                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                    <el-input v-model="ruleForm.volMin" style="width:200px" />
                 </el-form-item>
                 <el-form-item
                     label="电流上限"
-                    prop="taskNo"
+                    prop="eleMax"
                 >
-                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                    <el-input v-model="ruleForm.eleMax" style="width:200px" />
                 </el-form-item>
                 <el-form-item
                     label="电流下限"
-                    prop="taskNo"
+                    prop="eleMin"
                 >
-                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                    <el-input v-model="ruleForm.eleMin" style="width:200px" />
                 </el-form-item>
                 <el-form-item
                     label="计划时间"
@@ -442,7 +442,11 @@ export default {
                 deptName: '',
                 deptId: '',
                 planStarttime: '',
-                planEndtime: ''
+                planEndtime: '',
+                eleMax:'',
+                eleMin:'',
+                volMax:'',
+                volMin:'',
             },
             rules: {
                 taskNo: [
@@ -501,7 +505,6 @@ export default {
     created () {
         this.ruleFormObj = {...this.ruleForm};
         this.getList()
-        this.getUserRoles()
         if (this.levelArr.length == 0) {
             this.getLevelFun()
         }
