@@ -6,6 +6,7 @@ import com.gw.common.HttpResult;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
 import com.gw.entities.RealtimeData;
 import com.gw.entities.RtData;
+import com.gw.entities.TableInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,10 +58,11 @@ public class HistoricalCurveController {
      * @Description  根据表名 查询 焊机历史曲线
      * @Params
      */
-    @RequestMapping(value = "HistoricalCurveByTableName",method = RequestMethod.GET)
-    public HttpResult getList(String tableName){
+    @RequestMapping(value = "HistoricalCurveByTableName")
+    public HttpResult getList(@RequestBody TableInfo tableInfo){
 
-        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableName);
+        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableInfo.getTableName(),
+                tableInfo.getTaskId(),tableInfo.getWelderId(),tableInfo.getWeldMachineId());
 
         return HttpResult.ok(map);
     }

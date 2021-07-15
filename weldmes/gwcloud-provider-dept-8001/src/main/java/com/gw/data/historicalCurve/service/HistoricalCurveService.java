@@ -28,6 +28,6 @@ public interface HistoricalCurveService {
      * @Description  根据表名 查询 焊机历史曲线
      * @Params
      */
-    public Map<String,Object> getHistoryCurveInfoByTableName(String tableName);
+    public Map<String,Object> getHistoryCurveInfoByTableName(String tableName,Long taskId,Long welderId,Long weldMachineId);
 
 }

@@ -4,6 +4,7 @@ import com.gw.data.historicalCurve.dao.HistoricalCurveDao;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
 import com.gw.entities.RealtimeData;
 import com.gw.entities.RtData;
+import com.gw.entities.TableInfo;
 import com.gw.entities.TaskClaim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,10 +52,12 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
             lDate.add(calBegin.getTime());
         }
 
-        List<String> tableNames = new ArrayList<>();
+        List<TableInfo> tableNames = new ArrayList<>();
 
         //获取表名列表 并 判断表是否存在
         for (Date date : lDate) {
+
+            TableInfo tableInfo = new TableInfo();
 
             String tableName = "rtdata" + new SimpleDateFormat("yyyyMMdd").format(date);
 
@@ -63,14 +66,24 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
             if(ObjectUtils.isEmpty(rows)){
                 continue;
             }
-            tableNames.add(tableName);
+
+            tableInfo.setTableName(tableName);
+
+            tableInfo.setTaskId(taskId);
+
+            tableInfo.setWelderId(welderId);
+
+            tableInfo.setWeldMachineId(weldMachineId);
+
+            tableNames.add(tableInfo);
+
         }
 
         Map<String,Object> map = new HashMap<>();
 
         for (int i = 0; i < tableNames.size(); i++){
 
-            List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i));
+            List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i).getTableName());
 
             if(list.size() != 0){
                 map.put("list",list);
@@ -103,9 +116,9 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
      * @Params
      */
     @Override
-    public Map<String, Object> getHistoryCurveInfoByTableName(String tableName) {
+    public Map<String, Object> getHistoryCurveInfoByTableName(String tableName,Long taskId,Long welderId,Long weldMachineId) {
 
-        List<RtData> list = historicalCurveDao.getHistoryCurveByTableName(tableName);
+        List<RtData> list = historicalCurveDao.getHistoryCurveByTableName(tableName,taskId,welderId,weldMachineId);
 
         Map<String, Object> map = new HashMap<>();
 

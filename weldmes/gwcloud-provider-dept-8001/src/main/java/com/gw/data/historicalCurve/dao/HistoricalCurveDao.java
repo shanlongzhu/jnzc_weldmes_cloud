@@ -43,7 +43,8 @@ public interface HistoricalCurveDao {
      * @Params
      */
     @DS("slave_1")
-    public List<RtData> getHistoryCurveByTableName(@Param("tableName") String tableName);
+    public List<RtData> getHistoryCurveByTableName(@Param("tableName") String tableName,@Param("taskId")Long taskId,
+                                                   @Param("welderId")Long welderId,@Param("weldMachineId")Long weldMachineId);
 
 
 }
