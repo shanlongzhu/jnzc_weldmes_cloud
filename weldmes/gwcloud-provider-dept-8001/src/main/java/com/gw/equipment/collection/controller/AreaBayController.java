@@ -2,6 +2,7 @@ package com.gw.equipment.collection.controller;
 
 import com.gw.common.HttpResult;
 import com.gw.entities.AreaBayInfo;
+import com.gw.entities.IdListVO;
 import com.gw.entities.MachineGatherInfo;
 import com.gw.equipment.collection.service.AreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,9 @@ public class AreaBayController {
      * @Params areaBayInfo 区域跨间实体类
      */
     @RequestMapping(value = "areaBay/addBayToAreaInfo",method = RequestMethod.POST)
-    public HttpResult addBayToAreaInfo(@RequestBody AreaBayInfo areaBayInfo){
+    public HttpResult addBayToAreaInfo(@RequestBody IdListVO areaBays){
 
-        areaBayService.addAreaBayInfo(areaBayInfo);
+        areaBayService.addAreaBayInfo(areaBays.getAreaBayInfos());
 
         return HttpResult.ok("成功绑定区域跨间");
     }

@@ -2,6 +2,8 @@ package com.gw.equipment.collection.service;
 
 import com.gw.entities.AreaBayInfo;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:27
@@ -14,5 +16,5 @@ public interface AreaBayService {
      * @Description  绑定区域跨间
      * @Params areaBayInfo 区域跨间实体类
      */
-    public void addAreaBayInfo(AreaBayInfo areaBayInfo);
+    public void addAreaBayInfo(List<AreaBayInfo> areaBayInfos);
 }

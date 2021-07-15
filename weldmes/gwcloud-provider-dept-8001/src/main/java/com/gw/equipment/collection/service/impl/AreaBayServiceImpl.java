@@ -6,6 +6,8 @@ import com.gw.equipment.collection.service.AreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:27
@@ -23,8 +25,11 @@ public class AreaBayServiceImpl implements AreaBayService {
      * @Params areaBayInfo 区域跨间实体类
      */
     @Override
-    public void addAreaBayInfo(AreaBayInfo areaBayInfo) {
+    public void addAreaBayInfo(List<AreaBayInfo> areaBayInfos) {
 
-        areaBayDao.insertAreaBayInfo(areaBayInfo);
+        for (AreaBayInfo areaBayInfo : areaBayInfos) {
+
+            areaBayDao.insertAreaBayInfo(areaBayInfo);
+        }
     }
 }

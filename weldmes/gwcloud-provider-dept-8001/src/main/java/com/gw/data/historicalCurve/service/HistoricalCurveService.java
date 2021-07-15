@@ -23,4 +23,11 @@ public interface HistoricalCurveService {
      */
     List<RtData> getHistoryCurveInfos(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId);
 
+    /**
+     * @Date 2021/7/15 17:46
+     * @Description  根据表名 查询 焊机历史曲线
+     * @Params
+     */
+    public Map<String,Object> getHistoryCurveInfoByTableName(String tableName);
+
 }

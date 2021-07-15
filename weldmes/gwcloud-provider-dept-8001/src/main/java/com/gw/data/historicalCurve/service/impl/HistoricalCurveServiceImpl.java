@@ -96,4 +96,21 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         return list;
     }
+
+    /**
+     * @Date 2021/7/15 17:46
+     * @Description  根据表名 查询 焊机历史曲线
+     * @Params
+     */
+    @Override
+    public Map<String, Object> getHistoryCurveInfoByTableName(String tableName) {
+
+        List<RtData> list = historicalCurveDao.getHistoryCurveByTableName(tableName);
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("list",list);
+
+        return map;
+    }
 }

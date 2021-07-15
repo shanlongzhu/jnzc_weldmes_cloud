@@ -51,4 +51,18 @@ public class HistoricalCurveController {
 
         return HttpResult.ok(page);
     }
+
+    /**
+     * @Date 2021/7/15 17:46
+     * @Description  根据表名 查询 焊机历史曲线
+     * @Params
+     */
+    @RequestMapping(value = "HistoricalCurveByTableName",method = RequestMethod.GET)
+    public HttpResult getList(String tableName){
+
+        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableName);
+
+        return HttpResult.ok(map);
+    }
+
 }

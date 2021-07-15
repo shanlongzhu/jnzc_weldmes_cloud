@@ -6,6 +6,8 @@ import com.gw.equipment.collection.service.FirmMachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:43
@@ -23,9 +25,11 @@ public class FirmMachineServiceImpl implements FirmMachineService {
      * @Params firmMachineInfo 厂家设备信息
      */
     @Override
-    public void addFirmMachineInfo(FirmMachineInfo firmMachineInfo) {
+    public void addFirmMachineInfo(List<FirmMachineInfo> firmMachineInfos) {
 
-        firmMachineDao.insertFirmMachineInfo(firmMachineInfo);
+        for (FirmMachineInfo firmMachineInfo : firmMachineInfos) {
 
+            firmMachineDao.insertFirmMachineInfo(firmMachineInfo);
+        }
     }
 }

@@ -37,4 +37,13 @@ public interface HistoricalCurveDao {
      */
     public Integer tableExistYesOrNo(@Param("tableName")String tableName);
 
+    /**
+     * @Date 2021/7/15 17:46
+     * @Description  根据表名、taskId 任务id  welderId 焊工id  weldMachineId 焊机id 查询 焊机历史曲线
+     * @Params
+     */
+    @DS("slave_1")
+    public List<RtData> getHistoryCurveByTableName(@Param("tableName") String tableName);
+
+
 }

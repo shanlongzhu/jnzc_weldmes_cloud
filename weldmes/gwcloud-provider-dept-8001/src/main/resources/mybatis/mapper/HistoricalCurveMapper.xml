@@ -46,4 +46,10 @@
         where `TABLE_NAME` = #{tableName}
     </select>
 
+    <!--焊机历史曲线-->
+    <select id="getHistoryCurveByTableName" resultType="com.gw.entities.RtData">
+        select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage
+        from ${tableName} tableInfo
+    </select>
+
 </mapper>

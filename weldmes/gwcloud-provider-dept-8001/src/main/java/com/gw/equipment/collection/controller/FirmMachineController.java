@@ -3,9 +3,12 @@ package com.gw.equipment.collection.controller;
 import com.gw.common.HttpResult;
 import com.gw.entities.AreaBayInfo;
 import com.gw.entities.FirmMachineInfo;
+import com.gw.entities.IdListVO;
 import com.gw.equipment.collection.service.FirmMachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author zhanghan
@@ -25,9 +28,9 @@ public class FirmMachineController {
      * @Params firmMachineInfo 厂家设备信息
      */
     @RequestMapping(value = "firmMachine/addMachineToFirmInfo",method = RequestMethod.POST)
-    public HttpResult addBayToAreaInfo(@RequestBody FirmMachineInfo firmMachineInfo){
+    public HttpResult addBayToAreaInfo(@RequestBody IdListVO firmMachines){
 
-        firmMachineService.addFirmMachineInfo(firmMachineInfo);
+        firmMachineService.addFirmMachineInfo(firmMachines.getFirmMachineInfos());
 
         return HttpResult.ok("成功绑定厂家设备");
     }
