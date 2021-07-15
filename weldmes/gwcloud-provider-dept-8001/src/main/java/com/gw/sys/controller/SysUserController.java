@@ -81,7 +81,7 @@ public class SysUserController {
      * @Description 修改用户信息
      * @Params sysUser 用户信息  roleId 角色id
      */
-    @RequestMapping(value = "user/updateUserInfo")
+    @RequestMapping(value = "user/updateUserInfo",method = RequestMethod.PUT)
     public HttpResult updateUserInfos(@RequestBody SysUser sysUser) {
 
         sysUserService.updateUserInfo(sysUser);
@@ -95,7 +95,7 @@ public class SysUserController {
      * @Description 删除用户信息    逻辑删除
      * @Params id 用户id
      */
-    @RequestMapping(value = "user/delUserInfo")
+    @RequestMapping(value = "user/delUserInfo",method = RequestMethod.DELETE)
     public HttpResult delUserInfo(Long id) {
 
         sysUserService.delUserInfoById(id);

@@ -159,7 +159,7 @@ public class DispatchController {
      * @Description 任务修改接口
      * @Params taskInfo任务信息
      */
-    @RequestMapping(value = "task/updateTaskInfo")
+    @RequestMapping(value = "task/updateTaskInfo",method = RequestMethod.PUT)
     public HttpResult updateTaskInfoController(@RequestBody TaskInfo taskInfo){
 
         dispatchService.updateTaskInfo(taskInfo);
@@ -173,7 +173,7 @@ public class DispatchController {
      * @Description 任务删除接口
      * @Params
      */
-    @RequestMapping(value = "task/deleteTaskInfoInfo")
+    @RequestMapping(value = "task/deleteTaskInfoInfo",method = RequestMethod.DELETE)
     public HttpResult deleteTaskInfoController(@RequestBody TaskInfo taskInfo){
 
         dispatchService.deleteTaskInfoById(taskInfo.getId());
@@ -187,7 +187,7 @@ public class DispatchController {
      * @Description 任务批量删除接口
      * @Params idList 任务主键列表
      */
-    @RequestMapping(value = "task/deleteTaskInfoList")
+    @RequestMapping(value = "task/deleteTaskInfoList",method = RequestMethod.DELETE)
     public HttpResult deleteTaskInfoListController(@RequestBody IdListVO idList){
 
         dispatchService.deleteTaskInfoByIdList(idList);
@@ -214,7 +214,7 @@ public class DispatchController {
      * @Description 批量完成接口
      * @Params idList 主键列表
      */
-    @RequestMapping(value = "task/finishTaskInfoList")
+    @RequestMapping(value = "task/finishTaskInfoList",method = RequestMethod.PUT)
     public HttpResult finishTaskInfoListController(@RequestBody IdListVO idList){
 
         List<Long> ids = idList.getIdList();

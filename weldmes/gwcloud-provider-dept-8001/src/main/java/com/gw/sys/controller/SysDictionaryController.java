@@ -29,7 +29,7 @@ public class SysDictionaryController {
      * @Description  条件查询字典信息列表
      * @Params sysDictionary 字典信息
      */
-    @RequestMapping("dictionary/getDictionaryInfos")
+    @RequestMapping(value = "dictionary/getDictionaryInfos")
     public HttpResult getDictionaryInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,
                                          String type,String typeName,String value,String valueName){
 
@@ -48,7 +48,7 @@ public class SysDictionaryController {
      * @Description  根据id查询字典信息
      * @Params id 字典id
      */
-    @RequestMapping("dictionary/getDictionaryInfoById")
+    @RequestMapping(value = "dictionary/getDictionaryInfoById")
     public HttpResult getDictionaryInfoById(Long id){
 
         SysDictionary sysDictionary = sysDictionaryService.getDictionaryInfoById(id);
@@ -61,7 +61,7 @@ public class SysDictionaryController {
      * @Description  修改字典信息
      * @Params sysDictionary 字典信息
      */
-    @RequestMapping("dictionary/updateDictionaryInfo")
+    @RequestMapping(value = "dictionary/updateDictionaryInfo",method = RequestMethod.PUT)
     public HttpResult updateDictionaryInfo(@RequestBody SysDictionary sysDictionary){
 
         sysDictionaryService.updateDictionaryInfo(sysDictionary);
@@ -74,7 +74,7 @@ public class SysDictionaryController {
      * @Description  根据id删除字典信息
      * @Params id 字典id
      */
-    @RequestMapping("dictionary/delDictionaryInfo")
+    @RequestMapping(value = "dictionary/delDictionaryInfo",method = RequestMethod.DELETE)
     public HttpResult delDictionaryInfoById(Long id){
 
         sysDictionaryService.delDictionaryInfoById(id);

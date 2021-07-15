@@ -28,7 +28,7 @@ public class SysDeptController {
      * @Description 查询组织机构信息列表
      * @Params
      */
-    @RequestMapping("dept/getDeptInfos")
+    @RequestMapping(value = "dept/getDeptInfos")
     public HttpResult getDictionaryInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,
                                          @RequestParam(value="id",defaultValue = "1")Long id){
 
@@ -60,7 +60,7 @@ public class SysDeptController {
      * @Description 修改组织机构信息
      * @Params sysDept 组织机构信息
      */
-    @RequestMapping("dept/updateDeptInfo")
+    @RequestMapping(value = "dept/updateDeptInfo",method = RequestMethod.PUT)
     public HttpResult updateDeptInfo(@RequestBody SysDept sysDept){
 
         sysDeptService.updateDeptInfo(sysDept);
@@ -73,7 +73,7 @@ public class SysDeptController {
      * @Description 根据id删除组织机构信息
      * @Params id 组织机构信息id
      */
-    @RequestMapping("dept/delDeptInfo")
+    @RequestMapping(value = "dept/delDeptInfo",method = RequestMethod.DELETE)
     public HttpResult delDeptInfo(Long id){
 
         sysDeptService.delDeptInfoById(id);

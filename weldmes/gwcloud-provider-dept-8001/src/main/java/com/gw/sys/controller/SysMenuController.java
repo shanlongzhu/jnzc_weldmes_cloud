@@ -58,7 +58,7 @@ public class SysMenuController {
      * @Description  根据id 删除菜单/按钮
      * @Params id 菜单/按钮id
      */
-    @RequestMapping("delMenuOrButtonInfoById")
+    @RequestMapping(value = "delMenuOrButtonInfoById",method = RequestMethod.DELETE)
     public HttpResult delMenuOrButtonInfoById(Long id){
 
         sysMenuService.delMenuOrButoonInfoById(id);
@@ -84,7 +84,7 @@ public class SysMenuController {
      * @Description  修改菜单/按钮信息
      * @Params
      */
-    @RequestMapping("updateMenuAndButtonInfo")
+    @RequestMapping(value = "updateMenuAndButtonInfo",method = RequestMethod.PUT)
     public HttpResult updateRoleMenuAndButtonInfo(@RequestBody SysMenuInfo sysMenuInfo){
 
         sysMenuService.updateMenuOrButtonInfo(sysMenuInfo);

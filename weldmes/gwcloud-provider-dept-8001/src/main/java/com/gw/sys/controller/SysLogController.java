@@ -29,7 +29,7 @@ public class SysLogController {
      * @Description 日志信息列表查询
      * @Params
      */
-    @RequestMapping("sysLog/getSysLogInfos")
+    @RequestMapping(value = "sysLog/getSysLogInfos",method = RequestMethod.GET)
     public HttpResult getSysLogInfo(@RequestParam(value="pn",defaultValue = "1") Integer pn){
 
         PageHelper.startPage(pn,10);
@@ -47,7 +47,7 @@ public class SysLogController {
      * @Description 根据id删除日志信息
      * @Params id  日志id
      */
-    @RequestMapping("sysLog/delSysLogInfoById")
+    @RequestMapping(value = "sysLog/delSysLogInfoById",method = RequestMethod.DELETE)
     public HttpResult delSysLogInfoById(Long id){
 
         sysLogService.delSysLogInfoById(id);

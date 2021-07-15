@@ -2,12 +2,16 @@ package com.gw.config;
 
 import com.gw.common.DateTimeUtil;
 import com.gw.entities.SysLog;
+import com.gw.entities.UserLoginInfo;
 import com.gw.sys.service.SysLogService;
 import lombok.extern.log4j.Log4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +62,7 @@ public class SysLogAspect {
     private String requestArgs;
 
     //声明一个切点
-    @Pointcut("execution(public * com.gw.process.dispatch.controller.*.*(..))")
+    @Pointcut("execution(public * com.gw.*.*.controller.*.*(..)) || execution(public * com.gw.*.controller.*.*(..))")
     private void aspect(){}
 
     @Before("aspect()")
@@ -95,21 +99,34 @@ public class SysLogAspect {
         //执行时长
         Double time = (endTime-startTime)/1000.0;
 
-        log.info("==============================请求内容开始=====================================");
-        log.info("请求IP:" + ip);
-        log.info("请求接口名:" + interfaceName);
-        log.info("请求方式:" + methodWays);
-        log.info("请求方法路径:" + requestMethodUrl);
-        log.info("请求类方法参数:" + requestArgs);
-        log.info("==============================请求内容结束=====================================");
-        log.info("执行时长:" + (endTime-startTime)/1000.0+"s");
-
         SysLog sysLog = new SysLog();
 
-        //用户名
+        //获取当前用户
+        Subject currentUser = SecurityUtils.getSubject();
+
+        UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+
+        if(!ObjectUtils.isEmpty(subject)){
+
+            //用户名
+            sysLog.setUserName(subject.getUserName());
+        }
 
         //用户操作
-
+        switch(methodWays){
+            case "GET" :
+                sysLog.setOperation("查询");
+                break;
+            case "POST" :
+                sysLog.setOperation("新增");
+                break;
+            case "PUT" :
+                sysLog.setOperation("修改");
+                break;
+            case "DELETE" :
+                sysLog.setOperation("删除");
+                break;
+        }
         //请求IP
         sysLog.setIp(ip);
 

@@ -46,7 +46,7 @@ public class SysRoleController {
      * @Description 角色列表查询
      * @Params
      */
-    @RequestMapping(value = "role/roleInfos" ,method = RequestMethod.GET)
+    @RequestMapping(value = "role/roleInfos")
     public HttpResult roleInfos() {
 
         List<SysRole> list = sysRoleService.getRoleInfos();
@@ -85,7 +85,7 @@ public class SysRoleController {
      * @Description 修改角色信息
      * @Params sysRole 角色信息
      */
-    @RequestMapping(value = "role/updateRoleInfo")
+    @RequestMapping(value = "role/updateRoleInfo",method = RequestMethod.PUT)
     public HttpResult updateRoleInfo(@RequestBody SysRole sysRole) {
 
         sysRoleService.updateRoleInfo(sysRole);
@@ -98,7 +98,7 @@ public class SysRoleController {
      * @Description 根据id删除角色信息
      * @Params  id 角色id
      */
-    @RequestMapping(value = "role/delRoleInfoById")
+    @RequestMapping(value = "role/delRoleInfoById",method = RequestMethod.DELETE)
     public HttpResult delRolesInfoById(Long id) {
 
         sysRoleService.delRoleInfoById(id);
