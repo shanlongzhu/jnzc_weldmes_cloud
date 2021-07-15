@@ -26,7 +26,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @Override
-    public List<RtData> getList(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId) throws ParseException {
+    public Map<String,Object> getList(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId) throws ParseException {
 
         Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
 
@@ -53,27 +53,34 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         List<String> tableNames = new ArrayList<>();
 
-        //获取表名列表
+        //获取表名列表 并 判断表是否存在
         for (Date date : lDate) {
 
-            tableNames.add("rtdata" + new SimpleDateFormat("yyyyMMdd").format(date));
-        }
-
-        List<RtData> list = new ArrayList<>();
-
-        for (String tableName : tableNames) {
+            String tableName = "rtdata" + new SimpleDateFormat("yyyyMMdd").format(date);
 
             Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
 
             if(ObjectUtils.isEmpty(rows)){
                 continue;
             }
-            List<RtData> tableInfos = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableName);
-
-            list.addAll(tableInfos);
+            tableNames.add(tableName);
         }
 
-        return list;
+        Map<String,Object> map = new HashMap<>();
+
+        for (int i = 0; i < tableNames.size(); i++){
+
+            List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i));
+
+            if(list.size() != 0){
+                map.put("list",list);
+                break;
+            }
+        }
+
+        map.put("tableNames",tableNames);
+
+        return map;
 
     }
 

@@ -5,7 +5,7 @@ import com.gw.entities.AreaBayInfo;
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:27
- * @Description  区域跨间
+ * @Description  区域跨间业务层
  */
 public interface AreaBayService {
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:27
- * @Description
+ * @Description 区域跨间业务实现层
  */
 @Service
 public class AreaBayServiceImpl implements AreaBayService {

@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:28
- * @Description
+ * @Description  区域跨间dao层
  */
 @Mapper
 public interface AreaBayDao {

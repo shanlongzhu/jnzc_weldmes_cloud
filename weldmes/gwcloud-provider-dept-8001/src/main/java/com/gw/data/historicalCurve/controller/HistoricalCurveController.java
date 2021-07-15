@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -26,12 +27,11 @@ public class HistoricalCurveController {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String startTime, String endTime,
-                              Long taskId,Long welderId,Long weldMachineId) throws ParseException {
-        PageHelper.startPage(pn, 10);
-        List<RtData> list = historicalCurveService.getList(startTime,endTime,taskId,welderId,weldMachineId);
-        PageInfo page = new PageInfo(list, 5);
-        return HttpResult.ok(page);
+    public HttpResult getList(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId) throws ParseException {
+
+        Map<String,Object> map = historicalCurveService.getList(startTime,endTime,taskId,welderId,weldMachineId);
+
+        return HttpResult.ok(map);
     }
 
     /**
