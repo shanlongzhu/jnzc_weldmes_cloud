@@ -6,6 +6,8 @@ import com.gw.sys.service.SysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/14 10:12
@@ -27,6 +29,31 @@ public class SysLogServiceImpl implements SysLogService {
     public void addSysLogInfo(SysLog sysLog) {
 
         sysLogDao.insertSysLogInfo(sysLog);
+
+    }
+
+    /**
+     * @Date 2021/7/14 12:52
+     * @Description 日志信息列表查询
+     * @Params
+     */
+    @Override
+    public List<SysLog> getSysLogInfos() {
+
+        List<SysLog> list = sysLogDao.selectSysLogInfos();
+
+        return list;
+    }
+
+    /**
+     * @Date 2021/7/14 12:52
+     * @Description 根据id删除日志信息
+     * @Params id  日志id
+     */
+    @Override
+    public void delSysLogInfoById(Long id) {
+
+        sysLogDao.deleteSysLogInfoById(id);
 
     }
 }

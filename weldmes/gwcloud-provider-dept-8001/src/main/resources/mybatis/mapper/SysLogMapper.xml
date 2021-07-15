@@ -25,4 +25,15 @@
         #{sysLog.time},#{sysLog.ip},#{sysLog.createTime})
     </insert>
 
+    <!--查询日志信息列表-->
+    <select id="selectSysLogInfos" resultMap="sysLogMap">
+        select id,user_name,operation,method,params,`time`,ip,create_time
+        from sys_log
+    </select>
+
+    <!--根据id删除日志信息-->
+    <delete id="deleteSysLogInfoById" parameterType="Long">
+        delete from sys_log where id = #{id}
+    </delete>
+
 </mapper>

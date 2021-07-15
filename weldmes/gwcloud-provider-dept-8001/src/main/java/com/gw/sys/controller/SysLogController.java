@@ -1,9 +1,14 @@
 package com.gw.sys.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
+import com.gw.entities.SysLog;
 import com.gw.sys.service.SysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -21,15 +26,36 @@ public class SysLogController {
 
     /**
      * @Date 2021/7/14 12:52
-     * @Description 新增日志信息
+     * @Description 日志信息列表查询
      * @Params
      */
-    @RequestMapping("sysLog/addSysLogInfo")
-    public HttpResult addSysLogInfo(){
+    @RequestMapping("sysLog/getSysLogInfos")
+    public HttpResult getSysLogInfo(@RequestParam(value="pn",defaultValue = "1") Integer pn){
 
-        return HttpResult.ok();
+        PageHelper.startPage(pn,10);
+
+        List<SysLog> list = sysLogService.getSysLogInfos();
+
+        PageInfo<SysLog> page = new PageInfo(list,10);
+
+        return HttpResult.ok(page);
 
     }
+
+    /**
+     * @Date 2021/7/14 12:52
+     * @Description 根据id删除日志信息
+     * @Params id  日志id
+     */
+    @RequestMapping("sysLog/delSysLogInfoById")
+    public HttpResult delSysLogInfoById(Long id){
+
+        sysLogService.delSysLogInfoById(id);
+
+        return HttpResult.ok("日志删除成功!");
+
+    }
+
 
 
 
