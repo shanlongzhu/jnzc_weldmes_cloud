@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.equipment.collection.dao.FirmMachineDao">
+
+    <resultMap id="firmMachineMap" type="com.gw.entities.FirmMachineInfo">
+        <id property="id" column="id"></id>
+        <result property="firmId" column="firm_id"></result>
+        <result property="machineId" column="machine_id"></result>
+        <result property="remarks" column="remarks"></result>
+    </resultMap>
+
+    <!--绑定厂家、设备-->
+    <insert id="insertFirmMachineInfo" parameterType="com.gw.entities.FirmMachineInfo">
+        insert into firm_machine(firm_id,machine_id) values(#{firmMachineInfo.firmId},#{firmMachineInfo.machineId})
+    </insert>
+</mapper>

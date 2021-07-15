@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.equipment.collection.dao.AreaBayDao">
+
+    <resultMap id="AreaByaMap" type="com.gw.entities.AreaBayInfo">
+        <id property="id" column="id"></id>
+        <result property="areaId" column="area_id"></result>
+        <result property="bayId" column="bay_id"></result>
+        <result property="remarks" column="remarks"></result>
+    </resultMap>
+
+    <!--插入区域跨间信息-->
+    <insert id="insertAreaBayInfo" parameterType="com.gw.entities.AreaBayInfo">
+        insert into area_bay(area_id,bay_id) values(#{areaBayInfo.areaId},#{areaBayInfo.bayId})
+    </insert>
+</mapper>
