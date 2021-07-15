@@ -17,7 +17,7 @@ export function getProcessList(params = {}) {
 export function editProcess(data = {}) {
   return request({
     url: '/task/updateTaskInfo',
-    method: 'post',
+    method: 'put',
     data
   })
 }
@@ -51,7 +51,7 @@ export function getProcessDetail(params = {}) {
 export function delProcess(data = {}) {
   return request({
     url: '/task/deleteTaskInfoInfo',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -60,7 +60,7 @@ export function delProcess(data = {}) {
 export function delCheckAllProcess(data = {}) {
   return request({
     url: '/task/deleteTaskInfoList',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -69,7 +69,7 @@ export function delCheckAllProcess(data = {}) {
 export function changeAllStatus(data = {}) {
   return request({
     url: '/task/finishTaskInfoList',
-    method: 'post',
+    method: 'put',
     data
   })
 }
@@ -206,7 +206,7 @@ export function addProcesLibrary(data={}) {
 }
 
 
-//新增工艺库
+//修改工艺库
 export function editProcesLibrary(data={}) {
   return request({
     url: `/library`,

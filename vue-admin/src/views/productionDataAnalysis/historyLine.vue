@@ -143,8 +143,8 @@
             />
         </div>
         <div class="history-bottom flex">
-            <line-com></line-com>
-            <line-com-2 :voltageArr="voltageData" :timeArr="timeData"></line-com-2>
+            <line-com-e ref="lineComE"></line-com-e>
+            <line-com-2 ref="lineCom2"></line-com-2>
 
         </div>
     </div>
@@ -152,10 +152,11 @@
 
 <script>
 import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData } from '_api/productionDataAnalysis/productionDataAnalysisApi'
-import LineCom from './components/lineCom.vue';
+// import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
+import LineComE from './components/lineComE.vue';
 export default {
-    components: { LineCom, LineCom2 },
+    components: {LineCom2, LineComE },
     name: 'historyLine',
     data () {
         return {
@@ -177,10 +178,6 @@ export default {
             welderArr: [],
             //焊机下拉数据
             weldingMachineArr: [],
-            //曲线数据
-            timeData: [],
-            voltageData: [],
-            electricityData: []
         }
     },
 
@@ -251,12 +248,23 @@ export default {
                 startTime: row.taskRealityStartTime,
                 endTime: row.taskRealityEndTime
             }
-
+            this.$refs.lineCom2.echartsLoading();
+            this.$refs.lineComE.echartsLoading();
             let { data, code } = await getHistoryTimeData(req);
             if (code == 200) {
-                this.timeData = (data.list || []).map(item => item.weldTime);
-                this.voltageData = (data.list || []).map(item => item.voltage);
-                this.electricityData = (data.list || []).map(item => item.electricity);
+                const timeData = (data.list || []).map(item => item.weldTime);
+                const voltageData = (data.list || []).map(item => {
+                    // return [item.weldTime,item.voltage]
+                    return item.voltage
+                });
+
+                const electricityData = (data.list || []).map(item => {
+                    // return [item.weldTime,item.electricity]
+                    return item.electricity;
+                }); 
+                
+                this.$refs.lineCom2.init(voltageData,timeData);
+                this.$refs.lineComE.init(electricityData,timeData)
                 
             }
         }
