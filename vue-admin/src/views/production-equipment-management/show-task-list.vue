@@ -140,12 +140,6 @@
                     width="130"
                 />
                 <el-table-column
-                    prop="welderName"
-                    label="焊工姓名"
-                    align="left"
-                    width="130"
-                />
-                <el-table-column
                     prop="planStarttime"
                     label="计划开始时间"
                     align="left"
