@@ -376,15 +376,15 @@ export const asyncRoutes = [
           roles: ['admin'],
           noCache: true }
       },
-      // {
-      //   path: 'keyboard8',
-      //   component: () => import('@/views/charts/keyboard'),
-      //   name: 'KeyboardChart',
-      //   meta: {
-      //     title: '邮件下发管理',
-      //     mark:'706',
-      //     noCache: true }
-      // }
+      {
+        path: 'keyboard8',
+        component: () => import('@/views/system/drag/dragMenu'),
+        name: 'KeyboardChart',
+        meta: {
+          title: '邮件下发管理',
+          mark:'706',
+          noCache: true }
+      }
     ]
   },
   {
@@ -593,7 +593,7 @@ export const asyncRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

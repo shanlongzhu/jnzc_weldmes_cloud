@@ -37,7 +37,7 @@
     "vue-count-to": "1.0.13",
     "vue-router": "3.0.2",
     "vue-splitpane": "1.0.4",
-    "vuedraggable": "2.20.0",
+    "vuedraggable": "^2.20.0",
     "vuejs-uib-pagination": "^1.0.6",
     "vuex": "3.1.0",
     "vxe-table": "^3.3.9",

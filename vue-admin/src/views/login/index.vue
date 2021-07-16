@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { getMenuList } from '_api/system/systemApi'
 export default {
   name: 'Login',
   data() {
@@ -115,6 +116,7 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then((data) => {
             this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            // this.getMenuFun();            
             this.loading = false
           }).catch((err) => {
             console.log(err)
@@ -126,6 +128,16 @@ export default {
         }
       })
     },
+
+    async getMenuFun(){
+      let {data,code} = await getMenuList();
+      if(code==200){
+        console.log(this.$store)
+        this.$store.dispatch('permission/gsRoute',data);
+        this.$router.push({ path: '/' })
+      }
+    },
+
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
