@@ -53,6 +53,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
         }
 
         List<TableInfo> tableNames = new ArrayList<>();
+        List<TableInfo> tableNamesList = new ArrayList<>();
 
         //获取表名列表 并 判断表是否存在
         for (Date date : lDate) {
@@ -86,12 +87,13 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
             List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i).getTableName());
 
             if(list.size() != 0){
+                tableNamesList.add(tableNames.get(i));
                 map.put("list",list);
-                break;
+                continue;
             }
         }
 
-        map.put("tableNames",tableNames);
+        map.put("tableNames",tableNamesList);
 
         return map;
 
