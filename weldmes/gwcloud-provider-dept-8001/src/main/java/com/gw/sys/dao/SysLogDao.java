@@ -35,4 +35,5 @@ public interface SysLogDao {
      * @Params id  日志id
      */
     public void deleteSysLogInfoById(@Param("id")Long id);
+
 }

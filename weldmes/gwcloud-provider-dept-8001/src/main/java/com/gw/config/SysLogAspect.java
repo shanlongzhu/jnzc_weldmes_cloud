@@ -3,6 +3,7 @@ package com.gw.config;
 import com.gw.common.DateTimeUtil;
 import com.gw.entities.SysLog;
 import com.gw.entities.UserLoginInfo;
+import com.gw.sys.dao.SysLogDao;
 import com.gw.sys.service.SysLogService;
 import lombok.extern.log4j.Log4j;
 import org.apache.shiro.SecurityUtils;
@@ -30,6 +31,9 @@ public class SysLogAspect {
 
     @Autowired
     SysLogService sysLogService;
+
+    @Autowired
+    SysLogDao sysLogDao;
 
     /**
      * 开始时间
@@ -77,13 +81,13 @@ public class SysLogAspect {
         //获取请求ip
         ip = request.getRemoteAddr();
 
-        //获取请求地址
+        //获取请求方法名
         interfaceName = request.getRequestURI();
 
         //获取请求方式
         methodWays = request.getMethod();
 
-        //获取请求方法名
+        //获取请求方法地址
         requestMethodUrl = joinPoint.getSignature().toString();
 
         //获取请求参数
@@ -143,6 +147,13 @@ public class SysLogAspect {
         String createTime = DateTimeUtil.getCurrentTime();
 
         sysLog.setCreateTime(createTime);
+
+        /*interfaceName = interfaceName.substring(1);
+
+        interfaceName = interfaceName.substring(0,interfaceName.indexOf("/"));*/
+
+        //菜单模块
+        sysLog.setMenuModel(interfaceName);
 
         //日志入库
         sysLogService.addSysLogInfo(sysLog);

@@ -20,9 +20,9 @@
 
     <!--新增日志信息-->
     <insert id="insertSysLogInfo" parameterType="com.gw.entities.SysLog">
-        insert into sys_log(user_name,operation,method,params,`time`,ip,create_time)
+        insert into sys_log(user_name,operation,method,params,`time`,ip,create_time,menu_model)
         values(#{sysLog.userName},#{sysLog.operation},#{sysLog.method},#{sysLog.params},
-        #{sysLog.time},#{sysLog.ip},#{sysLog.createTime})
+        #{sysLog.time},#{sysLog.ip},#{sysLog.createTime},#{sysLog.menuModel})
     </insert>
 
     <!--查询日志信息列表-->
@@ -35,5 +35,4 @@
     <delete id="deleteSysLogInfoById" parameterType="Long">
         delete from sys_log where id = #{id}
     </delete>
-
 </mapper>

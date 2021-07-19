@@ -1,14 +1,11 @@
 package com.gw.equipment.collection.controller;
 
 import com.gw.common.HttpResult;
-import com.gw.entities.AreaBayInfo;
-import com.gw.entities.FirmMachineInfo;
 import com.gw.entities.IdListVO;
 import com.gw.equipment.collection.service.FirmMachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
  * @Author zhanghan

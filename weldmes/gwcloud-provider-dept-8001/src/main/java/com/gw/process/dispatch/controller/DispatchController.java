@@ -231,13 +231,13 @@ public class DispatchController {
      *               然后task_info表中 该 任务信息状态 变更为 进行中
      * @Params  taskClaim task_claim实体类
      */
-    @RequestMapping(value = "task/getTaskInfo")
+    /*@RequestMapping(value = "task/getTaskInfo")
     public HttpResult updateTaskStatusAndInsertInfoController(@RequestBody TaskClaim taskClaim){
 
         HttpResult httpResult = dispatchService.updateTaskStatusAndInsertInfo(taskClaim);
 
-        return httpResult;
-    }
+        return httpResult.;
+    }*/
 
     /**
      * @Date 2021/5/28 10:44

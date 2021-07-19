@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.dispatch.dao.TaskClaimDao">
+
+    <resultMap id="TaskWeldClaimMap" type="com.gw.entities.WeldClaimTaskInfo">
+        <result property="welderName" column="welderName"></result>
+        <result property="welderNo" column="welderNo"></result>
+        <result property="deptName" column="deptName"></result>
+        <result property="weldeNo" column="weldeNo"></result>
+        <result property="weldeType" column="weldeType"></result>
+        <result property="taskNo" column="taskNo"></result>
+    </resultMap>
+
+    <resultMap id="TaskClaimMap" type="com.gw.entities.TaskClaim">
+        <id property="id" column="id"></id>
+        <result property="welderId" column="welder_id"></result>
+        <result property="taskId" column="task_id"></result>
+        <result property="weldId" column="weld_id"></result>
+        <result property="claimTime" column="claim_time"></result>
+    </resultMap>
+
+    <!--根据焊机id查询最新一条任务绑定信息-->
+    <select id="selectTaskClaimInfoById" parameterType="Long" resultMap="TaskClaimMap">
+        select id,welder_id,task_id,weld_id from task_claim
+        where weld_id = #{id}
+        order by claim_time desc
+    </select>
+
+    <!--根据焊机任务绑定信息查询具体绑定信息  缺少任务焊工字段-->
+    <select id="selectWeldClaimTaskInfoByTaskClaim" parameterType="com.gw.entities.TaskClaim" resultMap="TaskWeldClaimMap">
+        select welder.welder_name welderName,welder.welder_no welderNo,dept.name deptName,
+        machine.machine_no weldeNo,dictionary.value_name weldeType,task.task_no taskNo
+        from task_claim claim
+        left join task_info task on claim.task_id = task.id
+        left join welder_info welder on claim.welder_id = welder.id
+        left join machine_weld_info machine on claim.weld_id = machine.id
+        left join sys_dictionary dictionary on machine.type = dictionary.id
+        left join sys_dept dept on welder.dept_id = dept.id
+        where claim.id = #{taskClaim.id}
+    </select>
+
+    <!--根据焊工id查询任务工单信息列表-->
+    <select id="selectTaskInfoByWelderId" parameterType="Long" resultType="com.gw.entities.TaskInfo">
+        select task.task_no taskNo,dictionary.value_name statusStr
+        from task_info task
+        left join sys_dictionary dictionary on dictionary.id = task.status
+        where task.welder_id = #{welderId}
+        and task.status != 41
+    </select>
+</mapper>

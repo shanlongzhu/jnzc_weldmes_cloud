@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
-import com.gw.entities.RealtimeData;
 import com.gw.entities.RtData;
 import com.gw.entities.TableInfo;
 import org.springframework.beans.factory.annotation.Autowired;
