@@ -287,7 +287,11 @@ export default {
         //获取展开行详细数据
         async getExpandDetail () {
             this.loading = true;
-            let { data, code } = await getProcesLibraryChild({ id:this.id});
+            let req = {
+                id:this.id,
+                pn:this.page
+            }
+            let { data, code } = await getProcesLibraryChild(req);
             this.loading = false;
             if(code==200){   
                 this.list = data.list||[];
@@ -321,6 +325,7 @@ export default {
 
         handleCurrentChange(p){
             this.page = p;
+            this.getExpandDetail();
         }
     }
 }

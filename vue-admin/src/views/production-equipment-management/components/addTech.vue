@@ -348,7 +348,7 @@
                                     style="width:100px"
                                     :min="12"
                                     :max="50"
-                                    v-model="ruleForm2.initialVol"
+                                    v-model="ruleForm2.weldingVol"
                                 ></el-input-number>
                                 <span> (V)</span>
                             </el-form-item>
@@ -821,6 +821,9 @@ export default {
                 alarmsVolMin: 0,//报警电压下限
             },
             rules2: {
+                channelNo:[
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
                 weldingStickTexture: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
@@ -940,6 +943,102 @@ export default {
                 {
                     id: 6,
                     valueName: '通道6'
+                },
+                {
+                    id: 7,
+                    valueName: '通道7'
+                },
+                {
+                    id: 8,
+                    valueName: '通道8'
+                },
+                {
+                    id: 9,
+                    valueName: '通道9'
+                },
+                {
+                    id: 10,
+                    valueName: '通道10'
+                },
+                {
+                    id: 11,
+                    valueName: '通道11'
+                },
+                {
+                    id: 12,
+                    valueName: '通道12'
+                },
+                {
+                    id: 13,
+                    valueName: '通道13'
+                },
+                {
+                    id: 14,
+                    valueName: '通道14'
+                },
+                {
+                    id: 15,
+                    valueName: '通道15'
+                },
+                {
+                    id: 16,
+                    valueName: '通道16'
+                },
+                {
+                    id: 17,
+                    valueName: '通道17'
+                },
+                {
+                    id: 18,
+                    valueName: '通道18'
+                },
+                {
+                    id: 19,
+                    valueName: '通道19'
+                },
+                {
+                    id: 20,
+                    valueName: '通道20'
+                },
+                {
+                    id: 21,
+                    valueName: '通道21'
+                },
+                {
+                    id: 22,
+                    valueName: '通道22'
+                },
+                {
+                    id: 23,
+                    valueName: '通道23'
+                },
+                {
+                    id: 24,
+                    valueName: '通道24'
+                },
+                {
+                    id: 25,
+                    valueName: '通道25'
+                },
+                {
+                    id: 26,
+                    valueName: '通道26'
+                },
+                {
+                    id: 27,
+                    valueName: '通道27'
+                },
+                {
+                    id: 28,
+                    valueName: '通道28'
+                },
+                {
+                    id: 29,
+                    valueName: '通道29'
+                },
+                {
+                    id: 30,
+                    valueName: '通道30'
                 },
             ],
             channelNoArr: [],
@@ -1134,6 +1233,10 @@ export default {
                     this.$refs.ruleForm2.resetFields();
                     this.ruleForm2 = { ...this.ruleFormObj2 };
                     this.ruleForm2.wpsLibraryId = id;
+                    if(this.channelNoArr.length>0){
+                        this.ruleForm2.channelNo = this.channelNoArr[0].id;
+                    }
+                    
                     Reflect.deleteProperty(this.ruleForm2, "id");
                 })
             }

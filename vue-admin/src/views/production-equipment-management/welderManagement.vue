@@ -158,12 +158,7 @@
                         {{scope.row.sysDictionary.valueName}}
                     </template>
                 </el-table-column>
-                <el-table-column
-                    prop="welderNo"
-                    label="卡号"
-                    align="left"
-                    min-width="120"
-                />
+                
                 <el-table-column
                     prop="macPath"
                     label="资质"

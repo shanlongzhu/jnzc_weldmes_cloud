@@ -65,6 +65,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/swipeCard',
+    component: () => import('@/views/swipes/swipeCard'),
+    hidden: true
+  },
+  {
+    path: '/swipeInfo',
+    component: () => import('@/views/swipes/swipeInfo'),
+    hidden: true
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
