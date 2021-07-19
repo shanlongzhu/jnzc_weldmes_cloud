@@ -54,34 +54,35 @@
         left join sys_dictionary d5 on m.bay=d5.id
 	    left join sys_dept s on m.dept_id=s.id
 	    left join machine_gather_info g on m.g_id=g.id
-        where 1=1
-        <if test="machineNo != null and machineNo != ''">
-            and  m.machine_no = #{machineNo}
-        </if>
-        <if test="type != null and type != ''">
-            and  d.id = #{type}
-        </if>
-        <if test="grade != null and grade != ''">
-            and  s.id = #{grade}
-        </if>
-        <if test="status != null and status != ''">
-            and  d1.id = #{status}
-        </if>
-        <if test="firm != null and firm != ''">
-            and  d2.id = #{firm}
-        </if>
-        <if test="isNetwork != null and isNetwork != ''">
-            and  m.is_network = #{isNetwork}
-        </if>
-        <if test="gatherNo != null and gatherNo != ''">
-            and  g.gather_no = #{gatherNo}
-        </if>
-        <if test="ipPath != null and ipPath != ''">
-            and  m.ip_path = #{ipPath}
-        </if>
-        <if test="model != null and model != ''">
-            and  model = #{model}
-        </if>
+        <where>
+            <if test="machineNo != null and machineNo != ''">
+                and  m.machine_no = #{machineNo}
+            </if>
+            <if test="type != null and type != ''">
+                and  d.id = #{type}
+            </if>
+            <if test="grade != null and grade != ''">
+                and  s.id = #{grade}
+            </if>
+            <if test="status != null and status != ''">
+                and  d1.id = #{status}
+            </if>
+            <if test="firm != null and firm != ''">
+                and  d2.id = #{firm}
+            </if>
+            <if test="isNetwork != null">
+                and  m.is_network = #{isNetwork}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and  g.gather_no = #{gatherNo}
+            </if>
+            <if test="ipPath != null and ipPath != ''">
+                and  m.ip_path = #{ipPath}
+            </if>
+            <if test="model != null and model != ''">
+                and  model = #{model}
+            </if>
+        </where>
     </select>
 
     <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
