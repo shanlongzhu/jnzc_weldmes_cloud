@@ -29,6 +29,11 @@ public class SysLog {
     private String operation;
 
     /**
+     * 菜单模块
+     */
+    private String menuModel;
+
+    /**
      * 请求方法
      */
     private String method;
