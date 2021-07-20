@@ -13,3 +13,17 @@ export function setToken(token) {
 export function removeToken() {
   return Cookies.remove(TokenKey)
 }
+
+
+
+export function getPublicToken() {
+  return Cookies.get('publicToken')
+}
+
+export function setPublicToken(token) {
+  return Cookies.set('publicToken', token)
+}
+
+export function removePublicToken() {
+  return Cookies.remove('publicToken')
+}

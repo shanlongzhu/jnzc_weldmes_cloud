@@ -153,6 +153,15 @@ export function saveModelBind(data = {}) {
 
 
 
+// 获取焊机设备列表无分页
+export function getWelderListNoPage(params = {}) {
+  return request({
+    url: "/welder/welderInfosNoPage",
+    method: "get",
+    params
+  });
+}
+
 
   //导出
   export function exportWelderExcel(params = {}) {

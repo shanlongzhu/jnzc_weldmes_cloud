@@ -3,7 +3,7 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getToken,removePublicToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -12,8 +12,7 @@ const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
-  NProgress.start()
-
+  NProgress.start()  
   // set page title
   document.title = getPageTitle(to.meta.title)
 
@@ -24,6 +23,7 @@ router.beforeEach(async(to, from, next) => {
     NProgress.done()
     next();
   }else if (hasToken) {
+    removePublicToken();
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
@@ -61,6 +61,7 @@ router.beforeEach(async(to, from, next) => {
       }
     }
   } else {
+    removePublicToken();
     /* has no token*/
 
     if (whiteList.indexOf(to.path) !== -1) {

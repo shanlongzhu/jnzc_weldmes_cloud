@@ -21,7 +21,7 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper flex">
           <img src="https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191" class="user-avatar">
-          <span style="font-size:14px; margin-left:10px">欢迎：</span>
+          <span style="font-size:14px; margin-left:10px">欢迎：{{user.user.userName}}</span>
         </div>
         <el-dropdown-menu slot="dropdown">
           <!--<router-link to="/profile/index">
@@ -65,7 +65,8 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'user'
     ])
   },
   methods: {

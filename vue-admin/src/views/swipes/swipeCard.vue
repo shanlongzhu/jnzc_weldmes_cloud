@@ -24,6 +24,7 @@
                         placeholder="请选择"
                         style="width:100px;margin-right:10px"
                         @change="changeArea"
+                        clearable
                     >
                         <el-option
                             v-for="item in areaArr"
@@ -36,7 +37,9 @@
                         v-model="bay"
                         size="mini"
                         placeholder="请选择"
-                        style="width:100px"
+                        style="width:130px"
+                        @change="getList"
+                        clearable
                     >
                         <el-option
                             v-for="item in straddleArr"
@@ -47,21 +50,18 @@
                     </el-select>
                 </div>
             </div>
-            <div class="swipe-bottom-b">
+            <div
+                class="swipe-bottom-b"
+                v-loading="loading"
+            >
                 <ul class="swipe-pro flex-n">
-                    <li>
+                    <li
+                        v-for="item in list"
+                        :key="item.id"
+                    >
                         <img src="/swipes/AT.png" />
                         <span>123</span>
                     </li>
-                    <li>
-                        <img src="/swipes/AT.png" />
-                        <span>123</span>
-                    </li>
-                    <li>
-                        <img src="/swipes/AT.png" />
-                        <span>123</span>
-                    </li>
-
                 </ul>
             </div>
         </div>
@@ -70,34 +70,101 @@
 
 <script>
 import moment from 'moment'
-import {showLoading,hideLoading} from '@/utils/utilsCom'
+import { showLoading, hideLoading } from '@/utils/utilsCom'
+import { login } from '_api/user.js'
+import { setPublicToken, getPublicToken, removePublicToken, getToken } from '@/utils/auth'
+import { getDictionaries } from '_api/productionProcess/process'
+import { findByIdArea, getWelderListNoPage } from '_api/productionEquipment/production'
 import './swipe.scss'
 export default {
     components: {},
     props: {},
     data () {
         return {
-            areaArr: [],//区域
             area: '',
-            straddleArr: [],//胯间
             bay: '',
-            time:'',
-            date:'',
-            timer:'',
+            //区域
+            areaArr: [],
+            //跨间
+            straddleArr: [],
+            straddleArr2: [],
+
+
+            time: '',
+            date: '',
+            timer: '',
+            //设备列表
+            list: [],
+            loading: true
         }
     },
     watch: {},
     computed: {},
-    methods: {},
+    methods: {
+        async getList () {
+            let req = {
+                area: this.area,
+                bay: this.bay
+            }
+            this.loading = true;
+            let { data, code } = await getWelderListNoPage(req);
+            this.loading = false;
+            if (code == 200) {
+                this.list = data || [];
+
+            }
+        },
+
+
+        async loginFun () {
+            showLoading();
+            let { data, code } = await login({ username: 'test2', password: '123456' });
+            hideLoading();
+            if (code == 200) {
+                setPublicToken(data.token);
+                setTimeout(() => {
+                    this.getDicFun();
+                }, 0)
+
+            }
+        },
+        //获取数据字典
+        async getDicFun () {
+            this.getList();
+            let { data, code } = await getDictionaries({ "types": ["16", "17"] });
+            if (code == 200) {
+                this.areaArr = data['16'] || [];
+                this.straddleArr2 = data['17'] || [];
+            }
+        },
+        async changeArea (id) {
+            if (id) {
+                this.bay = "";
+                let { code, data } = await findByIdArea({ id });
+                if (code == 200) {
+                    this.straddleArr = data || []
+                }
+            }else{
+                this.bay = "";
+                this.straddleArr = [];
+            }
+
+            this.getList();
+        },
+    },
     created () {
-        showLoading();
-        this.timer = setInterval(()=>{
+        if (!getToken() && !getPublicToken()) {
+            this.loginFun();
+        } else {
+            this.getDicFun();
+        }
+        this.timer = setInterval(() => {
             this.time = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-        },1000)
-     },
-    mounted () { 
-        
-    }
+        }, 1000)
+    },
+    mounted () {
+
+    },
 }
 </script>
 <style lang="scss">

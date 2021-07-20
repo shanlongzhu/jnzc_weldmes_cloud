@@ -20,21 +20,17 @@ function hasPermission(roles, route) {
  */
 export function filterAsyncRoutes(routes, roles) {
   const res = []
-  console.log(roles)
-  if(!roles){
-    return res
-  }
-  
-
-  routes.forEach(route => {
-    const tmp = { ...route }
-    if (hasPermission(roles, tmp)) {
-      if (tmp.children) {
-        tmp.children = filterAsyncRoutes(tmp.children, roles)
+  if(roles&&roles.length>0){
+    routes.forEach(route => {
+      const tmp = { ...route }
+      if (hasPermission(roles, tmp)) {
+        if (tmp.children) {
+          tmp.children = filterAsyncRoutes(tmp.children, roles)
+        }
+        res.push(tmp)
       }
-      res.push(tmp)
-    }
-  })
+    })
+  }  
   return res
 }
 
