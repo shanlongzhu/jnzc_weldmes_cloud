@@ -126,7 +126,8 @@ public class SysMenuServiceImpl implements SysMenuService {
 
         if(ObjectUtils.isEmpty(rolesIds)){
 
-            map.put("menus","当前用户暂未分配角色");
+            List<SysMenuInfo> menusTemp = new ArrayList<>();
+            map.put("menus",menusTemp);
 
             return map;
         }
