@@ -42,13 +42,22 @@ public class WelderController {
     @GetMapping
     public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,
                               String machineNo,Integer type,Integer grade,Integer status,
-                              Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model){
+                              Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
         PageHelper.startPage(pn,10);
-        List<MachineWeldInfo> list=welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model);
+        List<MachineWeldInfo> list=welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
         PageInfo page=new PageInfo(list,5);
         return HttpResult.ok(page);
     }
 
+    //列表展示
+    @RequestMapping("welderInfosNoPage")
+    public HttpResult getListNoPage(String machineNo,Integer type,Integer grade,Integer status,
+                              Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
+
+        List<MachineWeldInfo> list=welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+
+        return HttpResult.ok(list);
+    }
     //新增焊机信息
     @PostMapping
     public HttpResult addWelder(@RequestBody MachineWeldInfo machineWeldInfo){
@@ -112,9 +121,9 @@ public class WelderController {
     //导出Excel
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String machineNo,Integer type,Integer grade,Integer status,
-                                  Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model){
+                                  Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
         HttpResult result=new HttpResult();
-        List<MachineWeldInfo> list = welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model);
+        List<MachineWeldInfo> list = welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
         Workbook workbook=new XSSFWorkbook();
         Sheet sheet=workbook.createSheet("焊机设备数据");
         String[] titles={"固定资产编号","设备类型","入厂时间","所属项目","状态","厂家","是否在网","采集序号","位置","ip地址","设备型号"};

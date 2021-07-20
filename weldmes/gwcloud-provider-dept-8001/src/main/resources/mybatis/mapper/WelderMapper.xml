@@ -82,6 +82,12 @@
             <if test="model != null and model != ''">
                 and  model = #{model}
             </if>
+            <if test="area != null and area != ''">
+                and  area = #{area}
+            </if>
+            <if test="bay != null and bay != ''">
+                and  bay = #{bay}
+            </if>
         </where>
     </select>
 

@@ -35,4 +35,9 @@
     <delete id="deleteSysLogInfoById" parameterType="Long">
         delete from sys_log where id = #{id}
     </delete>
+
+    <!--查询接口信息列表-->
+    <select id="selectApiInfos" resultType="com.gw.entities.ApiInfo">
+        select api_name apiName,menu_operation menuOperation from api_info
+    </select>
 </mapper>

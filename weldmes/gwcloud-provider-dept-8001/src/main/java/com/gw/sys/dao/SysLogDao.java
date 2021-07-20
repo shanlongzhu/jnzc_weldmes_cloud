@@ -1,5 +1,6 @@
 package com.gw.sys.dao;
 
+import com.gw.entities.ApiInfo;
 import com.gw.entities.SysLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,5 +36,12 @@ public interface SysLogDao {
      * @Params id  日志id
      */
     public void deleteSysLogInfoById(@Param("id")Long id);
+
+    /**
+     * @Date 2021/7/20 15:51
+     * @Description 查询菜单模块信息列表
+     * @Params
+     */
+    public List<ApiInfo> selectApiInfos();
 
 }

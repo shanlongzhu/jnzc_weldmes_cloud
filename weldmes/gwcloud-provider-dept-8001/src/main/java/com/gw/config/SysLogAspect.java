@@ -1,6 +1,7 @@
 package com.gw.config;
 
 import com.gw.common.DateTimeUtil;
+import com.gw.entities.ApiInfo;
 import com.gw.entities.SysLog;
 import com.gw.entities.UserLoginInfo;
 import com.gw.sys.dao.SysLogDao;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -148,12 +150,19 @@ public class SysLogAspect {
 
         sysLog.setCreateTime(createTime);
 
-        /*interfaceName = interfaceName.substring(1);
 
-        interfaceName = interfaceName.substring(0,interfaceName.indexOf("/"));*/
+        List<ApiInfo> apiInfos = sysLogDao.selectApiInfos();
 
-        //菜单模块
-        sysLog.setMenuModel(interfaceName);
+        for (ApiInfo apiInfo : apiInfos) {
+
+            if(apiInfo.getApiName().equals(interfaceName)){
+
+                //菜单模块
+                sysLog.setMenuModel(apiInfo.getMenuOperation());
+
+                break;
+            }
+        }
 
         //日志入库
         sysLogService.addSysLogInfo(sysLog);

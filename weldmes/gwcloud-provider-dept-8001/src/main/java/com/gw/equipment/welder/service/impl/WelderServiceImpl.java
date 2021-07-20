@@ -20,8 +20,8 @@ public class WelderServiceImpl implements WelderService {
 
     @Override
     public List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
-                                         Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model) {
-        List<MachineWeldInfo> list=welderDao.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model);
+                                         Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay) {
+        List<MachineWeldInfo> list=welderDao.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
         return list;
     }
 

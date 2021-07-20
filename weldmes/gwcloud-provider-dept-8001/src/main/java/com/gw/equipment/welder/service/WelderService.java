@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface WelderService {
     List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
-                                  Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model);
+                                  Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay);
 
     int addWelder(MachineWeldInfo machineWeldInfo);
 
