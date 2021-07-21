@@ -7,6 +7,7 @@ import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -32,8 +33,13 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         //根据焊机id查询焊机任务绑定信息列表
         List<TaskClaim> taskClaims =taskClaimDao.selectTaskClaimInfoById(weldeId);
 
-        //根据焊机任务绑定信息查询具体绑定信息
-        WeldClaimTaskInfo weldClaimTaskInfo = taskClaimDao.selectWeldClaimTaskInfoByTaskClaim(taskClaims.get(0));
+        WeldClaimTaskInfo weldClaimTaskInfo = new WeldClaimTaskInfo();
+
+        if(!ObjectUtils.isEmpty(taskClaims)){
+
+            //根据焊机任务绑定信息查询具体绑定信息
+            weldClaimTaskInfo = taskClaimDao.selectWeldClaimTaskInfoByTaskClaim(taskClaims.get(0));
+        }
 
         return weldClaimTaskInfo;
     }
