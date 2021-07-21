@@ -192,7 +192,7 @@ export default {
         }, 1000)
     },
     mounted () {
-
+        window.mainPage = this;
     },
 }
 </script>
