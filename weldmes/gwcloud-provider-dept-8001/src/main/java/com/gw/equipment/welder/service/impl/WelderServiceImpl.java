@@ -1,13 +1,17 @@
 package com.gw.equipment.welder.service.impl;
 
 
+import com.gw.common.ConstantInfo;
 import com.gw.entities.MachineGatherInfo;
 import com.gw.entities.MachineWeldInfo;
+import com.gw.entities.TaskClaim;
 import com.gw.equipment.welder.dao.WelderDao;
 import com.gw.equipment.welder.service.WelderService;
+import com.gw.process.dispatch.dao.TaskClaimDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -17,11 +21,31 @@ public class WelderServiceImpl implements WelderService {
     @Autowired
     private WelderDao welderDao;
 
+    @Autowired
+    TaskClaimDao taskClaimDao;
+
 
     @Override
     public List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
                                          Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay) {
-        List<MachineWeldInfo> list=welderDao.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+
+        List<MachineWeldInfo> list = welderDao.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+
+        for (MachineWeldInfo machineWeldInfo : list) {
+
+            //判断焊机中是否有绑定的任务
+            List<TaskClaim> taskClaims =taskClaimDao.selectTaskClaimInfoById(machineWeldInfo.getId());
+
+            if(ObjectUtils.isEmpty(taskClaims)){
+
+                machineWeldInfo.setTaskFlag(ConstantInfo.WELD_NO_EXIST_FLAG);
+
+            }
+
+            machineWeldInfo.setTaskFlag(ConstantInfo.WELD_EXIST_FLAG);
+
+        }
+
         return list;
     }
 
