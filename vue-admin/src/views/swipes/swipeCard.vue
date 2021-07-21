@@ -10,7 +10,10 @@
         <section class="swipe-middle flex">
             <div class="swipe-middle-con flex">
                 <span>焊工编号：</span>
-                <el-input style="width:150px"></el-input>
+                <el-input
+                    style="width:150px"
+                    v-model="carNo"
+                ></el-input>
             </div>
         </section>
         <div class="swipe-bottom flex-c">
@@ -60,7 +63,7 @@
                         :key="item.id"
                     >
                         <img src="/swipes/AT.png" />
-                        <span>123</span>
+                        <span>{{item.machineNo}}</span>
                     </li>
                 </ul>
             </div>
@@ -73,7 +76,7 @@ import moment from 'moment'
 import { showLoading, hideLoading } from '@/utils/utilsCom'
 import { login } from '_api/user.js'
 import { setPublicToken, getPublicToken, removePublicToken, getToken } from '@/utils/auth'
-import { getDictionaries } from '_api/productionProcess/process'
+import { getDictionaries, getWelderPeopleList } from '_api/productionProcess/process'
 import { findByIdArea, getWelderListNoPage } from '_api/productionEquipment/production'
 import './swipe.scss'
 export default {
@@ -95,7 +98,8 @@ export default {
             timer: '',
             //设备列表
             list: [],
-            loading: true
+            loading: true,
+            carNo: '10003118'
         }
     },
     watch: {},
@@ -131,6 +135,10 @@ export default {
         //获取数据字典
         async getDicFun () {
             this.getList();
+            if (this.carNo) {
+                this.getWelderInfo(this.carNo);
+            }
+
             let { data, code } = await getDictionaries({ "types": ["16", "17"] });
             if (code == 200) {
                 this.areaArr = data['16'] || [];
@@ -144,13 +152,34 @@ export default {
                 if (code == 200) {
                     this.straddleArr = data || []
                 }
-            }else{
+            } else {
                 this.bay = "";
                 this.straddleArr = [];
             }
 
             this.getList();
         },
+        //获取焊工信息
+        async getWelderInfo (welderNo) {
+            this.carNo = welderNo;
+            if (!getToken() && !getPublicToken()) {
+                this.loginFun();
+            } else {
+                let { code, data } = await getWelderPeopleList({ welderNo });
+                if (code == 200) {
+                    if (data.list && data.list.length > 0) {
+                        sessionStorage.setItem("welderInfo", JSON.stringify(data.list[0]));
+                        this.$router.push({
+                            path: '/swipeInfo'
+                        })
+                    } else {
+                        this.carNo = '';
+                        this.$message.error("焊工编号不存在");
+                    }
+                }
+            }
+
+        }
     },
     created () {
         if (!getToken() && !getPublicToken()) {
@@ -219,6 +248,7 @@ export default {
         width: 100px;
         margin: 0 10px 10px;
         cursor: pointer;
+        border: 1px solid #ddd;
         span {
             display: block;
             text-align: center;

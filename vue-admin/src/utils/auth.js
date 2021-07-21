@@ -27,3 +27,12 @@ export function setPublicToken(token) {
 export function removePublicToken() {
   return Cookies.remove('publicToken')
 }
+
+
+export function getWelderInfo() {
+  return sessionStorage.getItem('welderInfo')
+}
+
+export function removeWelderInfo() {
+  return sessionStorage.removeItem('welderInfo')
+}

@@ -162,6 +162,24 @@ export function getWelderListNoPage(params = {}) {
   });
 }
 
+// 根据焊工id拉取任务列表
+export function getTaskInfoByWelderId(params = {}) {
+  return request({
+    url: "/taskClaim/getTaskInfoByWelderId",
+    method: "get",
+    params
+  });
+}
+
+// 根据焊机id查询任务绑定
+export function getWeldClaimTaskInfoById(params = {}) {
+  return request({
+    url: "/taskClaim/getWeldClaimTaskInfoById",
+    method: "get",
+    params
+  });
+}
+
 
   //导出
   export function exportWelderExcel(params = {}) {
