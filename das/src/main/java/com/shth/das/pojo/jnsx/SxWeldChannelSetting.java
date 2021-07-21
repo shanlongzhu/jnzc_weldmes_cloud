@@ -1,0 +1,38 @@
+package com.shth.das.pojo.jnsx;
+
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * @description: 松下焊机或焊接通道设定（锁定或解锁），和下行-读取公用此类
+ * @author: Shan Long
+ * @create: 2021-07-08
+ */
+@Data
+public class SxWeldChannelSetting implements Serializable {
+
+    /**
+     * 焊机IP
+     * 共有
+     */
+    private String weldIp;
+
+    /**
+     * 读写标志（0：主动上传；1：读取；2：设置；3：删除）
+     * 共有
+     */
+    private int readWriteFlag;
+
+    /**
+     * 功能（0：解锁；1：锁定）
+     * 仅通道设定有
+     */
+    private int function;
+
+    /**
+     * 通道选择（0：焊接通道；1：PC通道）
+     * 仅通道设定有
+     */
+    private int channelSelect;
+}

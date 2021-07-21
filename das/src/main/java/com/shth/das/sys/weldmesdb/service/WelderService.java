@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service;
 
-import com.shth.das.pojo.WelderModel;
+import com.shth.das.pojo.db.WelderModel;
 
 import java.util.List;
 

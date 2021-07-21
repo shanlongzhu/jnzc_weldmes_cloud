@@ -6,6 +6,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,7 @@ public class NettyServer {
                             .childHandler(getChannelInitializer());
                     // 服务端绑定端口并且开始接收进来的连接请求
                     channelFuture = server.bind(port).sync();
+                    //channelFuture = server.bind(port).sync();
                     // 查看一下操作是不是成功结束了
                     if (channelFuture.isSuccess()) {
                         //如果没有成功结束就处理一些事情,结束了就执行关闭服务端等操作
@@ -60,7 +62,14 @@ public class NettyServer {
         });
     }
 
-    protected static ChannelHandler getChannelInitializer() {
+    /**
+     * 1.从消息开头偏移lengthFieldOffset长度, 到达A位置
+     * 2.再从A位置读取lengthFieldLength长度, 到达B位置, 内容是d
+     * 3.再从B位置读取(d+lengthAdjustment)长度, 达到D位置
+     * 4.从消息开头跳过initialBytesToStrip长度到达C位置
+     * 5.将C位置-D位置之间的内容传送给接下来的处理器进行后续处理
+     */
+    protected ChannelHandler getChannelInitializer() {
         final NettyServerHandler nettyServerHandler = new NettyServerHandler();
         return new ChannelInitializer<SocketChannel>() {
             @Override
@@ -69,7 +78,6 @@ public class NettyServer {
                 //获取通道注册的服务端端口
                 //int serverPort = socketChannel.localAddress().getPort();
                 //心跳检测
-                pipeline.addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
                 //自定义协议解码器，根据端口动态的选择解码器
                 pipeline.addLast("decoder", new NettyDecoder());
                 //自定义协议编码器

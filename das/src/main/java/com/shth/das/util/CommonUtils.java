@@ -86,6 +86,28 @@ public class CommonUtils {
     }
 
     /**
+     * 10进制数字转16进制字符串
+     *
+     * @param number 数字(须大于等于0)
+     * @param length 要拼接的长度
+     * @return 拼接好的16进制字符串
+     */
+    public static String lengthJoint(int number, int length) {
+        if (number < 0) {
+            number = 0;
+        }
+        String str = Integer.toHexString(number);
+        if (str.length() < length) {
+            StringBuilder stringBuilder = new StringBuilder(str);
+            for (int i = 0; i < (length - str.length()); i++) {
+                stringBuilder.insert(0, "0");
+            }
+            str = stringBuilder.toString();
+        }
+        return str;
+    }
+
+    /**
      * 16进制字符串转10进制，再进行长度拼接
      *
      * @param str    16进制字符串

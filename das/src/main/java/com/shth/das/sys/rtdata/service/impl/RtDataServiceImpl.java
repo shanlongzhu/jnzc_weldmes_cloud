@@ -1,6 +1,6 @@
 package com.shth.das.sys.rtdata.service.impl;
 
-import com.shth.das.pojo.JNRtDataDB;
+import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.sys.rtdata.mapper.RtDataMapper;
 import com.shth.das.sys.rtdata.service.RtDataService;
 import com.shth.das.util.CommonUtils;

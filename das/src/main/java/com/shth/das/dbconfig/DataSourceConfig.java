@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,11 +77,11 @@ public class DataSourceConfig {
     }
 
     /**
-     * @return
      * @description 配置慢sql拦截器
+     * @return
      */
     @Bean(name = "statFilter")
-    public StatFilter statFilter() {
+    public StatFilter statFilter(){
         StatFilter statFilter = new StatFilter();
         //慢sql时间设置,即执行时间大于200毫秒的都是慢sql
         statFilter.setSlowSqlMillis(200);
@@ -90,13 +89,12 @@ public class DataSourceConfig {
         statFilter.setMergeSql(true);
         return statFilter;
     }
-
     /**
-     * @return
      * @description 配置日志拦截器
+     * @return
      */
     @Bean(name = "logFilter")
-    public Slf4jLogFilter logFilter() {
+    public Slf4jLogFilter logFilter(){
         Slf4jLogFilter slf4jLogFilter = new Slf4jLogFilter();
         slf4jLogFilter.setDataSourceLogEnabled(true);
         slf4jLogFilter.setStatementExecutableSqlLogEnable(true);

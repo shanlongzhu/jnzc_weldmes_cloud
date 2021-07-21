@@ -1,6 +1,7 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
-import com.shth.das.pojo.GatherModel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.sys.weldmesdb.mapper.MachineGatherMapper;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,13 @@ public class MachineGatherServiceImpl implements MachineGatherService {
     @Override
     public List<GatherModel> getMachineGatherAll() {
         return gatherMapper.selectList(null);
+    }
+
+    @Override
+    public void updateGatherIpByNumber(String gatherNo, String weldIp) {
+        GatherModel gatherModel = new GatherModel();
+        gatherModel.setIpPath(weldIp);
+        gatherMapper.update(gatherModel, new QueryWrapper<GatherModel>().eq("gather_no", gatherNo));
     }
 
 }

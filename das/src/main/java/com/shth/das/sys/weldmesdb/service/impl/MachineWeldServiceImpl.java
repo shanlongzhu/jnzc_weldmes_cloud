@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
-import com.shth.das.pojo.WeldModel;
+import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.sys.weldmesdb.mapper.MachineWeldMapper;
 import com.shth.das.sys.weldmesdb.service.MachineWeldService;
 import org.springframework.beans.factory.annotation.Autowired;

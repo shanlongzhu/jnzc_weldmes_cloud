@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shth.das.sys.rtdata.mapper.SxRtDataMapper">
+
+    <!-- 创建实时数据表结构 -->
+    <update id="createNewTable" parameterType="java.lang.String">
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+         `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+         `weldIp` varchar(100) NOT NULL COMMENT '设备IP',
+         `weldStatus` tinyint(4) NOT NULL DEFAULT '0' COMMENT '焊接状态(-1关机，0：待机)',
+         `weldTime` datetime NOT NULL COMMENT '焊机时间',
+         `alarmsCode` varchar(100) DEFAULT NULL COMMENT '报警代码',
+         `realityWeldEle` decimal(10,0) DEFAULT NULL COMMENT '实际焊接电流',
+         `realityWeldVol` decimal(10,1) DEFAULT NULL COMMENT '实际焊接电压',
+         `createTime` datetime DEFAULT NULL COMMENT '创建时间',
+         `weldFlag` int(10) NOT NULL DEFAULT '0' COMMENT '设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）',
+         `welderId` bigint(20) DEFAULT '0' COMMENT '焊工id（任务领取时不为空）',
+         `welderName` varchar(100) DEFAULT NULL COMMENT '焊工姓名（任务领取时不为空）',
+         `welderDeptId` bigint(20) DEFAULT NULL COMMENT '焊工组织id（任务领取时不为空）',
+         `taskId` bigint(20) DEFAULT '0' COMMENT '任务id（任务领取时不为空）',
+         `taskName` varchar(100) DEFAULT NULL COMMENT '任务名称（任务领取时不为空）',
+         `taskNo` varchar(100) DEFAULT NULL COMMENT '任务编号（任务领取时不为空）',
+         `weldCode` varchar(100) DEFAULT NULL COMMENT '设备编码（名称）',
+         `weldModel` varchar(100) DEFAULT NULL COMMENT '设备机型',
+         `weldType` tinyint(4) DEFAULT NULL COMMENT '设备类型(字典)',
+         `functionFlag` varchar(100) DEFAULT NULL COMMENT '功能标志',
+         `initialEle` decimal(10,0) DEFAULT NULL COMMENT '初期电流',
+         `initialVol` decimal(10,1) DEFAULT NULL COMMENT '初期电压',
+         `initialWireSpeed` decimal(10,1) DEFAULT NULL COMMENT '初期送丝速度',
+         `weldEle` decimal(10,0) DEFAULT NULL COMMENT '焊接电流',
+         `weldVol` decimal(10,1) DEFAULT NULL COMMENT '焊接电压',
+         `weldWireSpeed` decimal(10,1) DEFAULT NULL COMMENT '焊接送丝速度',
+         `arcEle` decimal(10,0) DEFAULT NULL COMMENT '收弧电流',
+         `arcVol` decimal(10,1) DEFAULT NULL COMMENT '收弧电压',
+         `arcWireSpeed` decimal(10,1) DEFAULT NULL COMMENT '收弧送丝速度',
+         `realityWireSpeed` decimal(10,1) DEFAULT NULL COMMENT '实际送丝速度',
+         `presetInitialEle` decimal(10,0) DEFAULT NULL COMMENT '预置初期电流',
+         `presetArcEle` decimal(10,0) DEFAULT NULL COMMENT '预置收弧电流',
+         `presetEle` decimal(10,0) DEFAULT NULL COMMENT '预置电流',
+         `presetVol` decimal(10,1) DEFAULT NULL COMMENT '预置电压',
+         `presetInitialVol` decimal(10,1) DEFAULT NULL COMMENT '预置初期电压',
+         `presetArcVol` decimal(10,1) DEFAULT NULL COMMENT '预置收弧电压',
+         `wireSpeed` decimal(10,1) DEFAULT NULL COMMENT '送丝速度',
+         `runFlag` int(10) DEFAULT NULL COMMENT '运行标志',
+         `presetWeldEle` decimal(10,0) DEFAULT NULL COMMENT '预置焊接电流',
+         `presetMaxEle` decimal(10,0) DEFAULT NULL COMMENT '预置峰值电流',
+         `pulseRate` decimal(10,0) DEFAULT NULL COMMENT '脉冲比率(5-95)',
+         `pulseFrequency` decimal(10,0) DEFAULT NULL COMMENT '脉冲频率',
+         `cleanWidth` decimal(10,0) DEFAULT NULL COMMENT '清洁宽度',
+         `acFrequency` decimal(10,0) DEFAULT NULL COMMENT 'AC频率',
+         `mixFrequency` decimal(10,0) DEFAULT NULL COMMENT 'MIX频率',
+         `mixAcRate` decimal(10,0) DEFAULT NULL COMMENT 'MIX（AC）比率',
+         PRIMARY KEY (`id`),
+         KEY `weldIp` (`weldIp`) USING BTREE COMMENT '设备IP',
+         KEY `weldStatus` (`weldStatus`) USING BTREE COMMENT '焊接状态',
+         KEY `weldTime` (`weldTime`) USING BTREE COMMENT '焊机时间',
+         KEY `welderId` (`welderId`) COMMENT '焊工id',
+         KEY `taskId` (`taskId`) COMMENT '任务id'
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='松下设备实时数据表';
+    </update>
+
+    <!-- 松下实时数据批量存入 -->
+    <insert id="insertSxRtDataList" parameterType="java.util.Map">
+        insert into `${tableName}`(weldIp,weldStatus,weldTime,alarmsCode,realityWeldEle,realityWeldVol,createTime,weldFlag,welderId,
+        welderName,welderDeptId,taskId,taskName,taskNo,weldCode,weldModel,weldType,functionFlag,initialEle,initialVol,initialWireSpeed,
+        weldEle,weldVol,weldWireSpeed,arcEle,arcVol,arcWireSpeed,realityWireSpeed,presetInitialEle,presetArcEle,presetEle,
+        presetVol,presetInitialVol,presetArcVol,wireSpeed,runFlag,presetWeldEle,presetMaxEle,pulseRate,pulseFrequency,
+        cleanWidth,acFrequency,mixFrequency,mixAcRate) values
+        <foreach collection="list" item="data" index="index" separator=",">
+            (#{data.weldIp},#{data.weldStatus},#{data.weldTime},#{data.alarmsCode},#{data.realityWeldEle},#{data.realityWeldVol},
+             #{data.createTime},#{data.weldFlag},#{data.welderId},#{data.welderName},#{data.welderDeptId},#{data.taskId},#{data.taskName},
+             #{data.taskNo},#{data.weldCode},#{data.weldModel},#{data.weldType},#{data.functionFlag},#{data.initialEle},
+            #{data.initialVol},#{data.initialWireSpeed},#{data.weldEle},#{data.weldVol},#{data.weldWireSpeed},#{data.arcEle},#{data.arcVol},
+             #{data.arcWireSpeed},#{data.realityWireSpeed},#{data.presetInitialEle},#{data.presetArcEle},#{data.presetEle},#{data.presetVol},
+             #{data.presetInitialVol},#{data.presetArcVol},#{data.wireSpeed},#{data.runFlag},#{data.presetWeldEle},#{data.presetMaxEle},
+             #{data.pulseRate},#{data.pulseFrequency},#{data.cleanWidth},#{data.acFrequency},#{data.mixFrequency},#{data.mixAcRate})
+        </foreach>
+    </insert>
+
+</mapper>

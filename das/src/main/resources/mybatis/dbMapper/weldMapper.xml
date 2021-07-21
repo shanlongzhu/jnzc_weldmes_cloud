@@ -4,7 +4,7 @@
 <mapper namespace="com.shth.das.sys.weldmesdb.mapper.MachineWeldMapper">
 
     <!-- 查询焊机和采集模块的绑定数据 -->
-    <select id="getMachineWeldAll" resultType="com.shth.das.pojo.WeldModel">
+    <select id="getMachineWeldAll" resultType="com.shth.das.pojo.db.WeldModel">
         SELECT w.*, g.gather_no gatherNo
         FROM machine_gather_info g
                  LEFT JOIN machine_weld_gather wg ON g.id = wg.gather_id

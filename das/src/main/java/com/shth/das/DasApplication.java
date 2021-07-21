@@ -30,12 +30,22 @@ public class DasApplication implements CommandLineRunner {
 
     @Value("${nettyServer.port}")
     private int otcPort;
+    @Value("${sxNettyServer.port}")
+    private int sxPort;
 
+    //启动时执行任务
     @Override
     public void run(String... args) {
+        //emq客户端启动，连接服务端
         emqMqttClient.start();
+        //OTC服务端启动
         nettyServer.start(otcPort);
+        //松下服务端启动
+        nettyServer.start(sxPort);
+        //创建OTC实时数据表
         rtDataJob.startJnOtcJob();
+        //创建松下实时数据表
+        rtDataJob.startSxJob();
     }
 
     public static void main(String[] args) {

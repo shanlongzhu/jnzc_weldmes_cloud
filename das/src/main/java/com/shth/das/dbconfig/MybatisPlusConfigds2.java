@@ -19,14 +19,14 @@ import javax.sql.DataSource;
 
 /**
  * Mybatis-plus ds2数据源配置
- * 多数据源配置依赖数据源配置
+ *  多数据源配置依赖数据源配置
  */
 @Configuration
-@MapperScan(basePackages = MybatisPlusConfigds2.PACKAGE, sqlSessionFactoryRef = "ds2SqlSessionFactory")
+@MapperScan(basePackages =MybatisPlusConfigds2.PACKAGE, sqlSessionTemplateRef  = "ds2SqlSessionTemplate")
 public class MybatisPlusConfigds2 {
 
     static final String PACKAGE = "com.shth.das.sys.rtdata.mapper";
-    static final String MAPPER_LOCATION = "classpath*:mybatis/rtdataMapper/*.xml";
+    static final String MAPPER_LOCATION = "classpath*:mybatis/rtdatamapper/*.xml";
 
     //ds2数据源
     @Bean("ds2SqlSessionFactory")
@@ -37,7 +37,7 @@ public class MybatisPlusConfigds2 {
         configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         // 配置打印sql语句
-        configuration.setLogImpl(StdOutImpl.class);
+        //configuration.setLogImpl(StdOutImpl.class);
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);

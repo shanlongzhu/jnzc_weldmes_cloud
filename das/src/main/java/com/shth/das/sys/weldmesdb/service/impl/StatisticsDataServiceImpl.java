@@ -19,8 +19,17 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
     }
 
     @Override
+    public void insertSxWeldStatisticsData(String startTime, String endTime, String tableName) {
+        statisticsDataMapper.insertSxWeldStatisticsData(startTime, endTime, tableName);
+    }
+
+    @Override
     public String selectOtcMaxEndTime() {
         return statisticsDataMapper.selectOtcMaxEndTime();
     }
 
+    @Override
+    public String selectSxMaxEndTime() {
+        return statisticsDataMapper.selectSxMaxEndTime();
+    }
 }

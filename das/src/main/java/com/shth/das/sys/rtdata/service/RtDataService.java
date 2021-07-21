@@ -1,6 +1,6 @@
 package com.shth.das.sys.rtdata.service;
 
-import com.shth.das.pojo.JNRtDataDB;
+import com.shth.das.pojo.jnotc.JNRtDataDB;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ public interface RtDataService {
 
     /**
      * 实时数据存入数据库
-     *
      * @param list 数据集合
      */
     void insertRtDataList(List<JNRtDataDB> list);

@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service;
 
-import com.shth.das.pojo.GatherModel;
+import com.shth.das.pojo.db.GatherModel;
 
 import java.util.List;
 
@@ -11,4 +11,11 @@ public interface MachineGatherService {
      * @return
      */
     List<GatherModel> getMachineGatherAll();
+
+    /**
+     * 根据采集编号修改IP
+     * @param gatherNo 采集编号
+     * @param weldIp 采集盒IP
+     */
+    void updateGatherIpByNumber(String gatherNo,String weldIp);
 }

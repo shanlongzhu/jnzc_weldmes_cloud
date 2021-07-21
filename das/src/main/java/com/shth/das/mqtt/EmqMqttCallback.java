@@ -2,13 +2,19 @@ package com.shth.das.mqtt;
 
 import com.alibaba.fastjson.JSON;
 import com.shth.das.business.JnRtDataProtocol;
+import com.shth.das.business.SxRtDataProtocol;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.TopicEnum;
 import com.shth.das.netty.NettyServerHandler;
-import com.shth.das.pojo.JNCommandIssue;
-import com.shth.das.pojo.JNPasswordIssue;
-import com.shth.das.pojo.JNProcessClaim;
-import com.shth.das.pojo.JNProcessIssue;
+import com.shth.das.pojo.db.TaskClaimIssue;
+import com.shth.das.pojo.jnotc.JNCommandIssue;
+import com.shth.das.pojo.jnotc.JNPasswordIssue;
+import com.shth.das.pojo.jnotc.JNProcessClaim;
+import com.shth.das.pojo.jnotc.JNProcessIssue;
+import com.shth.das.pojo.jnsx.SxCO2ProcessIssue;
+import com.shth.das.pojo.jnsx.SxProcessClaim;
+import com.shth.das.pojo.jnsx.SxTIGProcessIssue;
+import com.shth.das.pojo.jnsx.SxWeldChannelSetting;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.Channel;
 import lombok.SneakyThrows;
@@ -22,6 +28,7 @@ import java.util.List;
 /**
  * mqtt消息回调
  */
+@SuppressWarnings({"ALL", "AlibabaMethodTooLong"})
 @Slf4j
 public class EmqMqttCallback implements MqttCallback {
 
@@ -33,13 +40,13 @@ public class EmqMqttCallback implements MqttCallback {
     @SneakyThrows
     @Override
     public void connectionLost(Throwable throwable) {
-        log.info("连接丢失，正在重连...");
+        log.info("连接丢失，正在重连..." + throwable.getMessage());
+        Thread.sleep(2000);
         EmqMqttClient.reConnectMqtt();
     }
 
     /**
      * subscribe后得到的消息会执行到这里面
-     * message 格式：[{command:'52',gatherNo:'0005'},{command:'52',gatherNo:'0006'}]
      *
      * @param topic       主题
      * @param mqttMessage 消息体
@@ -56,11 +63,12 @@ public class EmqMqttCallback implements MqttCallback {
     }
 
     /**
-     * mqtt客户端消息处理
+     * mqtt客户端消息处理（下行）
      *
      * @param topic   主题
      * @param message 消息内容
      */
+    @SuppressWarnings("AlibabaMethodTooLong")
     public void messageManage(String topic, String message) {
         try {
             //工艺下发主题匹配下发规范模板进行解析
@@ -134,6 +142,123 @@ public class EmqMqttCallback implements MqttCallback {
                         if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                             channel.writeAndFlush(str).sync();
                             log.info("-----控制命令下发成功:{}", topic);
+                        }
+                    }
+                }
+            }
+            //松下CO2工艺下发
+            if (TopicEnum.sxCo2ProcessIssue.name().equals(topic)) {
+                SxCO2ProcessIssue sxCo2ProcessIssue = JSON.parseObject(message, SxCO2ProcessIssue.class);
+                if (null != sxCo2ProcessIssue) {
+                    String weldIp = sxCo2ProcessIssue.getWeldIp();
+                    String str = SxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
+                    if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
+                        if (NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(weldIp)) {
+                            Channel channel = NettyServerHandler.MAP.get(weldIp).channel();
+                            //判断该焊机通道是否打开、是否活跃、是否可写
+                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                                channel.writeAndFlush(str).sync();
+                                log.info("-----松下CO2工艺下发成功:{}", topic);
+                            }
+                        }
+                    }
+                }
+            }
+            //松下TIG工艺下发
+            if (TopicEnum.sxTigProcessIssue.name().equals(topic)) {
+                SxTIGProcessIssue sxTigProcessIssue = JSON.parseObject(message, SxTIGProcessIssue.class);
+                if (null != sxTigProcessIssue) {
+                    String weldIp = sxTigProcessIssue.getWeldIp();
+                    String str = SxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
+                    if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
+                        if (NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(weldIp)) {
+                            Channel channel = NettyServerHandler.MAP.get(weldIp).channel();
+                            //判断该焊机通道是否打开、是否活跃、是否可写
+                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                                channel.writeAndFlush(str).sync();
+                                log.info("-----松下TIG工艺下发成功:{}", topic);
+                            }
+                        }
+                    }
+                }
+            }
+            //松下焊机通道设定/读取
+            if (TopicEnum.sxWeldChannelSet.name().equals(topic)) {
+                SxWeldChannelSetting sxWeldChannelSetting = JSON.parseObject(message, SxWeldChannelSetting.class);
+                if (null != sxWeldChannelSetting) {
+                    String weldIp = sxWeldChannelSetting.getWeldIp();
+                    String str = SxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+                    if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
+                        if (NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(weldIp)) {
+                            Channel channel = NettyServerHandler.MAP.get(weldIp).channel();
+                            //判断该焊机通道是否打开、是否活跃、是否可写
+                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                                channel.writeAndFlush(str).sync();
+                                System.out.println("读取：------" + str);
+                                log.info("-----松下焊机通道设定/读取成功:{}", topic);
+                            }
+                        }
+                    }
+                }
+            }
+            //松下工艺索取/删除
+            if (TopicEnum.sxProcessClaim.name().equals(topic)) {
+                SxProcessClaim sxProcessClaim = JSON.parseObject(message, SxProcessClaim.class);
+                if (null != sxProcessClaim) {
+                    String weldIp = sxProcessClaim.getWeldIp();
+                    String str = SxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
+                    if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
+                        if (NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(weldIp)) {
+                            Channel channel = NettyServerHandler.MAP.get(weldIp).channel();
+                            //判断该焊机通道是否打开、是否活跃、是否可写
+                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                                channel.writeAndFlush(str).sync();
+                                log.info("-----松下工艺索取/删除成功:{}", topic);
+                            }
+                        }
+                    }
+                }
+            }
+            //焊工刷卡领取任务
+            if (TopicEnum.taskClaimIssue.name().equals(topic)) {
+                TaskClaimIssue taskClaimIssue = JSON.parseObject(message, TaskClaimIssue.class);
+                if (null != taskClaimIssue) {
+                    //如果是OTC设备
+                    if (taskClaimIssue.getWeldType() == 0) {
+                        //判断是开始任务还是结束任务（0：开始）
+                        if (taskClaimIssue.getStartFlag() == 0) {
+                            String gatherNo = taskClaimIssue.getGatherNo();
+                            if (CommonUtils.isNotEmpty(gatherNo)) {
+                                gatherNo = Integer.valueOf(gatherNo).toString();
+                                //如果已经开始任务，则会将之前的任务顶掉
+                                CommonDbData.OTC_TASK_CLAIM_MAP.put(gatherNo, taskClaimIssue);
+                            }
+                        }
+                        //否则就是结束任务
+                        else {
+                            String gatherNo = taskClaimIssue.getGatherNo();
+                            if (CommonUtils.isNotEmpty(gatherNo)) {
+                                gatherNo = Integer.valueOf(gatherNo).toString();
+                                CommonDbData.OTC_TASK_CLAIM_MAP.remove(gatherNo);
+                            }
+                        }
+                    }
+                    //否则就是松下设备
+                    else {
+                        //判断是开始任务还是结束任务（0：开始）
+                        if (taskClaimIssue.getStartFlag() == 0) {
+                            String weldIp = taskClaimIssue.getWeldIp();
+                            if (CommonUtils.isNotEmpty(weldIp)) {
+                                //如果已经开始任务，则会将之前的任务顶掉
+                                CommonDbData.SX_TASK_CLAIM_MAP.put(weldIp, taskClaimIssue);
+                            }
+                        }
+                        //否则就是结束任务
+                        else {
+                            String weldIp = taskClaimIssue.getWeldIp();
+                            if (CommonUtils.isNotEmpty(weldIp)) {
+                                CommonDbData.SX_TASK_CLAIM_MAP.remove(weldIp);
+                            }
                         }
                     }
                 }

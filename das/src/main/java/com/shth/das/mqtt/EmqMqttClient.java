@@ -2,10 +2,7 @@ package com.shth.das.mqtt;
 
 import com.shth.das.common.TopicEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -75,6 +72,12 @@ public class EmqMqttClient {
                     subTopic(TopicEnum.passwordIssue.name());
                     //控制命令下发
                     subTopic(TopicEnum.commandIssue.name());
+                    //松下CO2工艺下发
+                    subTopic(TopicEnum.sxCo2ProcessIssue.name());
+                    //松下TIG工艺下发
+                    subTopic(TopicEnum.sxTigProcessIssue.name());
+                    //松下焊接通道读取
+                    subTopic(TopicEnum.sxWeldChannelSet.name());
                 } else {
                     log.info("mqtt客户端启动失败");
                 }
@@ -91,19 +94,14 @@ public class EmqMqttClient {
      * @param message 消息
      * @param qos     级别
      */
-    public static void publishMessage(String topic, String message, int qos) {
+    public synchronized static void publishMessage(String topic, String message, int qos) {
         try {
             if (null != mqttClient && mqttClient.isConnected()) {
-                synchronized (EmqMqttClient.class) {
-                    if (null != mqttClient && mqttClient.isConnected()) {
-                        MqttMessage mqttMessage = new MqttMessage();
-                        mqttMessage.setQos(qos);
-                        mqttMessage.setPayload(message.getBytes());
-                        mqttClient.publish(topic, mqttMessage);
-                    } else {
-                        reConnectMqtt();
-                    }
-                }
+                MqttMessage mqttMessage = new MqttMessage();
+                mqttMessage.setQos(qos);
+                mqttMessage.setPayload(message.getBytes());
+                mqttMessage.setRetained(false);
+                mqttClient.publish(topic, mqttMessage);
             } else {
                 reConnectMqtt();
             }
@@ -122,6 +120,8 @@ public class EmqMqttClient {
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端重连成功");
                 } else {
+                    mqttClient.disconnect();
+                    mqttClient.close();
                     log.info("mqtt客户端重连失败");
                 }
             } else {

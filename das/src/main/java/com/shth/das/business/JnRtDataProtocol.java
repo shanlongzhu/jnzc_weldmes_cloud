@@ -7,18 +7,26 @@ import com.shth.das.common.CommonDbData;
 import com.shth.das.common.TopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
-import com.shth.das.pojo.*;
+import com.shth.das.pojo.db.GatherModel;
+import com.shth.das.pojo.db.TaskClaimIssue;
+import com.shth.das.pojo.db.WeldModel;
+import com.shth.das.pojo.db.WeldOnOffTime;
+import com.shth.das.pojo.jnotc.*;
 import com.shth.das.sys.rtdata.service.RtDataService;
+import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.BeanContext;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 江南项目数据解析类
@@ -46,13 +54,18 @@ public class JnRtDataProtocol {
             onOffTime.setMachineId(getMachineIdByGatherNo(gatherNo));
             onOffTime.setMachineType(0);
             onOffTimeService.insertWeldOnOffTime(onOffTime);
+            //修改OTC采集表的IP地址
+            MachineGatherService gatherService = BeanContext.getBean(MachineGatherService.class);
+            gatherService.updateGatherIpByNumber(gatherNo, clientIp);
         }
     }
 
     /**
-     * 江南版实时数据协议解码处理
+     * 江南版实时数据协议解码处理（上行）
      */
-    public static Map<String, Object> jnRtDataDecoderManage(String str) {
+    public static Map<String, Object> jnRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
+        //客户端IP（焊机IP）
+        String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
         Map<String, Object> map = new HashMap<>(8);
         /*
         江南版实时数据协议解析
@@ -61,7 +74,7 @@ public class JnRtDataProtocol {
             //存数据库
             List<JNRtDataDB> jnRtDataDbs = JnRtDataProtocol.jnRtDataAnalysis(str);
             //发送前端
-            List<JNRtDataUI> jnRtDataUis = JnRtDataProtocol.jnRtDataUiAnalysis(str);
+            List<JNRtDataUI> jnRtDataUis = JnRtDataProtocol.jnRtDataUiAnalysis(clientIp, str);
             map.put("JNRtDataDB", jnRtDataDbs);
             map.put("JNRtDataUI", jnRtDataUis);
         }
@@ -99,21 +112,25 @@ public class JnRtDataProtocol {
     }
 
     /**
-     * 实时数据处理
+     * 江南OTC实时数据处理（上行）
      */
     @SuppressWarnings("unchecked")
-    public static void jnRtDataManage(String clientIp, Object msg) {
+    public static void jnRtDataManage(Object msg) {
         Map<String, Object> map = (Map<String, Object>) msg;
         if (map.size() > 0) {
             //实时数据发送到前端
             if (map.containsKey("JNRtDataUI")) {
                 List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
                 String gatherNo = jnRtDataUis.get(0).getGatherNo();
+                String clientIp = jnRtDataUis.get(0).getWeldIp();
+                //采集盒IP地址盒采集编号绑定
                 gatherNoIpBinding(clientIp, gatherNo);
                 //集合转字符串[消除对同一对象的循环引用]
                 String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
-                //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), message, 0);
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), message, 0);
+                });
             }
             //实时数据存数据库
             if (map.containsKey("JNRtDataDB")) {
@@ -135,8 +152,10 @@ public class JnRtDataProtocol {
                 if (null != processIssueReturn) {
                     //Java类转JSON字符串
                     String message = JSON.toJSONString(processIssueReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.processIssueReturn.name(), message, 0);
+                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(TopicEnum.processIssueReturn.name(), message, 0);
+                    });
                 }
             }
             //工艺索取返回
@@ -144,8 +163,10 @@ public class JnRtDataProtocol {
                 JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
                 if (null != processClaimReturn) {
                     String message = JSON.toJSONString(processClaimReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.processClaimReturn.name(), message, 0);
+                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(TopicEnum.processClaimReturn.name(), message, 0);
+                    });
                 }
             }
             //密码返回
@@ -153,8 +174,10 @@ public class JnRtDataProtocol {
                 JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
                 if (null != passwordReturn) {
                     String message = JSON.toJSONString(passwordReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.passwordReturn.name(), message, 0);
+                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(TopicEnum.passwordReturn.name(), message, 0);
+                    });
                 }
             }
             //控制命令返回
@@ -162,8 +185,10 @@ public class JnRtDataProtocol {
                 JNCommandReturn commandReturn = (JNCommandReturn) map.get("JNCommandReturn");
                 if (null != commandReturn) {
                     String message = JSON.toJSONString(commandReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.commandReturn.name(), message, 0);
+                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(TopicEnum.commandReturn.name(), message, 0);
+                    });
                 }
             }
         }
@@ -175,7 +200,7 @@ public class JnRtDataProtocol {
      * @param str 需要解析的16进制字符串
      * @return 返回一个集合对象
      */
-    public static List<JNRtDataUI> jnRtDataUiAnalysis(String str) {
+    public static List<JNRtDataUI> jnRtDataUiAnalysis(String clientIp, String str) {
         List<JNRtDataUI> rtData = new ArrayList<>();
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
@@ -192,6 +217,7 @@ public class JnRtDataProtocol {
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
+                        data.setWeldIp(clientIp);
                         rtData.add(data);
                     }
                 }
@@ -250,28 +276,17 @@ public class JnRtDataProtocol {
                             }
                         }
                     }
-                    //焊工信息查询并绑定
-                    List<WelderModel> welderList = CommonDbData.WELDER_LIST;
-                    if (CommonUtils.isNotEmpty(welderList)) {
-                        for (WelderModel welder : welderList) {
-                            if (Integer.valueOf(data.getWelderNo()).equals(Integer.valueOf(welder.getWelderNo()))) {
-                                data.setWelderId(welder.getId());
-                                data.setWelderName(welder.getWelderName());
-                                data.setWelderDeptId(welder.getDeptId());
-                                break;
-                            }
-                        }
-                    }
-                    //任务信息查询并绑定
-                    List<TaskModel> taskList = CommonDbData.TASK_LIST;
-                    if (CommonUtils.isNotEmpty(taskList)) {
-                        for (TaskModel task : taskList) {
-                            if (CommonUtils.isNotEmpty(task.getWelderNo()) && Integer.valueOf(data.getWelderNo()).equals(Integer.valueOf(task.getWelderNo()))) {
-                                data.setTaskId(task.getId());
-                                data.setTaskNo(task.getTaskNo());
-                                data.setTaskName(task.getTaskName());
-                                break;
-                            }
+                    //刷卡领取任务后进行数据绑定
+                    ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonDbData.OTC_TASK_CLAIM_MAP;
+                    if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                        TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
+                        if (null != taskClaimIssue) {
+                            data.setWelderId(taskClaimIssue.getWelderId());
+                            data.setWelderName(taskClaimIssue.getWelderName());
+                            data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                            data.setTaskId(taskClaimIssue.getTaskId());
+                            data.setTaskName(taskClaimIssue.getTaskName());
+                            data.setTaskNo(taskClaimIssue.getTaskNo());
                         }
                     }
                     for (int a = 0; a < 239; a += 80) {
@@ -338,32 +353,32 @@ public class JnRtDataProtocol {
         String foot = JNProcessIssue.Flag.FOOT.value;
         String gatherNo = CommonUtils.lengthJoint(model.getGatherNo(), 4);//采集编号：0001
         String channelNo = CommonUtils.lengthJoint(model.getChannelNo(), 2);//通道号：01
-        String spotWeldTime = CommonUtils.lengthJoint(model.getSpotWeldTime().toString(), 4);//点焊时间：30
-        String preflowTime = CommonUtils.lengthJoint(model.getPreflowTime().toString(), 4);//提前送气时间：1
-        String initialEle = CommonUtils.lengthJoint(model.getInitialEle().toString(), 4);//初期电流:100
-        String initialVol = CommonUtils.lengthJoint(model.getInitialVol().toString(), 4);//初期电压:190
-        String initialVolUnitary = CommonUtils.lengthJoint(model.getInitialVolUnitary().toString(), 4);//初期电压一元:0
-        String weldElectricity = CommonUtils.lengthJoint(model.getWeldElectricity().toString(), 4);//焊接电流:100
-        String weldVoltage = CommonUtils.lengthJoint(model.getWeldVoltage().toString(), 4);//焊接电压:190
-        String weldVoltageUnitary = CommonUtils.lengthJoint(model.getWeldVoltageUnitary().toString(), 4);//焊接电压一元:0
-        String extinguishArcEle = CommonUtils.lengthJoint(model.getExtinguishArcEle().toString(), 4);//收弧电流:100
-        String extinguishArcVol = CommonUtils.lengthJoint(model.getExtinguishArcVol().toString(), 4);//收弧电压:190
-        String extinguishArcVolUnitary = CommonUtils.lengthJoint(model.getExtinguishArcVolUnitary().toString(), 4);//收弧电压一元:0
-        String hysteresisAspirated = CommonUtils.lengthJoint(model.getHysteresisAspirated().toString(), 4);//滞后送气:1
-        String arcPeculiarity = CommonUtils.lengthJoint(model.getArcPeculiarity().toString(), 4);//电弧特性:0
-        String gases = CommonUtils.lengthJoint(model.getGases().toString(), 2);//气体:0
-        String wireDiameter = CommonUtils.lengthJoint(model.getWireDiameter().toString(), 2);//焊丝直径:12
+        String spotWeldTime = CommonUtils.lengthJoint(model.getSpotWeldTime().intValue(), 4);//点焊时间：30
+        String preflowTime = CommonUtils.lengthJoint(model.getPreflowTime().intValue(), 4);//提前送气时间：1
+        String initialEle = CommonUtils.lengthJoint(model.getInitialEle().intValue(), 4);//初期电流:100
+        String initialVol = CommonUtils.lengthJoint(model.getInitialVol().intValue(), 4);//初期电压:190
+        String initialVolUnitary = CommonUtils.lengthJoint(model.getInitialVolUnitary().intValue(), 4);//初期电压一元:0
+        String weldElectricity = CommonUtils.lengthJoint(model.getWeldElectricity().intValue(), 4);//焊接电流:100
+        String weldVoltage = CommonUtils.lengthJoint(model.getWeldVoltage().intValue(), 4);//焊接电压:190
+        String weldVoltageUnitary = CommonUtils.lengthJoint(model.getWeldVoltageUnitary().intValue(), 4);//焊接电压一元:0
+        String extinguishArcEle = CommonUtils.lengthJoint(model.getExtinguishArcEle().intValue(), 4);//收弧电流:100
+        String extinguishArcVol = CommonUtils.lengthJoint(model.getExtinguishArcVol().intValue(), 4);//收弧电压:190
+        String extinguishArcVolUnitary = CommonUtils.lengthJoint(model.getExtinguishArcVolUnitary().intValue(), 4);//收弧电压一元:0
+        String hysteresisAspirated = CommonUtils.lengthJoint(model.getHysteresisAspirated().intValue(), 4);//滞后送气:1
+        String arcPeculiarity = CommonUtils.lengthJoint(model.getArcPeculiarity().intValue(), 4);//电弧特性:0
+        String gases = CommonUtils.lengthJoint(model.getGases().intValue(), 2);//气体:0
+        String wireDiameter = CommonUtils.lengthJoint(model.getWireDiameter().intValue(), 2);//焊丝直径:12
         String wireMaterials = CommonUtils.lengthJoint(model.getWireMaterials(), 2);//焊丝材料:0
         String weldProcess = CommonUtils.lengthJoint(model.getWeldProcess(), 2);//焊接过程:0
         String controlInfo = CommonUtils.lengthJoint(model.getControlInfo(), 4);//控制信息:229
-        String weldEleAdjust = CommonUtils.lengthJoint(model.getWeldEleAdjust().toString(), 2);//焊接电流微调:0
-        String weldVolAdjust = CommonUtils.lengthJoint(model.getWeldVolAdjust().toString(), 2);//焊接电压微调:0
-        String extinguishArcEleAdjust = CommonUtils.lengthJoint(model.getExtinguishArcEleAdjust().toString(), 2);//收弧电流微调:0
-        String extinguishArcVolAdjust = CommonUtils.lengthJoint(model.getExtinguishArcVolAdjust().toString(), 2);//收弧电压微调:0
-        String alarmsElectricityMax = CommonUtils.lengthJoint(model.getAlarmsElectricityMax().toString(), 4);//报警电流上限:0
-        String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().toString(), 4);//报警电流下限:0
-        String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().toString(), 4);//报警电压上限:0
-        String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().toString(), 4);//报警电压下限:0
+        String weldEleAdjust = CommonUtils.lengthJoint(model.getWeldEleAdjust().intValue(), 2);//焊接电流微调:0
+        String weldVolAdjust = CommonUtils.lengthJoint(model.getWeldVolAdjust().intValue(), 2);//焊接电压微调:0
+        String extinguishArcEleAdjust = CommonUtils.lengthJoint(model.getExtinguishArcEleAdjust().intValue(), 2);//收弧电流微调:0
+        String extinguishArcVolAdjust = CommonUtils.lengthJoint(model.getExtinguishArcVolAdjust().intValue(), 2);//收弧电压微调:0
+        String alarmsElectricityMax = CommonUtils.lengthJoint(model.getAlarmsElectricityMax().intValue(), 4);//报警电流上限:0
+        String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().intValue(), 4);//报警电流下限:0
+        String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
+        String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
         String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity +
                 weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity +
                 gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust +
@@ -562,6 +577,7 @@ public class JnRtDataProtocol {
             jnRtDataUi.setWeldStatus(-1);
             jnRtDataUi.setElectricity(BigDecimal.ZERO);
             jnRtDataUi.setVoltage(BigDecimal.ZERO);
+            jnRtDataUi.setWeldIp(clientIp);
             dataList.add(jnRtDataUi);
             String dataArray = JSONArray.toJSONString(dataList);
             EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), dataArray, 0);
@@ -585,23 +601,16 @@ public class JnRtDataProtocol {
      * @return 返回采集盒IP地址
      */
     public static String getClientIpByGatherNo(String gatherNo) {
-        String clientIp = "";
         if (CommonUtils.isNotEmpty(gatherNo)) {
-            synchronized (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP) {
-                Set<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet();
-                //循环查找value（采集编号）的key（IP地址）
-                for (Map.Entry<String, String> entry : entries) {
-                    //采集编号
-                    String gatherno = entry.getValue();
-                    if (Integer.valueOf(gatherNo).equals(Integer.valueOf(gatherno))) {
-                        //采集盒IP地址
-                        clientIp = entry.getKey();
-                        break;
-                    }
+            Iterator<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<String, String> entry = entries.next();
+                if (Integer.valueOf(gatherNo).equals(entry.getValue())) {
+                    return entry.getKey();
                 }
             }
         }
-        return clientIp;
+        return null;
     }
 
 }

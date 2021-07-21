@@ -1,7 +1,9 @@
 package com.shth.das.netty;
 
 import com.shth.das.business.JnRtDataProtocol;
+import com.shth.das.business.SxRtDataProtocol;
 import com.shth.das.common.ServerPort;
+import com.shth.das.pojo.jnsx.SxWeldModel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -37,6 +39,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     public static final ConcurrentHashMap<String, String> CLIENT_IP_GATHER_NO_MAP = new ConcurrentHashMap<>();
 
     /**
+     * key：客户端IP地址
+     * value：松下设备信息
+     * 松下焊机设备数据暂存
+     */
+    public static final ConcurrentHashMap<String, SxWeldModel> SX_CLIENT_IP_BIND_WELD_INFO = new ConcurrentHashMap<>();
+
+    /**
      * 服务端收到消息执行的方法
      *
      * @param ctx：通道
@@ -59,7 +68,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == ServerPort.otcPort) {
-            JnRtDataProtocol.jnRtDataManage(clientIp, msg);
+            JnRtDataProtocol.jnRtDataManage(msg);
+        }
+        //端口为sxPort，则为松下通讯协议
+        if (serverPort == ServerPort.sxPort) {
+            SxRtDataProtocol.sxRtDataManage(msg);
         }
         ctx.flush();
     }
@@ -106,6 +119,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == ServerPort.otcPort) {
             JnRtDataProtocol.jnWeldOffDataManage(clientIp);
+        }
+        //端口为sxPort，则为松下通讯协议
+        if (serverPort == ServerPort.sxPort) {
+            SxRtDataProtocol.sxWeldOffDataManage(clientIp);
         }
         ctx.disconnect();
         ctx.channel().close();

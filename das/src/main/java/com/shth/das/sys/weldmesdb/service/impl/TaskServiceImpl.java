@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
-import com.shth.das.pojo.TaskModel;
+import com.shth.das.pojo.db.TaskModel;
 import com.shth.das.sys.weldmesdb.mapper.TaskMapper;
 import com.shth.das.sys.weldmesdb.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;

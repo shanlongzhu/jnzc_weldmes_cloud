@@ -3,6 +3,7 @@ package com.shth.das.job;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.sys.rtdata.service.RtDataService;
+import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
@@ -17,8 +18,8 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 定时任务类
@@ -40,6 +41,8 @@ public class ScheduledTask {
     WelderService welderService;
     @Autowired
     StatisticsDataService statisticsDataService;
+    @Autowired
+    SxRtDataService sxRtDataService;
 
     /**
      * 每天0点执行
@@ -52,6 +55,10 @@ public class ScheduledTask {
         String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
         int otcCreateResult = rtDataService.createNewTable(otcTableName);
         log.info("otcCreateResult:--->>>>{}", otcCreateResult);
+        //当天数据库表名
+        String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+        int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
+        log.info("sxCreateResult:--->>>>{}", sxCreateResult);
     }
 
     /**
@@ -63,12 +70,10 @@ public class ScheduledTask {
     public void scheduled2() {
         CommonDbData.GATHER_LIST = gatherService.getMachineGatherAll();
         CommonDbData.WELD_LIST = weldService.getMachineWeldAll();
-        CommonDbData.TASK_LIST = taskService.getTaskModelAll();
-        CommonDbData.WELDER_LIST = welderService.getWelderModelAll();
+        //CommonDbData.TASK_LIST = taskService.getTaskModelAll();
+        //CommonDbData.WELDER_LIST = welderService.getWelderModelAll();
         log.info("gatherList:--->>>>{}", CommonDbData.GATHER_LIST.size());
         log.info("weldList:--->>>>{}", CommonDbData.WELD_LIST.size());
-        log.info("taskList:--->>>>{}", CommonDbData.TASK_LIST.size());
-        log.info("welderList:--->>>>{}", CommonDbData.WELDER_LIST.size());
     }
 
     /**
@@ -87,6 +92,9 @@ public class ScheduledTask {
         //今天零点日期时间
         String otcStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
         if (CommonUtils.isNotEmpty(otcMaxEndTime)) {
+            if (otcMaxEndTime.length() > 19) {
+                otcMaxEndTime = otcMaxEndTime.substring(0, 19);
+            }
             String otcNowMaxEndTime = LocalDateTime.parse(otcMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
             //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
             if (otcNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
@@ -108,13 +116,44 @@ public class ScheduledTask {
                 otcStartTime = nowEndTime;
             }
         }
+        /*
+        下面是松下的实时数据定时统计，逻辑同OTC的相似
+         */
+        String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+        String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
+        String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
+        if (CommonUtils.isNotEmpty(sxMaxEndTime)) {
+            if (sxMaxEndTime.length() > 19) {
+                sxMaxEndTime = sxMaxEndTime.substring(0, 19);
+            }
+            String sxNowMaxEndTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
+            //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
+            if (sxNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
+                //上一次结束时间作为新的开始时间
+                sxStartTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.HOUR_DATE);
+            }
+        }
+        //相差了几个小时
+        int sxHours = DateTimeUtils.differHours(sxStartTime, endTime);
+        if (sxHours < 2) {
+            //不超过2个小时，则直接新增
+            statisticsDataService.insertSxWeldStatisticsData(sxStartTime, endTime, sxTableName);
+        } else {
+            //循环每个小时统计
+            String nowEndTime = "";
+            for (int i = 0; i < sxHours; i++) {
+                nowEndTime = DateTimeUtils.addDateMinut(sxStartTime, 1);
+                statisticsDataService.insertSxWeldStatisticsData(sxStartTime, nowEndTime, sxTableName);
+                sxStartTime = nowEndTime;
+            }
+        }
     }
 
     /**
-     * 时间矫正
      * 每10分钟执行一次
+     * 任务：时间校准
      */
-    @Scheduled(fixedRate = 1000 * 60 * 10)
+    @Scheduled(fixedRate = 1000 * 10)
     @Async
     public void scheduled4() {
         try {
@@ -125,26 +164,25 @@ public class ScheduledTask {
             String hour = CommonUtils.lengthJoint(String.valueOf(localDateTime.getHour()), 2);
             String minute = CommonUtils.lengthJoint(String.valueOf(localDateTime.getMinute()), 2);
             String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
-            String head = "007E0F01010145";
+            String head = "007E1001010145";
             String foot = "007D";
             if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.size() > 0 && NettyServerHandler.MAP.size() > 0) {
-                synchronized (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP) {
-                    Set<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet();
-                    //循环查找value（采集编号）的key（IP地址）
-                    for (Map.Entry<String, String> entry : entries) {
-                        //采集盒IP地址
-                        String clientIp = entry.getKey();
-                        //采集编号
-                        String gatherNo = entry.getValue();
-                        gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
-                        if (CommonUtils.isNotEmpty(clientIp) && CommonUtils.isNotEmpty(gatherNo)) {
-                            if (NettyServerHandler.MAP.containsKey(clientIp)) {
-                                Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
-                                if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                                    String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
-                                    channel.writeAndFlush(timeString).sync();
-                                    log.info("时间校准：{}", year + month + day + hour + minute + second);
-                                }
+                Iterator<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<String, String> next = entries.next();
+                    //采集盒IP地址
+                    String clientIp = next.getKey();
+                    //采集编号
+                    String gatherNo = next.getValue();
+                    gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
+                    if (CommonUtils.isNotEmpty(clientIp) && CommonUtils.isNotEmpty(gatherNo)) {
+                        if (NettyServerHandler.MAP.containsKey(clientIp)) {
+                            Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
+                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                                String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
+                                timeString = timeString.toUpperCase();
+                                channel.writeAndFlush(timeString).sync();
+                                log.info("时间校准：{}", year + month + day + hour + minute + second);
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
-import com.shth.das.pojo.WeldOnOffTime;
+import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.sys.weldmesdb.mapper.WeldOnOffTimeMapper;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import org.springframework.beans.factory.annotation.Autowired;

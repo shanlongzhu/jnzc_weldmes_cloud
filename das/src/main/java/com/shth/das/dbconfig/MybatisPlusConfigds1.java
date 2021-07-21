@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.annotation.MapperScans;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +24,11 @@ import javax.sql.DataSource;
  * 多数据源配置依赖数据源配置
  */
 @Configuration
-@MapperScan(basePackages = MybatisPlusConfigds1.PACKAGE, sqlSessionFactoryRef = "ds1SqlSessionFactory")
+@MapperScan(basePackages = MybatisPlusConfigds1.PACKAGE, sqlSessionTemplateRef = "ds1SqlSessionTemplate")
 public class MybatisPlusConfigds1 {
 
     static final String PACKAGE = "com.shth.das.sys.weldmesdb.mapper";
-    static final String MAPPER_LOCATION = "classpath*:mybatis/dbMapper/*.xml";
+    static final String MAPPER_LOCATION = "classpath*:mybatis/dbmapper/*.xml";
 
     //主数据源 ds1数据源
     @Primary
@@ -39,7 +40,7 @@ public class MybatisPlusConfigds1 {
         configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         // 配置打印sql语句
-        configuration.setLogImpl(StdOutImpl.class);
+        //configuration.setLogImpl(StdOutImpl.class);
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
