@@ -4,11 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.team.service.TeamService;
-import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.RealtimeData;
-import com.gw.entities.WelderInfo;
-import com.gw.entities.weldStatisticsData;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -33,7 +28,7 @@ public class TeamController {
     @GetMapping
     public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,String time1,String time2){
         PageHelper.startPage(pn,10);
-        List<weldStatisticsData> list=teamService.getList(time1,time2);
+        List<WeldStatisticsData> list=teamService.getList(time1,time2);
         PageInfo page=new PageInfo(list,5);
         return HttpResult.ok(page);
     }
@@ -42,7 +37,7 @@ public class TeamController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String time1,String time2){
         HttpResult result=new HttpResult();
-        List<weldStatisticsData> list = teamService.getList(time1,time2);
+        List<WeldStatisticsData> list = teamService.getList(time1,time2);
         Workbook workbook=new XSSFWorkbook();
         Sheet sheet=workbook.createSheet("班组生产数据");
         String[] titles={"班组","设备总数","开机设备数","实焊设备数","未绑定设备数","设备利用率","焊接任务数","焊接时间","工作时间","焊接效率"};
@@ -55,7 +50,7 @@ public class TeamController {
 
             row=sheet.createRow(i+1);
 
-            weldStatisticsData weldStatistics= list.get(i);
+            WeldStatisticsData weldStatistics= list.get(i);
 
             Cell getNameCell=row.createCell(0);
             getNameCell.setCellValue(weldStatistics.getSysDept().getName());

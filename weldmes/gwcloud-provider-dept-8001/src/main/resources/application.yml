@@ -42,7 +42,7 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master
       datasource:
         master:
-          url: jdbc:mysql://119.3.100.103:3306/jnzc?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://119.3.100.103:3306/jnzc?&serverTimezone=GMT%2b8&useSSL=false&useUnicode=true&characterEncoding=utf8
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: ZJokvtdZ4O0
@@ -59,7 +59,7 @@ spring:
             #合并多个DruidDataSource的监控数据
           useGlobalDataSourceStat: true
         slave_1:
-          url: jdbc:mysql://119.3.100.103:3306/weldmes-rtdata?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://119.3.100.103:3306/weldmes-rtdata?&serverTimezone=GMT%2b8&useSSL=false&useUnicode=true&characterEncoding=utf8
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: ZJokvtdZ4O0

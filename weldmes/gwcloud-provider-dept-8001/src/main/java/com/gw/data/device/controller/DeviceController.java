@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.device.service.DeviceService;
 import com.gw.entities.RealtimeData;
+import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,7 +34,7 @@ public class DeviceController {
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Long areaId ,Long teamId,String time1, String time2) {
         PageHelper.startPage(pn, 10);
-        List<RealtimeData> list = deviceService.getList(areaId,teamId,time1,time2);
+        List<WeldStatisticsData> list = deviceService.getList(areaId,teamId,time1,time2);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
@@ -42,7 +43,7 @@ public class DeviceController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,Long areaId ,Long teamId,String time1, String time2) {
         HttpResult result = new HttpResult();
-        List<RealtimeData> list = deviceService.getList(areaId,teamId,time1,time2);
+        List<WeldStatisticsData> list = deviceService.getList(areaId,teamId,time1,time2);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("设备生产数据");
         String[] titles = {"设备编号", "班组", "焊接任务数", "焊接时间", "工作时间", "焊接效率"};
@@ -53,19 +54,19 @@ public class DeviceController {
         }
         for (int i = 0; i < list.size(); i++) {
             row = sheet.createRow(i + 1);
-            RealtimeData realtimeData = list.get(i);
+            WeldStatisticsData weldStatisticsData = list.get(i);
             Cell getMachineNoCell = row.createCell(0);
-            getMachineNoCell.setCellValue(realtimeData.getMachineWeldInfo().getMachineNo());
+            getMachineNoCell.setCellValue(weldStatisticsData.getMachineWeldInfo().getMachineNo());
             Cell NameCell = row.createCell(1);
-            NameCell.setCellValue(realtimeData.getSysDept().getName());
+            NameCell.setCellValue(weldStatisticsData.getSysDept().getName());
             Cell cellCountCell = row.createCell(2);
-            cellCountCell.setCellValue(realtimeData.getCount());
+            cellCountCell.setCellValue(weldStatisticsData.getCount());
             Cell TimeCell = row.createCell(3);
-            TimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(realtimeData.getTime()));
+            TimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime()));
             Cell Time2Cell = row.createCell(4);
-            Time2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(realtimeData.getTime2()));
+            Time2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime2()));
             Cell getUtilizationCell = row.createCell(5);
-            getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(realtimeData.getUtilization()));
+            getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(weldStatisticsData.getUtilization()));
         }
             try {
                 String fileName = URLEncoder.encode("设备生产数据.xlsx", "UTF-8");

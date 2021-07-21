@@ -3,7 +3,7 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gw.data.team.dao.TeamDao">
 
-	<resultMap id="weldStatisticsData" type="com.gw.entities.weldStatisticsData">
+	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsData">
 		<id property="id"  column="id"></id>
 		<result property="weldModel" column="weldModel"></result>
 		<result property="gatherNo" column="gatherNo"></result>
@@ -24,6 +24,11 @@
 		<result property="createTime" column="createTime"></result>
 		<result property="startTime" column="startTime"></result>
 		<result property="endTime" column="endTime"></result>
+		<result property="electricity" column="electricity"></result>
+		<result property="voltage" column="voltage"></result>
+		<result property="wireFeedRate" column="wireFeedRate"></result>
+		<result property="wireDiameter" column="wireDiameter"></result>
+		<result property="wireMaterialsGases" column="wireMaterialsGases"></result>
 		<result property="count" column="count"></result>
 		<result property="count2" column="count2"></result>
 		<result property="count3" column="count3"></result>
