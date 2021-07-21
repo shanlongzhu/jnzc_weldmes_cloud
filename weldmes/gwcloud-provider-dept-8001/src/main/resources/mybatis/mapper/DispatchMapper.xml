@@ -131,7 +131,7 @@
     <!--通过任务id查询任务信息-->
     <select id="queryTaskInfoById" parameterType="java.lang.Long" resultMap="taskList">
         select task.id,task.task_no,task.grade,
-        task.plan_starttime,task.plan_endtime,
+        task.plan_starttime,task.plan_endtime,task.status,
         task.dept_id,sys_dept.name deptName,sys_dept.parent_id,
         task.eleMax,task.eleMin,task.volMax,task.volMin
         from task_info task

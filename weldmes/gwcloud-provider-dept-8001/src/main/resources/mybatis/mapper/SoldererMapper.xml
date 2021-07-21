@@ -27,7 +27,7 @@
     </resultMap>
 
     <select id="getList" resultMap="solderer">
-        select w.id,w.welder_name,w.cellphone,w.welder_no,w.remarks,w.dept_id,w.rank,
+        select w.id,w.welder_name,w.cellphone,w.welder_no,w.remarks,w.dept_id,w.rank,w.dept_id,
 	           w.certification,d.value_name,dic.value_name value_names,s.`name`,d.id,dic.id,s.id
         from welder_info w
 	    left join sys_dictionary d on w.rank	= d.id
