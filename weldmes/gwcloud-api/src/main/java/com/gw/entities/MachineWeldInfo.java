@@ -54,4 +54,10 @@ public class MachineWeldInfo implements Serializable {
      * 跨间
      */
     private String bayStr;
+
+    /**
+     * 绑定任务标识
+     */
+    private int taskFlag;
+
 }

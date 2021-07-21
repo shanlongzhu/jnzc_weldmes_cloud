@@ -20,4 +20,13 @@ public class ConstantInfo {
      */
     public static final String ADMIN_FLAG = "admin";
 
+    /**
+     * 焊机绑定任务标识    1 -->有绑定     0 -->没有绑定
+     */
+    public static final int WELD_EXIST_FLAG = 1;
+
+    /**
+     * 焊机绑定任务标识    1 -->有绑定     0 -->没有绑定
+     */
+    public static final int WELD_NO_EXIST_FLAG = 0;
 }
