@@ -43,9 +43,7 @@
             `taskNo`             varchar(100)   DEFAULT NULL COMMENT '任务编号',
             `createTime`         datetime       DEFAULT NULL COMMENT '创建时间',
             PRIMARY KEY (`id`),
-            KEY                  `taskId` (`taskId`) USING BTREE COMMENT '任务id',
-            KEY                  `welderId` (`welderId`) USING BTREE COMMENT '焊工id',
-            KEY                  `machineId` (`machineId`) USING BTREE COMMENT '焊机id',
+            KEY                  `task` (`taskId`,`machineId`,`welderId`) USING BTREE COMMENT '任务焊机焊工',
             KEY                  `weldTime` (`weldTime`) USING BTREE COMMENT '焊机时间'
         ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='实时数据表'
     </update>
