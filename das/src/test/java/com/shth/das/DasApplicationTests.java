@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -23,6 +25,14 @@ class DasApplicationTests {
 
         System.out.println(gatherModels);
 
+    }
+
+    @Test
+    void testTime(){
+        String str = "210408123011";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+        LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
+        System.out.println(dateTime.toString().replace("T"," "));
     }
 
 

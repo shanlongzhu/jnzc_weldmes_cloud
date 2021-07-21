@@ -64,6 +64,8 @@ public class EmqMqttClient {
                 mqttClient.connect(mqttConnectOptions);
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端启动成功");
+                    //任务领取
+                    subTopic(TopicEnum.taskClaimIssue.name());
                     //工艺下发
                     subTopic(TopicEnum.processIssue.name());
                     //工艺索取

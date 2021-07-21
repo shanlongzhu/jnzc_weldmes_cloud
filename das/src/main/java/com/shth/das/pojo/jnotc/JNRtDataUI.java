@@ -44,4 +44,14 @@ public class JNRtDataUI implements Serializable {
      * 焊机IP
      */
     private String weldIp;
+
+    /**
+     * 焊接时间
+     */
+    private String weldTime;
+
+    /**
+     * 送丝速度
+     */
+    private BigDecimal wireFeedRate;
 }

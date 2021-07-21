@@ -153,7 +153,7 @@ public class ScheduledTask {
      * 每10分钟执行一次
      * 任务：时间校准
      */
-    @Scheduled(fixedRate = 1000 * 10)
+    @Scheduled(fixedRate = 1000 * 10 * 60)
     @Async
     public void scheduled4() {
         try {

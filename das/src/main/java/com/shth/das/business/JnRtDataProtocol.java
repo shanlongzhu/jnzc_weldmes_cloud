@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,6 +39,7 @@ public class JnRtDataProtocol {
      * 数据累积后插入到数据库
      */
     private static final List<JNRtDataDB> JN_RT_DATA_LIST = new LinkedList<>();
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyMMddHHmmss");
 
     /**
      * 采集盒IP地址盒采集编号绑定
@@ -218,6 +220,15 @@ public class JnRtDataProtocol {
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
                         data.setWeldIp(clientIp);
+                        data.setWeldTime(LocalDateTime.parse("" + Integer.valueOf(str.substring(38 + a, 40 + a), 16) +
+                                Integer.valueOf(str.substring(40 + a, 42 + a), 16) +
+                                Integer.valueOf(str.substring(42 + a, 44 + a), 16) +
+                                Integer.valueOf(str.substring(44 + a, 46 + a), 16) +
+                                Integer.valueOf(str.substring(46 + a, 48 + a), 16) +
+                                Integer.valueOf(str.substring(48 + a, 50 + a), 16) , FORMATTER)
+                                .toString().replace("T"," "));
+                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
+                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
                         rtData.add(data);
                     }
                 }
