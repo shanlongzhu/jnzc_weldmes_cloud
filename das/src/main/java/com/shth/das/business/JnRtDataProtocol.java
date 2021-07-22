@@ -220,13 +220,13 @@ public class JnRtDataProtocol {
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
                         data.setWeldIp(clientIp);
-                        data.setWeldTime(LocalDateTime.parse("" + Integer.valueOf(str.substring(38 + a, 40 + a), 16) +
-                                Integer.valueOf(str.substring(40 + a, 42 + a), 16) +
-                                Integer.valueOf(str.substring(42 + a, 44 + a), 16) +
-                                Integer.valueOf(str.substring(44 + a, 46 + a), 16) +
-                                Integer.valueOf(str.substring(46 + a, 48 + a), 16) +
-                                Integer.valueOf(str.substring(48 + a, 50 + a), 16) , FORMATTER)
-                                .toString().replace("T"," "));
+                        data.setWeldTime(LocalDateTime.parse(CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(38 + a, 40 + a), 16), 2) +
+                                CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(40 + a, 42 + a), 16), 2) +
+                                CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(42 + a, 44 + a), 16), 2) +
+                                CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(44 + a, 46 + a), 16), 2) +
+                                CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(46 + a, 48 + a), 16), 2) +
+                                CommonUtils.stringLengthJoint("" + Integer.valueOf(str.substring(48 + a, 50 + a), 16), 2), FORMATTER)
+                                .toString().replace("T", " "));
                         data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
                         rtData.add(data);
@@ -257,7 +257,7 @@ public class JnRtDataProtocol {
                     //采集模块编号
                     data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
                     //焊工号
-                    data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
+                    //data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
                     //当前日期：yyyy-MM-dd
                     String nowDate = DateTimeUtils.getNowDate();
                     //当前系统时间 yyyy-MM-dd HH:mm:ss
@@ -275,29 +275,34 @@ public class JnRtDataProtocol {
                             }
                         }
                     }
-                    //焊机信息查询并绑定
-                    List<WeldModel> weldList = CommonDbData.WELD_LIST;
-                    if (CommonUtils.isNotEmpty(weldList)) {
-                        for (WeldModel weld : weldList) {
-                            if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                data.setMachineId(weld.getId());
-                                data.setMachineNo(weld.getMachineNo());
-                                data.setMachineDeptId(weld.getDeptId());
-                                break;
-                            }
-                        }
-                    }
                     //刷卡领取任务后进行数据绑定
                     ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonDbData.OTC_TASK_CLAIM_MAP;
                     if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                         TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                         if (null != taskClaimIssue) {
                             data.setWelderId(taskClaimIssue.getWelderId());
+                            data.setWelderNo(taskClaimIssue.getWelderNo());
                             data.setWelderName(taskClaimIssue.getWelderName());
                             data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
                             data.setTaskId(taskClaimIssue.getTaskId());
                             data.setTaskName(taskClaimIssue.getTaskName());
                             data.setTaskNo(taskClaimIssue.getTaskNo());
+                            data.setMachineId(taskClaimIssue.getMachineId());
+                            data.setMachineNo(taskClaimIssue.getMachineNo());
+                            data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                        }
+                    } else {
+                        //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
+                        List<WeldModel> weldList = CommonDbData.WELD_LIST;
+                        if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
+                            for (WeldModel weld : weldList) {
+                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+                                    data.setMachineId(weld.getId());
+                                    data.setMachineNo(weld.getMachineNo());
+                                    data.setMachineDeptId(weld.getDeptId());
+                                    break;
+                                }
+                            }
                         }
                     }
                     for (int a = 0; a < 239; a += 80) {
