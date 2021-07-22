@@ -7,7 +7,7 @@ spring:
     ds1: #数据源1
       type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
       driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
-      url: jdbc:mysql://localhost:3306/jnzc?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8        # 数据库名称
+      url: jdbc:mysql://localhost:3306/weldmesdb?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8        # 数据库名称
       username: root
       password: 123456
       initialSize: 10
@@ -70,7 +70,7 @@ mqtt:
   cleanSession: true
   automaticReconnect: true
 nettyServer:
-  port: 6666
+  port: 5555
 sxNettyServer:
   port: 9002
 # mybatis-plus 配置

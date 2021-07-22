@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.sys.weldmesdb.mapper.MachineGatherMapper;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
+import com.shth.das.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class MachineGatherServiceImpl implements MachineGatherService {
 
     @Override
     public void updateGatherIpByNumber(String gatherNo, String weldIp) {
+        gatherNo = CommonUtils.stringLengthJoint(gatherNo,4);
         GatherModel gatherModel = new GatherModel();
         gatherModel.setIpPath(weldIp);
         gatherMapper.update(gatherModel, new QueryWrapper<GatherModel>().eq("gather_no", gatherNo));
