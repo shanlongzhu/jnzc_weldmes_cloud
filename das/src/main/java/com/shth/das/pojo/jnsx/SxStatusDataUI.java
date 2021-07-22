@@ -32,7 +32,9 @@ public class SxStatusDataUI implements Serializable {
     private int maxChannel;             //最大通道
     private Integer unitaryDifference;  //一元/分别
 
-    //GL系列CO2
+    private int weldFlag;               //设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
+
+    //GL5系列CO2
     private Integer weldType;           //设备类型
     private Integer modeSelect;         //模式选择
     private Integer weldingManner;      //焊接方式

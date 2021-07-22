@@ -54,4 +54,5 @@ public class JNRtDataUI implements Serializable {
      * 送丝速度
      */
     private BigDecimal wireFeedRate;
+
 }

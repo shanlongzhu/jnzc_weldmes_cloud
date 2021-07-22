@@ -1,5 +1,6 @@
 package com.gw.process.dispatch.service.impl;
 
+import com.gw.common.DateTimeUtil;
 import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
@@ -55,5 +56,21 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         List<TaskInfo> list = taskClaimDao.selectTaskInfoByWelderId(welderId);
 
         return list;
+    }
+
+    /**
+     * @Date 2021/7/22 14:36
+     * @Description 插入焊机任务绑定信息
+     * @Params taskClaim 焊机任务绑定信息
+     */
+    @Override
+    public void addTaskClaimInfo(TaskClaim taskClaim) {
+
+        //获取当前时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        taskClaim.setClaimTime(time);
+
+        taskClaimDao.insertTaskClaimInfo(taskClaim);
     }
 }

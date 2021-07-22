@@ -30,6 +30,10 @@ public class TaskClaimIssue implements Serializable {
      */
     private String welderName;
     /**
+     * 焊工编号
+     */
+    private String welderNo;
+    /**
      * 焊工组织id
      */
     private BigInteger welderDeptId;
@@ -45,6 +49,18 @@ public class TaskClaimIssue implements Serializable {
      * 任务编号
      */
     private String taskNo;
+    /**
+     * 焊机id
+     */
+    private BigInteger machineId;
+    /**
+     * 焊机编号
+     */
+    private String machineNo;
+    /**
+     * 焊机组织id
+     */
+    private BigInteger machineDeptId;
     /**
      * 设备类型（默认0：OTC，1：松下）
      */

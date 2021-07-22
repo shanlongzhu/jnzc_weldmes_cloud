@@ -36,4 +36,11 @@ public interface TaskClaimDao {
      * @Params welderId 焊工id
      */
     public List<TaskInfo> selectTaskInfoByWelderId(@Param("welderId")Long welderId);
+
+    /**
+     * @Date 2021/6/1 15:17
+     * @Description taskClaimInfo入库操作
+     * @Params taskClaimInfo 焊机任务绑定信息
+     */
+    public void insertTaskClaimInfo(@Param("taskClaimInfo") TaskClaim taskClaimInfo);
 }

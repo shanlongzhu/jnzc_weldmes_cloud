@@ -75,7 +75,7 @@
 		from
 			(
 				select count( machineId ) count,s.`name`,s.id from weld_statistics_data w,sys_dept s
-				where w.machineDeptId = s.id
+				where w.machineDeptId = s.id and w.startTime &gt;= #{time1} and w.endTime &lt;= #{time2}
 				group by machineDeptId
 			) a
 			inner join (select count( m.id ) count2,s.`name`

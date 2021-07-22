@@ -5,10 +5,8 @@
 
     <!-- 查询焊机和采集模块的绑定数据 -->
     <select id="getMachineWeldAll" resultType="com.shth.das.pojo.db.WeldModel">
-        SELECT w.*, g.gather_no gatherNo
-        FROM machine_gather_info g
-                 LEFT JOIN machine_weld_gather wg ON g.id = wg.gather_id
-                 LEFT JOIN machine_weld_info w ON wg.weld_id = w.id
+        SELECT w.*,g.gather_no gatherNo FROM machine_weld_info w
+        LEFT JOIN machine_gather_info g ON w.id = g.machine_id
     </select>
 
 </mapper>

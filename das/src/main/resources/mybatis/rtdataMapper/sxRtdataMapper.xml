@@ -51,10 +51,10 @@
          `acFrequency` decimal(10,0) DEFAULT NULL COMMENT 'AC频率',
          `mixFrequency` decimal(10,0) DEFAULT NULL COMMENT 'MIX频率',
          `mixAcRate` decimal(10,0) DEFAULT NULL COMMENT 'MIX（AC）比率',
-         PRIMARY KEY (`id`),
-         KEY `task` (`taskId`,`weldIp`,`welderId`) USING BTREE COMMENT '任务焊机焊工',
-         KEY `weldStatus` (`weldStatus`) USING BTREE COMMENT '焊接状态',
-         KEY `weldTime` (`weldTime`) USING BTREE COMMENT '焊机时间'
+          PRIMARY KEY (`id`),
+          KEY `task` (`taskId`,`weldIp`,`welderId`) USING BTREE COMMENT '任务焊机焊工',
+          KEY `weldStatus` (`weldStatus`) USING BTREE COMMENT '焊接状态',
+          KEY `weldTime` (`weldTime`) USING BTREE COMMENT '焊机时间'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='松下设备实时数据表';
     </update>
 

@@ -1,5 +1,6 @@
 package com.gw.process.dispatch.service;
 
+import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
 
@@ -26,5 +27,12 @@ public interface TaskClaimService {
      * @Params welderId 焊工id
      */
     public List<TaskInfo> getTaskInfoByWelderId(Long welderId);
+
+    /**
+     * @Date 2021/7/22 14:36
+     * @Description 插入焊机任务绑定信息
+     * @Params taskClaim 焊机任务绑定信息
+     */
+    public void addTaskClaimInfo(TaskClaim taskClaim);
 
 }
