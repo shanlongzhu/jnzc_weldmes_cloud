@@ -67,6 +67,7 @@
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         value-format="yyyy-MM-dd HH:mm:ss"
+                        :picker-options="disabledDate"
                     >
                     </el-date-picker>
                 </div>
@@ -180,7 +181,7 @@ export default {
     data () {
         return {
             list: [],
-            dateTime: '',//时间
+            dateTime: [],//时间
             searchObj: {
                 taskId: '',
                 welderId: '',
@@ -215,7 +216,12 @@ export default {
 
             //记录剩余表明
             surplusTable: [],
-            surIndex: 0
+            surIndex: 0,
+            disabledDate:{
+              disabledDate(time){
+                return time.getTime() > Date.now();
+              }
+            }
 
         }
     },
@@ -345,7 +351,8 @@ export default {
                 }
 
             }
-        }
+        },
+
     }
 }
 </script>

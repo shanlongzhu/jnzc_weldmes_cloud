@@ -181,6 +181,16 @@ export function getWeldClaimTaskInfoById(params = {}) {
 }
 
 
+// 焊机任务绑定
+export function addTaskClaimInfo(data = {}) {
+  return request({
+    url: "/taskClaim/addTaskClaimInfo",
+    method: "post",
+    data
+  });
+}
+
+
   //导出
   export function exportWelderExcel(params = {}) {
     return `${process.env.VUE_APP_BASE_API}/welder/excel?${qs.stringify(

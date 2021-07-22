@@ -11,6 +11,7 @@
             <div class="swipe-middle-con flex">
                 <span>焊工编号：</span>
                 <el-input
+                  readonly
                     style="width:150px"
                     v-model="carNo"
                 ></el-input>
@@ -99,7 +100,7 @@ export default {
             //设备列表
             list: [],
             loading: true,
-            carNo: '10003118'
+            carNo: ''//10003118
         }
     },
     watch: {},
@@ -161,6 +162,9 @@ export default {
         },
         //获取焊工信息
         async getWelderInfo (welderNo) {
+            if(!welderNo||welderNo==""){
+              return this.$message.error("焊工编号不能为空！");
+            }
             this.carNo = welderNo;
             if (!getToken() && !getPublicToken()) {
                 this.loginFun();
