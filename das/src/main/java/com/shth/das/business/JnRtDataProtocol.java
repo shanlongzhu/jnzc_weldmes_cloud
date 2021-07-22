@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.shth.das.common.CommonDbData;
-import com.shth.das.common.TopicEnum;
+import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.db.GatherModel;
@@ -21,8 +21,6 @@ import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -135,7 +133,7 @@ public class JnRtDataProtocol {
                 String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), message, 0);
                 });
             }
             //实时数据存数据库
@@ -160,7 +158,7 @@ public class JnRtDataProtocol {
                     String message = JSON.toJSONString(processIssueReturn);
                     CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                         //通过mqtt发送到服务端
-                        EmqMqttClient.publishMessage(TopicEnum.processIssueReturn.name(), message, 0);
+                        EmqMqttClient.publishMessage(UpTopicEnum.processIssueReturn.name(), message, 0);
                     });
                 }
             }
@@ -171,7 +169,7 @@ public class JnRtDataProtocol {
                     String message = JSON.toJSONString(processClaimReturn);
                     CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                         //通过mqtt发送到服务端
-                        EmqMqttClient.publishMessage(TopicEnum.processClaimReturn.name(), message, 0);
+                        EmqMqttClient.publishMessage(UpTopicEnum.processClaimReturn.name(), message, 0);
                     });
                 }
             }
@@ -182,7 +180,7 @@ public class JnRtDataProtocol {
                     String message = JSON.toJSONString(passwordReturn);
                     CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                         //通过mqtt发送到服务端
-                        EmqMqttClient.publishMessage(TopicEnum.passwordReturn.name(), message, 0);
+                        EmqMqttClient.publishMessage(UpTopicEnum.passwordReturn.name(), message, 0);
                     });
                 }
             }
@@ -193,7 +191,7 @@ public class JnRtDataProtocol {
                     String message = JSON.toJSONString(commandReturn);
                     CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                         //通过mqtt发送到服务端
-                        EmqMqttClient.publishMessage(TopicEnum.commandReturn.name(), message, 0);
+                        EmqMqttClient.publishMessage(UpTopicEnum.commandReturn.name(), message, 0);
                     });
                 }
             }
@@ -271,7 +269,7 @@ public class JnRtDataProtocol {
                     //创建时间
                     data.setCreateTime(nowDateTime);
                     //采集模块信息查询并绑定
-                    List<GatherModel> gatherList = CommonDbData.GATHER_LIST;
+                    List<GatherModel> gatherList = CommonDbData.getGatherList();
                     if (CommonUtils.isNotEmpty(gatherList)) {
                         for (GatherModel gather : gatherList) {
                             if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
@@ -299,7 +297,7 @@ public class JnRtDataProtocol {
                         }
                     } else {
                         //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
-                        List<WeldModel> weldList = CommonDbData.WELD_LIST;
+                        List<WeldModel> weldList = CommonDbData.getWeldList();
                         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                             for (WeldModel weld : weldList) {
                                 if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
@@ -573,7 +571,7 @@ public class JnRtDataProtocol {
      * @return 焊机ID
      */
     public static BigInteger getMachineIdByGatherNo(String gatherNo) {
-        List<WeldModel> weldList = CommonDbData.WELD_LIST;
+        List<WeldModel> weldList = CommonDbData.getWeldList();
         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
             for (WeldModel weld : weldList) {
                 if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
@@ -604,8 +602,8 @@ public class JnRtDataProtocol {
             jnRtDataUi.setWeldIp(clientIp);
             dataList.add(jnRtDataUi);
             String dataArray = JSONArray.toJSONString(dataList);
-            EmqMqttClient.publishMessage(TopicEnum.rtcdata.name(), dataArray, 0);
-            log.info("OTC关机：" + "：{}", TopicEnum.rtcdata.name() + ":" + dataArray);
+            EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
+            log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
             NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.remove(clientIp);
             //新增设备关机时间
             WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);

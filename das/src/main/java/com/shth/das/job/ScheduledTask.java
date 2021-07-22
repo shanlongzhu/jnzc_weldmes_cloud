@@ -68,12 +68,12 @@ public class ScheduledTask {
     @Scheduled(fixedRate = 1000 * 60 * 10)
     @Async
     public void scheduled2() {
-        CommonDbData.GATHER_LIST = gatherService.getMachineGatherAll();
-        CommonDbData.WELD_LIST = weldService.getMachineWeldAll();
+        CommonDbData.setGatherList(gatherService.getMachineGatherAll());
+        CommonDbData.setWeldList(weldService.getMachineWeldAll());
         //CommonDbData.TASK_LIST = taskService.getTaskModelAll();
         //CommonDbData.WELDER_LIST = welderService.getWelderModelAll();
-        log.info("gatherList:--->>>>{}", CommonDbData.GATHER_LIST.size());
-        log.info("weldList:--->>>>{}", CommonDbData.WELD_LIST.size());
+        log.info("gatherList:--->>>>{}", CommonDbData.getGatherList().size());
+        log.info("weldList:--->>>>{}", CommonDbData.getWeldList().size());
     }
 
     /**

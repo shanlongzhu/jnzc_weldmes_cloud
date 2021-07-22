@@ -1,8 +1,11 @@
 package com.shth.das.mqtt;
 
-import com.shth.das.common.TopicEnum;
+import com.shth.das.common.DownTopicEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -64,24 +67,7 @@ public class EmqMqttClient {
                 mqttClient.connect(mqttConnectOptions);
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端启动成功");
-                    //工艺下发
-                    subTopic(TopicEnum.processIssue.name());
-                    //工艺索取
-                    subTopic(TopicEnum.processClaim.name());
-                    //密码下发
-                    subTopic(TopicEnum.passwordIssue.name());
-                    //控制命令下发
-                    subTopic(TopicEnum.commandIssue.name());
-                    //松下CO2工艺下发
-                    subTopic(TopicEnum.sxCo2ProcessIssue.name());
-                    //松下TIG工艺下发
-                    subTopic(TopicEnum.sxTigProcessIssue.name());
-                    //松下焊接通道读取
-                    subTopic(TopicEnum.sxWeldChannelSet.name());
-                    //任务领取下发
-                    subTopic(TopicEnum.taskClaimIssue.name());
-                    //松下工艺索取
-                    subTopic(TopicEnum.sxProcessClaim.name());
+                    batchSubTopic();
                 } else {
                     log.info("mqtt客户端启动失败");
                 }
@@ -89,6 +75,30 @@ public class EmqMqttClient {
         } catch (Exception e) {
             log.error("emq服务器未启动：{}", e.getMessage());
         }
+    }
+
+    /**
+     * 主题批量订阅
+     */
+    private static void batchSubTopic() {
+        //OTC工艺下发
+        subTopic(DownTopicEnum.processIssue.name());
+        //OTC工艺索取
+        subTopic(DownTopicEnum.processClaim.name());
+        //OTC密码下发
+        subTopic(DownTopicEnum.passwordIssue.name());
+        //OTC控制命令下发
+        subTopic(DownTopicEnum.commandIssue.name());
+        //松下CO2工艺下发
+        subTopic(DownTopicEnum.sxCo2ProcessIssue.name());
+        //松下TIG工艺下发
+        subTopic(DownTopicEnum.sxTigProcessIssue.name());
+        //松下焊接通道读取
+        subTopic(DownTopicEnum.sxWeldChannelSet.name());
+        //任务领取下发
+        subTopic(DownTopicEnum.taskClaimIssue.name());
+        //松下工艺索取
+        subTopic(DownTopicEnum.sxProcessClaim.name());
     }
 
     /**
@@ -123,6 +133,7 @@ public class EmqMqttClient {
                 mqttClient.connect(mqttConnectOptions);
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端重连成功");
+                    batchSubTopic();
                 } else {
                     mqttClient.disconnect();
                     mqttClient.close();
@@ -154,16 +165,16 @@ public class EmqMqttClient {
      * 订阅某个主题
      *
      * @param topic 主题
-     * @param gos   级别
+     * @param qos   服务质量
      */
-    public void subTopic(String topic, int gos) {
+    public void subTopic(String topic, int qos) {
         try {
             if (null != mqttClient) {
                 log.info("主题订阅成功：" + topic);
-                mqttClient.subscribe(topic, gos);
+                mqttClient.subscribe(topic, qos);
             } else {
                 reConnectMqtt();
-                mqttClient.subscribe(topic, gos);
+                mqttClient.subscribe(topic, qos);
                 log.info("主题订阅成功：" + topic);
             }
         } catch (MqttException e) {

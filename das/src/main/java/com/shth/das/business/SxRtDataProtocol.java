@@ -3,7 +3,7 @@ package com.shth.das.business;
 import com.alibaba.fastjson.JSON;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.SxVerificationCode;
-import com.shth.das.common.TopicEnum;
+import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.db.TaskClaimIssue;
@@ -192,7 +192,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxRtDataUi);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxrtdata.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
                 });
             }
             //松下焊机GL5实时数据存数据库
@@ -224,7 +224,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxStatusDataUi);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxStatusData.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxStatusData.name(), message, 0);
                 });
             }
             //松下工艺下发回复发送到mq
@@ -234,7 +234,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxProcessReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxProcessReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxProcessReturn.name(), message, 0);
                 });
             }
             //松下工艺索取返回(无数据)
@@ -244,7 +244,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下工艺删除返回
@@ -254,7 +254,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxProcessDeleteReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxProcessDeleteReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxProcessDeleteReturn.name(), message, 0);
                 });
             }
             //松下CO2工艺索取返回
@@ -264,7 +264,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxCO2ProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxCO2ProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下TIG工艺索取返回
@@ -274,7 +274,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxTIGProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxTIGProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxTIGProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下焊机通道设定回复/读取回复发mq
@@ -284,7 +284,7 @@ public class SxRtDataProtocol {
                 String message = JSON.toJSONString(sxWeldChannelSetReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(TopicEnum.sxWeldChannelSetReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxWeldChannelSetReturn.name(), message, 0);
                 });
             }
         }
@@ -1081,8 +1081,8 @@ public class SxRtDataProtocol {
             //实体类转JSON字符串
             String message = JSON.toJSONString(sxRtDataUi);
             //通过mqtt发送到服务端
-            EmqMqttClient.publishMessage(TopicEnum.sxrtdata.name(), message, 0);
-            log.info("SX关机：" + "：{}", TopicEnum.sxrtdata.name() + ":" + message);
+            EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+            log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
             NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.remove(clientIp);
             //根据IP地址查询松下焊机信息
             SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);
@@ -1421,6 +1421,25 @@ public class SxRtDataProtocol {
                 log.error("松下工艺索取/删除协议拼接异常：" + e.getMessage());
                 return null;
             }
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2系列通道参数查询/删除协议拼接
+     *
+     * @param sxChannelParamQuery 松下FR2系列通道参数查询/删除
+     * @return 16进制字符串
+     */
+    public static String sxChannelParamQueryProtocol(SxChannelParamQuery sxChannelParamQuery) {
+        if (null != sxChannelParamQuery) {
+            String head = SxVerificationCode.SX_CHANNEL_PARAM_HEAD;
+            String command = CommonUtils.lengthJoint(sxChannelParamQuery.getCommand(), 2);
+            String channel = CommonUtils.lengthJoint(sxChannelParamQuery.getChannel(), 2);
+            String reserved = "0000";
+            String str = head + command + channel + reserved;
+            str = str.toUpperCase();
+            return str;
         }
         return null;
     }

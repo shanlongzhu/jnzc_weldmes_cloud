@@ -34,22 +34,22 @@ public class CommonDbData {
     /**
      * 采集模块数据
      */
-    public static List<GatherModel> GATHER_LIST = new ArrayList<>();
+    private static List<GatherModel> GATHER_LIST = new ArrayList<>();
 
     /**
      * 焊机数据
      */
-    public static List<WeldModel> WELD_LIST = new ArrayList<>();
+    private static List<WeldModel> WELD_LIST = new ArrayList<>();
 
     /**
      * 任务数据
      */
-    //public static List<TaskModel> TASK_LIST = new ArrayList<>();
+    //private static List<TaskModel> TASK_LIST = new ArrayList<>();
 
     /**
      * 焊工数据
      */
-    //public static List<WelderModel> WELDER_LIST = new ArrayList<>();
+    //private static List<WelderModel> WELDER_LIST = new ArrayList<>();
 
     /**
      * OTC设备领任务存储
@@ -79,4 +79,19 @@ public class CommonDbData {
         }
     }
 
+    public static List<GatherModel> getGatherList() {
+        return GATHER_LIST;
+    }
+
+    public synchronized static void setGatherList(List<GatherModel> gatherList) {
+        GATHER_LIST = gatherList;
+    }
+
+    public static List<WeldModel> getWeldList() {
+        return WELD_LIST;
+    }
+
+    public synchronized static void setWeldList(List<WeldModel> weldList) {
+        WELD_LIST = weldList;
+    }
 }
