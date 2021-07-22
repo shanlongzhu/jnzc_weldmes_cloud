@@ -1,11 +1,13 @@
 package com.gw.process.dispatch.controller;
 
 import com.gw.common.HttpResult;
+import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
 import com.gw.process.dispatch.service.TaskClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,4 +49,18 @@ public class TaskClaimController {
 
         return HttpResult.ok(list);
     }
+
+    /**
+     * @Date 2021/7/22 14:32
+     * @Description  插入焊机任务绑定信息
+     * @Params
+     */
+    @RequestMapping(value = "taskClaim/addTaskClaimInfo")
+    public HttpResult addTaskClaimInfo(@RequestBody TaskClaim taskClaim){
+
+        taskClaimService.addTaskClaimInfo(taskClaim);
+
+        return HttpResult.ok("焊机任务绑定信息添加成功!");
+    }
+
 }

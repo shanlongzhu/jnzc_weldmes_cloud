@@ -49,4 +49,9 @@
         where task.welder_id = #{welderId}
         and task.status != 41
     </select>
+
+    <!--task_claim表 入库操作-->
+    <insert id="insertTaskClaimInfo" parameterType="com.gw.entities.TaskClaim">
+        insert into task_claim(welder_id,task_id,weld_id,claim_time) values (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},#{taskClaimInfo.weldId},NOW())
+    </insert>
 </mapper>
