@@ -182,7 +182,7 @@
                     icon="el-icon-document-remove"
                     @click="bindAreaFun"
                 >区间绑定</el-button>
-            </div>          
+            </div>
 
         </div>
         <div
@@ -467,6 +467,7 @@
                 >
                     <el-select
                         v-model="ruleForm.gid"
+                        filterable
                         placeholder="请选择"
                         style="width:250px"
                     >
@@ -664,7 +665,7 @@ export default {
 
     created () {
         this.ruleFormObj = { ...this.ruleForm };
-        // 获取班组        
+        // 获取班组
         this.getTeamList();
         this.getList();
         this.getDicFun();

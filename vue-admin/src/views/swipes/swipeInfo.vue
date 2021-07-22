@@ -140,7 +140,7 @@ import { showLoading, hideLoading } from '@/utils/utilsCom'
 import { login } from '_api/user.js'
 import { setPublicToken, getPublicToken, removePublicToken, getToken } from '@/utils/auth'
 import { getDictionaries } from '_api/productionProcess/process'
-import { findByIdArea, getWelderListNoPage, getTaskInfoByWelderId, getWeldClaimTaskInfoById } from '_api/productionEquipment/production'
+import { findByIdArea, getWelderListNoPage, getTaskInfoByWelderId, getWeldClaimTaskInfoById,addTaskClaimInfo } from '_api/productionEquipment/production'
 import './swipe.scss'
 export default {
     components: {},
@@ -272,11 +272,11 @@ export default {
             this.client.on('message', (topic, message) => {
                 if (topic == 'taskClaimIssueReturn') {
                     console.log(`${message}`)
-                    
+
                 }
             })
         },
-        
+
 
         //订阅主题
         doSubscribe () {
@@ -289,7 +289,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('taskClaimIssue', msg, 0)
+            this.client.publish('taskClaimIssue', msg, 1)
         },
 
         //任务绑定
@@ -298,7 +298,7 @@ export default {
                 return this.$message.error('请选择焊机');
             }
             if(!this.curModel.machineGatherInfo.gatherNo){
-               return this.$message.error('选择的焊机采集序号位空！！！！！'); 
+               return this.$message.error('选择的焊机采集序号位空！！！！！');
             }
             if(!this.selectTask.hasOwnProperty("id")){
                 return this.$message.error('请选择任务');
@@ -334,8 +334,9 @@ export default {
 
                 this.doPublish(JSON.stringify(msg));
                 console.log(msg)
+                this.addTaskClaimInfo(msg);
                 this.$message.warning("发送中...");
-                this.butLoading = true; 
+                this.butLoading = true;
                 //记时触发下发失败
                 this.issueTimeOut();
             }, 500);
@@ -363,7 +364,19 @@ export default {
         },
         backPage(){
             this.$router.go(-1);
-        }
+        },
+      //绑定任务
+      async addTaskClaimInfo(data){
+          let req = {
+            welderId:data.welderId,
+            taskId:data.taskId,
+            weldId:data.machineId
+          }
+          let {code} = await addTaskClaimInfo(req);
+          if(code==200){
+
+          }
+      }
 
     },
     created () {
@@ -432,11 +445,11 @@ export default {
             width: 100%;
             color: #333;
         }
-        &.taskCur {            
+        &.taskCur {
             .bind-tip {
                 background: #f00;
             }
-            
+
         }
         &:hover
          {

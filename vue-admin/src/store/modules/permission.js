@@ -30,7 +30,7 @@ export function filterAsyncRoutes(routes, roles) {
         res.push(tmp)
       }
     })
-  }  
+  }
   return res
 }
 
@@ -55,7 +55,6 @@ const actions = {
       } else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles.menusArr)
       }
-
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

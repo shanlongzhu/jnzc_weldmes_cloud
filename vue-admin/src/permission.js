@@ -11,11 +11,10 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
-  console.log(to)
   // start progress bar
-  NProgress.start()  
+  NProgress.start()
   // set page title
-  document.title = getPageTitle(to.meta.title)  
+  document.title = getPageTitle(to.meta.title)
   // determine whether the user has logged in
   const hasToken = getToken()
   //进入焊工刷卡界面
@@ -52,15 +51,14 @@ router.beforeEach(async(to, from, next) => {
             menusArr:menus.menus,
             roles:roles
           }
+
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', objData)
-
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
-
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
-          next()
+          next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')

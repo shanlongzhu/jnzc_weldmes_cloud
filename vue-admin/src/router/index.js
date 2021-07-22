@@ -114,7 +114,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: 'page',
     alwaysShow: true,
-    name: 'Permission',
+    name: 'Per',
     meta: {
       title: '生产设备管理',
       icon: 'tree',
@@ -389,7 +389,7 @@ export const asyncRoutes = [
       {
         path: 'keyboard8',
         component: () => import('@/views/system/drag/dragMenu'),
-        name: 'KeyboardChart',
+        name: 'exEmail',
         meta: {
           title: '邮件下发管理',
           mark:'706',
