@@ -24,6 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Sharable  //表明当前Handler是共享的，只有一个Handler实例
 public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
 
+    private final JnRtDataProtocol jnRtDataProtocol = new JnRtDataProtocol();
+    private final SxRtDataProtocol sxRtDataProtocol = new SxRtDataProtocol();
+
     /**
      * key:客户端IP地址
      * value:连接通道
@@ -68,11 +71,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == ServerPort.otcPort) {
-            JnRtDataProtocol.jnRtDataManage(msg);
+            jnRtDataProtocol.jnRtDataManage(msg);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == ServerPort.sxPort) {
-            SxRtDataProtocol.sxRtDataManage(msg);
+            sxRtDataProtocol.sxRtDataManage(msg);
         }
         ctx.flush();
     }

@@ -64,8 +64,6 @@ public class EmqMqttClient {
                 mqttClient.connect(mqttConnectOptions);
                 if (mqttClient.isConnected()) {
                     log.info("mqtt客户端启动成功");
-                    //任务领取
-                    subTopic(TopicEnum.taskClaimIssue.name());
                     //工艺下发
                     subTopic(TopicEnum.processIssue.name());
                     //工艺索取
@@ -80,6 +78,10 @@ public class EmqMqttClient {
                     subTopic(TopicEnum.sxTigProcessIssue.name());
                     //松下焊接通道读取
                     subTopic(TopicEnum.sxWeldChannelSet.name());
+                    //任务领取下发
+                    subTopic(TopicEnum.taskClaimIssue.name());
+                    //松下工艺索取
+                    subTopic(TopicEnum.sxProcessClaim.name());
                 } else {
                     log.info("mqtt客户端启动失败");
                 }
@@ -94,9 +96,9 @@ public class EmqMqttClient {
      *
      * @param topic   主题
      * @param message 消息
-     * @param qos     级别
+     * @param qos     服务质量（0：至多一次，1：至少一次，2：只有一次）
      */
-    public synchronized static void publishMessage(String topic, String message, int qos) {
+    public static void publishMessage(String topic, String message, int qos) {
         try {
             if (null != mqttClient && mqttClient.isConnected()) {
                 MqttMessage mqttMessage = new MqttMessage();

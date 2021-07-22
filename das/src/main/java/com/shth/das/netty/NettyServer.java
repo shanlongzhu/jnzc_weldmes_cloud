@@ -6,7 +6,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -78,6 +77,7 @@ public class NettyServer {
                 //获取通道注册的服务端端口
                 //int serverPort = socketChannel.localAddress().getPort();
                 //心跳检测
+                pipeline.addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
                 //自定义协议解码器，根据端口动态的选择解码器
                 pipeline.addLast("decoder", new NettyDecoder());
                 //自定义协议编码器

@@ -69,10 +69,17 @@ mqtt:
   keepAliveInterval: 30000
   cleanSession: true
   automaticReconnect: true
+
 nettyServer:
-  port: 5555
+  port: 6666
 sxNettyServer:
   port: 9002
+
+# 数据累积条数（默认100）
+dataInsertForNumber:
+  otc: 100
+  sx: 100
+
 # mybatis-plus 配置
 mybatis-plus:
   # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml

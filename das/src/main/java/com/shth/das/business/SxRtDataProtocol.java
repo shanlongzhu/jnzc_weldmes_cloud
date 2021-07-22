@@ -17,6 +17,7 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
@@ -28,9 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings({"ALL", "AlibabaMethodTooLong"})
+@SuppressWarnings({"ALL"})
 @Slf4j
 public class SxRtDataProtocol {
+
+    @Value("${dataInsertForNumber.sx}")
+    private int num;
 
     /**
      * 松下实时数据累积后插入数据库
@@ -40,34 +44,34 @@ public class SxRtDataProtocol {
     /**
      * 松下实时数据解码处理（上行）
      */
-    public static Map<String, Object> sxRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
+    public Map<String, Object> sxRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
         //客户端IP（焊机IP）
         String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
         Map<String, Object> map = new HashMap<>(16);
         try {
-            //松下焊机GL5第一次验证（下行）
+            //松下焊机GL5/FR2/AT第一次验证（下行）
             if (str.length() == 42 && "4E455430".equals(str.substring(0, 8))) {
                 ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION).sync();
             }
-            //松下焊机GL5第二次验证（下行）
+            //松下焊机GL5/FR2/AT第二次验证（下行）
             if (str.length() == 128 && "4C4A5348".equals(str.substring(0, 8))) {
                 ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION).sync();
             }
             //松下焊机GL5软硬件参数
             if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
-                SxWeldModel sxWeldModel = SxRtDataProtocol.sxWeldAnalysis(clientIp, str);
+                SxWeldModel sxWeldModel = sxWeldAnalysis(clientIp, str);
                 map.put("SxWeldModel", sxWeldModel);
             }
             //松下焊机GL5实时数据
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
-                SxRtDataUi sxRtDataUi = SxRtDataProtocol.sxRtDataUiAnalysis(clientIp, str);
-                SxRtDataDb sxRtDataDb = SxRtDataProtocol.sxRtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = sxRtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = sxRtDataDbAnalysis(clientIp, str);
                 map.put("SxRtDataUI", sxRtDataUi);
                 map.put("SxRtDataDb", sxRtDataDb);
             }
-            //松下焊机GL5状态信息
+            //松下焊机GL5系列CO2状态信息
             if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
-                SxStatusDataUI sxStatusDataUi = SxRtDataProtocol.sxStatusDataUiAnalysis(clientIp, str);
+                SxStatusDataUI sxStatusDataUi = sxStatusDataUiAnalysis(clientIp, str);
                 map.put("SxStatusDataUI", sxStatusDataUi);
             }
             if (str.length() == 106) {
@@ -76,49 +80,62 @@ public class SxRtDataProtocol {
                     //读写标志：0：主动上传；1：读取；2：设置；3：删除
                     if ("1".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
                         //松下工艺索取返回（无数据）
-                        SxProcessClaimReturn sxProcessClaimReturn = SxRtDataProtocol.sxProcessClaimReturnAnalysis(clientIp, str);
+                        SxProcessClaimReturn sxProcessClaimReturn = sxProcessClaimReturnAnalysis(clientIp, str);
                         map.put("SxProcessClaimReturn", sxProcessClaimReturn);
                     }
                     if ("2".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
                         //松下工艺下发回复
-                        SxProcessReturn sxProcessReturn = SxRtDataProtocol.sxProcessReturnAnalysis(clientIp, str);
+                        SxProcessReturn sxProcessReturn = sxProcessReturnAnalysis(clientIp, str);
                         map.put("SxProcessReturn", sxProcessReturn);
                     }
                     if ("3".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50028".equals(str.substring(0, 10))) {
                         //松下工艺删除回复
-                        SxProcessDeleteReturn sxProcessDeleteReturn = SxRtDataProtocol.sxProcessDeleteReturnAnalysis(clientIp, str);
+                        SxProcessDeleteReturn sxProcessDeleteReturn = sxProcessDeleteReturnAnalysis(clientIp, str);
                         map.put("SxProcessDeleteReturn", sxProcessDeleteReturn);
                     }
                 }
                 //松下GL5焊接规范通道设定回复/读取回复
                 if ("1202".equals(str.substring(40, 44)) && "FE5AA50035".equals(str.substring(0, 10))) {
-                    SxWeldChannelSetReturn weldChannelSetReturn = SxRtDataProtocol.sxWeldChannelSetReturnAnalysis(clientIp, str);
+                    SxWeldChannelSetReturn weldChannelSetReturn = sxWeldChannelSetReturnAnalysis(clientIp, str);
                     map.put("SxWeldChannelSetReturn", weldChannelSetReturn);
                 }
             }
             //松下GL5系列CO2工艺索取返回
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                SxCO2ProcessClaimReturn claimReturn = SxRtDataProtocol.sxCO2ProcessClaimReturnAnalysis(clientIp, str);
+                SxCO2ProcessClaimReturn claimReturn = sxCO2ProcessClaimReturnAnalysis(clientIp, str);
                 map.put("SxCO2ProcessClaimReturn", claimReturn);
             }
             //松下GL5系列TIG工艺索取返回
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = SxRtDataProtocol.sxTIGProcessClaimReturnAnalysis(clientIp, str);
+                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = sxTIGProcessClaimReturnAnalysis(clientIp, str);
                 map.put("SxTIGProcessClaimReturn", sxTIGProcessClaimReturn);
             }
             //松下FR2系列CO2实时数据
             if (str.length() == 126 && "FE5AA5003F".equals(str.substring(0, 10))) {
-                SxRtDataDb sxRtDataDb = SxRtDataProtocol.fr2Co2RtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = SxRtDataProtocol.fr2Co2RtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = fr2Co2RtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = fr2Co2RtDataUiAnalysis(clientIp, str);
                 map.put("SxRtDataDb", sxRtDataDb);
                 map.put("SxRtDataUi", sxRtDataUi);
             }
             //松下FR2系列TIG实时数据
             if (str.length() == 118 && "FE5AA5003B".equals(str.substring(0, 10))) {
-                SxRtDataDb sxRtDataDb = SxRtDataProtocol.fr2TigRtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = SxRtDataProtocol.fr2TigRtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = fr2TigRtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = fr2TigRtDataUiAnalysis(clientIp, str);
                 map.put("SxRtDataDb", sxRtDataDb);
                 map.put("SxRtDataUi", sxRtDataUi);
+            }
+            //松下FR2系列CO2/TIG状态信息
+            if (str.length() == 156 && "FE5AA5004E".equals(str.substring(0, 10))) {
+                //CO2焊机
+                if ("0102".equals(str.substring(40, 44)) && 1 == Integer.valueOf(str.substring(68, 70), 16)) {
+                    SxStatusDataUI sxStatusDataUi = fr2Co2StatusUiAnalysis(clientIp, str);
+                    map.put("SxStatusDataUI", sxStatusDataUi);
+                }
+                //TIG焊机
+                if ("0102".equals(str.substring(40, 44)) && 4 == Integer.valueOf(str.substring(68, 70), 16)) {
+                    SxStatusDataUI sxStatusDataUi = fr2TigStatusUiAnalysis(clientIp, str);
+                    map.put("SxStatusDataUI", sxStatusDataUi);
+                }
             }
         } catch (Exception e) {
             log.error("sxRtDataDecoderManage Exception:" + e.getMessage());
@@ -139,13 +156,16 @@ public class SxRtDataProtocol {
                     NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.put(weldIp, sxWeldModel);
                 }
             }
+            //调用接口，数据存入数据库
+            SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);
+            sxWeldService.insertSxWeld(sxWeldModel);
         }
     }
 
     /**
      * 松下设备实时数据处理（上行）
      */
-    public static void sxRtDataManage(Object msg) {
+    public void sxRtDataManage(Object msg) {
         Map<String, Object> map = (Map<String, Object>) msg;
         if (map.size() > 0) {
             //松下焊机GL5软硬件参数存数据库
@@ -153,9 +173,6 @@ public class SxRtDataProtocol {
                 SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
                 //松下参数绑定
                 sxWeldDataBinding(sxWeldModel);
-                //调用接口，数据存入数据库
-                SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);
-                sxWeldService.insertSxWeld(sxWeldModel);
             }
             //松下焊机GL5实时数据发送到mq
             if (map.containsKey("SxRtDataUi")) {
@@ -192,7 +209,7 @@ public class SxRtDataProtocol {
                 }
                 synchronized (SX_RT_DATA_LIST) {
                     SX_RT_DATA_LIST.add(sxRtDataDb);
-                    if (SX_RT_DATA_LIST.size() >= 100) {
+                    if (SX_RT_DATA_LIST.size() >= num) {
                         //调用接口，松下实时数据批量存入
                         SxRtDataService sxRtDataService = BeanContext.getBean(SxRtDataService.class);
                         sxRtDataService.insertSxRtDataList(SX_RT_DATA_LIST);
@@ -276,7 +293,7 @@ public class SxRtDataProtocol {
     /**
      * 松下GL5软硬件参数解析
      */
-    public static SxWeldModel sxWeldAnalysis(String clientIp, String str) {
+    public SxWeldModel sxWeldAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
                 SxWeldModel sxWeldModel = new SxWeldModel();
@@ -309,7 +326,7 @@ public class SxRtDataProtocol {
      *
      * @return SxRtDataUI
      */
-    public static SxRtDataUi sxRtDataUiAnalysis(String clientIp, String str) {
+    public SxRtDataUi sxRtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
@@ -341,6 +358,7 @@ public class SxRtDataProtocol {
                     sxRtDataUi.setRealityWeldEle(BigDecimal.valueOf(Long.valueOf(str.substring(124, 128), 16)));
                     sxRtDataUi.setRealityWeldVol(BigDecimal.valueOf(Long.valueOf(str.substring(128, 132), 16)));
                     sxRtDataUi.setRealityWireSpeed(BigDecimal.valueOf(Long.valueOf(str.substring(132, 136), 16)));
+                    sxRtDataUi.setWeldFlag(0);
                     return sxRtDataUi;
                 } catch (Exception e) {
                     log.error("松下GL5实时数据解析异常：{}", e.getMessage());
@@ -356,7 +374,7 @@ public class SxRtDataProtocol {
      * @param str 16进制字符串
      * @return SxRtDataDB
      */
-    public static SxRtDataDb sxRtDataDbAnalysis(String clientIp, String str) {
+    public SxRtDataDb sxRtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
@@ -417,7 +435,7 @@ public class SxRtDataProtocol {
      * @param str 16进制字符串
      * @return 松下GL5状态数据实体类
      */
-    public static SxStatusDataUI sxStatusDataUiAnalysis(String clientIp, String str) {
+    public SxStatusDataUI sxStatusDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
                 SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
@@ -455,6 +473,7 @@ public class SxRtDataProtocol {
                 sxStatusDataUi.setUnitaryDifference(Integer.valueOf(str.substring(130, 132), 16));
                 sxStatusDataUi.setNowChannel(Integer.valueOf(str.substring(132, 134), 16));
                 sxStatusDataUi.setMaxChannel(Integer.valueOf(str.substring(134, 136), 16));
+                sxStatusDataUi.setWeldFlag(0);
                 return sxStatusDataUi;
             }
         }
@@ -468,7 +487,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return 工艺返回实体类
      */
-    public static SxProcessReturn sxProcessReturnAnalysis(String clientIp, String str) {
+    public SxProcessReturn sxProcessReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50035".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxProcessReturn sxProcessReturn = new SxProcessReturn();
@@ -496,7 +515,7 @@ public class SxRtDataProtocol {
      * @param str
      * @return
      */
-    public static SxProcessDeleteReturn sxProcessDeleteReturnAnalysis(String clientIp, String str) {
+    public SxProcessDeleteReturn sxProcessDeleteReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50028".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxProcessDeleteReturn sxProcessDeleteReturn = new SxProcessDeleteReturn();
@@ -524,7 +543,7 @@ public class SxRtDataProtocol {
      * @param str
      * @return
      */
-    public static SxProcessClaimReturn sxProcessClaimReturnAnalysis(String clientIp, String str) {
+    public SxProcessClaimReturn sxProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxProcessClaimReturn sxProcessClaimReturn = new SxProcessClaimReturn();
             sxProcessClaimReturn.setWeldIp(clientIp);
@@ -551,7 +570,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return 松下焊机通道设定回复实体类
      */
-    public static SxWeldChannelSetReturn sxWeldChannelSetReturnAnalysis(String clientIp, String str) {
+    public SxWeldChannelSetReturn sxWeldChannelSetReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50035".equals(str.substring(0, 10)) && "1202".equals(str.substring(40, 44))) {
                 SxWeldChannelSetReturn weldChannelSetReturn = new SxWeldChannelSetReturn();
@@ -583,7 +602,7 @@ public class SxRtDataProtocol {
      * @return 松下CO2焊机工艺索取返回实体类
      */
     @SuppressWarnings("AlibabaMethodTooLong")
-    public static SxCO2ProcessClaimReturn sxCO2ProcessClaimReturnAnalysis(String clientIp, String str) {
+    public SxCO2ProcessClaimReturn sxCO2ProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxCO2ProcessClaimReturn claimReturn = new SxCO2ProcessClaimReturn();
@@ -682,7 +701,7 @@ public class SxRtDataProtocol {
      * @return 松下TIG焊机工艺索取返回实体类
      */
     @SuppressWarnings("AlibabaMethodTooLong")
-    public static SxTIGProcessClaimReturn sxTIGProcessClaimReturnAnalysis(String clientIp, String str) {
+    public SxTIGProcessClaimReturn sxTIGProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxTIGProcessClaimReturn claimReturn = new SxTIGProcessClaimReturn();
@@ -795,7 +814,7 @@ public class SxRtDataProtocol {
      * @param str      16进制数据包
      * @return 实时表实体类
      */
-    public static SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
+    public SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataDb rtDataDb = new SxRtDataDb();
             rtDataDb.setWeldIp(clientIp);
@@ -845,7 +864,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxRtDataUI
      */
-    public static SxRtDataUi fr2Co2RtDataUiAnalysis(String clientIp, String str) {
+    public SxRtDataUi fr2Co2RtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataUi sxRtDataUi = new SxRtDataUi();
             sxRtDataUi.setWeldIp(clientIp);
@@ -882,7 +901,7 @@ public class SxRtDataProtocol {
      * @param str      16进制数据包
      * @return FR2系列TIG实体类
      */
-    public static SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
+    public SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataDb rtDataDb = new SxRtDataDb();
             rtDataDb.setWeldIp(clientIp);
@@ -934,7 +953,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxRtDataUi
      */
-    public static SxRtDataUi fr2TigRtDataUiAnalysis(String clientIp, String str) {
+    public SxRtDataUi fr2TigRtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataUi sxRtDataUi = new SxRtDataUi();
             sxRtDataUi.setWeldIp(clientIp);
@@ -962,6 +981,85 @@ public class SxRtDataProtocol {
             sxRtDataUi.setAlarmsCode(Integer.valueOf(str.substring(114, 118), 16).toString());
             sxRtDataUi.setWeldFlag(2);
             return sxRtDataUi;
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2系列CO2焊机状态数据解析
+     *
+     * @param clientIp
+     * @param str
+     * @return
+     */
+    public SxStatusDataUI fr2Co2StatusUiAnalysis(String clientIp, String str) {
+        if (CommonUtils.isNotEmpty(str)) {
+            SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
+            String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
+            String month = CommonUtils.hexToDecLengthJoint(str.substring(48, 50), 2);
+            String day = CommonUtils.hexToDecLengthJoint(str.substring(50, 52), 2);
+            String hour = CommonUtils.hexToDecLengthJoint(str.substring(52, 54), 2);
+            String minute = CommonUtils.hexToDecLengthJoint(str.substring(54, 56), 2);
+            String second = CommonUtils.hexToDecLengthJoint(str.substring(56, 58), 2);
+            String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+            sxStatusDataUi.setWeldTime(LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME));
+            sxStatusDataUi.setWeldIp(clientIp);
+            sxStatusDataUi.setFunctionFlag(Integer.valueOf(str.substring(66, 68), 16).toString());
+            sxStatusDataUi.setWeldModel(CommonUtils.convertHexToString(str.substring(70, 88)));
+            sxStatusDataUi.setWelderNo(str.substring(88, 98));
+            sxStatusDataUi.setWorkpieceNoMin(str.substring(98, 108));
+            sxStatusDataUi.setTexture(Integer.valueOf(str.substring(108, 110), 16));
+            sxStatusDataUi.setWireDiameter(Integer.valueOf(str.substring(110, 112), 16));
+            sxStatusDataUi.setGases(Integer.valueOf(str.substring(112, 114), 16));
+            sxStatusDataUi.setWeldingControl(Integer.valueOf(str.substring(114, 116), 16));
+            sxStatusDataUi.setPulseHaveNot(Integer.valueOf(str.substring(116, 118), 16));
+            sxStatusDataUi.setSpotWeldingTime(BigDecimal.valueOf(Long.valueOf(str.substring(118, 122), 16)));
+            sxStatusDataUi.setNowChannel(Integer.valueOf(str.substring(122, 124), 16));
+            sxStatusDataUi.setMaxChannel(Integer.valueOf(str.substring(124, 126), 16));
+            sxStatusDataUi.setUnitaryDifference(Integer.valueOf(str.substring(126, 128), 16));
+            sxStatusDataUi.setDryExtendLength(Integer.valueOf(str.substring(128, 130), 16));
+            sxStatusDataUi.setWorkpieceNoMax(str.substring(130, 136));
+            sxStatusDataUi.setWeldFlag(1);
+            return sxStatusDataUi;
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2系列TIG焊机状态数据解析
+     *
+     * @param clientIp
+     * @param str
+     * @return
+     */
+    public SxStatusDataUI fr2TigStatusUiAnalysis(String clientIp, String str) {
+        if (CommonUtils.isNotEmpty(str)) {
+            SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
+            String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
+            String month = CommonUtils.hexToDecLengthJoint(str.substring(48, 50), 2);
+            String day = CommonUtils.hexToDecLengthJoint(str.substring(50, 52), 2);
+            String hour = CommonUtils.hexToDecLengthJoint(str.substring(52, 54), 2);
+            String minute = CommonUtils.hexToDecLengthJoint(str.substring(54, 56), 2);
+            String second = CommonUtils.hexToDecLengthJoint(str.substring(56, 58), 2);
+            String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+            sxStatusDataUi.setWeldTime(LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME));
+            sxStatusDataUi.setWeldIp(clientIp);
+            sxStatusDataUi.setWeldModel(CommonUtils.convertHexToString(str.substring(70, 88)));
+            sxStatusDataUi.setWelderNo(str.substring(88, 98));
+            sxStatusDataUi.setWorkpieceNoMin(str.substring(98, 108));
+            sxStatusDataUi.setWeldMethod(Integer.valueOf(str.substring(108, 110), 16));
+            sxStatusDataUi.setArcHaveNot(Integer.valueOf(str.substring(112, 114), 16));
+            sxStatusDataUi.setPulseHaveNot(Integer.valueOf(str.substring(114, 116), 16));
+            sxStatusDataUi.setAcWaveform(Integer.valueOf(str.substring(116, 118), 16));
+            sxStatusDataUi.setSpotWeldingTime(BigDecimal.valueOf(Long.valueOf(str.substring(118, 122), 16)));
+            sxStatusDataUi.setBeforeAspiratedTime(BigDecimal.valueOf(Long.valueOf(str.substring(122, 126), 16)));
+            sxStatusDataUi.setAfterStopGasTime(BigDecimal.valueOf(Long.valueOf(str.substring(126, 130), 16)));
+            sxStatusDataUi.setRiseTime(BigDecimal.valueOf(Long.valueOf(str.substring(130, 134), 16)));
+            sxStatusDataUi.setDeclineTime(BigDecimal.valueOf(Long.valueOf(str.substring(134, 138))));
+            sxStatusDataUi.setNowChannel(Integer.valueOf(str.substring(138, 140)));
+            sxStatusDataUi.setMaxChannel(Integer.valueOf(str.substring(140, 142)));
+            sxStatusDataUi.setWeldFlag(2);
+            return sxStatusDataUi;
         }
         return null;
     }
