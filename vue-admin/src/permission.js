@@ -11,13 +11,13 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
+  console.log(to)
   // start progress bar
   NProgress.start()  
   // set page title
   document.title = getPageTitle(to.meta.title)  
   // determine whether the user has logged in
   const hasToken = getToken()
-  console.log(to,hasToken)
   //进入焊工刷卡界面
   if(to.path==='/swipeCard'){
     removeWelderInfo();
@@ -65,7 +65,7 @@ router.beforeEach(async(to, from, next) => {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
-          next(`/login`)
+          next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
       }
@@ -80,7 +80,7 @@ router.beforeEach(async(to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login`)
+      next(`/login?redirect=${to.path}`)
       NProgress.done()
     }
   }

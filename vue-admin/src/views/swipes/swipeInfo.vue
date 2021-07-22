@@ -127,8 +127,8 @@
             </div>
         </section>
         <section class="tc p10">
-            <el-button @click="bindTask">确定</el-button>
-            <el-button>返回</el-button>
+            <el-button @click="bindTask" :loading="butLoading">确定</el-button>
+            <el-button @click="backPage">返回</el-button>
         </section>
     </div>
 </template>
@@ -186,7 +186,9 @@ export default {
             taskLoading: false,
             //焊机绑定任务信息
             taskInfo: {},
-            infoLoading: false
+            infoLoading: false,
+            //确定按钮loading
+            butLoading:false,
 
         }
     },
@@ -307,9 +309,19 @@ export default {
                 msg['welderId'] = this.welderInfo.id;//焊工ID
                 msg['welderName'] = this.welderInfo.welderName;//焊工姓名
                 msg['welderDeptId'] = this.welderInfo.deptId;//焊工组织ID
+                msg['welderNo'] = this.welderInfo.welderNo;//焊工编号
                 msg['taskId'] = this.selectTask.id;//任务ID
                 msg['taskName'] = this.selectTask.taskName;//任务名称
                 msg['taskNo'] = this.selectTask.taskNo;//任务编号
+
+                msg['machineId'] = this.curModel.id;//焊机ID
+                msg['machineNo'] = this.curModel.machineNo;//焊机编号
+                msg['machineDeptId'] = this.curModel.deptId;//焊机组织ID
+
+
+
+                msg['weldIp'] = "";
+                msg['gatherNo'] = "";
                 if(this.curModel.sysDictionary.valueNamess=='OTC'){
                     msg['weldType'] = 0;//设备类型
                     msg['gatherNo'] = this.curModel.machineGatherInfo.gatherNo;//采集编号
@@ -322,6 +334,8 @@ export default {
 
                 this.doPublish(JSON.stringify(msg));
                 console.log(msg)
+                this.$message.warning("发送中...");
+                this.butLoading = true; 
                 //记时触发下发失败
                 this.issueTimeOut();
             }, 500);
@@ -334,8 +348,10 @@ export default {
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
+                    this.$message.success('已发送');
                     setTimeout(() => {
                         this.client.end();
+                        this.$router.replace({path:'/swipeCard'})
                     }, 1000)
                 });
 
@@ -345,6 +361,9 @@ export default {
                 clearTimeout(this.timeout)
             }, 5000)
         },
+        backPage(){
+            this.$router.go(-1);
+        }
 
     },
     created () {
@@ -388,7 +407,7 @@ export default {
         width: 122px;
         margin: 0 10px 10px 0px;
         cursor: pointer;
-        border: 1px solid rgb(1, 199, 83);
+        border: 1px solid #ddd;
         text-align: center;
         padding-top: 6px;
         transition: all 0.3s ease 0s;
@@ -407,25 +426,30 @@ export default {
             display: block;
             font-size: 12px;
             line-height: 22px;
-            background: rgb(1, 199, 83);
+            background: #f8f8f8;
             padding-top: 0px;
             border-top: 1px solid #ddd;
             width: 100%;
-            color: #fff;
+            color: #333;
         }
-        &.taskCur {
-            border-color: #f00;
+        &.taskCur {            
             .bind-tip {
                 background: #f00;
             }
-            span {
-                background: #f00;
-            }
+            
         }
-        &:hover,
-        &.current {
+        &:hover
+         {
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
             transform: scale(1.02);
+        }
+        &.current{
+            border:1px solid #aadef7;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
+            transform: scale(1.02);
+            span {
+                background: #aadef7;
+            }
         }
     }
 }

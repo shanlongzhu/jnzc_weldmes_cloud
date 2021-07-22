@@ -99,7 +99,7 @@ export default {
             //设备列表
             list: [],
             loading: true,
-            carNo: '10003118'
+            carNo: ''//10003118
         }
     },
     watch: {},

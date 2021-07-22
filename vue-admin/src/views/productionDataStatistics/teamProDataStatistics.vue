@@ -128,6 +128,30 @@
                     label="焊接效率(%)"
                     align="left"
                     min-width="170"
+                />     
+                <el-table-column
+                    prop="supergageTime"
+                    label="超规范时间"
+                    align="left"
+                    min-width="170"
+                />     
+                <el-table-column
+                    prop="standardPercentage"
+                    label="规范符合率(%)"
+                    align="left"
+                    min-width="170"
+                />     
+                <el-table-column
+                    prop="materialsConsumption"
+                    label="焊材消耗"
+                    align="left"
+                    min-width="170"
+                />     
+                <el-table-column
+                    prop="powerConsumption"
+                    label="电能消耗"
+                    align="left"
+                    min-width="170"
                 />                
             </el-table>
         </div>
