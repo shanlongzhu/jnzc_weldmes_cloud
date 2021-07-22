@@ -62,4 +62,24 @@ public class WeldStatisticsData implements Serializable {
     private WelderInfo welderInfo;
     private TaskInfo taskInfo;
     private SysDictionary sysDictionary;
+
+    /**
+     * 超规范时间
+     */
+    private String supergageTime;
+
+    /**
+     * 规范符合率
+     */
+    private Double standardPercentage;
+
+    /**
+     * 焊材消耗
+     */
+    private Double materialsConsumption;
+
+    /**
+     * 电能消耗
+     */
+    private Double powerConsumption;
 }
