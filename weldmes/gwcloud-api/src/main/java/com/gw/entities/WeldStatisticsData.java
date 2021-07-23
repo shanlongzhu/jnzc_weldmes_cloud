@@ -132,4 +132,9 @@ public class WeldStatisticsData implements Serializable {
      * 焊接效率
      */
     private Double weldingEfficiency;
+
+    /**
+     * 正常时间
+     */
+    private Double normalTime;
 }
