@@ -31,73 +31,69 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         Map<String,Object> map = new HashMap<>();
 
-        if(!ObjectUtils.isEmpty(startTime) || !ObjectUtils.isEmpty(endTime)){
-            Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
+        Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
 
-            Date endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
+        Date endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
 
-            List<Date> lDate = new ArrayList<>();
+        List<Date> lDate = new ArrayList<>();
 
-            lDate.add(bigTime);
+        lDate.add(bigTime);
 
-            Calendar calBegin = Calendar.getInstance();
+        Calendar calBegin = Calendar.getInstance();
 
-            calBegin.setTime(bigTime);
+        calBegin.setTime(bigTime);
 
-            Calendar calEnd = Calendar.getInstance();
+        Calendar calEnd = Calendar.getInstance();
 
-            calEnd.setTime(endTimes);
+        calEnd.setTime(endTimes);
 
-            while (endTimes.after(calBegin.getTime())) {
+        while (endTimes.after(calBegin.getTime())) {
 
-                calBegin.add(Calendar.DAY_OF_MONTH, 1);
+            calBegin.add(Calendar.DAY_OF_MONTH, 1);
 
-                lDate.add(calBegin.getTime());
-            }
-
-            List<TableInfo> tableNames = new ArrayList<>();
-            List<TableInfo> tableNamesList = new ArrayList<>();
-
-            //获取表名列表 并 判断表是否存在
-            for (Date date : lDate) {
-
-                TableInfo tableInfo = new TableInfo();
-
-                String tableName = "rtdata" + new SimpleDateFormat("yyyyMMdd").format(date);
-
-                Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
-
-                if(ObjectUtils.isEmpty(rows)){
-                    continue;
-                }
-
-                tableInfo.setTableName(tableName);
-
-                tableInfo.setTaskId(taskId);
-
-                tableInfo.setWelderId(welderId);
-
-                tableInfo.setWeldMachineId(weldMachineId);
-
-                tableNames.add(tableInfo);
-
-            }
-
-            for (int i = 0; i < tableNames.size(); i++){
-
-                List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i).getTableName());
-
-                if(list.size() != 0){
-                    tableNamesList.add(tableNames.get(i));
-                    map.put("list",list);
-                    continue;
-                }
-            }
-
-            map.put("tableNames",tableNamesList);
-
-            return map;
+            lDate.add(calBegin.getTime());
         }
+
+        List<TableInfo> tableNames = new ArrayList<>();
+        List<TableInfo> tableNamesList = new ArrayList<>();
+
+        //获取表名列表 并 判断表是否存在
+        for (Date date : lDate) {
+
+            TableInfo tableInfo = new TableInfo();
+
+            String tableName = "rtdata" + new SimpleDateFormat("yyyyMMdd").format(date);
+
+            Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
+
+            if(ObjectUtils.isEmpty(rows)){
+                continue;
+            }
+
+            tableInfo.setTableName(tableName);
+
+            tableInfo.setTaskId(taskId);
+
+            tableInfo.setWelderId(welderId);
+
+            tableInfo.setWeldMachineId(weldMachineId);
+
+            tableNames.add(tableInfo);
+
+        }
+
+        for (int i = 0; i < tableNames.size(); i++){
+
+            List<RtData> list = historicalCurveDao.getList(startTime,endTime,taskId,welderId,weldMachineId,tableNames.get(i).getTableName());
+
+            if(list.size() != 0){
+                tableNamesList.add(tableNames.get(i));
+                map.put("list",list);
+                continue;
+            }
+        }
+
+        map.put("tableNames",tableNamesList);
 
         return map;
 

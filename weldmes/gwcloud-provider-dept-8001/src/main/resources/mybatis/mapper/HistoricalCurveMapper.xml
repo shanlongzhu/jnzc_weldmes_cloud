@@ -7,7 +7,10 @@
     <select id="getList" resultType="com.gw.entities.RtData">
         select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage
         from ${tableName} tableInfo
-        where tableInfo.weldTime between #{startTime} and #{endTime}
+        where tableInfo.weldTime &gt;= #{startTime}
+        <if test="endTime != null and endTime != ''">
+            and tableInfo.weldTime &lt;= #{endTime}
+        </if>
         <if test="taskId != null and taskId != ''">
             and tableInfo.taskId = #{taskId}
         </if>
