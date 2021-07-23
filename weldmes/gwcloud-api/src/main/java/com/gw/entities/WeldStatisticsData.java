@@ -127,4 +127,9 @@ public class WeldStatisticsData implements Serializable {
      * 电能消耗
      */
     private Double powerConsumption;
+
+    /**
+     * 焊接效率
+     */
+    private Double weldingEfficiency;
 }
