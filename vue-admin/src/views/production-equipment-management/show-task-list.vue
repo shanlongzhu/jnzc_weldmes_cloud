@@ -297,7 +297,7 @@
                         v-model="ruleForm.grade"
                         placeholder="请选择"
                         style="width:200px"
-                        @change="getWelder"
+                        @change="changeSelectGetWelder"
                     >
                         <el-option
                             v-for="item in levelArr"
@@ -319,7 +319,7 @@
                         :options="teamArr"
                         :props="defalutProps"
                         :show-all-levels="false"
-                        @change="getWelder"
+                        @change="changeSelectGetWelder"
                     />
                 </el-form-item>
                 <el-form-item
@@ -577,6 +577,7 @@ export default {
             if (code == 200) {
                 this.visable1 = true
                 this.ruleForm = { ...data }
+                console.log(this.ruleForm)
                 this.dateTime = [this.ruleForm.planStarttime || '', this.ruleForm.planEndtime || '']
                 if(this.ruleForm.deptId||this.ruleForm.rate){
                     this.getWelder();
@@ -764,8 +765,11 @@ export default {
 
         },
         //获取焊工
-        async getWelder(){
+        changeSelectGetWelder(){
             this.ruleForm.welderId = "";
+            this.getWelder();
+        },
+        async getWelder(){            
             let req = {
                 grade: this.ruleForm.deptId&&this.ruleForm.deptId.length>0?this.ruleForm.deptId.slice(-1).join(''):this.ruleForm.deptId,
                 rate:this.ruleForm.grade
