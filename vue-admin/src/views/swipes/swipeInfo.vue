@@ -335,10 +335,10 @@ export default {
                 this.doPublish(JSON.stringify(msg));
                 console.log(msg)
                 this.addTaskClaimInfo(msg);
-                this.$message.warning("发送中...");
                 this.butLoading = true;
                 //记时触发下发失败
                 this.issueTimeOut();
+                this.$message.success('已发送');
             }, 500);
         },
         //下发超时
@@ -348,8 +348,7 @@ export default {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
-                    }
-                    this.$message.success('已发送');
+                    }                    
                     setTimeout(() => {
                         this.client.end();
                         this.$router.replace({path:'/swipeCard'})
