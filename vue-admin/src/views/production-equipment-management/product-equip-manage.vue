@@ -196,6 +196,7 @@
                 style="width: 100%"
                 align="center"
                 border
+                :loading="loading"
                 size="mini"
                 height='100%'
                 :header-cell-style="{background:'#eef1f6',color:'#606266'}"
@@ -469,6 +470,7 @@
                     <el-select
                         v-model="ruleForm.gid"
                         multiple
+                        :multiple-limit="1"
                         filterable
                         placeholder="请选择"
                         style="width:250px"
@@ -661,7 +663,7 @@ export default {
             headers: {
                 'Authorization': getToken()
             },
-
+            loading:false
         }
     },
 
@@ -670,8 +672,7 @@ export default {
         // 获取班组
         this.getTeamList();
         this.getList();
-        this.getDicFun();
-        this.getAllGatherNosFun();
+        this.getDicFun();        
     },
     methods: {
         //获取数据字典
@@ -703,8 +704,9 @@ export default {
                 ...this.searchObj
             }
             req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
-
+            this.loading = true;
             let { data, code } = await getWelderList(req);
+            this.loading = false;
             if (code == 200) {
                 this.list = data.list
                 this.total = data.total
@@ -725,6 +727,7 @@ export default {
             this.title = "新增焊机设备"
             this.visable1 = true;
             this.modelArr = [];
+            this.getAllGatherNosFun();
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
                 this.ruleForm = { ...this.ruleFormObj };
@@ -734,6 +737,7 @@ export default {
         //修改
         async editFun (id) {
             this.title = "修改焊机设备"
+            this.getAllGatherNosFun();
             this.ruleForm = { ...this.ruleFormObj };
             let { data, code } = await getWelderDetail(id);
             if (code == 200) {
