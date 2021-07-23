@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: 松下工艺索取返回实体类（默认无数据）
+ * @description: 松下GL5系列工艺索取返回实体类（默认无数据）
  * @author: Shan Long
  * @create: 2021-07-12
  */

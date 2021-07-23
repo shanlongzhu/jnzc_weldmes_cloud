@@ -99,6 +99,10 @@ public class EmqMqttClient {
         subTopic(DownTopicEnum.taskClaimIssue.name());
         //松下工艺索取
         subTopic(DownTopicEnum.sxProcessClaim.name());
+        //松下FR2系列通道参数查询/删除
+        subTopic(DownTopicEnum.sxChannelParamQuery.name());
+        //松下FR2系列通道参数下载
+        subTopic(DownTopicEnum.sxChannelParamDownload.name());
     }
 
     /**

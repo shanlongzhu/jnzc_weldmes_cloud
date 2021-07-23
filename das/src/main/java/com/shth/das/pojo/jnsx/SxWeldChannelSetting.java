@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: 松下焊机或焊接通道设定（锁定或解锁），和下行-读取公用此类
+ * @description: 松下GL5系列焊机或焊接通道设定（锁定或解锁），和下行-读取公用此类
  * @author: Shan Long
  * @create: 2021-07-08
  */

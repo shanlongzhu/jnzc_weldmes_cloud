@@ -44,7 +44,11 @@ public enum DownTopicEnum {
     sxProcessClaim,
 
     /**
-     * FR2系列通道参数查询/删除
+     * 松下FR2系列通道参数查询/删除
      */
     sxChannelParamQuery,
+    /**
+     * 松下FR2系列通道参数下载
+     */
+    sxChannelParamDownload,
 }

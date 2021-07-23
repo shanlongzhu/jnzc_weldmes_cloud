@@ -1,4 +1,4 @@
-package com.shth.das.pojo.jnsx;
+package com.shth.das.pojo.db;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
- * 松下焊机表
+ * 松下焊机表（数据库表）
  */
 @Data
 @AllArgsConstructor

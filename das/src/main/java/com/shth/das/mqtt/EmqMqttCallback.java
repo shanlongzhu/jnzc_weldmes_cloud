@@ -204,6 +204,15 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(weldIp, str, "----->FR2系列通道参数查询/删除成功", topic);
                 }
             }
+            //松下FR2系列通道参数下载
+            if (DownTopicEnum.sxChannelParamDownload.name().equals(topic)) {
+                SxChannelParamReplyHave channelParamReplyHave = JSON.parseObject(message, SxChannelParamReplyHave.class);
+                if (null != channelParamReplyHave) {
+                    String weldIp = channelParamReplyHave.getWeldIp();
+                    String str = SxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
+                    channelWrite(weldIp, str, "----->松下FR2系列通道参数下载成功", topic);
+                }
+            }
         } catch (Exception e) {
             log.error("messageManage error:{}", e.getMessage());
         }

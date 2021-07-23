@@ -1,6 +1,6 @@
 package com.shth.das.sys.weldmesdb.service;
 
-import com.shth.das.pojo.jnsx.SxWeldModel;
+import com.shth.das.pojo.db.SxWeldModel;
 
 public interface SxWeldService {
 

@@ -61,5 +61,13 @@ public enum UpTopicEnum {
      * 松下工艺删除回复
      */
     sxProcessDeleteReturn,
+    /**
+     * 松下FR2系列通道参数查询（无参数）、下载、删除回复
+     */
+    sxChannelParamReply,
+    /**
+     * 松下FR2系列通道参数查询（有参数）
+     */
+    sxChannelParamReplyHave,
 
 }

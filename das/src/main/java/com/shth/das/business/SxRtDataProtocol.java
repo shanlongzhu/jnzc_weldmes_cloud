@@ -6,6 +6,7 @@ import com.shth.das.common.SxVerificationCode;
 import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
+import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.pojo.jnsx.*;
@@ -136,6 +137,16 @@ public class SxRtDataProtocol {
                     SxStatusDataUI sxStatusDataUi = fr2TigStatusUiAnalysis(clientIp, str);
                     map.put("SxStatusDataUI", sxStatusDataUi);
                 }
+            }
+            //松下FR2系列通道参数查询（无参数）、下载、删除回复
+            if (str.length() == 52 && "FE5AA5001A".equals(str.substring(0, 10))) {
+                SxChannelParamReply sxChannelParamReply = sxChannelParamReplyAnalysis(clientIp, str);
+                map.put("SxChannelParamReply", sxChannelParamReply);
+            }
+            //松下FR2系列通道参数查询（有参数）
+            if (str.length() == 218 && "FE5AA5006E".equals(str.substring(0, 10))) {
+                SxChannelParamReplyHave sxChannelParamReplyHave = sxChannelParamReplyHaveAnalysis(clientIp, str);
+                map.put("SxChannelParamReplyHave", sxChannelParamReplyHave);
             }
         } catch (Exception e) {
             log.error("sxRtDataDecoderManage Exception:" + e.getMessage());
@@ -285,6 +296,26 @@ public class SxRtDataProtocol {
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxWeldChannelSetReturn.name(), message, 0);
+                });
+            }
+            //松下FR2通道参数查询（无参数）、下载、删除回复
+            if (map.containsKey("SxChannelParamReply")) {
+                SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
+                //实体类转JSON字符串
+                String message = JSON.toJSONString(sxChannelParamReply);
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReply.name(), message, 0);
+                });
+            }
+            //松下FR2通道参数查询回复（有参数）
+            if (map.containsKey("SxChannelParamReplyHave")) {
+                SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
+                //实体类转JSON字符串
+                String message = JSON.toJSONString(sxChannelParamReplyHave);
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReplyHave.name(), message, 0);
                 });
             }
         }
@@ -1065,6 +1096,89 @@ public class SxRtDataProtocol {
     }
 
     /**
+     * 松下FR2系列通道参数查询（无参数）、下载、删除回复
+     *
+     * @param clientIp 焊机IP
+     * @param str      16进制字符串
+     * @return SxChannelParamReply
+     */
+    private SxChannelParamReply sxChannelParamReplyAnalysis(String clientIp, String str) {
+        if (CommonUtils.isNotEmpty(str)) {
+            if ("0211".equals(str.substring(40, 44))) {
+                SxChannelParamReply sxChannelParamReply = new SxChannelParamReply();
+                sxChannelParamReply.setCommand(Integer.valueOf(str.substring(44, 46), 16));
+                sxChannelParamReply.setChannel(Integer.valueOf(str.substring(46, 48), 16).toString());
+                sxChannelParamReply.setWeldIp(clientIp);
+                return sxChannelParamReply;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2系列通道参数查询（有参数）
+     *
+     * @param clientIp 焊机IP
+     * @param str      16进制字符串
+     * @return SxChannelParamReplyHave
+     */
+    public SxChannelParamReplyHave sxChannelParamReplyHaveAnalysis(String clientIp, String str) {
+        if (CommonUtils.isNotEmpty(str) && "0211".equals(str.substring(40, 44))) {
+            SxChannelParamReplyHave replyHave = new SxChannelParamReplyHave();
+            replyHave.setWeldIp(clientIp);
+            replyHave.setCommand(Integer.valueOf(str.substring(44, 46), 16));
+            replyHave.setChannel(Integer.valueOf(str.substring(46, 48), 16).toString());
+            replyHave.setChannelFlag(Integer.valueOf(str.substring(50, 52), 16));
+            replyHave.setPresetEleMax(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));
+            replyHave.setPresetVolMax(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)));
+            replyHave.setPresetEleMin(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));
+            replyHave.setPresetVolMin(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)));
+            replyHave.setInitialEleMax(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));
+            replyHave.setInitialVolMax(BigDecimal.valueOf(Long.valueOf(str.substring(72, 76), 16)));
+            replyHave.setInitialEleMin(BigDecimal.valueOf(Long.valueOf(str.substring(76, 80), 16)));
+            replyHave.setInitialVolMin(BigDecimal.valueOf(Long.valueOf(str.substring(80, 84), 16)));
+            replyHave.setArcEleMax(BigDecimal.valueOf(Long.valueOf(str.substring(84, 88), 16)));
+            replyHave.setArcVolMax(BigDecimal.valueOf(Long.valueOf(str.substring(88, 92), 16)));
+            replyHave.setArcEleMin(BigDecimal.valueOf(Long.valueOf(str.substring(92, 96), 16)));
+            replyHave.setArcVolMin(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)));
+            replyHave.setTexture(Integer.valueOf(str.substring(100, 102), 16));
+            replyHave.setWireDiameter(Integer.valueOf(str.substring(102, 104), 16));
+            replyHave.setGases(Integer.valueOf(str.substring(104, 106), 16));
+            replyHave.setWeldingControl(Integer.valueOf(str.substring(106, 108), 16));
+            replyHave.setPulseHaveNot(Integer.valueOf(str.substring(108, 110), 16));
+            replyHave.setSpotWeldingTime(BigDecimal.valueOf(Long.valueOf(str.substring(110, 114), 16)));
+            replyHave.setUnitaryDifference(Integer.valueOf(str.substring(114, 116), 16));
+            replyHave.setDryExtendLength(Integer.valueOf(str.substring(116, 118), 16));
+            replyHave.setWeldMax(BigDecimal.valueOf(Long.valueOf(str.substring(124, 128), 16)));
+            replyHave.setWeldMin(BigDecimal.valueOf(Long.valueOf(str.substring(128, 132), 16)));
+            replyHave.setInitialMax(BigDecimal.valueOf(Long.valueOf(str.substring(132, 136), 16)));
+            replyHave.setInitialMin(BigDecimal.valueOf(Long.valueOf(str.substring(136, 140), 16)));
+            replyHave.setArcMax(BigDecimal.valueOf(Long.valueOf(str.substring(140, 144), 16)));
+            replyHave.setArcMin(BigDecimal.valueOf(Long.valueOf(str.substring(144, 148), 16)));
+            replyHave.setDelayTime(BigDecimal.valueOf(Long.valueOf(str.substring(148, 150), 16)));
+            replyHave.setAmendPeriod(BigDecimal.valueOf(Long.valueOf(str.substring(150, 152), 16)));
+            replyHave.setPresetEleAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(152, 156), 16)));
+            replyHave.setPresetVolAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(156, 160), 16)));
+            replyHave.setPresetEleAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(160, 164), 16)));
+            replyHave.setPresetVolAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(164, 168), 16)));
+            replyHave.setInitialEleAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(168, 172), 16)));
+            replyHave.setInitialVolAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(172, 176), 16)));
+            replyHave.setInitialEleAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(176, 180), 16)));
+            replyHave.setInitialVolAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(180, 184), 16)));
+            replyHave.setArcEleAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(184, 188), 16)));
+            replyHave.setArcVolAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(188, 192), 16)));
+            replyHave.setArcEleAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(192, 196), 16)));
+            replyHave.setArcVolAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(196, 200), 16)));
+            replyHave.setArcDelayTime(BigDecimal.valueOf(Long.valueOf(str.substring(200, 202), 16)));
+            replyHave.setAlarmDelayTime(BigDecimal.valueOf(Long.valueOf(str.substring(202, 204), 16)));
+            replyHave.setAlarmHaltTime(BigDecimal.valueOf(Long.valueOf(str.substring(204, 206), 16)));
+            replyHave.setFlowMax(BigDecimal.valueOf(Long.valueOf(str.substring(208, 210), 16)));
+            return replyHave;
+        }
+        return null;
+    }
+
+    /**
      * 松下设备关机数据处理
      *
      * @param clientIp 设备IP
@@ -1438,6 +1552,80 @@ public class SxRtDataProtocol {
             String channel = CommonUtils.lengthJoint(sxChannelParamQuery.getChannel(), 2);
             String reserved = "0000";
             String str = head + command + channel + reserved;
+            str = str.toUpperCase();
+            return str;
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2系列通道参数下载
+     *
+     * @param channelParamReplyHave 参数下载实体类
+     * @return 16进制字符串
+     */
+    public static String sxChannelParamReplyHaveProtocol(SxChannelParamReplyHave paramDownload) {
+        if (null != paramDownload) {
+            String head = SxVerificationCode.SX_CHANNEL_PARAM_DOWNLOAD_HEAD;
+            String command = CommonUtils.lengthJoint(paramDownload.getCommand(), 2);
+            String channel = CommonUtils.lengthJoint(paramDownload.getChannel(), 2);
+            String reserved = "00";
+            String channelFlag = CommonUtils.lengthJoint(paramDownload.getChannelFlag(), 2);
+            String presetEleMax = CommonUtils.lengthJoint(paramDownload.getPresetEleMax().intValue(), 4);
+            String presetVolMax = CommonUtils.lengthJoint(paramDownload.getPresetVolMax().intValue(), 4);
+            String presetEleMin = CommonUtils.lengthJoint(paramDownload.getPresetEleMin().intValue(), 4);
+            String presetVolMin = CommonUtils.lengthJoint(paramDownload.getPresetVolMin().intValue(), 4);
+            String initialEleMax = CommonUtils.lengthJoint(paramDownload.getInitialEleMax().intValue(), 4);
+            String initialVolMax = CommonUtils.lengthJoint(paramDownload.getInitialVolMax().intValue(), 4);
+            String initialEleMin = CommonUtils.lengthJoint(paramDownload.getInitialEleMin().intValue(), 4);
+            String initialVolMin = CommonUtils.lengthJoint(paramDownload.getInitialVolMin().intValue(), 4);
+            String arcEleMax = CommonUtils.lengthJoint(paramDownload.getArcEleMax().intValue(), 4);
+            String arcVolMax = CommonUtils.lengthJoint(paramDownload.getArcVolMax().intValue(), 4);
+            String arcEleMin = CommonUtils.lengthJoint(paramDownload.getArcEleMin().intValue(), 4);
+            String arcVolMin = CommonUtils.lengthJoint(paramDownload.getArcVolMin().intValue(), 4);
+            String texture = CommonUtils.lengthJoint(paramDownload.getTexture(), 2);
+            String wireDiameter = CommonUtils.lengthJoint(paramDownload.getWireDiameter(), 2);
+            String gases = CommonUtils.lengthJoint(paramDownload.getGases(), 2);
+            String weldingControl = CommonUtils.lengthJoint(paramDownload.getWeldingControl(), 2);
+            String pulseHaveNot = CommonUtils.lengthJoint(paramDownload.getPulseHaveNot(), 2);
+            String spotWeldingTime = CommonUtils.lengthJoint(paramDownload.getSpotWeldingTime().intValue(), 4);
+            String unitaryDifference = CommonUtils.lengthJoint(paramDownload.getUnitaryDifference(), 2);
+            String dryExtendLength = CommonUtils.lengthJoint(paramDownload.getDryExtendLength(), 2);
+            String reserved1 = "000000";
+            String weldMax = CommonUtils.lengthJoint(paramDownload.getWeldMax().intValue(), 4);
+            String weldMin = CommonUtils.lengthJoint(paramDownload.getWeldMin().intValue(), 4);
+            String initialMax = CommonUtils.lengthJoint(paramDownload.getInitialMax().intValue(), 4);
+            String initialMin = CommonUtils.lengthJoint(paramDownload.getInitialMin().intValue(), 4);
+            String arcMax = CommonUtils.lengthJoint(paramDownload.getArcMax().intValue(), 4);
+            String arcMin = CommonUtils.lengthJoint(paramDownload.getArcMin().intValue(), 4);
+            String delayTime = CommonUtils.lengthJoint(paramDownload.getDelayTime().intValue(), 2);
+            String amendPeriod = CommonUtils.lengthJoint(paramDownload.getAmendPeriod().intValue(), 2);
+            String presetEleAlarmMax = CommonUtils.lengthJoint(paramDownload.getPresetEleAlarmMax().intValue(), 4);
+            String presetVolAlarmMax = CommonUtils.lengthJoint(paramDownload.getPresetVolAlarmMax().intValue(), 4);
+            String presetEleAlarmMin = CommonUtils.lengthJoint(paramDownload.getPresetEleAlarmMin().intValue(), 4);
+            String presetVolAlarmMin = CommonUtils.lengthJoint(paramDownload.getPresetVolAlarmMin().intValue(), 4);
+            String initialEleAlarmMax = CommonUtils.lengthJoint(paramDownload.getInitialEleAlarmMax().intValue(), 4);
+            String initialVolAlarmMax = CommonUtils.lengthJoint(paramDownload.getInitialVolAlarmMax().intValue(), 4);
+            String initialEleAlarmMin = CommonUtils.lengthJoint(paramDownload.getInitialEleAlarmMin().intValue(), 4);
+            String initialVolAlarmMin = CommonUtils.lengthJoint(paramDownload.getInitialVolAlarmMin().intValue(), 4);
+            String arcEleAlarmMax = CommonUtils.lengthJoint(paramDownload.getArcEleAlarmMax().intValue(), 4);
+            String arcVolAlarmMax = CommonUtils.lengthJoint(paramDownload.getArcVolAlarmMax().intValue(), 4);
+            String arcEleAlarmMin = CommonUtils.lengthJoint(paramDownload.getArcEleAlarmMin().intValue(), 4);
+            String arcVolAlarmMin = CommonUtils.lengthJoint(paramDownload.getArcVolAlarmMin().intValue(), 4);
+            String arcDelayTime = CommonUtils.lengthJoint(paramDownload.getArcDelayTime().intValue(), 2);
+            String alarmDelayTime = CommonUtils.lengthJoint(paramDownload.getAlarmDelayTime().intValue(), 2);
+            String alarmHaltTime = CommonUtils.lengthJoint(paramDownload.getAlarmHaltTime().intValue(), 2);
+            String reserved2 = "00";
+            String alarmFlag = CommonUtils.lengthJoint(paramDownload.getAlarmFlag(), 2);
+            String reserved3 = "00000000";
+            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
+                    presetVolMin + initialEleMax + initialVolMax + initialEleMin + initialVolMin + arcEleMax + arcVolMax +
+                    arcEleMin + arcVolMin + texture + wireDiameter + gases + weldingControl + pulseHaveNot + spotWeldingTime +
+                    unitaryDifference + dryExtendLength + reserved1 + weldMax + weldMin + initialMax + initialMin + arcMax +
+                    arcMin + delayTime + amendPeriod + presetEleAlarmMax + presetVolAlarmMax + presetEleAlarmMin + presetVolAlarmMin +
+                    initialEleAlarmMax + initialVolAlarmMax + initialEleAlarmMin + initialVolAlarmMin + arcEleAlarmMax +
+                    arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime + alarmHaltTime + reserved2 +
+                    alarmFlag + reserved3;
             str = str.toUpperCase();
             return str;
         }

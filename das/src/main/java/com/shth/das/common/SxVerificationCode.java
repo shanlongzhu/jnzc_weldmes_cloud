@@ -39,4 +39,9 @@ public class SxVerificationCode {
      */
     public static final String SX_CHANNEL_PARAM_HEAD = "FE5AA5001A0001404100900760000000000000950211";
 
+    /**
+     * 松下FR2系列通道参数下载头部数据
+     */
+    public static final String SX_CHANNEL_PARAM_DOWNLOAD_HEAD = "FE5AA5006E0001404100900760000000000000950211";
+
 }

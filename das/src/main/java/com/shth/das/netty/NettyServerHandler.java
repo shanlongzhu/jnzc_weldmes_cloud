@@ -3,7 +3,7 @@ package com.shth.das.netty;
 import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.business.SxRtDataProtocol;
 import com.shth.das.common.ServerPort;
-import com.shth.das.pojo.jnsx.SxWeldModel;
+import com.shth.das.pojo.db.SxWeldModel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

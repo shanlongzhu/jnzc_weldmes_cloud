@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 松下设备状态信息实体类
+ * 松下设备状态信息实体类（GL5、FR2、AT共用）
  */
 @Data
 @AllArgsConstructor

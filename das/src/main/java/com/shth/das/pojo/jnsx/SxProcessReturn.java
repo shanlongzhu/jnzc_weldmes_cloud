@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: 松下工艺参数下发回复
+ * @description: 松下GL5工艺参数下发回复（co2和TIG共用）
  * @author: Shan Long
  * @create: 2021-07-08
  */

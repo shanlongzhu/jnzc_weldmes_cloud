@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 松下实时数据解析前端展示实体类
+ * 松下实时数据解析前端展示实体类（GL5、FR2、AT共用）
  */
 @Data
 @AllArgsConstructor

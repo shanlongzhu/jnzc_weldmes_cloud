@@ -9,15 +9,15 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+/**
+ * 前端实时数据展示的实体类
+ */
 @SuppressWarnings("ALL")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Accessors(chain = true)
-/**
- * 前端实时数据展示的实体类
- */
 public class JNRtDataUI implements Serializable {
 
     /**

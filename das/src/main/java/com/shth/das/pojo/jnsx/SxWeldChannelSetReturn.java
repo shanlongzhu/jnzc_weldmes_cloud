@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: 松下焊机或通道设定回复/读取回复
+ * @description: 松下GL5系列焊机或通道设定回复/读取回复
  * @author: Shan Long
  * @create: 2021-07-08
  */

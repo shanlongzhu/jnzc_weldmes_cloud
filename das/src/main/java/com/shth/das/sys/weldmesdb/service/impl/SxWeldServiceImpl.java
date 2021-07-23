@@ -1,7 +1,7 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.shth.das.pojo.jnsx.SxWeldModel;
+import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.sys.weldmesdb.mapper.SxWeldMapper;
 import com.shth.das.sys.weldmesdb.service.SxWeldService;
 import com.shth.das.util.CommonUtils;
