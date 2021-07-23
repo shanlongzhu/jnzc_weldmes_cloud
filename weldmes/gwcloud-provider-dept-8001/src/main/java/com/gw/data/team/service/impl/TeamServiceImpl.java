@@ -53,22 +53,36 @@ public class TeamServiceImpl implements TeamService {
 
             if(!ObjectUtils.isEmpty(list)){
 
-                //执行班组生产数据报表查询
-                List<WeldStatisticsData> weldStatisticsDataList = teamDao.getList(time1,time2,list);
+                List<SysDept> temp = new ArrayList<>();
+                for (SysDept sysDeptTemp : list) {
 
+                    //获取班组层级id列表
+                    List<SysDept> sysDeptListTemp = sysDeptDao.selectDeptInfosByParentId(sysDeptTemp.getId());
+
+                    temp.addAll(sysDeptListTemp);
+                }
+
+                List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
+                if(!ObjectUtils.isEmpty(temp)){
+
+                    //执行班组生产数据报表查询
+                    weldStatisticsDataList = teamDao.getList(time1,time2,temp);
+
+                    return weldStatisticsDataList;
+                }
                 return weldStatisticsDataList;
             }
 
             //当前 sysDeptInfos 为装焊区层级id列表
-            List<WeldStatisticsData> weldStatisticsDataList = teamDao.getList(time1,time2,sysDeptInfos);
+            List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
             return weldStatisticsDataList;
 
         }
 
         //执行班组生产数据报表查询
-        teamDao.getList(time1,time2,sysDeptInfos);
+        List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
-        return null;
+        return weldStatisticsDataList;
     }
 }
