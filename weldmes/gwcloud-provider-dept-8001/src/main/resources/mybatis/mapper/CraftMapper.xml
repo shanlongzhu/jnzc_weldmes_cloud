@@ -108,6 +108,7 @@
 	left join sys_dictionary d3 on w.welding_stick_diameter=d3.`value` and w.welding_stick_diameter_type=d3.type
 	left join sys_dictionary d4 on w.welding_process=d4.`value` and w.welding_process_type=d4.type
     where w.wps_library_id=#{id}
+    order by w.channel_no
     </select>
 
     <insert id="addCraft">
