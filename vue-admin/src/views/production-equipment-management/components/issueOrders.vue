@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-07-23 16:09:31
+ * @LastEditTime: 2021-07-23 20:56:34
 -->
 
 <template>
@@ -766,7 +766,7 @@ export default {
                         console.log('取消订阅失败', error)
                     }
                 })
-                this.client.end();
+                // this.client.end();
                 if (this.backMqttNum !== this.reqMqttNum) {
                     this.$message.error("下发超时")
                     this.newEqu.forEach(item => {
