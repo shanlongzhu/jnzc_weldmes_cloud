@@ -57,7 +57,7 @@
 	</resultMap>
 
 
-	<select id="getList" resultMap="weldStatisticsData">
+	<select id="getList" resultType="com.gw.entities.WeldStatisticsData">
 		SELECT d.id,d.`name` deptName,
 		COUNT(DISTINCT m.id) allCount,
 		COUNT(DISTINCT s.machineId) onOffCount,
