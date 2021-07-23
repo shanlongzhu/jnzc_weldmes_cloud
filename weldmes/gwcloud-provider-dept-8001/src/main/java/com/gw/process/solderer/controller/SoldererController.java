@@ -45,6 +45,14 @@ public class SoldererController {
         return HttpResult.ok(page);
     }
 
+    //无分页列表展示
+    @GetMapping(value = "noPage")
+    public HttpResult getListNoPage(String welderName,String welderNo,Integer rate,
+                              Integer talent,Integer grade) {
+        List<WelderInfo> list = soldererService.getList(welderName,welderNo,rate,talent,grade);
+        return HttpResult.ok(list);
+    }
+
     //新增焊工信息
     @PostMapping
     public HttpResult addSolderer(@RequestBody WelderInfo welderInfo) {
