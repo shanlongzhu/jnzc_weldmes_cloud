@@ -28,9 +28,18 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<WeldStatisticsData> getList(String time1, String time2) {
 
-        //获取到当前登录用户信息
+        //如果传入时间有一个为空
+        if (ObjectUtils.isEmpty(time1) || ObjectUtils.isEmpty(time1)){
+
+            List<WeldStatisticsData> list = new ArrayList<>();
+
+            return list;
+
+        }
+
         Subject currentUser = SecurityUtils.getSubject();
 
+        //获取到当前登录用户信息
         UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
 
         //获取到当前用户部门id
@@ -62,32 +71,52 @@ public class TeamServiceImpl implements TeamService {
                     temp.addAll(sysDeptListTemp);
                 }
 
-                List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
                 if(!ObjectUtils.isEmpty(temp)){
 
-                    List<Long> ids = new ArrayList<>();
-
-                    for (SysDept sysInfo : temp) {
-                        Long id = sysInfo.getId();
-                        ids.add(id);
-                    }
                     //执行班组生产数据报表查询
-                    weldStatisticsDataList = teamDao.getList(time1,time2,ids);
+                    List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,temp);
 
                     return weldStatisticsDataList;
                 }
+
+                //用户部门id为制造部层级
+                List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,list);
+
                 return weldStatisticsDataList;
             }
 
             //当前 sysDeptInfos 为装焊区层级id列表
-            List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
+            List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,sysDeptInfos);
 
             return weldStatisticsDataList;
 
         }
 
+        List<Long> ids = new ArrayList<>();
+
+        ids.add(deptId);
+
+        //执行班组生产数据报表查询  班组层级
+        List<WeldStatisticsData> weldStatisticsDataList = teamDao.getList(time1,time2,ids);
+
+        return weldStatisticsDataList;
+    }
+
+
+    /**
+     * @Date 2021/7/13 17:33
+     * @Description  查询班组生产数据
+     * @Params
+     */
+    public List<WeldStatisticsData> getGradeInfo(String time1,String time2,List<SysDept> list){
+        List<Long> ids = new ArrayList<>();
+
+        for (SysDept sysInfo : list) {
+            Long id = sysInfo.getId();
+            ids.add(id);
+        }
         //执行班组生产数据报表查询
-        List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
+        List<WeldStatisticsData> weldStatisticsDataList = teamDao.getList(time1,time2,ids);
 
         return weldStatisticsDataList;
     }
