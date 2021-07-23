@@ -65,8 +65,14 @@ public class TeamServiceImpl implements TeamService {
                 List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
                 if(!ObjectUtils.isEmpty(temp)){
 
+                    List<Long> ids = new ArrayList<>();
+
+                    for (SysDept sysInfo : temp) {
+                        Long id = sysInfo.getId();
+                        ids.add(id);
+                    }
                     //执行班组生产数据报表查询
-                    weldStatisticsDataList = teamDao.getList(time1,time2,temp);
+                    weldStatisticsDataList = teamDao.getList(time1,time2,ids);
 
                     return weldStatisticsDataList;
                 }
