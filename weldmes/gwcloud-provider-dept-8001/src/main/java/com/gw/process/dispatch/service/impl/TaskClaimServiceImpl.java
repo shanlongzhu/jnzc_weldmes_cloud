@@ -4,6 +4,7 @@ import com.gw.common.DateTimeUtil;
 import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
+import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class TaskClaimServiceImpl implements TaskClaimService {
 
     @Autowired
     TaskClaimDao taskClaimDao;
+
+    @Autowired
+    DispatchDao dispatchDao;
 
     /**
      * @Date 2021/7/19 14:50
@@ -72,5 +76,15 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         taskClaim.setClaimTime(time);
 
         taskClaimDao.insertTaskClaimInfo(taskClaim);
+
+        //判断任务表中该数据的实际开始时间是否为空
+        TaskInfo taskInfo = dispatchDao.queryTaskInfoById(taskClaim.getTaskId());
+
+        if(ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
+
+            taskInfo.setRealityStarttime(taskClaim.getClaimTime());
+
+            dispatchDao.updateTaskInfo(taskInfo);
+        }
     }
 }

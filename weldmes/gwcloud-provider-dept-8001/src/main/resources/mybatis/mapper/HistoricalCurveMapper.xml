@@ -21,7 +21,7 @@
 
     <!--焊机历史曲线信息列表-->
     <select id="selectHistoryCurveInfos" resultType="com.gw.entities.RtData">
-        select task.id taskId,task.task_no,task.reality_starttime taskRealityStartTime,reality_endtime taskRealityEndTime,
+        select task.id taskId,task.task_no,task.reality_starttime taskRealityStartTime,task.reality_endtime taskRealityEndTime,
         welder.id welderId,welder.welder_name,welder.welder_no,weld.id machineId,weld.machine_no
         from task_claim claim
         left join task_info task on task.id = claim.task_id
@@ -37,6 +37,7 @@
         <if test="weldMachineId != null and weldMachineId != ''">
             and tableInfo.machineId = #{weldMachineId}
         </if>
+        GROUP BY task.id,welder.id,weld.id
     </select>
 
     <!--判断表是否存在-->
