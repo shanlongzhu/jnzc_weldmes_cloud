@@ -14,7 +14,8 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    :default-time="['00:00:00', '23:59:59']"
+                    :picker-options="disabledDate"
                 >
                 </el-date-picker>
             </div>
@@ -45,7 +46,7 @@
                 stripe
                 style="width: 100%"
                 align="center"
-                v-loading='loading'
+                :loading='loading'
                 border
                 size="mini"
                 height='100%'
@@ -59,32 +60,29 @@
                     fixed="left"
                 />
                 <el-table-column
-                    prop="welderName"
+                    prop="deptName"
                     label="所属班组"
                     align="left"
                     min-width="100"
                     fixed="left"
                 >
-                <template slot-scope="scope">
-                    {{scope.row.sysDept.name}}
-                </template>
                 </el-table-column>
                 <el-table-column
-                    prop="count1"
+                    prop="allCount"
                     label="设备总数"
                     align="left"
                     min-width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="count2"
+                    prop="onOffCount"
                     label="开机设备数"
                     align="left"
                     min-width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="count3"
+                    prop="realWeldOnline"
                     label="实焊设备数"
                     align="left"
                     min-width="120"
@@ -92,39 +90,39 @@
                     
                 </el-table-column>
                 <el-table-column
-                    prop="count4"
+                    prop="noTaskCount"
                     label="未绑定设备数"
                     align="left"
                     min-width="120"
                 />
                 <el-table-column
-                    prop="utilization"
+                    prop="equipUtilization"
                     label="设备利用率(%)"
                     align="left"
                     min-width="120"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="count5"
+                    prop="taskCount"
                     label="焊接任务数"
                     align="left"
                     min-width="170"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="time"
+                    prop="realWeldTime"
                     label="焊接时间"
                     align="left"
                     min-width="170"
                 />
                 <el-table-column
-                    prop="time2"
+                    prop="onOffTime"
                     label="工作时间"
                     align="left"
                     min-width="170"
                 />
                 <el-table-column
-                    prop="utilization2"
+                    prop="weldingEfficiency"
                     label="焊接效率(%)"
                     align="left"
                     min-width="170"
@@ -169,6 +167,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { getTeamDataList,exportTeamDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
 export default {
@@ -182,11 +181,16 @@ export default {
             total: 0,
 
             //搜索条件
-            dateTime: '',
+            dateTime: [moment(new Date()).startOf('day'),new Date()],
 
             loading: false,
             headers: {
                 'Authorization': getToken()
+            },
+            disabledDate:{
+              disabledDate(time){
+                return time.getTime() > Date.now();
+              }
             }
         }
     },
@@ -203,8 +207,8 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1:this.dateTime[0]?this.dateTime[0]:'',
-                time2:this.dateTime[1]?this.dateTime[1]:'',
+                time1:this.dateTime[0]?moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss'):'',
+                time2:this.dateTime[1]?moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss'):'',
             }
             this.loading = true;
             let { data, code } = await getTeamDataList(req);

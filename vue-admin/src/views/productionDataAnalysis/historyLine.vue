@@ -66,8 +66,8 @@
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd HH:mm:ss"
                         :picker-options="disabledDate"
+                        :default-time="['00:00:00', '23:59:59']"
                     >
                     </el-date-picker>
                 </div>
@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData, getHistoryRepeat } from '_api/productionDataAnalysis/productionDataAnalysisApi'
 // import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
@@ -181,7 +182,7 @@ export default {
     data () {
         return {
             list: [],
-            dateTime: [],//时间
+            dateTime: [moment(new Date()).startOf('day'),new Date()],//时间
             searchObj: {
                 taskId: '',
                 welderId: '',
@@ -227,7 +228,7 @@ export default {
     },
 
     created () {
-        // this.getList();
+        this.getList();
         this.getTaskListFun();
         this.getWelderListFun();
         this.getWeldingListFun();
@@ -254,8 +255,8 @@ export default {
             }
             let req = {
                 pn: this.page,
-                startTime: this.dateTime[0] ? this.dateTime[0] : '',
-                endTime: this.dateTime[1] ? this.dateTime[1] : '',
+                startTime: this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                endTime: this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
                 ...this.searchObj
             }
             this.loading = true;

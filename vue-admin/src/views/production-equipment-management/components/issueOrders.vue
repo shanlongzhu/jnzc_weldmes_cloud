@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-07-23 15:39:20
+ * @LastEditTime: 2021-07-23 16:09:31
 -->
 
 <template>
@@ -283,6 +283,7 @@
                     </div>
                 </div>
                 <vxe-table
+                    ref="vxeTable"
                     border
                     show-overflow
                     auto-resize
@@ -576,7 +577,7 @@ export default {
         init (row) {
             this.model = true;
             this.selectTechnology = [];
-            this.selectEquipment = [];
+            this.selectEquipment = {};
             this.libray = { ...row };
             this.getExpandDetail(row.id);
         },
@@ -603,6 +604,9 @@ export default {
             if (this.selectTechnology.length > 0) {
                 this.model2 = true;
                 this.getList();
+                this.$nextTick(() => {
+                    this.$refs.vxeTable.clearCheckboxReserve();
+                })
             } else {
                 this.$message.error("请选择工艺")
             }
@@ -712,11 +716,10 @@ export default {
             if (equipmentArr.filter(item => !item.machineGatherInfo.gatherNo || item.machineGatherInfo.gatherNo == '').length > 0) {
                 return this.$message.error("选择的设备存在采集序号为空");
             }
-            
-            // equipmentArr.map(item => {
-            //     this
-            // })
-
+            //取出选中设备所有采集编号
+            equipmentArr.filter(item => item.machineGatherInfo.gatherNo).forEach(item => {
+                gatherNoArr = [...gatherNoArr, ...item.machineGatherInfo.gatherNo.split(',')]
+            });
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -727,40 +730,25 @@ export default {
                     //选择的工艺数据
                     let techArr = this.formatTechnoloay(this.selectTechnology);
                     this.newEqu = []
-                    for (let i = 0, len = equipmentArr.length; i < len; i++) {
-                        ((i) =>{
+                    for (let i = 0, len = gatherNoArr.length; i < len; i++) {
+                        ((i) => {
                             setTimeout(() => {
                                 clearTimeout(this.timeout);
                                 let msgData = techArr.map(v => {
-                                let objItem = { ...v };
-                                objItem['gatherNo'] = equipmentArr[i].machineGatherInfo.gatherNo;
-                                objItem['isSuccessStatus'] = 0;//记录发送状态
-                                this.reqMqttNum++;//记录发送总条数
-                                return objItem;
-                            })
-                            this.newEqu.push(msgData)
-                            const msg = JSON.stringify(msgData);
-                            this.doPublish(msg);
-                            console.log(msg)
-                            this.issueTimeOut();
-                            }, (i + 1) * 200);
+                                    let objItem = { ...v };
+                                    objItem['gatherNo'] = gatherNoArr[i];
+                                    objItem['isSuccessStatus'] = 0;//记录发送状态
+                                    this.reqMqttNum++;//记录发送总条数
+                                    return objItem;
+                                })
+                                this.newEqu.push(msgData)
+                                const msg = JSON.stringify(msgData);
+                                this.doPublish(msg);
+                                console.log(msg)
+                                this.issueTimeOut();
+                            }, (i + 1) * 300);
                         })(i)
                     }
-
-
-
-                    // this.newEqu = equipmentArr.map(item => {
-                    //     let msgData = techArr.map(v => {
-                    //         let objItem = { ...v };
-                    //         objItem['gatherNo'] = item.machineGatherInfo.gatherNo;
-                    //         objItem['isSuccessStatus'] = 0;//记录发送状态
-                    //         this.reqMqttNum++;//记录发送总条数
-                    //         return objItem;
-                    //     })
-                    //     const msg = JSON.stringify(msgData);
-                    //     this.doPublish(msg);
-                    //     return msgData
-                    // });                    
                 }, 500);
                 this.model = false;
                 this.model2 = false;
@@ -772,8 +760,6 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                //清除选中的设备
-                this.selectEquipment = {};
                 this.client.unsubscribe('processIssueReturn', error => {
                     console.log("取消订阅")
                     if (error) {
@@ -783,6 +769,11 @@ export default {
                 this.client.end();
                 if (this.backMqttNum !== this.reqMqttNum) {
                     this.$message.error("下发超时")
+                    this.newEqu.forEach(item => {
+                        item.forEach(v => {
+                            v.isSuccessStatus = 2;
+                        })
+                    });
                     clearTimeout(this.timeout)
                 }
             }, 5000)
