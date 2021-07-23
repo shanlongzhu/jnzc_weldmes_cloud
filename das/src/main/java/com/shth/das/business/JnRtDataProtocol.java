@@ -300,7 +300,8 @@ public class JnRtDataProtocol {
                         List<WeldModel> weldList = CommonDbData.getWeldList();
                         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                             for (WeldModel weld : weldList) {
-                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+//                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(data.getGatherNo())) {
                                     data.setMachineId(weld.getId());
                                     data.setMachineNo(weld.getMachineNo());
                                     data.setMachineDeptId(weld.getDeptId());
@@ -575,7 +576,8 @@ public class JnRtDataProtocol {
         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
             for (WeldModel weld : weldList) {
                 if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                    if (gatherNo.equals(Integer.valueOf(weld.getGatherNo()).toString())) {
+                    if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo,4))) {
+//                    if (gatherNo.equals(Integer.valueOf(weld.getGatherNo()).toString())) {
                         return weld.getId();
                     }
                 }
