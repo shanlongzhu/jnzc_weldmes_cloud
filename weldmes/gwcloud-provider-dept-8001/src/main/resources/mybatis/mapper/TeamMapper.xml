@@ -58,58 +58,32 @@
 
 
 	<select id="getList" resultMap="weldStatisticsData">
-		select
-			a.*,
-			b.*,
-			c.*,
-			d.*,
-			e.*,
-			f.*,
-			g.*,
-			cast(b.count2 / a.count * 100 as decimal (13,2)) utilization,
-			cast(f.time/g.time2*100 as decimal (13,2)) utilization2,
-			h.supergage_time supergageTime,
-			((g.time2-i.standby_time-h.supergage_time)/(g.time2-i.standby_time))*100 standardPercentage,
-			(g.wireFeedRate*(g.time2-i.standby_time))/600 materialsConsumption,
-			g.electricity*g.voltage*g.time2/60/1000 powerConsumption
-		from
-			(
-				select count( machineId ) count,s.`name`,s.id from weld_statistics_data w,sys_dept s
-				where w.machineDeptId = s.id and w.startTime &gt;= #{time1} and w.endTime &lt;= #{time2}
-				group by machineDeptId
-			) a
-			inner join (select count( m.id ) count2,s.`name`
-						from machine_weld_info m,sys_dept s
-						where m.dept_id = s.id
-						group by s.`name`) b on a.`name` = b.`name`
-			inner join (select count( w.id ) count3,s.`name`
-						from weld_statistics_data w,sys_dept s
-						where w.machineDeptId = s.id and ( w.weldStatus = 3 or w.weldStatus = 5 or w.weldStatus = 7 or w.weldStatus = 99 )
-						group by s.`name`) c on a.`name` = c.`name`
-			inner join (select distinct count(w.machineId) count4,s.`name`
-						from weld_statistics_data w,sys_dept s
-						where w.taskId = 0 and w.machineDeptId=s.id
-						group by s.`name`) d on a.`name`=d.`name`
-			inner join (select distinct count(w.machineId) count5,s.`name`
-						from weld_statistics_data w,sys_dept s
-						where w.taskId != 0 and w.machineDeptId=s.id
-						group by s.`name`)e on a.`name`=e.`name`
-			inner join (select SEC_TO_TIME(count( w.id )) time,s.`name`
-						from weld_statistics_data w,sys_dept s
-						where w.machineDeptId = s.id and ( w.weldStatus = 3 or w.weldStatus = 99 )
-						group by s.`name`)f on a.`name`=f.`name`
-			inner join (select SEC_TO_TIME(count( w.id )) time2,s.`name`,w.wireFeedRate,w.electricity,w.voltage
-						from weld_statistics_data w,sys_dept s
-						where w.machineDeptId = s.id and ( w.weldStatus = 0 or w.weldStatus = 3 or w.weldStatus = 5 or w.weldStatus = 7 or w.weldStatus = 99 )
-						group by s.`name`)g on a.`name`=g.`name`
-			left join (select SEC_TO_TIME(count( w.id )) supergage_time,s.`name`
-					   from weld_statistics_data w,sys_dept s
-					   where w.machineDeptId = s.id and (w.weldStatus = 99)
-					   group by s.`name`)h on g.`name`=h.`name`
-			left join (select SEC_TO_TIME(count( w.id )) standby_time,s.`name`
-					   from weld_statistics_data w,sys_dept s
-					   where w.machineDeptId = s.id and w.weldStatus = 0
-					   group by s.`name`)i on g.`name`=i.`name`
+		SELECT d.id,d.`name` deptName,
+		COUNT(DISTINCT m.id) allCount,
+		COUNT(DISTINCT s.machineId) onOffCount,
+		SUM(s.weldDuration) onOffTime,
+		COUNT(DISTINCT s.taskId)-COUNT(DISTINCT s2.taskId) taskCount,
+		COUNT(DISTINCT s1.machineId) realWeldOnline,
+		SUM(s1.weldDuration) realWeldTime,
+		IF(SUM(s1.weldDuration)>300,COUNT(DISTINCT s2.machineId),0) noTaskCount,
+		COUNT(DISTINCT s.machineId)/COUNT(DISTINCT m.id)*100 equipUtilization,
+		SUM(s3.weldDuration) supergageTime,
+		SUM(s1.weldDuration)-SUM(s3.weldDuration) normalTime,
+		(SUM(s1.weldDuration)-SUM(s3.weldDuration))/SUM(s1.weldDuration)*100 standardPercentage,
+		sum(s.wireFeedRate*s.weldDuration)/600 materialsConsumption,
+		sum((s.electricity*s.voltage*s.weldDuration)/3600/1000)+(s.weldDuration-s1.weldDuration)/36000 powerConsumption
+		FROM sys_dept d
+		INNER JOIN machine_weld_info m ON d.id=m.dept_id
+		LEFT JOIN weld_statistics_data s ON d.id=s.machineDeptId AND m.id=s.machineId
+		LEFT JOIN weld_statistics_data s1 ON s.id=s1.id  AND s1.weldStatus IN (3,5,7,99)
+		LEFT JOIN weld_statistics_data s3 ON s1.id=s3.id  AND s1.weldStatus=99
+		LEFT JOIN weld_statistics_data s2 ON s1.id=s2.id AND s2.taskId=0
+		where s.startTime &gt;= #{time1} and s.endTime &lt;= #{time2}
+		and d.id in
+		<foreach collection="list" item="sysDept" open="(" separator="," close=")">
+			#{sysDept.id}
+		</foreach>
+		GROUP BY d.id,d.`name`
 	</select>
 
 </mapper>
