@@ -56,7 +56,7 @@
     </insert>
 
     <!--根据任务状态查询任务信息-->
-    <select id="selectTaskInfoByStatus" parameterType="int" resultType="com.gw.entities.TaskInfo">
+    <select id="selectTaskInfoByStatus" parameterType="Long" resultType="com.gw.entities.TaskInfo">
         select task.task_no taskNo,dictionary.value_name statusStr,task.id,task.task_name taskName,task.dept_id deptId
         from task_info task
         left join sys_dictionary dictionary on dictionary.id = task.status

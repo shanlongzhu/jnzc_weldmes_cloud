@@ -153,6 +153,15 @@ public class DispatchServiceImpl implements DispatchService{
 
         taskInfo.setCreateTime(time);
 
+        if(ObjectUtils.isEmpty(taskInfo.getPlanStarttime())){
+
+            taskInfo.setPlanStarttime(null);
+        }
+
+        if(ObjectUtils.isEmpty(taskInfo.getPlanEndtime())){
+
+            taskInfo.setPlanEndtime(null);
+        }
         dispatchDao.addTaskInfo(taskInfo);
 
     }
