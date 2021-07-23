@@ -4,6 +4,15 @@ import qs from 'qs'
 
 //************任务工单*************** */
 
+// 获取焊工列表部分页
+export function getWelderPeopleListNoPage(params = {}) {
+  return request({
+    url: "/solderer/noPage",
+    method: "get",
+    params
+  });
+}
+
 // 获取列表
 export function getProcessList(params = {}) {
   return request({

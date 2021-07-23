@@ -297,6 +297,7 @@
                         v-model="ruleForm.grade"
                         placeholder="请选择"
                         style="width:200px"
+                        @change="getWelder"
                     >
                         <el-option
                             v-for="item in levelArr"
@@ -318,7 +319,25 @@
                         :options="teamArr"
                         :props="defalutProps"
                         :show-all-levels="false"
+                        @change="getWelder"
                     />
+                </el-form-item>
+                <el-form-item
+                    label="焊工姓名"
+                    prop="welderId"
+                >
+                    <el-select
+                        v-model="ruleForm.welderId"
+                        placeholder="请选择"
+                        style="width:200px"
+                    >
+                        <el-option
+                            v-for="item in welderArr"
+                            :key="item.id"
+                            :label="item.welderName"
+                            :value="item.id"
+                        />
+                    </el-select>
                 </el-form-item>
                 <el-form-item
                     label="电压上限"
@@ -416,7 +435,7 @@
 
 <script>
 import { getInfo } from '../../api/user'
-import { getProcessList, editProcess, getlevel, getProcessDetail, delProcess, addProcess, delCheckAllProcess, changeAllStatus, changeStatus, getTeam, setEvaluate, exportExcel, importExcel ,getDictionaries} from '_api/productionProcess/process'
+import { getProcessList, editProcess, getlevel, getProcessDetail, delProcess, addProcess, delCheckAllProcess, changeAllStatus, changeStatus, getTeam, setEvaluate, exportExcel, importExcel ,getDictionaries,getWelderPeopleListNoPage} from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     data () {
@@ -430,6 +449,7 @@ export default {
             ruleFormObj: {
             },
             ruleForm: {
+                welderId:'',//焊工id
                 taskNo: '',
                 gradeIdToStr: '',
                 grade: '',
@@ -443,11 +463,14 @@ export default {
                 volMin:'',
             },
             rules: {
+                grade: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
+                ],
                 taskNo: [
-                    { required: true, message: '任务编号不能为空', trigger: 'blur' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ],
                 deptId: [
-                    { required: true, message: '班组不能为空', trigger: 'blur' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ]
             },
             title: '修改任务',
@@ -492,7 +515,8 @@ export default {
                 'Authorization': getToken()
             },
             starArr:[],
-            loading: true
+            loading: true,
+            welderArr:[]
         }
     },
 
@@ -554,6 +578,9 @@ export default {
                 this.visable1 = true
                 this.ruleForm = { ...data }
                 this.dateTime = [this.ruleForm.planStarttime || '', this.ruleForm.planEndtime || '']
+                if(this.ruleForm.deptId||this.ruleForm.rate){
+                    this.getWelder();
+                }
             }
         },
         // 新增任务
@@ -735,7 +762,19 @@ export default {
         },
         beforeAvatarUpload () {
 
+        },
+        //获取焊工
+        async getWelder(){
+            let req = {
+                grade: this.ruleForm.deptId&&this.ruleForm.deptId.length>0?this.ruleForm.deptId.slice(-1).join(''):this.ruleForm.deptId,
+                rate:this.ruleForm.grade
+            }
+            let {data,code} = await getWelderPeopleListNoPage(req);
+            if(code==200){
+                this.welderArr = data||[];
+            }
         }
+
     }
 }
 </script>

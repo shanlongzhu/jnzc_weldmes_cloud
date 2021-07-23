@@ -147,13 +147,13 @@
                 />     
                 <el-table-column
                     prop="materialsConsumption"
-                    label="焊材消耗"
+                    label="焊材消耗(m)"
                     align="left"
                     min-width="170"
                 />     
                 <el-table-column
                     prop="powerConsumption"
-                    label="电能消耗"
+                    label="电能消耗(kwh)"
                     align="left"
                     min-width="170"
                 />                             
