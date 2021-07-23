@@ -2,6 +2,7 @@ package com.gw.equipment.collection.service.impl;
 
 
 import com.gw.entities.MachineGatherInfo;
+import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import lombok.NonNull;
@@ -86,6 +87,5 @@ public class CollectionServiceImpl implements CollectionService {
 
         return list;
     }
-
 
 }

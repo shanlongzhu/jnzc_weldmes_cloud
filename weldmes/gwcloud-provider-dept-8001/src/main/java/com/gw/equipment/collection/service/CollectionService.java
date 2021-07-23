@@ -1,6 +1,7 @@
 package com.gw.equipment.collection.service;
 
 import com.gw.entities.MachineGatherInfo;
+import com.gw.entities.MachineWeldInfo;
 
 import java.util.List;
 
@@ -30,4 +31,5 @@ public interface CollectionService {
      * @Params
      */
     List<MachineGatherInfo> queryGatherNos();
+
 }

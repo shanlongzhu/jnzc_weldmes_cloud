@@ -6,6 +6,7 @@ import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 
 import com.gw.entities.MachineGatherInfo;
+import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.service.CollectionService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

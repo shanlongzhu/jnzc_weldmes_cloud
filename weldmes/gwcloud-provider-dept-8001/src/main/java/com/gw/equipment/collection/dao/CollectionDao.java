@@ -2,6 +2,7 @@ package com.gw.equipment.collection.dao;
 
 
 import com.gw.entities.MachineGatherInfo;
+import com.gw.entities.MachineWeldInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -34,4 +35,5 @@ public interface CollectionDao {
      * @Params
      */
     List<MachineGatherInfo> queryGatherNos();
+
 }
