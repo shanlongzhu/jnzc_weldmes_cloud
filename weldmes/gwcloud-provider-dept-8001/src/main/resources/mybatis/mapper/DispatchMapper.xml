@@ -122,16 +122,16 @@
     <!--新增任务信息-->
     <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
         insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time,
-        eleMax,eleMin,volMax,volMin)
+        eleMax,eleMin,volMax,volMin,welder_id)
         values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},
         #{taskInfo.planEndtime},52,#{taskInfo.createTime},#{taskInfo.eleMax},#{taskInfo.eleMin},
-        #{taskInfo.volMax},#{taskInfo.volMin})
+        #{taskInfo.volMax},#{taskInfo.volMin},#{taskInfo.welderId})
     </insert>
 
     <!--通过任务id查询任务信息-->
     <select id="queryTaskInfoById" parameterType="java.lang.Long" resultMap="taskList">
         select task.id,task.task_no,task.grade,
-        task.plan_starttime,task.plan_endtime,
+        task.plan_starttime,task.plan_endtime,task.welder_id,
         task.reality_starttime,task.reality_endtime,task.status,
         task.dept_id,sys_dept.name deptName,sys_dept.parent_id,
         task.eleMax,task.eleMin,task.volMax,task.volMin
