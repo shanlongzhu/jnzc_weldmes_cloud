@@ -11,9 +11,9 @@
             <div class="swipe-middle-con flex">
                 <span>焊工编号：</span>
                 <el-input
-                  readonly
                     style="width:150px"
                     v-model="carNo"
+                    @change="searchInput"
                 ></el-input>
             </div>
         </section>
@@ -159,6 +159,9 @@ export default {
             }
 
             this.getList();
+        },
+        searchInput(v){
+            this.getWelderInfo(v)
         },
         //获取焊工信息
         async getWelderInfo (welderNo) {
