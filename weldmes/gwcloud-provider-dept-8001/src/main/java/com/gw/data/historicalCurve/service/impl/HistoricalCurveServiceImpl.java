@@ -31,9 +31,18 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         Map<String,Object> map = new HashMap<>();
 
-        Date bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
+        Date bigTime = null;
 
-        Date endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
+        Date endTimes = null;
+        if (!ObjectUtils.isEmpty(startTime)){
+
+            bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
+        }
+
+        if (!ObjectUtils.isEmpty(endTime)){
+
+            endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
+        }
 
         List<Date> lDate = new ArrayList<>();
 
