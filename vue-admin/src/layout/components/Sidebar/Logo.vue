@@ -1,13 +1,11 @@
 <template>
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <!-- <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1> -->
+      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link-small flex-c" to="/">
+        <span>T</span>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img src="../../components/WELDMESLogoW.png" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
       </router-link>
     </transition>
   </div>
@@ -48,7 +46,24 @@ export default {
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
-
+  & .sidebar-logo-link-small{
+    position: relative;
+    height: 100%;
+    display: flex!important;;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    & span{
+      font-size: 16px;
+      color: #eee;
+      border:2px solid #aaa;
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      border-radius: 50%;
+    }   
+  }
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;

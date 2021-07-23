@@ -248,7 +248,7 @@
                     min-width="60"
                 >
                     <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNames}}
+                        <span :class="{'green':scope.row.sysDictionary.valueNames=='启用','waring':scope.row.sysDictionary.valueNames=='维修','error':scope.row.sysDictionary.valueNames=='报废'}">{{scope.row.sysDictionary.valueNames}}</span>                        
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -275,7 +275,8 @@
                     prop="gatherNo"
                     label="采集序号"
                     align="left"
-                    min-width="100"
+                    min-width="150"
+                    show-overflow-tooltip
                 >
                     <template slot-scope="scope">
                         {{scope.row.machineGatherInfo.gatherNo}}
@@ -467,6 +468,7 @@
                 >
                     <el-select
                         v-model="ruleForm.gid"
+                        multiple
                         filterable
                         placeholder="请选择"
                         style="width:250px"
@@ -602,7 +604,7 @@ export default {
                 model: '',//设备型号
                 deptId: '',//项目（机构id）
                 isNetwork: 0,//是否联网
-                gid: '',//采集id
+                gid: [],//采集id
                 protocol: '',//通讯协议
                 createTime: '',//入厂时间
                 ipPath: '',//ip
@@ -739,7 +741,9 @@ export default {
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data[0] || {};
+                    this.ruleForm.gid = this.ruleForm.gid.split(',').map(Number);
                     this.changeFirm(this.ruleForm.firm);
+                    this.changeArea(this.ruleForm.area);
                 })
             }
         },
@@ -796,6 +800,7 @@ export default {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
+                        req.gid = req.gid.join(',');
                         const { data, code } = await editWelder(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
@@ -805,6 +810,7 @@ export default {
                     } else {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
+                        req.gid = req.gid.join(',');
                         const { data, code } = await addWelder(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
@@ -839,4 +845,13 @@ export default {
 </script>
 
 <style scoped>
+    .cell span.green{
+        color: rgb(0, 190, 73);
+    }
+    .cell span.waring{
+        color: rgb(224, 183, 0);
+    }
+    .cell span.error{
+        color: #f00;
+    }
 </style>

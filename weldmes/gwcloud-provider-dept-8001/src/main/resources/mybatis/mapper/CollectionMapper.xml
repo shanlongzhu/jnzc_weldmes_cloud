@@ -9,6 +9,7 @@
         <result property="gatherNo" column="gather_no"></result>
         <result property="status" column="status"></result>
         <result property="deptId" column="dept_id"></result>
+        <result property="machineId" column="machine_id"></result>
         <result property="productionDate" column="production_date"></result>
         <result property="ipPath" column="ip_path"></result>
         <result property="macPath" column="mac_path"></result>

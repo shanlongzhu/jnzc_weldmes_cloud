@@ -4,10 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.team.service.TeamService;
+import com.gw.entities.UserLoginInfo;
 import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +30,13 @@ public class TeamController {
     //班组生产数据列表展示
     @GetMapping
     public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,String time1,String time2){
+
         PageHelper.startPage(pn,10);
+
         List<WeldStatisticsData> list=teamService.getList(time1,time2);
+
         PageInfo page=new PageInfo(list,5);
+
         return HttpResult.ok(page);
     }
 
@@ -53,26 +60,26 @@ public class TeamController {
             WeldStatisticsData weldStatistics= list.get(i);
 
             Cell getNameCell=row.createCell(0);
-            getNameCell.setCellValue(weldStatistics.getSysDept().getName());
+            getNameCell.setCellValue(weldStatistics.getDeptName());
 
             Cell WelderCountCell=row.createCell(1);
-            WelderCountCell.setCellValue(weldStatistics.getCount());
+            WelderCountCell.setCellValue(weldStatistics.getAllCount());
 
             Cell cellCount2Cell=row.createCell(2);
-            cellCount2Cell.setCellValue(weldStatistics.getCount2());
+            cellCount2Cell.setCellValue(weldStatistics.getOnOffCount());
 
             Cell count3Cell=row.createCell(3);
-            count3Cell.setCellValue(weldStatistics.getCount3());
+            count3Cell.setCellValue(weldStatistics.getRealWeldOnline());
 
             Cell count4Cell=row.createCell(4);
-            count4Cell.setCellValue(weldStatistics.getCount4());
+            count4Cell.setCellValue(weldStatistics.getNoTaskCount());
 
             Cell getUtilizationCell=row.createCell(5);
-            if(ObjectUtils.isEmpty(weldStatistics.getUtilization())){
-                weldStatistics.setUtilization(0.00);
+            if(ObjectUtils.isEmpty(weldStatistics.getEquipUtilization())){
+                weldStatistics.setEquipUtilization(0.00);
             }
 
-            getUtilizationCell.setCellValue(weldStatistics.getUtilization());
+            getUtilizationCell.setCellValue(weldStatistics.getEquipUtilization());
 
             //设置单元格格式
             CellStyle cellStyle = workbook.createCellStyle();
@@ -80,21 +87,23 @@ public class TeamController {
             getUtilizationCell.setCellStyle(cellStyle);
 
             Cell getCount5Cell=row.createCell(6);
-            getCount5Cell.setCellValue(weldStatistics.getCount5());
+            getCount5Cell.setCellValue(weldStatistics.getTaskCount());
             Cell getTimeCell=row.createCell(7);
-            getTimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getTime()));
+            getTimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getRealWeldTime()));
             Cell getTime2Cell=row.createCell(8);
-            getTime2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getTime2()));
-            Cell getUtilization2Cell=row.createCell(9);
+            getTime2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getOnOffTime()));
 
-            if(ObjectUtils.isEmpty(weldStatistics.getUtilization2())){
-                weldStatistics.setUtilization2(0.00);
-            }
+            Cell getTime3Cell=row.createCell(9);
+            getTime3Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getSupergageTime()));
 
-            CellStyle cellStyle2 = workbook.createCellStyle();
-            cellStyle2.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
-            getUtilization2Cell.setCellStyle(cellStyle2);
-            getUtilization2Cell.setCellValue(weldStatistics.getUtilization2());
+            Cell getStandardPercentageCell=row.createCell(10);
+            getStandardPercentageCell.setCellValue(weldStatistics.getStandardPercentage());
+
+            Cell getMaterialsConsumptionCell=row.createCell(11);
+            getMaterialsConsumptionCell.setCellValue(weldStatistics.getMaterialsConsumption());
+
+            Cell getPowerConsumptionCell=row.createCell(12);
+            getPowerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
         }
         try {
             String fileName= URLEncoder.encode("班组生产数据.xlsx","UTF-8");

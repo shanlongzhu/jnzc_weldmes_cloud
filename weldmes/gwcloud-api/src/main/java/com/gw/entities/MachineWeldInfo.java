@@ -21,7 +21,7 @@ public class MachineWeldInfo implements Serializable {
     private Byte firm;
     private Byte model;
     private long deptId;
-    private long gId;
+    private String gId;
     private long isNetwork;
     private Timestamp productionDate;
     private String ipPath;

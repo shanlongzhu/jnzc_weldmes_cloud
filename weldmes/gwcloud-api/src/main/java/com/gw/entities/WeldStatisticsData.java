@@ -64,6 +64,51 @@ public class WeldStatisticsData implements Serializable {
     private SysDictionary sysDictionary;
 
     /**
+     * 所属班组
+     */
+    private String deptName;
+
+    /**
+     * 设备总数
+     */
+    private Long allCount;
+
+    /**
+     * 开机设备数
+     */
+    private Long onOffCount;
+
+    /**
+     * 实焊设备数
+     */
+    private Long realWeldOnline;
+
+    /**
+     * 未绑定设备数
+     */
+    private Long noTaskCount;
+
+    /**
+     * 设备利用率
+     */
+    private Double equipUtilization;
+
+    /**
+     * 焊接任务数
+     */
+    private Long taskCount;
+
+    /**
+     * 焊接时间
+     */
+    private Long realWeldTime;
+
+    /**
+     * 工作时间
+     */
+    private Long onOffTime;
+
+    /**
      * 超规范时间
      */
     private String supergageTime;
