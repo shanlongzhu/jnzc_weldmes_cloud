@@ -765,6 +765,7 @@ export default {
         },
         //获取焊工
         async getWelder(){
+            this.ruleForm.welderId = "";
             let req = {
                 grade: this.ruleForm.deptId&&this.ruleForm.deptId.length>0?this.ruleForm.deptId.slice(-1).join(''):this.ruleForm.deptId,
                 rate:this.ruleForm.grade
