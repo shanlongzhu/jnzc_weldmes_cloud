@@ -249,7 +249,7 @@
                     min-width="60"
                 >
                     <template slot-scope="scope">
-                        <span :class="{'green':scope.row.sysDictionary.valueNames=='启用','waring':scope.row.sysDictionary.valueNames=='维修','error':scope.row.sysDictionary.valueNames=='报废'}">{{scope.row.sysDictionary.valueNames}}</span>                        
+                        <span :class="{'green':scope.row.sysDictionary.valueNames=='启用','waring':scope.row.sysDictionary.valueNames=='维修','error':scope.row.sysDictionary.valueNames=='报废'}">{{scope.row.sysDictionary.valueNames}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -565,7 +565,7 @@
 </template>
 
 <script>
-import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel,findByIdArea } from '_api/productionEquipment/production'
+import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel, findByIdArea } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 import areaBind from './components/areaBind.vue'
@@ -663,7 +663,7 @@ export default {
             headers: {
                 'Authorization': getToken()
             },
-            loading:false
+            loading: false
         }
     },
 
@@ -672,7 +672,7 @@ export default {
         // 获取班组
         this.getTeamList();
         this.getList();
-        this.getDicFun();        
+        this.getDicFun();
     },
     methods: {
         //获取数据字典
@@ -746,9 +746,13 @@ export default {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data[0] || {};
                     this.ruleForm.gid = this.ruleForm.gid.split(',').map(Number);
-                    this.gatherNos.unshift({id:parseInt(this.ruleForm.gid),gatherNo:this.ruleForm.machineGatherInfo.gatherNo});
-                    this.changeFirm(this.ruleForm.firm);
-                    this.changeArea(this.ruleForm.area);
+                    this.gatherNos.unshift({ id: parseInt(this.ruleForm.gid), gatherNo: this.ruleForm.machineGatherInfo.gatherNo });
+                    if (this.ruleForm.firm) {
+                        this.changeFirm(this.ruleForm.firm);
+                    }
+                    if (this.ruleForm.area) {
+                        this.changeArea(this.ruleForm.area);
+                    }
                 })
             }
         },
@@ -830,10 +834,10 @@ export default {
             })
         },
 
-        async changeArea(id){
-            let {code,data} = await findByIdArea({id});
-            if(code==200){
-                this.straddleArr = data||[]
+        async changeArea (id) {
+            let { code, data } = await findByIdArea({ id });
+            if (code == 200) {
+                this.straddleArr = data || []
             }
         },
 
@@ -850,13 +854,13 @@ export default {
 </script>
 
 <style scoped>
-    .cell span.green{
-        color: rgb(0, 190, 73);
-    }
-    .cell span.waring{
-        color: rgb(224, 183, 0);
-    }
-    .cell span.error{
-        color: #f00;
-    }
+.cell span.green {
+    color: rgb(0, 190, 73);
+}
+.cell span.waring {
+    color: rgb(224, 183, 0);
+}
+.cell span.error {
+    color: #f00;
+}
 </style>
