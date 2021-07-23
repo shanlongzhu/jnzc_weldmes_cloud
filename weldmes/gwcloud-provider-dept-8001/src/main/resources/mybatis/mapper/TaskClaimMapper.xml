@@ -54,4 +54,12 @@
     <insert id="insertTaskClaimInfo" parameterType="com.gw.entities.TaskClaim">
         insert into task_claim(welder_id,task_id,weld_id,claim_time) values (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},#{taskClaimInfo.weldId},NOW())
     </insert>
+
+    <!--根据任务状态查询任务信息-->
+    <select id="selectTaskInfoByStatus" parameterType="int" resultType="com.gw.entities.TaskInfo">
+        select task.task_no taskNo,dictionary.value_name statusStr,task.id,task.task_name taskName,task.dept_id deptId
+        from task_info task
+        left join sys_dictionary dictionary on dictionary.id = task.status
+        where task.status !=41 and task.dept_id = #{deptId}
+    </select>
 </mapper>

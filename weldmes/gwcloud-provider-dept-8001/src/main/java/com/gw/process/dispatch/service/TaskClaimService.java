@@ -5,6 +5,7 @@ import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -26,7 +27,7 @@ public interface TaskClaimService {
      * @Description  根据焊工id查询任务工单信息列表
      * @Params welderId 焊工id
      */
-    public List<TaskInfo> getTaskInfoByWelderId(Long welderId);
+    public Set<TaskInfo> getTaskInfoByWelderId(Long welderId);
 
     /**
      * @Date 2021/7/22 14:36

@@ -43,4 +43,12 @@ public interface TaskClaimDao {
      * @Params taskClaimInfo 焊机任务绑定信息
      */
     public void insertTaskClaimInfo(@Param("taskClaimInfo") TaskClaim taskClaimInfo);
+
+    /**
+     * @Date 2021/7/23 19:34
+     * @Description  根据任务状态查询任务信息
+     * @Params deptId 焊工部门id
+     */
+    public List<TaskInfo> selectTaskInfoByStatus(@Param("deptId")Long deptId);
+
 }

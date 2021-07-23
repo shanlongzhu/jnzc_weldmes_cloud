@@ -1,17 +1,18 @@
 package com.gw.process.dispatch.service.impl;
 
 import com.gw.common.DateTimeUtil;
-import com.gw.entities.TaskClaim;
-import com.gw.entities.TaskInfo;
-import com.gw.entities.WeldClaimTaskInfo;
+import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
+import com.gw.process.solderer.dao.SoldererDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -26,6 +27,9 @@ public class TaskClaimServiceImpl implements TaskClaimService {
 
     @Autowired
     DispatchDao dispatchDao;
+
+    @Autowired
+    SoldererDao soldererDao;
 
     /**
      * @Date 2021/7/19 14:50
@@ -55,11 +59,22 @@ public class TaskClaimServiceImpl implements TaskClaimService {
      * @Params welderId 焊工id
      */
     @Override
-    public List<TaskInfo> getTaskInfoByWelderId(Long welderId) {
+    public Set<TaskInfo> getTaskInfoByWelderId(Long welderId) {
 
         List<TaskInfo> list = taskClaimDao.selectTaskInfoByWelderId(welderId);
 
-        return list;
+        //根据焊工id查询焊工信息   获取焊工部门id
+        List<WelderInfo> welders = soldererDao.getById(welderId);
+
+        //未领取的任务信息
+        List<TaskInfo> temp = taskClaimDao.selectTaskInfoByStatus(welders.get(0).getDeptId());
+
+        list.addAll(temp);
+
+        //去重
+        Set<TaskInfo> set = new HashSet<>(list);
+
+        return set;
     }
 
     /**

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author zhanghan
@@ -45,7 +46,7 @@ public class TaskClaimController {
     @RequestMapping(value = "taskClaim/getTaskInfoByWelderId")
     public HttpResult getTaskInfoByWelderId(Long welderId){
 
-        List<TaskInfo> list = taskClaimService.getTaskInfoByWelderId(welderId);
+        Set<TaskInfo> list = taskClaimService.getTaskInfoByWelderId(welderId);
 
         return HttpResult.ok(list);
     }
