@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -156,7 +157,7 @@ public class WelderController {
             Cell ipPathCell=row.createCell(9);
             ipPathCell.setCellValue("");
             Cell getValueNamesssCell=row.createCell(10);
-            getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamessss());
+            getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamesss());
 
         }
         try {
@@ -199,7 +200,6 @@ public class WelderController {
                     //拿到单元格的 value值
                     Object value= ExcelUtils.getValue(cell);
                     obs[j]=value;
-
                 }
                 //把从excel中拿出来的数据封装到 对象中
                 MachineWeldInfo machineWeldInfo=new MachineWeldInfo();
@@ -224,8 +224,18 @@ public class WelderController {
                     machineWeldInfo.setIsNetwork(1);
                 }
                 String machineNo=(String) obs[7];
-                Long gId=welderService.getGid(machineNo);
-                machineWeldInfo.setGId(gId);
+                String [] machineNos=machineNo.split(",");
+                List<String>list=new ArrayList<>();
+                for (int j = 0; j <machineNos.length ; j++) {
+                    String a = String.valueOf(welderService.getGid(machineNos[j]));
+                    list.add(a);
+                }
+                StringBuffer sb = new StringBuffer();
+                for(int k = 0; k < list.size(); k++){
+                    sb. append(list.get(k)).append(",");
+                }
+               String s = sb.toString().substring(0,sb.length()-1);
+                machineWeldInfo.setGId(s);
                 String model=(String) obs[10];
                 Byte modelId=welderService.getModelId(model);
                 machineWeldInfo.setModel(modelId);

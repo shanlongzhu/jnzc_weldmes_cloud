@@ -36,24 +36,41 @@
         <association property="machineGatherInfo" javaType="com.gw.entities.MachineGatherInfo">
             <id property="id" column="id"></id>
             <result property="gatherNo" column="gather_no"></result>
+            <result property="machineId" column="machine_id"></result>
         </association>
     </resultMap>
 
     <select id="getList" resultMap="welder">
-        select m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,
-	           m.`status`,m.model,m.firm,m.is_network,d.value_name,d1.value_name value_names,
-	           d2.value_name value_namess,d3.value_name value_namesss,s.`name`,
-	           g.gather_no,m.ip_path,d4.value_name area,d5.value_name bay,
-	           d.id,s.id,d1.id,d2.id
-        from machine_weld_info m
-	    left join sys_dictionary d  on m.type = d.id
-	    left join sys_dictionary d1 on m.`status` = d1.id
-	    left join sys_dictionary d2 on m.firm=d2.id
-	    left join sys_dictionary d3 on m.model=d3.id
-        left join sys_dictionary d4 on m.area=d4.id
-        left join sys_dictionary d5 on m.bay=d5.id
-	    left join sys_dept s on m.dept_id=s.id
-	    left join machine_gather_info g on m.g_id=g.id
+        SELECT
+        m.id,
+        m.machine_no,
+        m.create_time,
+        m.type,
+        m.dept_id,
+        m.g_id,
+        m.`status`,
+        m.model,
+        m.firm,
+        m.is_network,
+        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
+        d.value_name,
+        d1.value_name value_names,
+        d2.value_name value_namess,
+        d3.value_name value_namesss,
+        s.`name`,
+        m.ip_path,
+        d4.value_name area,
+        d5.value_name bay
+        from
+        machine_weld_info m
+        left join sys_dictionary d on m.type = d.id
+        left join sys_dictionary d1 on m.`status` = d1.id
+        left join sys_dictionary d2 on m.firm = d2.id
+        left join sys_dictionary d3 on m.model = d3.id
+        left join sys_dictionary d4 on m.area = d4.id
+        left join sys_dictionary d5 on m.bay = d5.id
+        left join sys_dept s on m.dept_id = s.id
+        LEFT JOIN machine_gather_info ON FIND_IN_SET( machine_gather_info.id,m.g_id )
         <where>
             <if test="machineNo != null and machineNo != ''">
                 and  m.machine_no = #{machineNo}
@@ -89,6 +106,8 @@
                 and  bay = #{bay}
             </if>
         </where>
+        group by
+        m.machine_no
     </select>
 
     <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
@@ -99,11 +118,40 @@
     </insert>
 
 
-    <select id="getById" resultType="com.gw.entities.MachineWeldInfo">
-        select
-            id,machine_no,`type`,dept_id,firm,g_id,model,is_network,status,create_time,ip_path,area,bay
-        from machine_weld_info
-        where id =#{id}
+    <select id="getById" resultMap="welder">
+      SELECT
+        m.id,
+        m.machine_no,
+        m.create_time,
+        m.type,
+        m.dept_id,
+        m.g_id,
+        m.`status`,
+        m.model,
+        m.firm,
+        m.is_network,
+        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
+        d.value_name,
+        d1.value_name value_names,
+        d2.value_name value_namess,
+        d3.value_name value_namesss,
+        s.`name`,
+        m.ip_path,
+        d4.value_name area,
+        d5.value_name bay
+        from
+        machine_weld_info m
+        left join sys_dictionary d on m.type = d.id
+        left join sys_dictionary d1 on m.`status` = d1.id
+        left join sys_dictionary d2 on m.firm = d2.id
+        left join sys_dictionary d3 on m.model = d3.id
+        left join sys_dictionary d4 on m.area = d4.id
+        left join sys_dictionary d5 on m.bay = d5.id
+        left join sys_dept s on m.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
+		where m.id=#{id}
+		group by
+        m.machine_no
     </select>
 
     <update id="updateWelder" parameterType="com.gw.entities.MachineWeldInfo">
