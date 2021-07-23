@@ -220,7 +220,7 @@ export default {
             surIndex: 0,
             disabledDate:{
               disabledDate(time){
-                return time.getTime() > Date.now();
+                return time.getTime() > Date.now()+3600*1000*24
               }
             }
 

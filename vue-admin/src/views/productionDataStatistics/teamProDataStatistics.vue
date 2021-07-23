@@ -122,6 +122,12 @@
                     min-width="170"
                 />
                 <el-table-column
+                    prop="normalTime"
+                    label="正常焊接时间"
+                    align="left"
+                    min-width="170"
+                />       
+                <el-table-column
                     prop="weldingEfficiency"
                     label="焊接效率(%)"
                     align="left"
@@ -150,7 +156,7 @@
                     label="电能消耗"
                     align="left"
                     min-width="170"
-                />                
+                />                             
             </el-table>
         </div>
         <el-pagination
@@ -189,7 +195,7 @@ export default {
             },
             disabledDate:{
               disabledDate(time){
-                return time.getTime() > Date.now();
+                return time.getTime() > Date.now()+3600*1000*24
               }
             }
         }

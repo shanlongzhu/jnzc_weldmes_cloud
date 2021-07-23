@@ -746,6 +746,7 @@ export default {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data[0] || {};
                     this.ruleForm.gid = this.ruleForm.gid.split(',').map(Number);
+                    this.gatherNos.unshift({id:parseInt(this.ruleForm.gid),gatherNo:this.ruleForm.machineGatherInfo.gatherNo});
                     this.changeFirm(this.ruleForm.firm);
                     this.changeArea(this.ruleForm.area);
                 })
