@@ -69,6 +69,7 @@
 		COUNT(DISTINCT s.machineId)/COUNT(DISTINCT m.id)*100 equipUtilization,
 		SUM(s3.weldDuration) supergageTime,
 		SUM(s1.weldDuration)-SUM(s3.weldDuration) normalTime,
+		(SUM(s1.weldDuration)-SUM(s3.weldDuration))/SUM(s.weldDuration) weldingEfficiency,
 		(SUM(s1.weldDuration)-SUM(s3.weldDuration))/SUM(s1.weldDuration)*100 standardPercentage,
 		sum(s.wireFeedRate*s.weldDuration)/600 materialsConsumption,
 		sum((s.electricity*s.voltage*s.weldDuration)/3600/1000)+(s.weldDuration-s1.weldDuration)/36000 powerConsumption
