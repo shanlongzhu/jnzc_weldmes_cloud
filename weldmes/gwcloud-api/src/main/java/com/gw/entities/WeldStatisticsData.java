@@ -101,12 +101,12 @@ public class WeldStatisticsData implements Serializable {
     /**
      * 焊接时间
      */
-    private Long realWeldTime;
+    private String realWeldTime;
 
     /**
      * 工作时间
      */
-    private Long onOffTime;
+    private String onOffTime;
 
     /**
      * 超规范时间
@@ -136,5 +136,5 @@ public class WeldStatisticsData implements Serializable {
     /**
      * 正常时间
      */
-    private Double normalTime;
+    private String normalTime;
 }
