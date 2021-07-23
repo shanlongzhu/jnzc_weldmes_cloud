@@ -15,8 +15,10 @@
         <result property="isNetwork" column="is_network"></result>
         <result property="createTime" column="create_time"></result>
         <result property="ipPath" column="ip_path"></result>
-        <result property="areaStr" column="area"></result>
-        <result property="bayStr" column="bay"></result>
+        <result property="areaStr" column="areaStr"></result>
+        <result property="bayStr" column="bayStr"></result>
+        <result property="area" column="area"></result>
+        <result property="bay" column="bay"></result>
         <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
             <id property="id" column="id"></id>
             <result property="type" column="type"></result>
@@ -36,7 +38,6 @@
         <association property="machineGatherInfo" javaType="com.gw.entities.MachineGatherInfo">
             <id property="id" column="id"></id>
             <result property="gatherNo" column="gather_no"></result>
-            <result property="machineId" column="machine_id"></result>
         </association>
     </resultMap>
 
@@ -59,8 +60,10 @@
         d3.value_name value_namesss,
         s.`name`,
         m.ip_path,
-        d4.value_name area,
-        d5.value_name bay
+        m.area,
+        m.bay,
+        d4.value_name areaStr,
+        d5.value_name bayStr
         from
         machine_weld_info m
         left join sys_dictionary d on m.type = d.id
@@ -137,8 +140,10 @@
         d3.value_name value_namesss,
         s.`name`,
         m.ip_path,
-        d4.value_name area,
-        d5.value_name bay
+        m.area,
+		m.bay,
+        d4.value_name areaStr,
+        d5.value_name bayStr
         from
         machine_weld_info m
         left join sys_dictionary d on m.type = d.id
