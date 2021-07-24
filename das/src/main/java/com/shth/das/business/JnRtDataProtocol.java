@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.shth.das.common.CommonDbData;
+import com.shth.das.common.DataInitialization;
 import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
@@ -20,7 +21,6 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -34,9 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class JnRtDataProtocol {
-
-    @Value("${dataInsertForNumber.otc}")
-    private int num;
 
     /**
      * 数据累积后插入到数据库
@@ -142,7 +139,7 @@ public class JnRtDataProtocol {
                 if (CommonUtils.isNotEmpty(list)) {
                     synchronized (JN_RT_DATA_LIST) {
                         JN_RT_DATA_LIST.addAll(list);
-                        if (JN_RT_DATA_LIST.size() >= num) {
+                        if (JN_RT_DATA_LIST.size() >= DataInitialization.otcNumber) {
                             RtDataService rtDataService = BeanContext.getBean(RtDataService.class);
                             rtDataService.insertRtDataList(JN_RT_DATA_LIST);
                             JN_RT_DATA_LIST.clear();

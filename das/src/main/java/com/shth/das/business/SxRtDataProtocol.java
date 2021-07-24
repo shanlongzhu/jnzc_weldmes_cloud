@@ -2,6 +2,7 @@ package com.shth.das.business;
 
 import com.alibaba.fastjson.JSON;
 import com.shth.das.common.CommonDbData;
+import com.shth.das.common.DataInitialization;
 import com.shth.das.common.SxVerificationCode;
 import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
@@ -18,7 +19,6 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
@@ -33,9 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"ALL"})
 @Slf4j
 public class SxRtDataProtocol {
-
-    @Value("${dataInsertForNumber.sx}")
-    private int num;
 
     /**
      * 松下实时数据累积后插入数据库
@@ -220,7 +217,7 @@ public class SxRtDataProtocol {
                 }
                 synchronized (SX_RT_DATA_LIST) {
                     SX_RT_DATA_LIST.add(sxRtDataDb);
-                    if (SX_RT_DATA_LIST.size() >= num) {
+                    if (SX_RT_DATA_LIST.size() >= DataInitialization.sxNumber) {
                         //调用接口，松下实时数据批量存入
                         SxRtDataService sxRtDataService = BeanContext.getBean(SxRtDataService.class);
                         sxRtDataService.insertSxRtDataList(SX_RT_DATA_LIST);

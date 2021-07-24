@@ -1,5 +1,8 @@
 package com.shth.das.common;
 
+/**
+ * 松下设备协议的一些固定编码
+ */
 public class SxVerificationCode {
 
     /**
