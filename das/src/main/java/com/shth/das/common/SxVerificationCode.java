@@ -47,4 +47,9 @@ public class SxVerificationCode {
      */
     public static final String SX_CHANNEL_PARAM_DOWNLOAD_HEAD = "FE5AA5006E0001404100900760000000000000950211";
 
+    /**
+     * 松下AT3系列参数下载头部固定数据
+     */
+    public static final String SX_AT3_PARAM_DOWNLOAD_HEAD = "FE5AA5002E0001404100900760000000000000950211";
+
 }

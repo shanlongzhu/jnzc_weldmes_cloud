@@ -38,27 +38,27 @@ public enum UpTopicEnum {
      */
     sxStatusData,
     /**
-     * 松下工艺下发回复
+     * 松下GL5系列工艺下发回复
      */
     sxProcessReturn,
     /**
-     * 松下焊接通道设定回复/读取回复
+     * 松下GL5系列焊接通道设定回复/读取回复
      */
     sxWeldChannelSetReturn,
     /**
-     * 松下CO2工艺索取回复
+     * 松下GL5系列CO2工艺索取回复
      */
     sxCO2ProcessClaimReturn,
     /**
-     * 松下TIG工艺索取回复
+     * 松下GL5系列松下TIG工艺索取回复
      */
     sxTIGProcessClaimReturn,
     /**
-     * 松下工艺索取回复(无数据)
+     * 松下GL5系列松下工艺索取回复(无数据)
      */
     sxProcessClaimReturn,
     /**
-     * 松下工艺删除回复
+     * 松下GL5系列松下工艺删除回复
      */
     sxProcessDeleteReturn,
     /**
@@ -69,5 +69,10 @@ public enum UpTopicEnum {
      * 松下FR2系列通道参数查询（有参数）
      */
     sxChannelParamReplyHave,
+
+    /**
+     * 松下AT3系列查询回复（有参数）
+     */
+    sxAt3ParamQueryReturn,
 
 }

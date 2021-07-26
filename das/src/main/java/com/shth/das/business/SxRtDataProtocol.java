@@ -145,6 +145,11 @@ public class SxRtDataProtocol {
                 SxChannelParamReplyHave sxChannelParamReplyHave = sxChannelParamReplyHaveAnalysis(clientIp, str);
                 map.put("SxChannelParamReplyHave", sxChannelParamReplyHave);
             }
+            //松下AT3系列查询回复（有参数）
+            if (str.length() == 92 && "FE5AA5002E".equals(str.substring(0, 10))) {
+                At3ParamQueryReturn at3ParamQueryReturn = at3ParamQueryReturnAnalysis(clientIp, str);
+                map.put("At3ParamQueryReturn", at3ParamQueryReturn);
+            }
         } catch (Exception e) {
             log.error("sxRtDataDecoderManage Exception:" + e.getMessage());
         }
@@ -295,7 +300,7 @@ public class SxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxWeldChannelSetReturn.name(), message, 0);
                 });
             }
-            //松下FR2通道参数查询（无参数）、下载、删除回复
+            //松下FR2通道参数查询回复（无参数）、下载回复、删除回复
             if (map.containsKey("SxChannelParamReply")) {
                 SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
                 //实体类转JSON字符串
@@ -313,6 +318,16 @@ public class SxRtDataProtocol {
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReplyHave.name(), message, 0);
+                });
+            }
+            //松下AT3系列查询回复（有参数）
+            if (map.containsKey("At3ParamQueryReturn")) {
+                At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
+                //实体类转JSON字符串
+                String message = JSON.toJSONString(at3ParamQueryReturn);
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxAt3ParamQueryReturn.name(), message, 0);
                 });
             }
         }
@@ -1176,6 +1191,35 @@ public class SxRtDataProtocol {
     }
 
     /**
+     * 松下AT3系列查询回复（有参数）
+     *
+     * @param clientIp 焊机IP
+     * @param str      16进制字符串
+     * @return At3ParamQueryReturn
+     */
+    public static At3ParamQueryReturn at3ParamQueryReturnAnalysis(String clientIp, String str) {
+        if (CommonUtils.isNotEmpty(str)) {
+            At3ParamQueryReturn at3ParamQueryReturn = new At3ParamQueryReturn();
+            at3ParamQueryReturn.setWeldIp(clientIp);
+            at3ParamQueryReturn.setCommand(Integer.valueOf(str.substring(44, 46), 16));
+            at3ParamQueryReturn.setChannel(Integer.valueOf(str.substring(46, 48), 16).toString());
+            at3ParamQueryReturn.setChannelFlag(Integer.valueOf(str.substring(50, 52), 16));
+            at3ParamQueryReturn.setPresetEleMax(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));
+            at3ParamQueryReturn.setPresetVolMax(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)));
+            at3ParamQueryReturn.setPresetEleMin(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));
+            at3ParamQueryReturn.setPresetVolMin(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)));
+            at3ParamQueryReturn.setEleAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));
+            at3ParamQueryReturn.setVolAlarmMax(BigDecimal.valueOf(Long.valueOf(str.substring(72, 76), 16)));
+            at3ParamQueryReturn.setEleAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(76, 80), 16)));
+            at3ParamQueryReturn.setVolAlarmMin(BigDecimal.valueOf(Long.valueOf(str.substring(80, 84), 16)));
+            at3ParamQueryReturn.setAlarmDelayTime(BigDecimal.valueOf(Long.valueOf(str.substring(84, 86), 16)));
+            at3ParamQueryReturn.setAlarmHaltTime(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)));
+            return at3ParamQueryReturn;
+        }
+        return null;
+    }
+
+    /**
      * 松下设备关机数据处理
      *
      * @param clientIp 设备IP
@@ -1623,6 +1667,38 @@ public class SxRtDataProtocol {
                     initialEleAlarmMax + initialVolAlarmMax + initialEleAlarmMin + initialVolAlarmMin + arcEleAlarmMax +
                     arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime + alarmHaltTime + reserved2 +
                     alarmFlag + reserved3;
+            str = str.toUpperCase();
+            return str;
+        }
+        return null;
+    }
+
+    /**
+     * 松下AT3系列参数下载协议拼接
+     *
+     * @param at3ParamDownload 实体类
+     * @return 16进制字符串
+     */
+    public static String At3ParamDownloadProtocol(At3ParamDownload at3ParamDownload) {
+        if (null != at3ParamDownload) {
+            String head = SxVerificationCode.SX_AT3_PARAM_DOWNLOAD_HEAD;
+            String command = CommonUtils.lengthJoint(at3ParamDownload.getCommand(), 2);
+            String channel = CommonUtils.lengthJoint(at3ParamDownload.getChannel(), 2);
+            String reserved = "00";
+            String channelFlag = CommonUtils.lengthJoint(at3ParamDownload.getChannelFlag(), 2);
+            String presetEleMax = CommonUtils.lengthJoint(at3ParamDownload.getPresetEleMax().intValue(), 4);
+            String presetVolMax = CommonUtils.lengthJoint(at3ParamDownload.getPresetVolMax().intValue(), 4);
+            String presetEleMin = CommonUtils.lengthJoint(at3ParamDownload.getPresetEleMin().intValue(), 4);
+            String presetVolMin = CommonUtils.lengthJoint(at3ParamDownload.getPresetVolMin().intValue(), 4);
+            String eleAlarmMax = CommonUtils.lengthJoint(at3ParamDownload.getEleAlarmMax().intValue(), 4);
+            String volAlarmMax = CommonUtils.lengthJoint(at3ParamDownload.getVolAlarmMax().intValue(), 4);
+            String eleAlarmMin = CommonUtils.lengthJoint(at3ParamDownload.getEleAlarmMin().intValue(), 4);
+            String volAlarmMin = CommonUtils.lengthJoint(at3ParamDownload.getVolAlarmMin().intValue(), 4);
+            String alarmDelayTime = CommonUtils.lengthJoint(at3ParamDownload.getAlarmDelayTime().intValue(), 2);
+            String alarmHaltTime = CommonUtils.lengthJoint(at3ParamDownload.getAlarmHaltTime().intValue(), 2);
+            String reserved1 = "0000";
+            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
+                    presetVolMin + eleAlarmMax + volAlarmMax + eleAlarmMin + volAlarmMin + alarmDelayTime + alarmHaltTime + reserved1;
             str = str.toUpperCase();
             return str;
         }

@@ -71,11 +71,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == DataInitialization.otcPort) {
-            jnRtDataProtocol.jnRtDataManage(msg);
+            this.jnRtDataProtocol.jnRtDataManage(msg);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == DataInitialization.sxPort) {
-            sxRtDataProtocol.sxRtDataManage(msg);
+            this.sxRtDataProtocol.sxRtDataManage(msg);
         }
         ctx.flush();
     }
