@@ -1,9 +1,10 @@
 package com.gw.data.person.service;
 
 import com.gw.entities.RealtimeData;
+import com.gw.entities.WeldStatisticsData;
 
 import java.util.List;
 
 public interface PersonService {
-    List<RealtimeData> getList(String time1, String time2);
+    List<WeldStatisticsData> getList(String time1, String time2);
 }

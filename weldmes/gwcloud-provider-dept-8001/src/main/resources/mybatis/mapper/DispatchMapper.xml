@@ -120,7 +120,7 @@
     </select>
 
     <!--新增任务信息-->
-    <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
+     <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
         insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time,
         eleMax,eleMin,volMax,volMin,welder_id)
         values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},
