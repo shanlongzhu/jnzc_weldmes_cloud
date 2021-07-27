@@ -151,10 +151,12 @@ public class SysLogAspect {
         sysLog.setCreateTime(createTime);
 
 
+        //获取系统接口路径信息列表
         List<ApiInfo> apiInfos = sysLogDao.selectApiInfos();
 
         for (ApiInfo apiInfo : apiInfos) {
 
+            //调用接口路径与接口信息列表进行匹配
             if(apiInfo.getApiName().equals(interfaceName)){
 
                 //菜单模块
