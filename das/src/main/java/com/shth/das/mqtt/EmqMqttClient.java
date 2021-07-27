@@ -103,6 +103,8 @@ public class EmqMqttClient {
         subTopic(DownTopicEnum.sxChannelParamQuery.name());
         //松下FR2系列通道参数下载
         subTopic(DownTopicEnum.sxChannelParamDownload.name());
+        //松下AT3系列参数下载
+        subTopic(DownTopicEnum.sxAt3ParamDownload.name());
     }
 
     /**

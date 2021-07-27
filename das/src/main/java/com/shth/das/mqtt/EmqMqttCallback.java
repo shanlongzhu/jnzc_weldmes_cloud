@@ -68,7 +68,7 @@ public class EmqMqttCallback implements MqttCallback {
     @SuppressWarnings("AlibabaMethodTooLong")
     private void messageManage(String topic, String message) {
         try {
-            //工艺下发主题匹配下发规范模板进行解析
+            //OTC工艺下发主题匹配下发规范模板进行解析
             if (DownTopicEnum.processIssue.name().equals(topic)) {
                 //匹配下发规范模板
                 List<JNProcessIssue> list = JSON.parseArray(message, JNProcessIssue.class);
@@ -82,7 +82,7 @@ public class EmqMqttCallback implements MqttCallback {
                     }
                 }
             }
-            //工艺索取主题匹配索取规范模板解析
+            //OTC工艺索取主题匹配索取规范模板解析
             if (DownTopicEnum.processClaim.name().equals(topic)) {
                 JNProcessClaim jnProcessClaim = JSON.parseObject(message, JNProcessClaim.class);
                 if (null != jnProcessClaim) {
@@ -93,7 +93,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(clientIp, str, "----->OTC工艺索取成功", topic);
                 }
             }
-            //密码下发
+            //OTC密码下发
             if (DownTopicEnum.passwordIssue.name().equals(topic)) {
                 JNPasswordIssue jnPasswordIssue = JSON.parseObject(message, JNPasswordIssue.class);
                 if (null != jnPasswordIssue) {
@@ -104,7 +104,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(clientIp, str, "----->OTC密码下发成功", topic);
                 }
             }
-            //控制命令下发
+            //OTC控制命令下发
             if (DownTopicEnum.commandIssue.name().equals(topic)) {
                 JNCommandIssue jnCommandIssue = JSON.parseObject(message, JNCommandIssue.class);
                 if (null != jnCommandIssue) {
@@ -115,7 +115,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(clientIp, str, "----->OTC控制命令下发成功", topic);
                 }
             }
-            //松下CO2工艺下发
+            //松下GL5系列CO2工艺下发
             if (DownTopicEnum.sxCo2ProcessIssue.name().equals(topic)) {
                 SxCO2ProcessIssue sxCo2ProcessIssue = JSON.parseObject(message, SxCO2ProcessIssue.class);
                 if (null != sxCo2ProcessIssue) {
@@ -124,7 +124,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(weldIp, str, "----->松下CO2工艺下发成功", topic);
                 }
             }
-            //松下TIG工艺下发
+            //松下GL5系列TIG工艺下发
             if (DownTopicEnum.sxTigProcessIssue.name().equals(topic)) {
                 SxTIGProcessIssue sxTigProcessIssue = JSON.parseObject(message, SxTIGProcessIssue.class);
                 if (null != sxTigProcessIssue) {
@@ -133,7 +133,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(weldIp, str, "----->松下TIG工艺下发成功", topic);
                 }
             }
-            //松下焊机通道设定/读取
+            //松下GL5系列焊机通道设定/读取
             if (DownTopicEnum.sxWeldChannelSet.name().equals(topic)) {
                 SxWeldChannelSetting sxWeldChannelSetting = JSON.parseObject(message, SxWeldChannelSetting.class);
                 if (null != sxWeldChannelSetting) {
@@ -142,7 +142,7 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(weldIp, str, "----->松下焊机通道设定/读取成功", topic);
                 }
             }
-            //松下工艺索取/删除
+            //松下GL5系列工艺索取/删除
             if (DownTopicEnum.sxProcessClaim.name().equals(topic)) {
                 SxProcessClaim sxProcessClaim = JSON.parseObject(message, SxProcessClaim.class);
                 if (null != sxProcessClaim) {
@@ -195,7 +195,7 @@ public class EmqMqttCallback implements MqttCallback {
                     }
                 }
             }
-            //FR2系列通道参数查询/删除
+            //松下FR2系列通道参数查询/删除
             if (DownTopicEnum.sxChannelParamQuery.name().equals(topic)) {
                 SxChannelParamQuery sxChannelParamQuery = JSON.parseObject(message, SxChannelParamQuery.class);
                 if (null != sxChannelParamQuery) {
@@ -204,13 +204,22 @@ public class EmqMqttCallback implements MqttCallback {
                     channelWrite(weldIp, str, "----->FR2系列通道参数查询/删除成功", topic);
                 }
             }
-            //松下FR2系列通道参数下载
+            //松下松下FR2系列通道参数下载
             if (DownTopicEnum.sxChannelParamDownload.name().equals(topic)) {
                 SxChannelParamReplyHave channelParamReplyHave = JSON.parseObject(message, SxChannelParamReplyHave.class);
                 if (null != channelParamReplyHave) {
                     String weldIp = channelParamReplyHave.getWeldIp();
                     String str = SxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
                     channelWrite(weldIp, str, "----->松下FR2系列通道参数下载成功", topic);
+                }
+            }
+            //松下AT3系列参数下载
+            if (DownTopicEnum.sxAt3ParamDownload.name().equals(topic)) {
+                At3ParamDownload at3ParamDownload = JSON.parseObject(message, At3ParamDownload.class);
+                if (null != at3ParamDownload) {
+                    String weldIp = at3ParamDownload.getWeldIp();
+                    String str = SxRtDataProtocol.At3ParamDownloadProtocol(at3ParamDownload);
+                    channelWrite(weldIp, str, "----->松下AT3系列参数下载成功", topic);
                 }
             }
         } catch (Exception e) {
