@@ -34,6 +34,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
         Date bigTime = null;
 
         Date endTimes = null;
+        Calendar calEnd = Calendar.getInstance();
         if (!ObjectUtils.isEmpty(startTime)){
 
             bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
@@ -42,6 +43,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
         if (!ObjectUtils.isEmpty(endTime)){
 
             endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
+            calEnd.setTime(endTimes);
         }
 
         List<Date> lDate = new ArrayList<>();
@@ -52,15 +54,14 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
         calBegin.setTime(bigTime);
 
-        Calendar calEnd = Calendar.getInstance();
+        if(!ObjectUtils.isEmpty(endTimes)){
 
-        calEnd.setTime(endTimes);
+            while (endTimes.after(calBegin.getTime())) {
 
-        while (endTimes.after(calBegin.getTime())) {
+                calBegin.add(Calendar.DAY_OF_MONTH, 1);
 
-            calBegin.add(Calendar.DAY_OF_MONTH, 1);
-
-            lDate.add(calBegin.getTime());
+                lDate.add(calBegin.getTime());
+            }
         }
 
         List<TableInfo> tableNames = new ArrayList<>();
