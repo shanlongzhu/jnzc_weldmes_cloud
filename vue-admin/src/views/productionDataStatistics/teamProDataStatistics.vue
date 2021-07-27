@@ -48,6 +48,7 @@
                 :loading="loading"
                 highlight-current-row
                 auto-resize
+                @cell-click="cellClick"
             >
                 <vxe-table-column
                     type="seq"
@@ -83,14 +84,6 @@
                     title="未绑定设备数"
                     width="100"
                 >
-                    <template #default={row}>
-                        <span v-if="!row.noTaskCount&&row.noTaskCount==0">—</span>
-                        <span
-                            v-else
-                            @click="viewDetail(row)"
-                            class="cur c-blue"
-                        >查看</span>
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="equipUtilization"
@@ -247,6 +240,11 @@ export default {
         viewDetail (row) {
             this.dialogVisible = true;
             this.noTaskModelList = row.noTaskMachineDetail.split(',') || []
+        },
+        cellClick({column,row}){
+            if(column.title=="未绑定设备数"&&row.noTaskCount!=0){
+                this.viewDetail(row);
+            }
         }
 
     }

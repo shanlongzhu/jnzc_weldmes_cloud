@@ -155,11 +155,20 @@ aside {
 .mt10{
   margin-top:10px;
 }
+.mr10{
+  margin-right: 10px;
+}
 .tc{
   text-align: center;
 }
 .tr{
   text-align: right;
+}
+.c-blue{
+  color:#1890ff
+}
+.cur{
+  cursor: pointer;
 }
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
