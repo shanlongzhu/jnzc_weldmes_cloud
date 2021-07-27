@@ -42,6 +42,12 @@ public class TeamServiceImpl implements TeamService {
         //获取到当前登录用户信息
         UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
 
+        if(ObjectUtils.isEmpty(subject.getDeptId())){
+
+            //部门id为空
+            return null;
+        }
+
         //获取到当前用户部门id
         Long deptId = subject.getDeptId();
 
