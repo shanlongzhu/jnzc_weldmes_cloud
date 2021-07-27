@@ -105,8 +105,8 @@ public class TeamController {
             Cell getPowerConsumptionCell=row.createCell(12);
             getPowerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
         }
-        try {
-            String fileName= URLEncoder.encode("班组生产数据.xlsx","UTF-8");
+        try { String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
+            String fileName= URLEncoder.encode("班组生产数据"+time+".xlsx","UTF-8");
             response.setContentType("application/octet-stream");
             response.setHeader("content-disposition","attachment;filename="+fileName);
             response.setHeader("filename",fileName);
