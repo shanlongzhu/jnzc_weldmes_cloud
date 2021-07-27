@@ -28,8 +28,17 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<WeldStatisticsData> getList(String time1, String time2) {
 
-        //如果传入时间有一个为空
-        if (ObjectUtils.isEmpty(time1) || ObjectUtils.isEmpty(time1)){
+        //如果传入时间 time1 为空
+        if (ObjectUtils.isEmpty(time1)){
+
+            List<WeldStatisticsData> list = new ArrayList<>();
+
+            return list;
+
+        }
+
+        //如果传入 时间 均为空
+        if (ObjectUtils.isEmpty(time1) && ObjectUtils.isEmpty(time2)){
 
             List<WeldStatisticsData> list = new ArrayList<>();
 
