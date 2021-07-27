@@ -60,59 +60,37 @@ public class TeamServiceImpl implements TeamService {
         //获取到当前用户部门id
         Long deptId = subject.getDeptId();
 
+        //获取当前用户 所在部门的  下一级所有部门信息
         List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(deptId);
 
-        //判断是否为班组层级的id
-        if(!ObjectUtils.isEmpty(sysDeptInfos)){
+        List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
-            List<SysDept> list = new ArrayList<>();
+        do{
+
+            List<SysDept> nextSysDeptInfos = new ArrayList<>();
 
             for (SysDept sysDeptInfo : sysDeptInfos) {
 
-                //获取班组层级id列表
+                //获取 当前用户所在部门 的 下级部门
                 List<SysDept> sysDeptList = sysDeptDao.selectDeptInfosByParentId(sysDeptInfo.getId());
 
-                list.addAll(sysDeptList);
+                nextSysDeptInfos.addAll(sysDeptList);
             }
 
-            if(!ObjectUtils.isEmpty(list)){
 
-                List<SysDept> temp = new ArrayList<>();
-                for (SysDept sysDeptTemp : list) {
+            if (ObjectUtils.isEmpty(nextSysDeptInfos)){
 
-                    //获取班组层级id列表
-                    List<SysDept> sysDeptListTemp = sysDeptDao.selectDeptInfosByParentId(sysDeptTemp.getId());
-
-                    temp.addAll(sysDeptListTemp);
-                }
-
-                if(!ObjectUtils.isEmpty(temp)){
-
-                    //执行班组生产数据报表查询
-                    List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,temp);
-
-                    return weldStatisticsDataList;
-                }
-
-                //用户部门id为制造部层级
-                List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,list);
+                //执行班组生产数据报表查询   处理 班组层级 的部门信息
+                weldStatisticsDataList = getGradeInfo(time1,time2,sysDeptInfos);
 
                 return weldStatisticsDataList;
             }
 
-            //当前 sysDeptInfos 为装焊区层级id列表
-            List<WeldStatisticsData> weldStatisticsDataList = getGradeInfo(time1,time2,sysDeptInfos);
+            sysDeptInfos.clear();
 
-            return weldStatisticsDataList;
+            sysDeptInfos = nextSysDeptInfos;
 
-        }
-
-        List<Long> ids = new ArrayList<>();
-
-        ids.add(deptId);
-
-        //执行班组生产数据报表查询  班组层级
-        List<WeldStatisticsData> weldStatisticsDataList = teamDao.getList(time1,time2,ids);
+        }while(!ObjectUtils.isEmpty(sysDeptInfos));
 
         return weldStatisticsDataList;
     }
