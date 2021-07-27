@@ -66,6 +66,7 @@
 		COUNT(DISTINCT s1.machineId) realWeldOnline,
 		SEC_TO_TIME(SUM(s1.weldDuration)) realWeldTime,
 		IF(SUM(s1.weldDuration)>300,COUNT(DISTINCT s2.machineId),0) noTaskCount,
+		GROUP_CONCAT(distinct s2.machineNo) noTaskMachineDetail,
 		COUNT(DISTINCT s.machineId)/COUNT(DISTINCT m.id)*100 equipUtilization,
 		SEC_TO_TIME(SUM(s3.weldDuration)) supergageTime,
 		SEC_TO_TIME(SUM(s1.weldDuration)-SUM(s3.weldDuration)) normalTime,

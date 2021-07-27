@@ -27,27 +27,6 @@ public class ShiroConfig {
     @Autowired
     private UserRealm userRealm;
 
-
-    /**
-     * @Date 2021/6/4 9:06
-     * @Description  SecurityManager 用于管理 Realm 、流程控制
-     * @Params  Realm  资源
-     */
-    /*@Bean
-    public DefaultWebSecurityManager userSecurityManager(Realm userRealm){
-
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-
-        SessionManager sessionManager = new DefaultWebSessionManager();
-
-        sessionManager.
-        securityManager.setRealm(userRealm);
-
-        securityManager.setSessionManager(sessionManager);
-
-        return securityManager;
-    }*/
-
     /**
      * @Date 2021/6/4 9:10
      * @Description 请求过滤器
@@ -83,7 +62,7 @@ public class ShiroConfig {
 
     /**
      * @Date 2021/6/17 23:54
-     * @Description  shiro安全管理器  shiro自定义session 配置
+     * @Description  shiro安全管理器  将自定义session 配置 交给shiro管理
      * @Params
      */
     @Bean("securityManager")
@@ -132,6 +111,11 @@ public class ShiroConfig {
         return defaultAdvisorAutoProxyCreator;
     }
 
+    /**
+     * @Date 2021/7/27 10:01
+     * @Description  开启Shiro授权生效
+     * @Params
+     */
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
 

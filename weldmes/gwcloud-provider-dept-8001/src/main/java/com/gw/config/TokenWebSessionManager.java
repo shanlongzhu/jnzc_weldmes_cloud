@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * @Author: zhanghan
- * @Description: 获取 请求头 中的 token
+ * @Description: 自定义Session管理器
  * @DateTime: 2021/6/17 20:40
  **/
 @Configuration
