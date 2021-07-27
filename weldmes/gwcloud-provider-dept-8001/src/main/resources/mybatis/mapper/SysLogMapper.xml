@@ -27,7 +27,7 @@
 
     <!--查询日志信息列表-->
     <select id="selectSysLogInfos" resultMap="sysLogMap">
-        select id,user_name,operation,method,params,`time`,ip,create_time
+        select id,user_name,operation,method,params,`time`,ip,create_time,menu_model
         from sys_log
     </select>
 
