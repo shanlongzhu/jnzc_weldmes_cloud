@@ -89,6 +89,11 @@ public class WeldStatisticsData implements Serializable {
     private Long noTaskCount;
 
     /**
+     * 未绑定设备编号
+     */
+    private String noTaskMachineDetail;
+
+    /**
      * 设备利用率
      */
     private Double equipUtilization;
