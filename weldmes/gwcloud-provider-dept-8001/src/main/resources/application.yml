@@ -36,7 +36,8 @@ spring:
 #      min-idle: 5                                           # 数据库连接池的最小维持连接数
 #      initial-size: 5                                       # 初始化连接数
 #      max-total: 5                                          # 最大连接数
-#      max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+#      max-wait-millis: 200
+    # 等待连接获取的最大超时时间
   datasource:
     dynamic:
       primary: master #设置默认的数据源或者数据源组,默认值即为master
@@ -75,6 +76,14 @@ spring:
           connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
             #合并多个DruidDataSource的监控数据
           useGlobalDataSourceStat: true
+  mail:
+      default-encoding: utf-8
+      # 主机地址
+      host: smtp.qq.com
+      # 邮箱名
+      username: 603453103@qq.com
+      # 授权码
+      password: ionfpprfyvfqbdif
 
 
 eureka:
