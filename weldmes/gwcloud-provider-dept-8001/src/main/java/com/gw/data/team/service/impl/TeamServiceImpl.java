@@ -1,4 +1,5 @@
 package com.gw.data.team.service.impl;
+import com.gw.common.DateTimeUtil;
 import com.gw.data.team.dao.TeamDao;
 import com.gw.data.team.service.TeamService;
 import com.gw.entities.SysDept;
@@ -28,33 +29,32 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<WeldStatisticsData> getList(String time1, String time2) {
 
-        //如果传入时间 time1 为空
-        if (ObjectUtils.isEmpty(time1)){
-
-            List<WeldStatisticsData> list = new ArrayList<>();
-
-            return list;
-
-        }
+        List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
         //如果传入 时间 均为空
         if (ObjectUtils.isEmpty(time1) && ObjectUtils.isEmpty(time2)){
 
-            List<WeldStatisticsData> list = new ArrayList<>();
-
-            return list;
+            return weldStatisticsDataList;
 
         }
 
+        //终止时间为空时  设置为当前系统时间
+        if (!ObjectUtils.isEmpty(time1) && ObjectUtils.isEmpty(time2)){
+
+            time2 = DateTimeUtil.getCurrentTime();
+        }
+
+        //获取当前登录用户
         Subject currentUser = SecurityUtils.getSubject();
 
         //获取到当前登录用户信息
         UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
 
-        if(ObjectUtils.isEmpty(subject.getDeptId())){
+        //保证当前用户的部门id非空
+        if(ObjectUtils.isEmpty(subject) && ObjectUtils.isEmpty(subject.getDeptId())){
 
             //部门id为空
-            return null;
+            return weldStatisticsDataList;
         }
 
         //获取到当前用户部门id
@@ -62,8 +62,6 @@ public class TeamServiceImpl implements TeamService {
 
         //获取当前用户 所在部门的  下一级所有部门信息
         List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(deptId);
-
-        List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
         do{
 
@@ -76,7 +74,6 @@ public class TeamServiceImpl implements TeamService {
 
                 nextSysDeptInfos.addAll(sysDeptList);
             }
-
 
             if (ObjectUtils.isEmpty(nextSysDeptInfos)){
 
@@ -113,4 +110,5 @@ public class TeamServiceImpl implements TeamService {
 
         return weldStatisticsDataList;
     }
+
 }
