@@ -13,7 +13,7 @@
                 :model="ruleForm2"
                 :rules="rules2"
                 :show-message="false"
-                label-width="100px"
+                label-width="120px"
                 class="demo-ruleForm"
             >
                 <el-row>
@@ -38,576 +38,246 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <div
-                    style="border:1px solid #aaa"
-                    class="pt10 pb10 mt10"
-                >
+                <!--普通气保焊工艺  -->
+                <sxCO2Tech1></sxCO2Tech1>
+                <!-- GL4工艺 -->
+                <sxCO2GL4></sxCO2GL4>
+                <!-- 手工焊 -->
+                <sxCO2Manual></sxCO2Manual>
+                <div class="border-tip">
+                    <span class="border-tip-txt">报警设置</span>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                label="收弧方式"
-                                prop="controlArc"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.controlArc"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                >
-                                    <el-option
-                                        v-for="item in controlArcArr"
-                                        :key="item.id"
-                                        :label="item.valueName"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="一元/个别"
-                                prop="unitarySeveral"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.unitarySeveral"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                    @change="changeWelderType"
-                                >
-                                    <el-option
-                                        v-for="item in unitarySeveralArr"
-                                        :key="item.id"
-                                        :label="item.valueName"
-                                        :value="item.id"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item
-                                label=""
-                                label-width="40px"
-                            >
-                                <el-checkbox v-model="ruleForm2.initialCondition">初期条件</el-checkbox>
-                                <el-checkbox v-model="ruleForm2.fusionControl">熔深控制</el-checkbox>
-                                <el-checkbox
-                                    @change="changeSoftArcSchema"
-                                    v-model="ruleForm2.softArcSchema"
-                                >柔软电弧模式</el-checkbox>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="电弧特性"
-                                prop="arcCharacter"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="-99"
-                                    :max="99"
-                                    v-model="ruleForm2.arcCharacter"
-                                ></el-input-number>
-                                <span> (±1)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="焊丝材质"
-                                prop="weldingStickTexture"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.weldingStickTexture"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                    @change="changekDiameter"
-                                >
-                                    <el-option
-                                        v-for="item in weldingStickTextureArr"
-                                        :key="item.id"
-                                        :label="item.valueName"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="提前送气"
-                                prop="inAdvanceAspirated"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="10"
-                                    v-model="ruleForm2.inAdvanceAspirated"
-                                ></el-input-number>
-                                <span> (0.1s)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="气体"
-                                prop="gases"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.gases"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                >
-                                    <el-option
-                                        v-for="item in gasesArr"
-                                        :key="item.id"
-                                        :label="item.valueName"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="点焊时间"
-                                prop="spotWeldingTime"
-                            >
-                                <el-input-number
-                                    :disabled="spotWeldingTimeDisabled"
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="10"
-                                    v-model="ruleForm2.spotWeldingTime"
-                                ></el-input-number>
-                                <span> (0.1s)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="焊丝直径"
-                                prop="weldingStickDiameter"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.weldingStickDiameter"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                >
-                                    <el-option
-                                        v-for="item in weldingStickDiameterArr"
-                                        :key="item.id"
-                                        :label="'Φ'+item.valueName"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="滞后送气"
-                                prop="hysteresisAspirated"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="10"
-                                    v-model="ruleForm2.hysteresisAspirated"
-                                ></el-input-number>
-                                <span> (0.1s)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="焊接过程"
-                                prop="weldingProcess"
-                            >
-                                <el-select
-                                    v-model="ruleForm2.weldingProcess"
-                                    placeholder="请选择"
-                                    style="width:120px"
-                                    size="mini"
-                                >
-                                    <el-option
-                                        v-for="item in weldingProcessArr"
-                                        :key="item.id"
-                                        :label="item.valueName"
-                                        :value="item.value"
-                                    />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                </div>
-                <div
-                    style="border:1px solid #aaa"
-                    class="pt10 pb10 mt10"
-                >
-                    <el-row>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="初期电流"
+                                label="焊接电流上限(A)"
                                 prop="initialEle"
-                                label-width="130px"
                             >
                                 <el-input-number
-                                    :disabled="initialEleDisabled"
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
+                                    style="width:110px"
                                     :min="30"
                                     :max="550"
                                     v-model="ruleForm2.initialEle"
                                 ></el-input-number>
-                                <span> (A)</span>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item
-                                label="焊接电流"
+                                label="焊接电流下限(A)"
                                 prop="weldingEle"
-                                label-width="130px"
                             >
                                 <el-input-number
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
+                                    style="width:110px"
                                     :min="30"
                                     :max="550"
                                     v-model="ruleForm2.weldingEle"
                                 ></el-input-number>
-                                <span> (A)</span>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item
-                                label="收弧电流"
+                                label="焊接电压上限(V)"
                                 prop="arcEle"
-                                label-width="130px"
                             >
                                 <el-input-number
-                                    :disabled="arcDisabled"
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
+                                    style="width:110px"
                                     :min="30"
                                     :max="550"
                                     v-model="ruleForm2.arcEle"
                                 ></el-input-number>
-                                <span> (A)</span>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-                    <el-row v-if="ruleForm2.unitarySeveral==1">
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item
-                                label="初期电压"
-                                prop="initialVol"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="initialEleDisabled"
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="12"
-                                    :max="50"
-                                    v-model="ruleForm2.initialVol"
-                                ></el-input-number>
-                                <span> (V)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="焊接电压"
-                                prop="weldingVol"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="12"
-                                    :max="50"
-                                    v-model="ruleForm2.weldingVol"
-                                ></el-input-number>
-                                <span> (V)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="收弧电压"
-                                prop="arcVol"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="arcDisabled"
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="12"
-                                    :max="50"
-                                    v-model="ruleForm2.arcVol"
-                                ></el-input-number>
-                                <span> (V)</span>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row v-if="ruleForm2.unitarySeveral==0">
-                        <el-col :span="8">
-                            <el-form-item
-                                label="焊接电压(一元)"
-                                prop="weldingVolUnitary"
-                                label-width="130px"
+                                label="焊接电压下限(V)"
+                                prop="arcEle"
                             >
                                 <el-input-number
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
-                                    :min="-30"
-                                    :max="30"
-                                    v-model="ruleForm2.weldingVolUnitary"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.arcEle"
                                 ></el-input-number>
-                                <span> (±1)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="收弧电压（一元）"
-                                prop="arcVolUnitary"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="arcDisabled"
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="-30"
-                                    :max="30"
-                                    v-model="ruleForm2.arcVolUnitary"
-                                ></el-input-number>
-                                <span> (±1)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="初期电压（一元）"
-                                prop="initialVolUnitary"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="initialEleDisabled"
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="-30"
-                                    :max="30"
-                                    v-model="ruleForm2.initialVolUnitary"
-                                ></el-input-number>
-                                <span> (±1)</span>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="焊接电流微调"
-                                prop="weldingEleAdjust"
-                                label-width="130px"
-                            >
+                        <el-col :span="6">
+                            <el-form-item prop="initialEle">
+                                <template slot="label">
+                                    报警模式
+                                    <el-tooltip
+                                        class="item"
+                                        effect="light"
+                                        placement="top"
+                                    >
+                                        <template slot="content">
+                                            <span style="color:#f00">请确认焊机是否支持此功能</span>
+                                        </template>
+                                        <i class="el-icon-info"></i>
+                                    </el-tooltip>
+                                </template>
                                 <el-input-number
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="50"
-                                    v-model="ruleForm2.weldingEleAdjust"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.initialEle"
                                 ></el-input-number>
-                                <span> (A)</span>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item
-                                label="收弧电流微调"
-                                prop="arcEleAdjust"
-                                label-width="130px"
+                                label="起弧延时时间"
+                                prop="weldingEle"
                             >
                                 <el-input-number
                                     :controls="false"
-                                    :disabled="arcDisabled"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="50"
-                                    v-model="ruleForm2.arcEleAdjust"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.weldingEle"
                                 ></el-input-number>
-                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="报警延时(S)"
+                                prop="arcEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.arcEle"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="停机冻结(S)"
+                                prop="arcEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.arcEle"
+                                ></el-input-number>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item
-                                v-if="ruleForm2.unitarySeveral==1"
-                                label="焊接电压微调"
-                                prop="weldingVolAdjust"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="5"
-                                    v-model="ruleForm2.weldingVolAdjust"
-                                ></el-input-number>
-                                <span> (V)</span>
-                            </el-form-item>
-                            <el-form-item
-                                v-show="ruleForm2.unitarySeveral==0"
-                                label="焊接电压微调(一元)"
-                                prop="weldingVolAdjust"
-                                label-width="130px"
+                                prop="initialEle"
+                                label="停机延时(S)"
                             >
                                 <el-input-number
                                     :controls="false"
                                     :precision="0"
                                     size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="20"
-                                    v-model="ruleForm2.weldingVolAdjust"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.initialEle"
                                 ></el-input-number>
-                                <span> (%)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                v-show="ruleForm2.unitarySeveral==1"
-                                label="收弧电压微调"
-                                prop="arcVolAdjust"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="arcDisabled"
-                                    :controls="false"
-                                    :precision="1"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="5"
-                                    v-model="ruleForm2.arcVolAdjust"
-                                ></el-input-number>
-                                <span> (V)</span>
-                            </el-form-item>
-                            <el-form-item
-                                v-show="ruleForm2.unitarySeveral==0"
-                                label="收弧电压微调(一元)"
-                                prop="arcVolAdjust"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :disabled="arcDisabled"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="0"
-                                    :max="20"
-                                    v-model="ruleForm2.arcVolAdjust"
-                                ></el-input-number>
-                                <span> (%)</span>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="报警电流上限"
-                                prop="alarmsEleMax"
-                                label-width="130px"
-                            >
-                                <el-input
-                                    size="mini"
-                                    style="width:100px"
-                                    v-model="ruleForm2.alarmsEleMax"
-                                ></el-input>
-                                <span> (A)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="报警电流下限"
-                                prop="alarmsEleMin"
-                                label-width="130px"
-                            >
-                                <el-input
-                                    size="mini"
-                                    style="width:100px"
-                                    v-model="ruleForm2.alarmsEleMin"
-                                ></el-input>
-                                <span> (A)</span>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="报警电压上限"
-                                prop="alarmsVolMax"
-                                label-width="130px"
-                            >
-                                <el-input
-                                    size="mini"
-                                    style="width:100px"
-                                    v-model="ruleForm2.alarmsVolMax"
-                                ></el-input>
-                                <span> (V/%)</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="报警电压下限"
-                                prop="alarmsVolMin"
-                                label-width="130px"
-                            >
-                                <el-input
-                                    size="mini"
-                                    style="width:100px"
-                                    v-model="ruleForm2.alarmsVolMin"
-                                ></el-input>
-                                <span> (V/%)</span>
                             </el-form-item>
                         </el-col>
                     </el-row>
                 </div>
-
+                <div class="border-tip">
+                    <span class="border-tip-txt">限流设置</span>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接限流上限(A)"
+                                prop="initialEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.initialEle"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="超限时间(S)"
+                                prop="weldingEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.weldingEle"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接限流下限(A)"
+                                prop="initialEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.initialEle"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="修正周期(MS)"
+                                prop="weldingEle"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.weldingEle"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
                 <el-form-item
                     class="mt10 tc"
                     label-width="0"
@@ -625,8 +295,7 @@
             </el-form>
         </el-dialog>
 
-        <!-- 选择设备 -->
-
+        <!-- 索取规范 选择设备 -->
         <el-dialog
             title="选择设备"
             :visible.sync="model2"
@@ -758,9 +427,12 @@ import mqtt from 'mqtt'
 import { getTeam, getDictionaries, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
 
 import { getWelderList } from '_api/productionEquipment/production'
+import sxCO2Tech1 from './SxCO2Tech1.vue'
+import sxCO2GL4 from './SxCO2GL4.vue'
+import sxCO2Manual from './SxCO2Manual.vue'
 export default {
-    name:'addTech',
-    components: {},
+    name: 'SxCO2',
+    components: { sxCO2Tech1, sxCO2GL4,sxCO2Manual },
     props: {},
     data () {
         return {
@@ -782,47 +454,122 @@ export default {
             title2: '新增工艺',
             ruleFormObj2: {},
             ruleForm2: {
-                wpsLibraryId: '',//工艺库id
-                id: '',
-                channelNo: '',//通道号
-                initialCondition: false,//初期条件
-                fusionControl: false,//熔深控制
-                unitarySeveral: 1,//一元/个别
-                controlArc: '000',//收弧方式
-                controlArcType: '7',//收弧方式
-                softArcSchema: false,//柔软电弧模式
-                arcCharacter: 0,//电弧特性
-                spotWeldingTime: 3,//点焊时间
-                weldingStickTexture: '0',//焊丝材质
-                weldingStickTextureType: '8',//焊丝材质Type
-                weldingStickDiameter: '12',//焊丝直径
-                weldingStickDiameterType: '10',//焊丝直径Type
-                inAdvanceAspirated: 0.1,//提前送气
-                hysteresisAspirated: 0.1,//滞后送气
-                gases: '0',//气体
-                gasesType: '9',//气体Typez
-                weldingProcess: '1',//焊接过程
-                weldingProcessType: '11',//焊接过程Type
-                initialEle: 100,//初期电流
-                initialVol: 19,//初期电压
-                weldingEle: 100,//焊接电流
-                weldingVol: 19,//焊接电压
-                arcEle: 100,//收弧电流
-                arcVol: 19,//收弧电压
-                initialVolUnitary: 0,//初期电压一元
-                weldingVolUnitary: 0,//焊接电压一元
-                arcVolUnitary: 0,//收弧电压一元
-                weldingEleAdjust: 0,//焊接电流微调
-                weldingVolAdjust: 0,//焊接电压微调
-                arcEleAdjust: 0,//收弧电流微调
-                arcVolAdjust: 0,//收弧电压微调
-                alarmsEleMax: 0,//报警电流上限
-                alarmsEleMin: 0,//报警电流下限
-                alarmsVolMax: 0,//报警电压上限
-                alarmsVolMin: 0,//报警电压下限
+                // wpsLibraryId: '',//工艺库id
+                // id: '',
+                // channelNo: '',//通道号
+                // initialCondition: false,//初期条件
+                // fusionControl: false,//熔深控制
+                // unitarySeveral: 1,//一元/个别
+                // controlArc: '000',//收弧方式
+                // controlArcType: '7',//收弧方式
+                // softArcSchema: false,//柔软电弧模式
+                // arcCharacter: 0,//电弧特性
+                // spotWeldingTime: 3,//点焊时间
+                // weldingStickTexture: '0',//焊丝材质
+                // weldingStickTextureType: '8',//焊丝材质Type
+                // weldingStickDiameter: '12',//焊丝直径
+                // weldingStickDiameterType: '10',//焊丝直径Type
+                // inAdvanceAspirated: 0.1,//提前送气
+                // hysteresisAspirated: 0.1,//滞后送气
+                // gases: '0',//气体
+                // gasesType: '9',//气体Typez
+                // weldingProcess: '1',//焊接过程
+                // weldingProcessType: '11',//焊接过程Type
+                // initialEle: 100,//初期电流
+                // initialVol: 19,//初期电压
+                // weldingEle: 100,//焊接电流
+                // weldingVol: 19,//焊接电压
+                // arcEle: 100,//收弧电流
+                // arcVol: 19,//收弧电压
+                // initialVolUnitary: 0,//初期电压一元
+                // weldingVolUnitary: 0,//焊接电压一元
+                // arcVolUnitary: 0,//收弧电压一元
+                // weldingEleAdjust: 0,//焊接电流微调
+                // weldingVolAdjust: 0,//焊接电压微调
+                // arcEleAdjust: 0,//收弧电流微调
+                // arcVolAdjust: 0,//收弧电压微调
+                // alarmsEleMax: 0,//报警电流上限
+                // alarmsEleMin: 0,//报警电流下限
+                // alarmsVolMax: 0,//报警电压上限
+                // alarmsVolMin: 0,//报警电压下限
+
+                //松下co2工艺
+                channelNo: '',//通道编号
+                weldIp: '',//下发的焊机IP
+
+                //*** 预置参数 */
+                initialEleMax: 0,//初期电流上限
+                initialEleMin: 0,//初期电流下限
+                initialVolMax: 0,//初期电压上限
+                initialWireSpeedMax: '',//初期送丝速度上限
+                initialWireSpeedMin: '',//初期送丝速度下限
+                weldEleMax: '',//焊接电流上限
+                weldEleMin: '',//焊接电流下限
+                weldVolMax: '',//焊接电压上限
+                weldVolMin: '',//焊接电压下限
+                weldWireSpeedMax: '',//焊接送丝速度上限
+                weldWireSpeedMin: '',//焊接送丝速度下限,
+                arcEleMax: '',//收弧电流上限
+                arcEleMin: '',//收弧电流下限
+                arcVolMax: '',//收弧电压上限
+                arcVolMin: '',//收弧电压下限
+                arcWireSpeedMax: '',//收弧送丝速度上限
+                arcWireSpeedMin: '',//收弧送丝速度下限
+
+                //*** 焊接条件 */
+                modeSelect: '',//模式选择
+                weldingControl: '',//焊接控制
+                weldingManner: '',//焊接方式
+                texture: '',//材质
+                wireDiameter: '',//丝径
+                gases: '',//气体
+                wireFeed: '', //手动送丝
+                checkGasStatus: '',//检气状态
+                cutStatus: '',//切换状态
+                lockStatus: '',//锁定状态
+                eleShowSelect: '',//电流显示选择
+                rev: '',//转速
+                boardThickness: '',//板厚
+                spotWeldingTime: '',//点焊时间
+                volShowSelect: '',//电压显示选择
+                arcLength: '',//弧长
+                arcCharacter: '',//电弧特性
+                penetrationControl: '',//熔深控制
+                beforeAspiratedTime: '',//提前送气时间
+                afterStopGasTime: '',//滞后停气时间
+                unitaryDifference: '',//一元/分别
+                nowChannel: '',//当前通道
+
+                //*** 动态限流参数 */
+                dclInitialEleMax: '',//初期电流上限
+                dclInitialEleMin: '',//初期电流下限
+                dclWeldEleMax: '',//焊接电流上限
+                dclWeldEleMin: '',//焊接电流下限
+                dclArcEleMax: '',//收弧电流上限
+                dclArcEleMin: '',//收弧电流下限
+                startDelayTime: '',//启动延时时间
+                clAmendPeriod: '',//限流修正周期
+
+                //*** 超限报警参数 */
+                oaInitialEleMax: '',//初期电流上限
+                oaInitialEleMin: '',//初期电流下限
+                oaInitialVolMax: '',//初期电压上限
+                oaInitialVolMin: '',//初期电压下限
+                oaWeldEleMax: '',//焊接电流上限
+                oaWeldEleMin: '',//焊接电流下限
+                oaWeldVolMax: '',//焊接电压上限
+                oaWeldVolMin: '',//焊接电压下限
+                oaArcEleMax: '',//收弧电流上限
+                oaArcEleMin: '',//收弧电流下限
+                oaArcVolMax: '',//收弧电压上限
+                oaArcVolMin: '',//收弧电压下限
+                arcDelayTime: '',//起弧延时时间
+                alarmDelayTime: '',//报警延时时间
+                haltDelayTime: '',//停机延时时间
+                haltFreezeTime: '',//停机冻结时间
             },
             rules2: {
-                channelNo:[
+                channelNo: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
                 weldingStickTexture: [
@@ -1143,12 +890,12 @@ export default {
             while (arrStr.length < 8) {
                 arrStr.unshift('0')
             }
-            this.ruleForm2.initialCondition = arrStr[7]?false:true;//初期条件
+            this.ruleForm2.initialCondition = arrStr[7] ? false : true;//初期条件
             this.ruleForm2.controlArc = arrStr[6] + arrStr[5] + arrStr[4];//收弧
 
             this.ruleForm2.unitarySeveral = parseInt(arrStr[2]);//一元/个别
-            this.ruleForm2.fusionControl = arrStr[1]?false:true;//熔深控制
-            this.ruleForm2.softArcSchema = arrStr[0]?false:true;//柔软电弧模式
+            this.ruleForm2.fusionControl = arrStr[1] ? false : true;//熔深控制
+            this.ruleForm2.softArcSchema = arrStr[0] ? false : true;//柔软电弧模式
             console.log(this.ruleForm2)
         },
 
@@ -1234,10 +981,10 @@ export default {
                     this.$refs.ruleForm2.resetFields();
                     this.ruleForm2 = { ...this.ruleFormObj2 };
                     this.ruleForm2.wpsLibraryId = id;
-                    if(this.channelNoArr.length>0){
+                    if (this.channelNoArr.length > 0) {
                         this.ruleForm2.channelNo = this.channelNoArr[0].id;
                     }
-                    
+
                     Reflect.deleteProperty(this.ruleForm2, "id");
                 })
             }
@@ -1383,7 +1130,7 @@ export default {
                     }
                     setTimeout(() => {
                         this.client.end();
-                    },500)
+                    }, 500)
                 });
 
                 if (n) {
@@ -1403,6 +1150,22 @@ export default {
 }
 </script>
 <style>
+.border-tip {
+    border: 1px solid #ccc;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+}
+.border-tip-txt {
+    position: absolute;
+    background: #fff;
+    left: 10px;
+    top: -7px;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 0 10px;
+}
 .teamList {
     z-index: 9999 !important;
 }

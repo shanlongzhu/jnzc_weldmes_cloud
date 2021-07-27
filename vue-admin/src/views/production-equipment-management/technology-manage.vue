@@ -71,9 +71,9 @@
                     field="weldModel"
                     title="焊机型号"
                 >
-                <template #default={row}>
-                    {{row.sysDictionary.valueName}}
-                </template>
+                    <template #default={row}>
+                        {{row.sysDictionary.valueName}}
+                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="createTime"
@@ -97,7 +97,7 @@
                             size="mini"
                             type="success"
                             plain
-                            @click="addLibraryFun(row.id)"
+                            @click="addLibraryFun(row)"
                         >
                             新增工艺
                         </el-button>
@@ -204,25 +204,25 @@
             </el-form>
         </el-dialog>
         <!-- 工艺明细 -->
-        <add-tech
-            ref="addTech"
-            @throwData="submitLibary"
-        ></add-tech>
+        <add-tech ref="addTech"></add-tech>
         <!-- 工艺库下发 -->
         <issue-orders ref="issueOrdersRef"></issue-orders>
+        <!-- 松下 co2工艺 -->
+        <sxco2 ref="SxCO2"></sxco2>
     </div>
 </template>
 
 <script>
-import PahoMQTT from 'paho-mqtt'
-import { getTeam, getDictionaries, getProcesLibraryList, getProcesLibraryDetail, delProcesLibrary, editProcesLibrary, addProcesLibrary, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild, getProcesLibraryChild } from '_api/productionProcess/process'
+import { getDictionaries, getProcesLibraryList, getProcesLibraryDetail, delProcesLibrary, editProcesLibrary, addProcesLibrary, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
 import { getWeldingModel } from '_api/productionEquipment/production'
 import expandTable from './components/expandTable.vue';
+// otc500工艺
 import AddTech from './components/addTech.vue';
 import IssueOrders from './components/issueOrders.vue';
+import sxco2 from './components/SxCO2.vue';
 
 export default {
-    components: { expandTable, AddTech, IssueOrders },
+    components: { expandTable, AddTech, IssueOrders, sxco2 },
     data () {
         return {
             visable1: false,
@@ -261,175 +261,16 @@ export default {
     },
 
     created () {
-        this.ruleFormObj = {...this.ruleForm};
+        this.ruleFormObj = { ...this.ruleForm };
         this.getDicFun();
         this.getList();
     },
     mounted () {
-        // this.PahoMQTTFun();
     },
     methods: {
-        //建立连接
-        PahoMQTTFun () {
-            const time = new Date().getTime();
-            const clientId = "adminTest" + time;
-            this.mqttClient = new PahoMQTT.Client(process.env.VUE_APP_MQTT_API, 8083, clientId);
-            let options = {
-                timeout: 50,
-                keepAliveInterval: 60,
-                cleanSession: false,
-                useSSL: false,
-                onSuccess: this.onConnect,
-                onFailure: function (e) {
-                    console.log(e);
-                },
-                reconnect: true
-            }
-            this.mqttClient.onConnectionLost = this.onConnectionLost;
-            this.mqttClient.connect(options);
-        },
-
-        //连接成功
-        onConnect () {
-            console.log("mqttClient onConnect Success");
-        },
-
-        //连接失败
-        onConnectionLost (responseObject) {
-            console.log("onConnectionLost:" + responseObject.errorMessage);
-        },
         async issueOrders (row) {
             this.$refs.issueOrdersRef.init(row);
-            return
-            this.$confirm('确定要下发吗?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(async () => {
-                let { data, code } = await getProcesLibraryChild({ id:row.id });
-                if (code == 200) {
-                    if (data.list && data.list.length > 0) {
-                        this.messageObj = this.$message({
-                            message: '下发中....',
-                            type: 'warning',
-                            duration: 0
-                        });
-                        this.testProcessIssue(data.list)
-                    } else {
-                        this.$message.error("该工艺库没有工艺可下发")
-                    }
-
-                }
-            }).catch(() => { })
-
         },
-
-        testProcessIssue (arr) {
-            let dataArray = (arr || []).map(item => {
-                let obj = {};
-                obj['gatherNo'] = "0011";//采集模块编号
-                obj['channelNo'] = item.channelNo;//通道号
-                obj['spotWeldTime'] = item.spotWeldingTime * 10;//点焊时间
-                obj['preflowTime'] = item.inAdvanceAspirated * 10;//提前送气
-                obj['initialEle'] = item.initialEle;//初期电流
-                obj['initialVol'] = item.initialVol * 10;//初期电压
-                obj['initialVolUnitary'] = item.initialVolUnitary;//初期电压一元
-                obj['weldElectricity'] = item.weldingEle;//焊接电流
-                obj['weldVoltage'] = item.weldingVol * 10;//焊接电压
-                obj['weldVoltageUnitary'] = item.weldingVolUnitary;//焊接电压一元
-                obj['extinguishArcEle'] = item.arcEle;//收弧电流
-                obj['extinguishArcVol'] = item.arcVol * 10;//收弧电压
-                obj['extinguishArcVolUnitary'] = item.arcVolUnitary;//收弧电压一元
-                obj['hysteresisAspirated'] = item.hysteresisAspirated * 10;//滞后送气
-                obj['arcPeculiarity'] = item.arcCharacter;//电弧特性
-                obj['gases'] = item.gases;//气体
-                obj['wireDiameter'] = item.weldingStickDiameter;//直径
-                obj['wireMaterials'] = item.weldingStickTexture;//材质
-                obj['weldProcess'] = item.weldingProcess;//焊接过程
-                obj['controlInfo'] = this.issueOrdersStr(item);//控制信息
-                obj['weldEleAdjust'] = item.weldingEleAdjust;//焊接电流微调
-                obj['weldVolAdjust'] = item.weldingVolAdjust * 10;//焊接电压微调
-                obj['extinguishArcEleAdjust'] = item.arcEleAdjust;//收弧电流微调
-                obj['extinguishArcVolAdjust'] = item.arcVolAdjust * 10;//收弧电压微调
-                obj['alarmsElectricityMax'] = item.alarmsEleMax;//报警电流上限
-                obj['alarmsElectricityMin'] = item.alarmsEleMin;//报警电流下限
-                obj['alarmsVoltageMax'] = item.alarmsVolMax;//报警电压上限
-                obj['alarmsVoltageMin'] = item.alarmsVolMin;//报警电压下限
-                return obj;
-            })
-            //集合转字符串
-            const message = JSON.stringify(dataArray);
-            console.log(message)
-            //工艺参数下发测试
-            // const topic = new PahoMQTT.Message(message);
-            // topic.destinationName = "processIssue";
-            // mqttClient.send(topic);
-
-            console.log(this.mqttClient)
-            this.mqttClient.publish('processIssue', message, 0)
-
-            this.testIssueReturn();
-        },
-
-        //测试下发返回
-        testIssueReturn () {
-            //主题订阅
-            this.mqttClient.subscribe("processIssueReturn", {
-                qos: 0,
-                onSuccess: function (e) {
-                    console.log("下发返回主题订阅成功：processIssueReturn");
-                },
-                onFailure: function (e) {
-                    console.log(e);
-                }
-            });
-            //5秒后执行下发超时显示
-            var onTaskTimeout = window.setTimeout(function () {
-                this.mqttClient.unsubscribe("processIssueReturn", {
-                    onSuccess: function (e) {
-                        console.log("下发返回主题取消订阅成功");
-                    },
-                    onFailure: function (e) {
-                        console.log(e);
-                    }
-                });
-                alert("下发超时");
-            }, 5000);
-            this.mqttClient.onMessageArrived = function (message) {
-                console.log(message)
-                if ("processIssueReturn" === message.destinationName) {
-                    var datajson = JSON.parse(message.payloadString);
-                    if (datajson.flag === 0) {
-                        alert("采集编号：" + datajson.gatherNo + "--通道：" + datajson.channelNo + "-->下发成功");
-                    } else {
-                        alert("采集编号：" + datajson.gatherNo + "--通道：" + datajson.channelNo + "-->下发失败");
-                    }
-                    this.mqttClient.unsubscribe("processIssueReturn", {
-                        onSuccess: function (e) {
-                            console.log("下发返回主题取消订阅成功");
-                        },
-                        onFailure: function (e) {
-                            console.log(e);
-                        }
-                    });
-                    //收到消息后清除定时器
-                    window.clearTimeout(onTaskTimeout);
-                }
-            }
-        },
-
-        issueOrdersStr (item) {
-            let bit0 = item.initialCondition;//初期条件
-            let bit1 = item.controlArc;//收弧
-            let bit4 = '0';//焊枪
-            let bit5 = item.unitarySeveral;//一元/个别
-            let bit6 = item.fusionControl;//熔深控制
-            let bit7 = item.softArcSchema;//柔软电弧模式
-            let str = bit7 + '' + bit6 + '' + bit5 + '' + bit4 + '' + bit1 + '' + bit0;
-            return parseInt(str, 2);
-        },
-
-
 
         //获取数据字典
         async getDicFun () {
@@ -530,7 +371,7 @@ export default {
                         const { data, code } = await editProcesLibrary(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
-                            this.visable2 = false
+                            this.visable1 = false
                             this.getList()
                         }
                     } else {
@@ -538,7 +379,7 @@ export default {
                         const { data, code } = await addProcesLibrary(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
-                            this.visable2 = false
+                            this.visable1 = false
                             this.getList()
                         }
                     }
@@ -550,43 +391,23 @@ export default {
         },
 
         //新增工艺
-        addLibraryFun (id) {
-            this.$refs.addTech.addLibraryFun(id);
-        },
-
-
-        //子组件调用修改
-        async editDetailFun (obj) {
-            this.$refs.addTech.editDetailFun(obj);
-        },
-
-        // 新增/编辑提交工艺
-        async submitLibary (vData) {
-            const req = { ...vData }
-            req.initialCondition = req.initialCondition ? 1 : 0;
-            req.fusionControl = req.fusionControl ? 1 : 0;
-            req.softArcSchema = req.softArcSchema ? 1 : 0;
-            if (req.hasOwnProperty('id')) {
-                const { data, code } = await editProcesLibraryChild(req)
-                if (code == 200) {
-                    this.$message.success('修改成功')
-                    console.log(this.$refs.addTech)
-                    this.$refs.addTech.visable2 = false
-                    this.getList()
-                }
-            } else {
-                const { data, code } = await addProcesLibraryChild(req);
-                if (code == 200) {
-                    this.$message.success('新增成功')
-                    this.$refs.addTech.visable2 = false
-                    this.getList()
-                }
+        addLibraryFun (row) {
+            console.log(row.sysDictionary.valueName)
+            switch (row.sysDictionary.valueName) {
+                case 'SxCO2':
+                    this.$refs.SxCO2.addLibraryFun(row.id);
+                    break;
+                default:
+                    this.$refs.addTech.addLibraryFun(row.id);
+                    break;
             }
         },
 
 
-
-
+        //展开列表调用修改工艺
+        async editDetailFun (obj) {
+            this.$refs.addTech.editDetailFun(obj);
+        },
     }
 }
 </script>

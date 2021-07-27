@@ -59,6 +59,14 @@
                 >
                 </el-table-column>
                 <el-table-column
+                    prop="menuModel"
+                    label="菜单模块"
+                    align="left"
+                    min-width="100"
+                    fixed="left"
+                >
+                </el-table-column>
+                <el-table-column
                     prop="ip"
                     label="ip"
                     align="left"
