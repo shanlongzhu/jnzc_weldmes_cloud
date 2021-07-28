@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.shth.das.common.CommonDbData;
-import com.shth.das.common.DataInitialization;
 import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
@@ -13,7 +12,6 @@ import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.pojo.jnotc.*;
-import com.shth.das.sys.rtdata.service.RtDataService;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.BeanContext;
@@ -136,16 +134,7 @@ public class JnRtDataProtocol {
             //实时数据存数据库
             if (map.containsKey("JNRtDataDB")) {
                 List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
-                if (CommonUtils.isNotEmpty(list)) {
-                    synchronized (JN_RT_DATA_LIST) {
-                        JN_RT_DATA_LIST.addAll(list);
-                        if (JN_RT_DATA_LIST.size() >= DataInitialization.otcNumber) {
-                            RtDataService rtDataService = BeanContext.getBean(RtDataService.class);
-                            rtDataService.insertRtDataList(JN_RT_DATA_LIST);
-                            JN_RT_DATA_LIST.clear();
-                        }
-                    }
-                }
+                list.forEach(CommonDbData.OTC_LINKED_BLOCKING_QUEUE::offer);
             }
             //工艺下发返回
             if (map.containsKey("JNProcessIssueReturn")) {
@@ -573,7 +562,7 @@ public class JnRtDataProtocol {
         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
             for (WeldModel weld : weldList) {
                 if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                    if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo,4))) {
+                    if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
 //                    if (gatherNo.equals(Integer.valueOf(weld.getGatherNo()).toString())) {
                         return weld.getId();
                     }

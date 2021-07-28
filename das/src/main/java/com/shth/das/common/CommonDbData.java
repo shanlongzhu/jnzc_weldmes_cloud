@@ -3,6 +3,8 @@ package com.shth.das.common;
 import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldModel;
+import com.shth.das.pojo.jnotc.JNRtDataDB;
+import com.shth.das.pojo.jnsx.SxRtDataDb;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,15 @@ import java.util.concurrent.*;
 @Component
 @Slf4j
 public class CommonDbData {
+
+    /**
+     * 阻塞队列存储实时数据，并定时同步到MySQL数据库
+     */
+    public static final LinkedBlockingQueue<JNRtDataDB> OTC_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);
+    /**
+     * 阻塞队列存储实时数据，并定时同步到MySQL数据库
+     */
+    public static final LinkedBlockingQueue<SxRtDataDb> SX_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);
 
     /**
      * 执行THREAD_POOL_EXECUTOR多出的任务
@@ -34,12 +45,12 @@ public class CommonDbData {
     /**
      * 采集模块数据
      */
-    private static List<GatherModel> GATHER_LIST = new ArrayList<>();
+    private volatile static List<GatherModel> GATHER_LIST = new ArrayList<>();
 
     /**
      * 焊机数据
      */
-    private static List<WeldModel> WELD_LIST = new ArrayList<>();
+    private volatile static List<WeldModel> WELD_LIST = new ArrayList<>();
 
     /**
      * 任务数据
@@ -94,4 +105,5 @@ public class CommonDbData {
     public synchronized static void setWeldList(List<WeldModel> weldList) {
         WELD_LIST = weldList;
     }
+
 }

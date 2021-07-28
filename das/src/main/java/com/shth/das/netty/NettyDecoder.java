@@ -66,11 +66,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
             //服务端端口
             int serverPort = inetSocket.getPort();
             //端口为otcPort，则为江南版OTC通讯协议
-            if (serverPort == DataInitialization.otcPort) {
+            if (serverPort == DataInitialization.getOtcPort()) {
                 otcRecursionReadBytes(ctx, message, out);
             }
             //端口为sxPort，则为松下通讯协议
-            if (serverPort == DataInitialization.sxPort) {
+            if (serverPort == DataInitialization.getSxPort()) {
                 sxRecursionReadBytes(ctx, message, out);
             }
         }

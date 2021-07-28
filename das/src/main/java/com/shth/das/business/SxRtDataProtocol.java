@@ -2,7 +2,6 @@ package com.shth.das.business;
 
 import com.alibaba.fastjson.JSON;
 import com.shth.das.common.CommonDbData;
-import com.shth.das.common.DataInitialization;
 import com.shth.das.common.SxVerificationCode;
 import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
@@ -11,7 +10,6 @@ import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.pojo.jnsx.*;
-import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.SxWeldService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.BeanContext;
@@ -220,15 +218,8 @@ public class SxRtDataProtocol {
                         sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
                     }
                 }
-                synchronized (SX_RT_DATA_LIST) {
-                    SX_RT_DATA_LIST.add(sxRtDataDb);
-                    if (SX_RT_DATA_LIST.size() >= DataInitialization.sxNumber) {
-                        //调用接口，松下实时数据批量存入
-                        SxRtDataService sxRtDataService = BeanContext.getBean(SxRtDataService.class);
-                        sxRtDataService.insertSxRtDataList(SX_RT_DATA_LIST);
-                        SX_RT_DATA_LIST.clear();
-                    }
-                }
+                //添加到阻塞队列
+                CommonDbData.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
             }
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {

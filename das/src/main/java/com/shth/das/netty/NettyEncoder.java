@@ -20,12 +20,12 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
         int serverPort = inetSocket.getPort();//服务端端口
         //端口为port，则为江南版OTC通讯协议
-        if (serverPort == DataInitialization.otcPort) {
+        if (serverPort == DataInitialization.getOtcPort()) {
             //单台设备睡眠250毫秒后再次下发
             Thread.sleep(250);
         }
         //端口为sxPort，则为松下通讯协议
-        if (serverPort == DataInitialization.sxPort) {
+        if (serverPort == DataInitialization.getSxPort()) {
             Thread.sleep(200);
         }
         //16进制字符串转byte数组

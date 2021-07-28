@@ -1,7 +1,10 @@
 package com.shth.das.job;
 
+import com.google.common.collect.Queues;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.netty.NettyServerHandler;
+import com.shth.das.pojo.jnotc.JNRtDataDB;
+import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.sys.rtdata.service.RtDataService;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.*;
@@ -16,10 +19,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 定时任务类
@@ -190,6 +197,52 @@ public class ScheduledTask {
             }
         } catch (Exception e) {
             log.error("时间校准异常：{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 3秒执行一次
+     * 任务：江南OTC设备实时数据定时存储
+     */
+    @Scheduled(fixedRate = 1000 * 3)
+    @Async
+    public void scheduled5() {
+        LinkedBlockingQueue<JNRtDataDB> otcLinkedBlockingQueue = CommonDbData.OTC_LINKED_BLOCKING_QUEUE;
+        if (otcLinkedBlockingQueue.size() > 0) {
+            try {
+                while (!otcLinkedBlockingQueue.isEmpty()) {
+                    List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
+                    Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 1000, Duration.ofMillis(0));
+                    rtDataService.insertRtDataList(jnRtDataDbList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                otcLinkedBlockingQueue.clear();
+            }
+        }
+    }
+
+    /**
+     * 3秒执行一次
+     * 任务：松下OTC设备实时数据定时存储
+     */
+    @Scheduled(fixedRate = 1000 * 3)
+    @Async
+    public void scheduled6() {
+        LinkedBlockingQueue<SxRtDataDb> sxLinkedBlockingQueue = CommonDbData.SX_LINKED_BLOCKING_QUEUE;
+        if (sxLinkedBlockingQueue.size() > 0) {
+            try {
+                while (!sxLinkedBlockingQueue.isEmpty()) {
+                    ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
+                    Queues.drain(sxLinkedBlockingQueue, sxRtDataList, 1000, Duration.ofMillis(0));
+                    sxRtDataService.insertSxRtDataList(sxRtDataList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                sxLinkedBlockingQueue.clear();
+            }
         }
     }
 
