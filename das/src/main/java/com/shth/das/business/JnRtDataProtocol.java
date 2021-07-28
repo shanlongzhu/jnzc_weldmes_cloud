@@ -65,7 +65,7 @@ public class JnRtDataProtocol {
     public Map<String, Object> jnRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
         //客户端IP（焊机IP）
         String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        Map<String, Object> map = new HashMap<>(8);
+        Map<String, Object> map = new HashMap<>(6);
         /*
         江南版实时数据协议解析
          */

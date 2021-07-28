@@ -43,7 +43,7 @@ public class SxRtDataProtocol {
     public Map<String, Object> sxRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
         //客户端IP（焊机IP）
         String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        Map<String, Object> map = new HashMap<>(16);
+        Map<String, Object> map = new HashMap<>(6);
         try {
             //松下焊机GL5/FR2/AT第一次验证（下行）
             if (str.length() == 42 && "4E455430".equals(str.substring(0, 8))) {
