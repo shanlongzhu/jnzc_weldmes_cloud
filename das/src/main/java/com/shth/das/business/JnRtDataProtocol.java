@@ -134,7 +134,10 @@ public class JnRtDataProtocol {
             //实时数据存数据库
             if (map.containsKey("JNRtDataDB")) {
                 List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
-                list.forEach(CommonDbData.OTC_LINKED_BLOCKING_QUEUE::offer);
+                if (CommonUtils.isNotEmpty(list)) {
+                    //添加到OTC阻塞队列（通过定时任务存储）
+                    list.forEach(CommonDbData.OTC_LINKED_BLOCKING_QUEUE::offer);
+                }
             }
             //工艺下发返回
             if (map.containsKey("JNProcessIssueReturn")) {

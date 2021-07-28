@@ -218,8 +218,10 @@ public class SxRtDataProtocol {
                         sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
                     }
                 }
-                //添加到阻塞队列
-                CommonDbData.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
+                if (null != sxRtDataDb) {
+                    //添加到松下阻塞队列（通过定时任务定时存储）
+                    CommonDbData.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
+                }
             }
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {

@@ -12,18 +12,8 @@ import java.util.List;
 @SpringBootTest
 class DasApplicationTests {
 
-    @Autowired
-    MachineGatherMapper gatherMapper;
-
     @Test
     void contextLoads() {
-
-
-        List<GatherModel> gatherModels = gatherMapper.selectList(null);
-
-        System.out.println(gatherModels);
-
     }
-
 
 }
