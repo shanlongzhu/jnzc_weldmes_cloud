@@ -34,6 +34,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--这里写上main方法所在类的路径-->
                 <configuration>
                     <mainClass>com.gw.EurekaServer7001_App</mainClass>
                 </configuration>
