@@ -69,5 +69,8 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>gwcloud-zuul-gateway-9527</finalName>
+    </build>
 
 </project>

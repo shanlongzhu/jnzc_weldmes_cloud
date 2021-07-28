@@ -88,5 +88,8 @@
 
     </dependencies>
 
+    <build>
+        <finalName>gwcloud-provider-dept-8002</finalName>
+    </build>
 
 </project>

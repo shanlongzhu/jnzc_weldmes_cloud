@@ -28,5 +28,8 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>gwcloud-eureka-7002</finalName>
+    </build>
 
 </project>

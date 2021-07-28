@@ -171,4 +171,8 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <finalName>gwcloud-provider-dept-8001</finalName>
+    </build>
 </project>
