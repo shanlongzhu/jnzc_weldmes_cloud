@@ -48,4 +48,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <finalName>gwcloud-api</finalName>
+    </build>
 </project>
