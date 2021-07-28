@@ -239,7 +239,7 @@ public class JnRtDataProtocol {
      * @return 返回一个集合对象
      */
     public List<JNRtDataDB> jnRtDataAnalysis(String str) {
-        List<JNRtDataDB> rtdata = new LinkedList<>();
+        List<JNRtDataDB> rtdata = new ArrayList<>();
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
