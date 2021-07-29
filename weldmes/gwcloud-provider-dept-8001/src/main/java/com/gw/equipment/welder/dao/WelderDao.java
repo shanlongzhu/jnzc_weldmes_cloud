@@ -51,4 +51,11 @@ public interface WelderDao {
      */
     public List<MachineWeldInfo> selectIdAndMachineNoOfWelderInfos();
 
+    /**
+     * @Date 2021/7/29 14:10
+     * @Description 根据 部门d列表 查询设备信息列表
+     * @Params
+     */
+    public List<MachineWeldInfo> selectMachineWeldInfosByDeptIds(@Param("deptIds")List<Long> deptIds);
+
 }

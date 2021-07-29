@@ -218,4 +218,28 @@
     <select id="selectIdAndMachineNoOfWelderInfos" resultType="com.gw.entities.MachineWeldInfo">
         select id,machine_no machineNo from machine_weld_info
     </select>
+
+    <!--根据 部门d列表 查询设备信息列表-->
+    <select id="selectMachineWeldInfosByDeptIds" parameterType="Long" resultType="com.gw.entities.MachineWeldInfo">
+        SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,
+               m.`status`,m.model,m.firm,m.is_network,
+               GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
+               d.value_name,d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,
+               s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        from machine_weld_info m
+        left join sys_dictionary d on m.type = d.id
+        left join sys_dictionary d1 on m.`status` = d1.id
+        left join sys_dictionary d2 on m.firm = d2.id
+        left join sys_dictionary d3 on m.model = d3.id
+        left join sys_dictionary d4 on m.area = d4.id
+        left join sys_dictionary d5 on m.bay = d5.id
+        left join sys_dept s on m.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
+		where m.dept_id in
+        <foreach collection="deptIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+		group by
+        m.machine_no
+    </select>
 </mapper>
