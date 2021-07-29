@@ -38,4 +38,11 @@ public interface WelderService {
      */
     public List<MachineWeldInfo> getIdAndMachineNoOfWelderInfos();
 
+    /**
+     * @Date 2021/7/29 13:20
+     * @Description  根据部门id查询设备信息列表
+     * @Params id 部门id
+     */
+    public List<MachineWeldInfo> getWeldInfos(Long id);
+
 }

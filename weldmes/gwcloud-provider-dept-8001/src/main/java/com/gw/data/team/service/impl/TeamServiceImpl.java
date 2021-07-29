@@ -63,6 +63,14 @@ public class TeamServiceImpl implements TeamService {
         //获取当前用户 所在部门的  下一级所有部门信息
         List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(deptId);
 
+        if (ObjectUtils.isEmpty(sysDeptInfos)){
+
+            //执行班组生产数据报表查询   处理 班组层级 的部门信息
+            weldStatisticsDataList = getGradeInfo(time1,time2,sysDeptInfos);
+
+            return weldStatisticsDataList;
+        }
+
         do{
 
             List<SysDept> nextSysDeptInfos = new ArrayList<>();

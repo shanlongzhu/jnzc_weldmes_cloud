@@ -259,4 +259,20 @@ public class WelderController {
         return HttpResult.ok(list);
     }
 
+    /**
+     * @Date 2021/7/29 13:20
+     * @Description  根据部门id查询设备信息列表
+     * @Params id 部门id
+     */
+    @RequestMapping(value = "getWeldInfosByDeptId")
+    public HttpResult getWeldInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long id){
+
+        PageHelper.startPage(pn,10);
+
+        List<MachineWeldInfo> list = welderService.getWeldInfos(id);
+
+        PageInfo page=new PageInfo(list,5);
+        return HttpResult.ok(page);
+    }
+
 }
