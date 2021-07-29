@@ -21,12 +21,12 @@ public class RtDataJob {
      * 任务：创建OTC实时表
      */
     public void startJnOtcJob() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
             String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
             int newTable = rtDataService.createNewTable(tableName);
             log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, newTable);
-        });
+        //});
     }
 
     /**

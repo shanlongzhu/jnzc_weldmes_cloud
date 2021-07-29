@@ -38,7 +38,7 @@ public class GatherModel implements Serializable {
     @TableField("mac_path")
     private String macPath;
     private String protocol;
-    @TableField("machine_id")
+    @TableField(value = "machine_id",exist = false)
     private BigInteger machineId;
 
 }
