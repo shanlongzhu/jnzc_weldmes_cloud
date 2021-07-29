@@ -60,4 +60,29 @@ public class MachineWeldInfo implements Serializable {
      */
     private int taskFlag;
 
+    /**
+     * 类型名称
+     */
+    private String typeStr;
+
+    /**
+     * 设备状态名称
+     */
+    private String statusStr;
+
+    /**
+     * 厂商名称
+     */
+    private String firmStr;
+
+    /**
+     * 型号名称
+     */
+    private String modelStr;
+
+    /**
+     * 采集编号
+     */
+    private String gatherNo;
+
 }
