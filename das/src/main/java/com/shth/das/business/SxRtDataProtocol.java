@@ -33,11 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SxRtDataProtocol {
 
     /**
-     * 松下实时数据累积后插入数据库
-     */
-    private static final List<SxRtDataDb> SX_RT_DATA_LIST = new ArrayList<>();
-
-    /**
      * 松下实时数据解码处理（上行）
      */
     public Map<String, Object> sxRtDataDecoderManage(ChannelHandlerContext ctx, String str) {

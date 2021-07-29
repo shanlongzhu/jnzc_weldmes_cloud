@@ -34,11 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JnRtDataProtocol {
 
     /**
-     * 数据累积后插入到数据库
-     */
-    private static final List<JNRtDataDB> JN_RT_DATA_LIST = new LinkedList<>();
-
-    /**
      * 采集盒IP地址盒采集编号绑定
      */
     private static void gatherNoIpBinding(String clientIp, String gatherNo) {
