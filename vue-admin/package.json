@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "dev-test": "vue-cli-service serve --mode runTest",
+    "dev-host": "vue-cli-service serve --mode runhost",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging"
   },
