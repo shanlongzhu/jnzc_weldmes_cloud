@@ -32,7 +32,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      * value:连接通道
      * 保存连接进服务端的通道数量
      */
-    public static final ConcurrentHashMap<String, ChannelHandlerContext> MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, ChannelHandlerContext> CHANNEL_MAP = new ConcurrentHashMap<>();
 
     /**
      * key:客户端IP地址
@@ -90,12 +90,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         String clientIp = insocket.getAddress().getHostAddress();
         int clientPort = insocket.getPort();
         //如果map中不包含此连接，就保存连接
-        if (MAP.containsKey(clientIp)) {
-            log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + MAP.size());
+        if (CHANNEL_MAP.containsKey(clientIp)) {
+            log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
         } else {
             //保存连接
-            MAP.put(clientIp, ctx);
-            log.info("新增连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + MAP.size());
+            CHANNEL_MAP.put(clientIp, ctx);
+            log.info("新增连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
         }
     }
 
@@ -114,10 +114,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         //服务端端口
         int serverPort = inetSocket.getPort();
         //包含此客户端才去删除
-        if (MAP.containsKey(clientIp)) {
+        if (CHANNEL_MAP.containsKey(clientIp)) {
             //删除连接
-            MAP.remove(clientIp);
-            log.info("终止连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + MAP.size());
+            CHANNEL_MAP.remove(clientIp);
+            log.info("终止连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == DataInitialization.getOtcPort()) {
@@ -147,7 +147,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.info("异常捕捉：" + cause);
+        //log.info("异常捕捉：" + cause);
         ctx.flush();
         ctx.disconnect();
         ctx.channel().close();
@@ -166,14 +166,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         if (obj instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) obj).state();
             if (state == IdleState.READER_IDLE) {
-                log.info("5秒内未收到数据,主动断开连接");
+                //log.info("5秒内未收到数据,主动断开连接");
                 // 在规定时间内没有收到客户端的上行数据, 主动断开连接
                 ctx.disconnect();
                 ctx.channel().close();
                 ctx.close();
             }
         } else {
-            log.info("Netty客户端连接超时检测");
+            //log.info("Netty客户端连接超时检测");
             super.userEventTriggered(ctx, obj);
         }
     }

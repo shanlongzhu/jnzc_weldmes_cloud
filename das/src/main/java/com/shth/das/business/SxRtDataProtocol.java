@@ -1225,7 +1225,7 @@ public class SxRtDataProtocol {
             String message = JSON.toJSONString(sxRtDataUi);
             //通过mqtt发送到服务端
             EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
-            log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
+            //log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
             NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.remove(clientIp);
             //根据IP地址查询松下焊机信息
             SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);

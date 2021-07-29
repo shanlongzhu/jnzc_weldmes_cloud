@@ -589,7 +589,7 @@ public class JnRtDataProtocol {
             dataList.add(jnRtDataUi);
             String dataArray = JSONArray.toJSONString(dataList);
             EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
-            log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
+            //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
             NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.remove(clientIp);
             //新增设备关机时间
             WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);

@@ -73,7 +73,7 @@ mqtt:
 # netty服务端口配置
 otcNettyServer:
   ip: 127.0.0.1
-  port: 6666
+  port: 5555
 sxNettyServer:
   ip: 127.0.0.1
   port: 9002

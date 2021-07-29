@@ -173,7 +173,7 @@ public class ScheduledTask {
             String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
             String head = "007E1001010145";
             String foot = "007D";
-            if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.size() > 0 && NettyServerHandler.MAP.size() > 0) {
+            if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.size() > 0 && NettyServerHandler.CHANNEL_MAP.size() > 0) {
                 Iterator<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> next = entries.next();
@@ -183,8 +183,8 @@ public class ScheduledTask {
                     String gatherNo = next.getValue();
                     gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
                     if (CommonUtils.isNotEmpty(clientIp) && CommonUtils.isNotEmpty(gatherNo)) {
-                        if (NettyServerHandler.MAP.containsKey(clientIp)) {
-                            Channel channel = NettyServerHandler.MAP.get(clientIp).channel();
+                        if (NettyServerHandler.CHANNEL_MAP.containsKey(clientIp)) {
+                            Channel channel = NettyServerHandler.CHANNEL_MAP.get(clientIp).channel();
                             if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                                 String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
                                 timeString = timeString.toUpperCase();

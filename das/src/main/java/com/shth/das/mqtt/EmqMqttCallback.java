@@ -238,8 +238,8 @@ public class EmqMqttCallback implements MqttCallback {
     private void channelWrite(String weldIp, String str, String msg, String topic) {
         try {
             if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
-                if (NettyServerHandler.MAP.size() > 0 && NettyServerHandler.MAP.containsKey(weldIp)) {
-                    Channel channel = NettyServerHandler.MAP.get(weldIp).channel();
+                if (NettyServerHandler.CHANNEL_MAP.size() > 0 && NettyServerHandler.CHANNEL_MAP.containsKey(weldIp)) {
+                    Channel channel = NettyServerHandler.CHANNEL_MAP.get(weldIp).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str).sync();
