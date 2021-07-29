@@ -79,8 +79,8 @@ public class ScheduledTask {
         CommonDbData.setWeldList(weldService.getMachineWeldAll());
         //CommonDbData.TASK_LIST = taskService.getTaskModelAll();
         //CommonDbData.WELDER_LIST = welderService.getWelderModelAll();
-        log.info("gatherList:--->>>>{}", CommonDbData.getGatherList().size());
-        log.info("weldList:--->>>>{}", CommonDbData.getWeldList().size());
+        //log.info("gatherList:--->>>>{}", CommonDbData.getGatherList().size());
+        //log.info("weldList:--->>>>{}", CommonDbData.getWeldList().size());
     }
 
     /**
@@ -189,7 +189,7 @@ public class ScheduledTask {
                                 String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
                                 timeString = timeString.toUpperCase();
                                 channel.writeAndFlush(timeString).sync();
-                                log.info("时间校准：{}", year + month + day + hour + minute + second);
+                                //log.info("时间校准：{}", year + month + day + hour + minute + second);
                             }
                         }
                     }

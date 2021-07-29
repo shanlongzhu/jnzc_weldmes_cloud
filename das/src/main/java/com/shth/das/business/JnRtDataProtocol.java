@@ -284,8 +284,8 @@ public class JnRtDataProtocol {
                         List<WeldModel> weldList = CommonDbData.getWeldList();
                         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                             for (WeldModel weld : weldList) {
-//                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(data.getGatherNo())) {
+                                //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
                                     data.setMachineId(weld.getId());
                                     data.setMachineNo(weld.getMachineNo());
                                     data.setMachineDeptId(weld.getDeptId());
