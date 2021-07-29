@@ -386,15 +386,15 @@ export const asyncRoutes = [
           roles: ['admin'],
           noCache: true }
       },
-      {
-        path: 'keyboard8',
-        component: () => import('@/views/system/drag/dragMenu'),
-        name: 'exEmail',
-        meta: {
-          title: '邮件下发管理',
-          mark:'706',
-          noCache: true }
-      }
+      // {
+      //   path: 'keyboard8',
+      //   component: () => import('@/views/system/drag/dragMenu'),
+      //   name: 'exEmail',
+      //   meta: {
+      //     title: '邮件下发管理',
+      //     mark:'706',
+      //     noCache: true }
+      // }
     ]
   },
   {
@@ -416,6 +416,28 @@ export const asyncRoutes = [
         meta: {
           mark:'801',
           title: '日志列表' }
+      }      
+    ]
+  },
+  {
+    path: '/monitor-manager',
+    component: Layout,
+    redirect: 'real-time',
+    alwaysShow: true,
+    name: 'monitorManager',
+    meta: {
+      mark:'9',
+      title: '实时监测管理',
+      icon: 'el-icon-notebook-2'
+    },
+    children: [
+      {
+        path: 'real-time',
+        component: () => import('@/views/monitor/realTime'),
+        name: 'realTime',
+        meta: {
+          mark:'901',
+          title: '实时监测' }
       }      
     ]
   },

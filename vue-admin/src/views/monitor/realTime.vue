@@ -5,7 +5,7 @@
     >
         <div
             class="table-con flex"
-            style="flex:1;"
+            style="flex:1; height:0px"
         >
             <div
                 class="user-l"
@@ -27,97 +27,30 @@
                 </div>
             </div>
             <div
-                class="user-r flex-c"
+                class="user-r flex-c real-tit"
                 style='height:100%;flex:1; width:0px'
             >
-                <div class="top-con flex-n">
-                    <div class="con-w">
-                        <span>名称：</span>
-                        <el-input
-                            size="small"
-                            class="w150"
-                            v-model="searchObj.name"
-                        ></el-input>
-                    </div>                    
-                    <div class="con-w">
-                        <el-button
-                            size="small"
-                            icon="el-icon-search"
-                            type="primary"
-                            @click="search"
-                        >搜索</el-button>
+                <div class="organizational-tit fs14">焊机实时状态监测</div>
+                <div class="real-con">
+                    <div class="real-con-box flex-n">
+                        <div class="real-con-item flex-n" v-for="item in list" :key="item.id">
+                            <span class="real-con-item-img">
+                                <img src="/swipes/AT.png" />
+                            </span>
+                            <div class="real-con-item-txt">
+                                <p><span>设备编号：</span>{{item.machineNo||'--'}}</p>
+                                <p><span>任务编号：</span>{{item.machineNo||'--'}}</p>
+                                <p><span>操作人员：</span>{{item.machineNo||'--'}}</p>
+                                <p><span>焊接电流：</span>{{item.machineNo||'--'}}A</p>
+                                <p><span>焊接电压：</span>{{item.machineNo||'--'}}V</p>
+                                <p><span>焊机状态：</span><strong>{{item.statusStr||'--'}}</strong></p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="con-w">
-                        <el-button
-                            size="small"
-                            icon="el-icon-plus"
-                            @click="addFun"
-                        >新增</el-button>
-                    </div>
-                </div>
-                <div style="flex:1;height:0">
-                    <vxe-table
-                        border
-                        stripe
-                        :data="list"
-                        size="mini"
-                        height="auto"
-                        :loading="loading"
-                        auto-resize
-                    >
-                        <vxe-table-column
-                            type="seq"
-                            title="序号"
-                            width="50"
-                        ></vxe-table-column>
-                        <vxe-table-column
-                            field="childrenName"
-                            title="名称"
-                            min-width="100"
-                        >
-                            <template #default = {row}>
-                                {{row.childrenName||row.name}}
-                            </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                            field="name"
-                            title="上级项目"
-                            min-width="140"
-                        >
-                        <template #default = {row}>
-                                {{row.childrenName?row.name:row.parentName}}
-                            </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                            field="createTime"
-                            title="操作"
-                            width="150px"
-                            fixed="right"
-                        >
-                            <template #default="{row}">
-                                <el-button
-                                    size="mini"
-                                    type="primary"
-                                    plain
-                                    @click="editFun(row.childrenId||row.id)"
-                                >
-                                    修改
-                                </el-button>
-                                <el-button
-                                    size="mini"
-                                    type="danger"
-                                    plain
-                                    @click="delFun(row.childrenId||row.id)"
-                                >
-                                    删除
-                                </el-button>
-                            </template>
-                        </vxe-table-column>
-                    </vxe-table>
                 </div>
             </div>
         </div>
-        <el-pagination
+        <!-- <el-pagination
             class="p10"
             :current-page.sync="page"
             :page-size="10"
@@ -126,7 +59,7 @@
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"
-        />
+        /> -->
 
         <!-- 新增/修改 -->
         <el-dialog
@@ -181,6 +114,7 @@
 <script>
 import { getTeam } from '_api/productionProcess/process'
 import { getUserTree,getTreeDeptInfo,addDept,findIdDeptInfo,editDept,delDept } from '_api/system/systemApi'
+import {  getModelFindId } from '_api/productionEquipment/production'
 export default {
     name: 'organizational',
     data () {
@@ -193,8 +127,7 @@ export default {
 
             //搜索条件
             searchObj: {
-                id:'',
-                name: '',//机构名称
+                id:''
             },
 
             visable1: false,
@@ -263,18 +196,18 @@ export default {
             }
         },
 
-        //根据部门id获取机构列表
+        //根据部门id获取用户列表
         async getList (id) {
             let req = {
                 pn: this.page,
                 ...this.searchObj
             }
             this.loading = true;
-            let { code, data } = await getTreeDeptInfo(req);
+            let { code, data } = await getModelFindId(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data.list
-                this.total = data.total
+                this.list = data.list||[];
+                this.total = data.total;
             }
         },
         //新增
@@ -381,5 +314,32 @@ export default {
     background: #f8f8f8;
     font-weight: bold;
     border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+.real-tit{
+    border-top:1px solid #ddd;
+}
+.real-con{
+    flex:1;
+    height:0;
+    overflow-y:scroll;
+    border:1px solid #ddd;
+    border-top:none;
+}
+.real-con-item{
+    line-height: 20px;
+    font-size: 12px;
+    align-items: center;
+    padding: 10px;
+    width: 230px;
+}
+.real-con-item .real-con-item-img{
+    margin-right: 6px;
+}
+.real-con-item .real-con-item-txt p{
+    margin: 0px;
+}
+.real-con-item .real-con-item-txt p span{
+    color: #666;
 }
 </style>

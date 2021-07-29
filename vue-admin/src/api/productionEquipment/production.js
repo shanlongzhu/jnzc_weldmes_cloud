@@ -190,6 +190,17 @@ export function addTaskClaimInfo(data = {}) {
   });
 }
 
+// 根据机构id获取设备
+export function getModelFindId(params = {}) {
+  return request({
+    url: "/welder/getWeldInfosByDeptId",
+    method: "get",
+    params
+  });
+}
+
+
+
 
   //导出
   export function exportWelderExcel(params = {}) {
