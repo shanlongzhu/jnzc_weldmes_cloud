@@ -118,7 +118,7 @@ public interface DispatchDao {
      * @Description 通过 任务等级的描述 查询 任务等级Id
      * @Params taskGradeValueName 任务等级的描述
      */
-    public byte queryTaskGradeIdByValueName(String taskGradeValueName);
+    public Long queryTaskGradeIdByValueName(String taskGradeValueName);
 
     /**
      * @Date 2021/5/31 18:43

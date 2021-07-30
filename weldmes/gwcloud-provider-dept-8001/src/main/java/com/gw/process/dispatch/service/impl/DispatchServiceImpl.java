@@ -23,10 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @Author zhanghan
@@ -568,8 +566,14 @@ public class DispatchServiceImpl implements DispatchService{
             //获取excel的第一个sheet
             Sheet sheet = workbook.getSheetAt(0);
 
+            int firstRowNum = sheet.getFirstRowNum();
+
             //获取最后一行的下标
             int lastRowNum = sheet.getLastRowNum();
+
+            Row firstRow = sheet.getRow(firstRowNum);
+
+            int lastCellNums = firstRow.getLastCellNum();
 
             List<TaskInfo> taskInfos = new ArrayList<>();
 
@@ -578,18 +582,17 @@ public class DispatchServiceImpl implements DispatchService{
                 //获取第i行
                 Row row = sheet.getRow(i);
 
-                //获取本行的最后一个单元格的下标
-                short lastCellNum = row.getLastCellNum();
-
-                Object[] obs = new Object[lastCellNum];
+                Object[] obs = new Object[lastCellNums];
 
                 //Excel中一条完整的 任务信息 存储到 obs 里
-                for (int j = 0; j <lastCellNum ; j++) {
+                for (int j = 0; j <lastCellNums ; j++) {
 
                     //获取第i行的 第j个 单元格
                     Cell cell = row.getCell(j);
 
-                    System.out.println("cell: "+cell);
+                    if(row.getCell(j)==null){
+                        continue;
+                    }
 
                     //拿到单元格的 value值
                     Object value = ExcelUtils.getValue(cell);
@@ -614,7 +617,7 @@ public class DispatchServiceImpl implements DispatchService{
                 String valueName = (String) obs[1];
 
                 //通过任务等级获取 该任务等级的主键Id
-                byte taskGradeId = dispatchDao.queryTaskGradeIdByValueName(valueName);
+                Long taskGradeId = dispatchDao.queryTaskGradeIdByValueName(valueName);
 
                 //任务等级
                 taskInfo.setGrade(taskGradeId);
@@ -627,46 +630,52 @@ public class DispatchServiceImpl implements DispatchService{
                 //所属班组
                 taskInfo.setDeptId(deptId);
 
-                String planStartTime = (String) obs[3];
+                SimpleDateFormat sdf = DateTimeUtil.sdf;
 
-                Timestamp planStartTimeFt = Timestamp.valueOf(planStartTime);
+                Date planStartTime = (Date)obs[3];
 
                 //计划开始时间
-                taskInfo.setPlanStarttime(planStartTime);
+                taskInfo.setPlanStarttime(sdf.format(planStartTime));
 
-                String planEndTime = (String) obs[4];
-
-                Timestamp planEndTimeFt = Timestamp.valueOf(planEndTime);
+                Date planEndTime = (Date) obs[4];
 
                 //计划结束时间
-                taskInfo.setPlanEndtime(planEndTime);
+                taskInfo.setPlanEndtime(sdf.format(planEndTime));
 
-                String realityStartTime = (String) obs[5];
+                Date realityStartTime = (Date) obs[5];
 
-                Timestamp realityStartTimeFt = Timestamp.valueOf(realityStartTime);
+                if(!ObjectUtils.isEmpty(realityStartTime)){
 
-                //实际开始时间
-                taskInfo.setRealityStarttime(realityStartTime);
+                    //实际开始时间
+                    taskInfo.setRealityStarttime(sdf.format(realityStartTime));
+                }
 
-                String realityEndTime = (String) obs[6];
+                Date realityEndTime = (Date) obs[6];
 
-                //实际结束时间
-                Timestamp realityEndTimeFt = Timestamp.valueOf(realityEndTime);
+                if(!ObjectUtils.isEmpty(realityEndTime)){
 
-                taskInfo.setRealityEndtime(realityEndTime);
+                    //实际结束时间
+                    taskInfo.setRealityEndtime(sdf.format(realityEndTime));
+                }
 
                 String evaluateContent = (String) obs[7];
 
-                //任务评价
-                taskInfo.setEvaluateContent(evaluateContent);
+                if(!ObjectUtils.isEmpty(evaluateContent)){
+
+                    //任务评价
+                    taskInfo.setEvaluateContent(evaluateContent);
+                }
 
                 //评价星级
                 String evaluateStars = (String) obs[8];
 
-                //根据评价星级 获取到星级Id
-                byte evaluateStarsId = dispatchDao.queryTaskGradeIdByValueName(evaluateStars);
+                if(!ObjectUtils.isEmpty(evaluateStars)){
 
-                taskInfo.setEvaluateStars(evaluateStarsId);
+                    //根据评价星级 获取到星级Id
+                    Long evaluateStarsId = dispatchDao.queryTaskGradeIdByValueName(evaluateStars);
+
+                    taskInfo.setEvaluateStars(evaluateStarsId);
+                }
 
                 //把对象放到list
                 taskInfos.add(taskInfo);

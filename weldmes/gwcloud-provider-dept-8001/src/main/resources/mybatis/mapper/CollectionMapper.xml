@@ -43,13 +43,14 @@
 	    left join sys_dictionary d on m.status = d.id
 	    left join sys_dictionary dic on m.protocol = dic.id
 	    left join sys_dept s on m.dept_id=s.id
-        where 1=1
-        <if test="grade != null and grade != ''">
-            and m.dept_id = #{grade}
-        </if>
-        <if test="gatherNo != null and gatherNo != ''">
-            and m.gather_no = #{gatherNo}
-        </if>
+        <where>
+            <if test="grade != null and grade != ''">
+                and m.dept_id = #{grade}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and m.gather_no = #{gatherNo}
+            </if>
+        </where>
     </select>
 
     <insert id="addCollection" parameterType="com.gw.entities.MachineGatherInfo">
