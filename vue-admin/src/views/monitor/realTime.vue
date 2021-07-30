@@ -82,7 +82,9 @@
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">设备信息</span>
                         <div
-                            class="real-con-item flex-n" style="width:300px" >
+                            class="real-con-item flex-n"
+                            style="width:300px"
+                        >
                             <span class="real-con-item-img">
                                 <img :src="`/swipes/${imgType(selectItem.typeStr)}${statusText(selectItem.weldStatus).imgN}.png`" />
                             </span>
@@ -103,64 +105,67 @@
                             <p><span>电压</span><strong>30V</strong></p>
                         </div>
                     </div>
-                    <div class="border-tip flex-c" style="flex:1;margin-right:0px">
+                    <div
+                        class="border-tip flex-c"
+                        style="flex:1;margin-right:0px"
+                    >
                         <span class="border-tip-txt">设备特征</span>
                         <div class="wel-text">
                             <el-row>
-                              <el-col :span="6">
-                                  开机时长：
-                              </el-col>
-                              <el-col :span="6">
-                                  通道总数：
-                              </el-col>
-                              <el-col :span="6">
-                                  气体流量：
-                              </el-col>
-                              <el-col :span="6">
-                                  预置电流：
-                              </el-col>
+                                <el-col :span="6">
+                                    开机时长：
+                                </el-col>
+                                <el-col :span="6">
+                                    通道总数：
+                                </el-col>
+                                <el-col :span="6">
+                                    气体流量：
+                                </el-col>
+                                <el-col :span="6">
+                                    预置电流：
+                                </el-col>
                             </el-row>
                             <el-row>
-                              <el-col :span="6">
-                                  离线时长：
-                              </el-col>
-                              <el-col :span="6">
-                                  当前通道：自由调节状态
-                              </el-col>
-                              <el-col :span="6">
-                                  瞬时功率：
-                              </el-col>
-                              <el-col :span="6">
-                                  预置电压：
-                              </el-col>
+                                <el-col :span="6">
+                                    离线时长：
+                                </el-col>
+                                <el-col :span="6">
+                                    当前通道：自由调节状态
+                                </el-col>
+                                <el-col :span="6">
+                                    瞬时功率：
+                                </el-col>
+                                <el-col :span="6">
+                                    预置电压：
+                                </el-col>
                             </el-row>
                             <el-row>
-                              <el-col :span="6">
-                                  工作时长：
-                              </el-col>
-                              <el-col :span="6">
-                                  焊接控制：
-                              </el-col>
-                              <el-col :span="6">
-                                  提前送气时间：
-                              </el-col>
-                              <el-col :span="6">
-                                  初期电流：
-                              </el-col>
+                                <el-col :span="6">
+                                    工作时长：
+                                </el-col>
+                                <el-col :span="6">
+                                    焊接控制：
+                                </el-col>
+                                <el-col :span="6">
+                                    提前送气时间：
+                                </el-col>
+                                <el-col :span="6">
+                                    初期电流：
+                                </el-col>
                             </el-row>
                             <el-row>
-                              <el-col :span="6">
-                                  焊接时长：
-                              </el-col>
-                              <el-col :span="6">
-                                  送丝速度：
-                              </el-col>
-                              <el-col :span="6">
-                                  滞后停气时间：
-                              </el-col>
-                              <el-col :span="6">
-                                  收弧电流：
-                              </el-col>
+                                <el-col :span="6">
+                                    焊接时长：
+                                </el-col>
+                                <el-col :span="6">
+                                    送丝速度：
+                                </el-col>
+                                <el-col :span="6">
+                                    滞后停气时间：
+                                </el-col>
+                                <el-col :span="6">
+                                    收弧电流：
+                                </el-col>
                             </el-row>
                         </div>
                     </div>
@@ -170,7 +175,7 @@
                         <span class="line-box-l-tit">电流曲线</span>
                         <span class="line-box-l-unit">A</span>
                     </div>
-                    <line-e></line-e>
+                    <line-e ref="lineComEChild"></line-e>
                 </div>
                 <div class="model-line-box vol-box flex">
                     <div class="line-box-l flex-c">
@@ -232,9 +237,9 @@ export default {
             //
             drawer: false,
             //点击的设备
-            selectItem:{},
+            selectItem: {},
             //曲线数据
-            lineData:[]
+            lineData: []
         }
     },
     created () {
@@ -264,37 +269,32 @@ export default {
                     var datajson = JSON.parse(`${message}`);
                     // clearTimeout(this.timeout);
                     //获取曲线数据
-                    // this.setLineData()
+                    //this.setLineData(datajson);
                     //第一条不延时显示
-                    this.setData(0, datajson);
+                    this.setData(datajson);
                     //后面两条延时显示
-                    for (let i = 1; i < 3; i++) {
-                        ((i) => {
-                            this.timeout = setTimeout(() => {
-                                this.setData(i, datajson);
-                            }, (i + 1) * 1000);
-                        })(i)
-                    }
+                    // for (let i = 1; i < 3; i++) {
+                    //     ((i) => {
+                    //         this.timeout = setTimeout(() => {
+                    //             this.setData(i, datajson);
+                    //         }, (i + 1) * 1000);
+                    //     })(i)
+                    // }
                 }
             })
         },
 
-        setData (i, arr) {
-            this.list.forEach(item => {
-                let filterArr = arr.filter(v1 => parseInt(v1.gatherNo) == parseInt(item.gatherNo));
-                if (filterArr.length == 3) {
-                    item.voltage = filterArr[i].voltage
-                    item.electricity = filterArr[i].electricity
-                    item.welderName = filterArr[i].welderName
-                    item.taskNo = filterArr[i].taskNo
-                    item.weldStatus = filterArr[i].weldStatus;//状态
-                } else {
-                    item.voltage = ''
-                    item.electricity = ''
-                    item.welderName = ''
-                    item.taskNo = ''
-                    item.weldStatus = -1;//状态
-                }
+        setData (arr) {
+            arr.forEach(v1 => {
+                this.list.forEach(item => {
+                    if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
+                        item.voltage = v1.voltage
+                        item.electricity = v1.electricity
+                        item.welderName = v1.welderName
+                        item.taskNo = v1.taskNo
+                        item.weldStatus = v1.weldStatus;//状态
+                    }
+                })
             })
         },
 
@@ -369,6 +369,18 @@ export default {
         handlerWeld (v) {
             this.drawer = true;
             this.selectItem = v;
+        },
+
+        setLineData (arr) {
+            if (this.selectItem.hasOwnProperty('gatherNo')) {
+                let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
+                console.log(filterArr)
+                filterArr.forEach(item => {
+                    this.lineDataTime.push(item.weldTime);
+                    this.lineDataValue.push(item.weldTime)
+                })
+                // this.$refs.lineComEChild.init(filterArr)
+            }
         },
 
 
@@ -460,7 +472,7 @@ export default {
     color: #666;
 }
 
-.real-con-layer *{
+.real-con-layer * {
     color: #333;
 }
 
@@ -482,12 +494,12 @@ export default {
     line-height: 14px;
     padding: 0 10px;
 }
-.wel-tip{
+.wel-tip {
     min-width: 250px;
     padding: 0 20px;
     line-height: 36px;
 }
-.wel-tip span{
+.wel-tip span {
     display: inline-block;
     background: rgb(1, 209, 95);
     width: 80px;
@@ -499,27 +511,27 @@ export default {
     vertical-align: middle;
     margin-right: 5px;
 }
-.wel-tip p:last-child span{
+.wel-tip p:last-child span {
     background: rgb(255, 119, 8);
 }
-.wel-tip strong{
+.wel-tip strong {
     font-size: 24px;
     vertical-align: middle;
 }
-.wel-text{
+.wel-text {
     padding: 10px 20px;
     line-height: 24px;
 }
-.wel-text *{
+.wel-text * {
     font-size: 12px;
 }
 
-.model-line-box{
-    flex:1;
+.model-line-box {
+    flex: 1;
     height: 0px;
     margin-top: 10px;
 }
-.line-box-l{
+.line-box-l {
     width: 34px;
     background: rgb(1, 209, 95);
     font-size: 18px;
@@ -528,11 +540,11 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.line-box-l-tit{
+.line-box-l-tit {
     line-height: 26px;
     color: #fff;
 }
-.line-box-l-unit{
+.line-box-l-unit {
     background: #fff;
     width: 20px;
     height: 20px;
@@ -541,8 +553,7 @@ export default {
     line-height: 20px;
     text-align: center;
 }
-.vol-box .line-box-l{
+.vol-box .line-box-l {
     background: rgb(255, 119, 8);
 }
-
 </style>

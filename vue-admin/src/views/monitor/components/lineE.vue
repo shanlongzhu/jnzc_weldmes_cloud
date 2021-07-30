@@ -32,19 +32,7 @@ export default {
             this.myChart.clear()
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
-            if (elc.length <= 100) {
-                this.option.dataZoom[0].end = 100;
-                this.option.dataZoom[1].end = 100;
-            } else if (elc.length <= 500) {
-                this.option.dataZoom[0].end = 70;
-                this.option.dataZoom[1].end = 70;
-            } else if (elc.length <= 2000) {
-                this.option.dataZoom[0].end = 30;
-                this.option.dataZoom[1].end = 30;
-            } else {
-                this.option.dataZoom[0].end = 0.5;
-                this.option.dataZoom[1].end = 0.5;
-            }
+            
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
         },
