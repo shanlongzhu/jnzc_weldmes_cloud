@@ -73,7 +73,7 @@ public class TaskInfo {
     /**
      * 等级字典id
      */
-    private byte grade;
+    private Long grade;
 
     /**
      * 等级id对应字符串
@@ -83,7 +83,7 @@ public class TaskInfo {
     /**
      * 评价星级字典id
      */
-    private byte evaluateStars;
+    private Long evaluateStars;
 
     /**
      * 评价星级字典id对应字符串
