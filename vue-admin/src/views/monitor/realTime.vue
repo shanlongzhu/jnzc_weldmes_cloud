@@ -277,7 +277,7 @@ export default {
 
         setData (i, arr) {
             this.list.forEach(item => {
-                let filterArr = arr.filter(v1 => v1.gatherNo == parseInt(item.gatherNo));
+                let filterArr = arr.filter(v1 => parseInt(v1.gatherNo) == parseInt(item.gatherNo));
                 if (filterArr.length == 3) {
                     item.voltage = filterArr[i].voltage
                     item.electricity = filterArr[i].electricity
