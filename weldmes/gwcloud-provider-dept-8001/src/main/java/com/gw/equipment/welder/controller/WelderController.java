@@ -169,7 +169,7 @@ public class WelderController {
     //导入
     @PostMapping(value = "importExcel",produces = "application/json;charset=UTF-8")
     public HttpResult importExcel(@RequestParam("file")MultipartFile file){
-        HttpResult result=new HttpResult();
+
         try {
             //workbook excel
             Workbook workbook=new XSSFWorkbook(file.getInputStream());
@@ -238,12 +238,11 @@ public class WelderController {
             }
             //保存
             welderService.importExcel(machineWeldInfoArrayList);
-            result.setMsg("导入成功！");
+            return HttpResult.ok("导入成功！");
         }catch (Exception e){
             e.printStackTrace();
-            result.setMsg("导入失败！");
+            return HttpResult.error("导入失败！");
         }
-        return  result;
     }
 
     /**

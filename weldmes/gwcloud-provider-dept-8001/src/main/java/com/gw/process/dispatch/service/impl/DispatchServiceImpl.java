@@ -688,6 +688,7 @@ public class DispatchServiceImpl implements DispatchService{
 
         }catch (Exception e){
             e.printStackTrace();
+            HttpResult.error("导入失败！");
         }
     }
 }

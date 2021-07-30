@@ -7,6 +7,7 @@ import com.gw.entities.UserLoginInfo;
 import com.gw.sys.service.SysMenuService;
 import com.gw.sys.service.SysUserService;
 import com.gw.sys.service.UserRolesAndPerService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -51,10 +52,12 @@ public class LoginController {
 
         UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
 
+        String newPwdMD5 = DigestUtils.md5Hex(password);
+
         //  针对 同一浏览器 不同窗口 中 同一用户重复登录
         if(currentUser.isAuthenticated() &&
                 subject.getUserName().equals(username) &&
-                subject.getPassWord().equals(password)){
+                subject.getPassWord().equals(newPwdMD5)){
 
             return HttpResult.ok("当前用户已登录,请更换用户重新登录");
         }
@@ -62,7 +65,7 @@ public class LoginController {
         //当前用户 未登录 时 进行登录认证
         if(!currentUser.isAuthenticated()){
 
-            UsernamePasswordToken userToken = new UsernamePasswordToken(username,password);
+            UsernamePasswordToken userToken = new UsernamePasswordToken(username,newPwdMD5);
 
             try{
 

@@ -7,6 +7,7 @@ import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.SysUserDao;
 import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysUserService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +133,10 @@ public class SysUserServiceImpl implements SysUserService {
 
         sysUserRole.setLastUpdateTime(time);
 
+        String newPwdMD5 = DigestUtils.md5Hex(sysUser.getPassword());
+
+        sysUser.setPassword(newPwdMD5);
+
         //修改用户信息
         sysUserDao.updateUserInfo(sysUser);
 
@@ -178,6 +183,10 @@ public class SysUserServiceImpl implements SysUserService {
 
         //将时间放入用户信息
         sysUser.setCreateTime(time);
+
+        String newPwdMD5 = DigestUtils.md5Hex(sysUser.getPassword());
+
+        sysUser.setPassword(newPwdMD5);
 
         //新增用户信息
         sysUserDao.insertUserInfo(sysUser);
