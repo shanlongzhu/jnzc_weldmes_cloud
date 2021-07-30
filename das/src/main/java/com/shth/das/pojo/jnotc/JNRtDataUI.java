@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * 前端实时数据展示的实体类
@@ -54,5 +55,60 @@ public class JNRtDataUI implements Serializable {
      * 送丝速度
      */
     private BigDecimal wireFeedRate;
+
+    /**
+     * 焊工id
+     */
+    private BigInteger welderId;
+
+    /**
+     * 焊工姓名
+     */
+    private String welderName;
+
+    /**
+     * 焊工编号
+     */
+    private String welderNo;
+
+    /**
+     * 焊工组织id
+     */
+    private BigInteger welderDeptId;
+
+    /**
+     * 任务id
+     */
+    private BigInteger taskId;
+
+    /**
+     * 任务名称
+     */
+    private String taskName;
+
+    /**
+     * 任务编号
+     */
+    private String taskNo;
+
+    /**
+     * 焊机id
+     */
+    private BigInteger machineId;
+
+    /**
+     * 焊机编号
+     */
+    private String machineNo;
+
+    /**
+     * 焊机组织id
+     */
+    private BigInteger machineDeptId;
+
+    /**
+     * 设备类型（默认0：OTC，1：松下）
+     */
+    private int weldType;
 
 }
