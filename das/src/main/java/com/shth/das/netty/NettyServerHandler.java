@@ -171,9 +171,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
                 ctx.disconnect();
                 ctx.channel().close();
                 ctx.close();
+            } else {
+                super.userEventTriggered(ctx, obj);
             }
         } else {
-            //log.info("Netty客户端连接超时检测");
             super.userEventTriggered(ctx, obj);
         }
     }
