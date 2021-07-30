@@ -232,7 +232,9 @@ export default {
             //
             drawer: false,
             //点击的设备
-            selectItem:{}
+            selectItem:{},
+            //曲线数据
+            lineData:[]
         }
     },
     created () {
@@ -260,7 +262,9 @@ export default {
             this.client.on('message', (topic, message) => {
                 if (topic == 'rtcdata') {
                     var datajson = JSON.parse(`${message}`);
-                    clearTimeout(this.timeout);
+                    // clearTimeout(this.timeout);
+                    //获取曲线数据
+                    // this.setLineData()
                     //第一条不延时显示
                     this.setData(0, datajson);
                     //后面两条延时显示
