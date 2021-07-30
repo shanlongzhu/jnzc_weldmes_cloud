@@ -40,6 +40,7 @@
                             class="real-con-item flex-n"
                             v-for="item in list"
                             :key="item.id"
+                            @click="handlerWeld(item)"
                         >
                             <span class="real-con-item-img">
                                 <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
@@ -67,13 +68,120 @@
             :total="total"
             @current-change="handleCurrentChange"
         /> -->
-        <el-drawer
-            title="我是标题"
+        <el-dialog
+            title="设备运行参数监控"
             :visible.sync="drawer"
-            :with-header="false"
+            fullscreen
+            class="real-con-layer"
         >
-            <span>我来啦!</span>
-        </el-drawer>
+            <div
+                class="flex-c"
+                style="height:calc(100vh - 100px)"
+            >
+                <div class="real-layer-top flex">
+                    <div class="border-tip flex-c">
+                        <span class="border-tip-txt">设备信息</span>
+                        <div
+                            class="real-con-item flex-n" style="width:300px" >
+                            <span class="real-con-item-img">
+                                <img :src="`/swipes/${imgType(selectItem.typeStr)}${statusText(selectItem.weldStatus).imgN}.png`" />
+                            </span>
+                            <div class="real-con-item-txt">
+                                <p><span>设备编号：</span>{{selectItem.machineNo||'--'}}</p>
+                                <p><span>任务编号：</span>{{selectItem.taskNo||'--'}}</p>
+                                <p><span>操作人员：</span>{{selectItem.welderName||'--'}}</p>
+                                <p><span>焊接电流：</span>{{selectItem.electricity||selectItem.electricity===0?selectItem.electricity:'--'}}A</p>
+                                <p><span>焊接电压：</span>{{selectItem.voltage||selectItem.voltage===0?selectItem.voltage:'--'}}V</p>
+                                <p><span>焊机状态：</span><strong>{{statusText(selectItem.weldStatus).str}}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-tip flex-c">
+                        <span class="border-tip-txt">焊接参数</span>
+                        <div class="wel-tip">
+                            <p><span>电流</span><strong>100A</strong></p>
+                            <p><span>电压</span><strong>30V</strong></p>
+                        </div>
+                    </div>
+                    <div class="border-tip flex-c" style="flex:1;margin-right:0px">
+                        <span class="border-tip-txt">设备特征</span>
+                        <div class="wel-text">
+                            <el-row>
+                              <el-col :span="6">
+                                  开机时长：
+                              </el-col>
+                              <el-col :span="6">
+                                  通道总数：
+                              </el-col>
+                              <el-col :span="6">
+                                  气体流量：
+                              </el-col>
+                              <el-col :span="6">
+                                  预置电流：
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="6">
+                                  离线时长：
+                              </el-col>
+                              <el-col :span="6">
+                                  当前通道：自由调节状态
+                              </el-col>
+                              <el-col :span="6">
+                                  瞬时功率：
+                              </el-col>
+                              <el-col :span="6">
+                                  预置电压：
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="6">
+                                  工作时长：
+                              </el-col>
+                              <el-col :span="6">
+                                  焊接控制：
+                              </el-col>
+                              <el-col :span="6">
+                                  提前送气时间：
+                              </el-col>
+                              <el-col :span="6">
+                                  初期电流：
+                              </el-col>
+                            </el-row>
+                            <el-row>
+                              <el-col :span="6">
+                                  焊接时长：
+                              </el-col>
+                              <el-col :span="6">
+                                  送丝速度：
+                              </el-col>
+                              <el-col :span="6">
+                                  滞后停气时间：
+                              </el-col>
+                              <el-col :span="6">
+                                  收弧电流：
+                              </el-col>
+                            </el-row>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-line-box ele-box flex">
+                    <div class="line-box-l flex-c">
+                        <span class="line-box-l-tit">电流曲线</span>
+                        <span class="line-box-l-unit">A</span>
+                    </div>
+                    <line-e></line-e>
+                </div>
+                <div class="model-line-box vol-box flex">
+                    <div class="line-box-l flex-c">
+                        <span class="line-box-l-tit">电压曲线</span>
+                        <span class="line-box-l-unit">V</span>
+                    </div>
+                    <line-v></line-v>
+                </div>
+            </div>
+
+        </el-dialog>
     </div>
 </template>
 
@@ -82,7 +190,10 @@ import mqtt from 'mqtt'
 import { getTeam } from '_api/productionProcess/process'
 import { getUserTree, getTreeDeptInfo, addDept, findIdDeptInfo, editDept, delDept } from '_api/system/systemApi'
 import { getModelFindId } from '_api/productionEquipment/production'
+import lineE from './components/lineE.vue'
+import LineV from './components/lineV.vue'
 export default {
+    components: { lineE, LineV },
     name: 'organizational',
     data () {
 
@@ -108,7 +219,7 @@ export default {
             searchObj: {
                 id: ''
             },
-            
+
             loading: false,
 
             //部门tree数据
@@ -119,7 +230,9 @@ export default {
                 label: 'name'
             },
             //
-            drawer:false
+            drawer: false,
+            //点击的设备
+            selectItem:{}
         }
     },
     created () {
@@ -137,7 +250,7 @@ export default {
                 console.log('连接失败', error)
             }
             this.client.on('connect', () => {
-                console.log('连接成功')
+                // console.log('连接成功')
                 this.doSubscribe();
 
             })
@@ -147,7 +260,6 @@ export default {
             this.client.on('message', (topic, message) => {
                 if (topic == 'rtcdata') {
                     var datajson = JSON.parse(`${message}`);
-                    console.log(datajson)
                     clearTimeout(this.timeout);
                     //第一条不延时显示
                     this.setData(0, datajson);
@@ -165,7 +277,7 @@ export default {
 
         setData (i, arr) {
             this.list.forEach(item => {
-                let filterArr = arr.filter(v1 => v1.gatherNo == item.gatherNo);
+                let filterArr = arr.filter(v1 => v1.gatherNo == parseInt(item.gatherNo));
                 if (filterArr.length == 3) {
                     item.voltage = filterArr[i].voltage
                     item.electricity = filterArr[i].electricity
@@ -185,7 +297,7 @@ export default {
         //订阅主题
         doSubscribe () {
             this.client.subscribe('rtcdata', 0, (error, res) => {
-                console.log('订阅rtcdata')
+                // console.log('订阅rtcdata')
                 if (error) {
                     this.$message.error("订阅rtcdata超时")
                     return
@@ -250,8 +362,9 @@ export default {
         },
 
         //点击焊机
-        handlerWeld(){
+        handlerWeld (v) {
             this.drawer = true;
+            this.selectItem = v;
         },
 
 
@@ -342,4 +455,90 @@ export default {
 .real-con-item .real-con-item-txt p span {
     color: #666;
 }
+
+.real-con-layer *{
+    color: #333;
+}
+
+.real-con-layer .border-tip {
+    border: 1px solid #999;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    justify-content: center;
+}
+.real-con-layer .border-tip-txt {
+    position: absolute;
+    background: #fff;
+    left: 10px;
+    top: -7px;
+    font-size: 14px;
+    line-height: 14px;
+    padding: 0 10px;
+}
+.wel-tip{
+    min-width: 250px;
+    padding: 0 20px;
+    line-height: 36px;
+}
+.wel-tip span{
+    display: inline-block;
+    background: rgb(1, 209, 95);
+    width: 80px;
+    line-height: 36px;
+    font-size: 18px;
+    text-align: center;
+    color: #fff;
+    border-radius: 10px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.wel-tip p:last-child span{
+    background: rgb(255, 119, 8);
+}
+.wel-tip strong{
+    font-size: 24px;
+    vertical-align: middle;
+}
+.wel-text{
+    padding: 10px 20px;
+    line-height: 24px;
+}
+.wel-text *{
+    font-size: 12px;
+}
+
+.model-line-box{
+    flex:1;
+    height: 0px;
+    margin-top: 10px;
+}
+.line-box-l{
+    width: 34px;
+    background: rgb(1, 209, 95);
+    font-size: 18px;
+    padding: 2px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.line-box-l-tit{
+    line-height: 26px;
+    color: #fff;
+}
+.line-box-l-unit{
+    background: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+}
+.vol-box .line-box-l{
+    background: rgb(255, 119, 8);
+}
+
 </style>
