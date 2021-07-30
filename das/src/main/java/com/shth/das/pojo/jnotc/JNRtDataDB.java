@@ -21,7 +21,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @ToString
 @Accessors(chain = true)
-public class JNRtDataDB implements Serializable {
+public class JNRtDataDB implements Serializable,Cloneable {
 
     /**
      * 焊机发送的数据字段
@@ -67,4 +67,14 @@ public class JNRtDataDB implements Serializable {
     private String taskNo;              //任务编号（任务领取时不为空）
     private String createTime;          //创建时间
 
+    @Override
+    public Object clone() {
+        JNRtDataDB jnr = null;
+        try{
+            jnr = (JNRtDataDB)super.clone();
+        }catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return jnr;
+    }
 }

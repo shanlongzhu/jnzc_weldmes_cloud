@@ -234,7 +234,7 @@ public class JnRtDataProtocol {
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
-                        rtData.add(data);
+                        rtData.add((JNRtDataUI)data.clone());
                     }
                 }
             }
@@ -353,7 +353,7 @@ public class JnRtDataProtocol {
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
                         data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
-                        rtdata.add(data);
+                        rtdata.add((JNRtDataDB)data.clone());
                     }
                 }
             }
