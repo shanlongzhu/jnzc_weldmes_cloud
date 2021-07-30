@@ -97,7 +97,7 @@ public class DataInitialization {
     @Value("${sxNettyServer.ip}")
     private void setSxIp(String ip) {
         if (CommonUtils.isNotEmpty(ip)) {
-            sxIp = sxIp;
+            sxIp = ip;
         }
     }
 }

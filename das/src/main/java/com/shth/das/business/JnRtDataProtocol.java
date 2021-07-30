@@ -198,19 +198,21 @@ public class JnRtDataProtocol {
                     ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonDbData.OTC_TASK_CLAIM_MAP;
                     //采集模块编号
                     data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                    if (otcTaskClaimMap.size()>0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                    if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                         TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
-                        data.setWelderId(taskClaimIssue.getWelderId());
-                        data.setWelderName(taskClaimIssue.getWelderName());
-                        data.setWelderNo(taskClaimIssue.getWelderNo());
-                        data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                        data.setTaskId(taskClaimIssue.getTaskId());
-                        data.setTaskName(taskClaimIssue.getTaskName());
-                        data.setTaskNo(taskClaimIssue.getTaskNo());
-                        data.setMachineId(taskClaimIssue.getMachineId());
-                        data.setMachineNo(taskClaimIssue.getMachineNo());
-                        data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
-                        data.setWeldType(taskClaimIssue.getWeldType());
+                        if (null != taskClaimIssue) {
+                            data.setWelderId(taskClaimIssue.getWelderId());
+                            data.setWelderName(taskClaimIssue.getWelderName());
+                            data.setWelderNo(taskClaimIssue.getWelderNo());
+                            data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                            data.setTaskId(taskClaimIssue.getTaskId());
+                            data.setTaskName(taskClaimIssue.getTaskName());
+                            data.setTaskNo(taskClaimIssue.getTaskNo());
+                            data.setMachineId(taskClaimIssue.getMachineId());
+                            data.setMachineNo(taskClaimIssue.getMachineNo());
+                            data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                            data.setWeldType(taskClaimIssue.getWeldType());
+                        }
                     }
                     for (int a = 0; a < 239; a += 80) {
                         String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);

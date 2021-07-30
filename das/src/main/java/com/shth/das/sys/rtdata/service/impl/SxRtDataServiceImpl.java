@@ -36,6 +36,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
                 sxRtDataMapper.insertSxRtDataList(map);
             } catch (Exception e) {
                 e.printStackTrace();
+                throw new RuntimeException();
             }
         }
     }
