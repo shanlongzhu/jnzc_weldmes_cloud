@@ -198,7 +198,7 @@ public class JnRtDataProtocol {
                     ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonDbData.OTC_TASK_CLAIM_MAP;
                     //采集模块编号
                     data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                    if (otcTaskClaimMap.size()>0 && otcTaskClaimMap.contains(data.getGatherNo())) {
+                    if (otcTaskClaimMap.size()>0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                         TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                         data.setWelderId(taskClaimIssue.getWelderId());
                         data.setWelderName(taskClaimIssue.getWelderName());
