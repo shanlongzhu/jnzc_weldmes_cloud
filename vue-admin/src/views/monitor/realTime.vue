@@ -31,19 +31,26 @@
                 style='height:100%;flex:1; width:0px'
             >
                 <div class="organizational-tit fs14">焊机实时状态监测</div>
-                <div class="real-con">
+                <div
+                    class="real-con"
+                    v-loading="loading"
+                >
                     <div class="real-con-box flex-n">
-                        <div class="real-con-item flex-n" v-for="item in list" :key="item.id">
+                        <div
+                            class="real-con-item flex-n"
+                            v-for="item in list"
+                            :key="item.id"
+                        >
                             <span class="real-con-item-img">
-                                <img src="/swipes/AT.png" />
+                                <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
                                 <p><span>设备编号：</span>{{item.machineNo||'--'}}</p>
-                                <p><span>任务编号：</span>{{item.machineNo||'--'}}</p>
-                                <p><span>操作人员：</span>{{item.machineNo||'--'}}</p>
-                                <p><span>焊接电流：</span>{{item.machineNo||'--'}}A</p>
-                                <p><span>焊接电压：</span>{{item.machineNo||'--'}}V</p>
-                                <p><span>焊机状态：</span><strong>{{item.statusStr||'--'}}</strong></p>
+                                <p><span>任务编号：</span>{{item.taskNo||'--'}}</p>
+                                <p><span>操作人员：</span>{{item.welderName||'--'}}</p>
+                                <p><span>焊接电流：</span>{{item.electricity||item.electricity===0?item.electricity:'--'}}A</p>
+                                <p><span>焊接电压：</span>{{item.voltage||item.voltage===0?item.voltage:'--'}}V</p>
+                                <p><span>焊机状态：</span><strong>{{statusText(item.weldStatus).str}}</strong></p>
                             </div>
                         </div>
                     </div>
@@ -60,66 +67,38 @@
             :total="total"
             @current-change="handleCurrentChange"
         /> -->
-
-        <!-- 新增/修改 -->
-        <el-dialog
-            :title="title"
-            :visible.sync="visable1"
-            :close-on-click-modal="false"
-            width="500px"
+        <el-drawer
+            title="我是标题"
+            :visible.sync="drawer"
+            :with-header="false"
         >
-            <el-form
-                ref="ruleForm"
-                :model="ruleForm"
-                :rules="rules"
-                label-width="100px"
-                class="demo-ruleForm"
-            >
-                <el-form-item
-                    label="名称"
-                    prop="name"
-                >
-                    <el-input
-                        v-model="ruleForm.name"
-                        style="width:250px"
-                    ></el-input>
-                </el-form-item>
-                             
-                <el-form-item
-                    label="上级部门"
-                    prop="parentId"
-                >
-                    <el-cascader
-                        v-model="ruleForm.parentId"
-                        style="width:250px"
-                        clearable
-                        :options="teamArr"
-                        :props="defalutProps"
-                        :show-all-levels="false"
-                    />
-                </el-form-item>              
-                
-                <el-form-item>
-                    <el-button
-                        type="primary"
-                        @click="submitForm('ruleForm')"
-                    >保存</el-button>
-                    <el-button @click="visable1 = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
+            <span>我来啦!</span>
+        </el-drawer>
     </div>
 </template>
 
 <script>
+import mqtt from 'mqtt'
 import { getTeam } from '_api/productionProcess/process'
-import { getUserTree,getTreeDeptInfo,addDept,findIdDeptInfo,editDept,delDept } from '_api/system/systemApi'
-import {  getModelFindId } from '_api/productionEquipment/production'
+import { getUserTree, getTreeDeptInfo, addDept, findIdDeptInfo, editDept, delDept } from '_api/system/systemApi'
+import { getModelFindId } from '_api/productionEquipment/production'
 export default {
     name: 'organizational',
     data () {
-        
+
         return {
+            //mqtt
+            client: {},
+            options: {
+                timeout: 50,
+                keepAliveInterval: 60,
+                cleanSession: false,
+                useSSL: false,
+                reconnect: true,
+                clientId: "adminTest" + new Date().getTime()
+            },
+            timeout: '',
+
             list: [],
             //分页
             page: 1,
@@ -127,58 +106,96 @@ export default {
 
             //搜索条件
             searchObj: {
-                id:''
+                id: ''
             },
-
-            visable1: false,
-            ruleFormObj: {
-
-            },
-            ruleForm: {
-                name: '',//机构名称
-                parentId: '',//父级机构id
-            },
-            rules: {
-                name: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                parentId: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],                
-            },
-            title: '新建机构',
-
-            //机构数据
-            teamArr: [],
-
-            // 级联下拉配置
-            defalutProps: {
-                label: 'name',
-                value: 'id',
-                children: 'list',
-                checkStrictly: true
-            },
+            
             loading: false,
 
             //部门tree数据
-            treeLoading:false,
+            treeLoading: false,
             treeData: [],
             defaultProps: {
                 children: 'list',
                 label: 'name'
             },
-            //角色下拉数据
-            rolesArr: []
+            //
+            drawer:false
         }
     },
-
     created () {
-        this.ruleFormObj = { ...this.ruleForm };
+        this.searchObj.id = 1;
         this.getList();
         this.getUserTreeFun();
-        this.getTeamList();
     },
     methods: {
+        //mqtt创建
+        createConnection () {
+            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
+            try {
+                this.client = mqtt.connect(connectUrl, this.options)
+            } catch (error) {
+                console.log('连接失败', error)
+            }
+            this.client.on('connect', () => {
+                console.log('连接成功')
+                this.doSubscribe();
+
+            })
+            this.client.on('error', error => {
+                console.log('连接失败', error)
+            })
+            this.client.on('message', (topic, message) => {
+                if (topic == 'rtcdata') {
+                    var datajson = JSON.parse(`${message}`);
+                    console.log(datajson)
+                    clearTimeout(this.timeout);
+                    //第一条不延时显示
+                    this.setData(0, datajson);
+                    //后面两条延时显示
+                    for (let i = 1; i < 3; i++) {
+                        ((i) => {
+                            this.timeout = setTimeout(() => {
+                                this.setData(i, datajson);
+                            }, (i + 1) * 1000);
+                        })(i)
+                    }
+                }
+            })
+        },
+
+        setData (i, arr) {
+            this.list.forEach(item => {
+                let filterArr = arr.filter(v1 => v1.gatherNo == item.gatherNo);
+                if (filterArr.length == 3) {
+                    item.voltage = filterArr[i].voltage
+                    item.electricity = filterArr[i].electricity
+                    item.welderName = filterArr[i].welderName
+                    item.taskNo = filterArr[i].taskNo
+                    item.weldStatus = filterArr[i].weldStatus;//状态
+                } else {
+                    item.voltage = ''
+                    item.electricity = ''
+                    item.welderName = ''
+                    item.taskNo = ''
+                    item.weldStatus = -1;//状态
+                }
+            })
+        },
+
+        //订阅主题
+        doSubscribe () {
+            this.client.subscribe('rtcdata', 0, (error, res) => {
+                console.log('订阅rtcdata')
+                if (error) {
+                    this.$message.error("订阅rtcdata超时")
+                    return
+                }
+            })
+        },
+
+
+
+
         search () {
             this.page = 1;
             this.getList();
@@ -190,13 +207,13 @@ export default {
             this.treeLoading = false;
             if (code == 200) {
                 this.treeData = [data] || [];
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     this.$refs.treeDom.setCurrentKey(this.searchObj.id)
                 })
             }
         },
 
-        //根据部门id获取用户列表
+        //根据部门id获取设备列表
         async getList (id) {
             let req = {
                 pn: this.page,
@@ -206,97 +223,80 @@ export default {
             let { code, data } = await getModelFindId(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data.list||[];
+                this.list = (data.list || []).map(item => {
+                    let objItem = { ...item };
+                    objItem.electricity = '';//电流
+                    objItem.voltage = '';//电压
+                    objItem.weldIp = '';//IP
+                    objItem.weldStatus = -1;//状态
+                    objItem.welderName = '';//操作人
+                    objItem.taskNo = '';//任务编号
+                    return objItem;
+                });
                 this.total = data.total;
+                this.createConnection();
             }
         },
-        //新增
-        addFun () {
-            this.title = "新建机构"
-            this.visable1 = true;
-            this.$nextTick(() => {
-                this.$refs.ruleForm.resetFields();
-                this.ruleForm = { ...this.ruleFormObj };
-                Reflect.deleteProperty(this.ruleForm, "id");
-            })
 
-        },
-        //修改
-        async editFun (id) {
-            this.title = "编辑机构"
-            this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await findIdDeptInfo({ id });
-            if (code == 200) {
-                this.visable1 = true;
-                this.$nextTick(() => {
-                    this.$refs.ruleForm.resetFields();
-                    this.ruleForm = data || {}
-                })
-            }
-        },
-        //删除
-        delFun (id) {
-            this.$confirm('确定要删除吗?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(async () => {
-                let { code, data } = await delDept({ id })
-                if (code == 200) {
-                    this.$message.success('操作成功')
-                    this.getList();
-                    this.getUserTreeFun();
-                }
-            }).catch(() => { })
-
-        },
-
-        // 获取班组
-        async getTeamList () {
-            const { data, code } = await getTeam()
-            this.teamArr = data.workArea || []
-        },
         //分页切换
         handleCurrentChange (p) {
             this.page = p;
             this.getList();
         },
 
-        // 新增/编辑提交
-        submitForm (formName) {
-            console.log(this.ruleForm)
-            this.$refs[formName].validate(async (valid) => {
-                if (valid) {
-                    if (this.ruleForm.hasOwnProperty('id')) {
-                        const req = { ...this.ruleForm }
-                        req.parentId = req.parentId && req.parentId.length > 0 ? req.parentId.slice(-1).join('') : req.parentId
-                        const { data, code } = await editDept(req)
-                        if (code == 200) {
-                            this.$message.success('修改成功')
-                            this.visable1 = false
-                            this.getList();
-                            this.getUserTreeFun();
-                        }
-                    } else {
-                        const req = { ...this.ruleForm }
-                        req.parentId = req.parentId && req.parentId.length > 0 ? req.parentId.slice(-1).join('') : req.parentId
-                        const { data, code } = await addDept(req);
-                        if (code == 200) {
-                            this.$message.success('新增成功')
-                            this.visable1 = false
-                            this.getList();
-                            this.getUserTreeFun();
-                        }
-                    }
-                } else {
-                    console.log('error submit!!')
-                    return false
-                }
-            })
-        },
         currentChangeTree (v) {
             this.searchObj.id = v.id;
             this.search();
+        },
+
+        //点击焊机
+        handlerWeld(){
+            this.drawer = true;
+        },
+
+
+        //焊机状态
+        statusText (v) {
+            let str = '关机';
+            let imgN = '';
+            switch (v) {
+                case -1:
+                    str = '关机';
+                    imgN = '';
+                    break;
+                case 0:
+                    str = '待机';
+                    imgN = 'S';
+                    break;
+                case 3: case 5: case 7:
+                    str = '焊接';
+                    imgN = 'W';
+                    break;
+                default:
+                    str = '故障';
+                    imgN = 'O';
+                    break;
+            }
+            return {
+                str: str,
+                imgN: imgN
+            };
+        },
+        //图片类型
+        imgType (v) {
+            let str = '';
+            switch (v) {
+                case '手工焊':
+                    str = 'AT';
+                    break;
+                case '气保焊':
+                    str = 'FR';
+                    break;
+                default:
+                    str = 'GL';
+                    break;
+            }
+            return str;
         },
 
     }
@@ -316,30 +316,30 @@ export default {
     border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
 }
-.real-tit{
-    border-top:1px solid #ddd;
+.real-tit {
+    border-top: 1px solid #ddd;
 }
-.real-con{
-    flex:1;
-    height:0;
-    overflow-y:scroll;
-    border:1px solid #ddd;
-    border-top:none;
+.real-con {
+    flex: 1;
+    height: 0;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    border-top: none;
 }
-.real-con-item{
+.real-con-item {
     line-height: 20px;
     font-size: 12px;
     align-items: center;
     padding: 10px;
     width: 230px;
 }
-.real-con-item .real-con-item-img{
+.real-con-item .real-con-item-img {
     margin-right: 6px;
 }
-.real-con-item .real-con-item-txt p{
+.real-con-item .real-con-item-txt p {
     margin: 0px;
 }
-.real-con-item .real-con-item-txt p span{
+.real-con-item .real-con-item-txt p span {
     color: #666;
 }
 </style>

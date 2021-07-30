@@ -428,7 +428,7 @@ export const asyncRoutes = [
     meta: {
       mark:'9',
       title: '实时监测管理',
-      icon: 'el-icon-notebook-2'
+      icon: 'el-icon-data-board'
     },
     children: [
       {

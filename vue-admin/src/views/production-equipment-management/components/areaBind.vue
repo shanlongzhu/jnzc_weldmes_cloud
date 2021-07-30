@@ -12,7 +12,6 @@
                 v-model="areaId"
                 size="small"
                 class="w120"
-                clearable
                 placeholder="请选择"
                 @change="changeArea"
             >
