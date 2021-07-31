@@ -132,7 +132,7 @@
                                 <el-col :span="8">
                                     预置电流：
                                 </el-col>
-                                
+
                             </el-row>
                             <el-row>
                                 <el-col :span="8">
@@ -144,7 +144,7 @@
                                 <el-col :span="8">
                                     预置电压：
                                 </el-col>
-                                
+
                             </el-row>
                             <el-row>
                                 <el-col :span="8">
@@ -153,8 +153,7 @@
                                 <el-col :span="8">
                                     送丝速度：
                                 </el-col>
-                                
-                                
+
                             </el-row>
                             <el-row>
                                 <el-col :span="8">
@@ -163,7 +162,7 @@
                                 <el-col :span="8">
                                     瞬时功率：
                                 </el-col>
-                                
+
                             </el-row>
                         </div>
                     </div>
@@ -384,7 +383,7 @@ export default {
         },
 
         setLineData (arr) {
-            if(!this.drawer){
+            if (!this.drawer) {
                 return
             }
             if (this.selectItem.hasOwnProperty('gatherNo')) {
@@ -408,9 +407,9 @@ export default {
                         this.lineDataValueE.push(item.electricity);
                         this.lineDataValueV.push(item.voltage);
                     })
+                    this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
+                    this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
                 }
-                this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
-                this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
             }
         },
 
