@@ -109,6 +109,14 @@
         select id,`name`,parent_id from sys_dept where `id`=#{deptId}
     </select>
 
+    <!--通过部门父级id  查询部门信息列表-->
+    <select id="selectDepartmentTrees" resultMap="deptInfoMap">
+        select id,`name`,parent_id from sys_dept
+        <where>
+            <if test="deptPId!=null">and parent_id=#{deptPId}</if>
+        </where>
+    </select>
+
     <!--通过工作区父级id获取班组列表-->
     <select id="queryGradeList" parameterType="java.lang.Long" resultMap="deptInfoMap">
         select id,`name` from sys_dept where parent_id=#{deptId}
@@ -183,7 +191,7 @@
     </update>
 
     <!--通过任务等级的描述(value_name) 获取到该条任务等级的主键-->
-    <select id="queryTaskGradeIdByValueName" parameterType="java.lang.String" resultType="byte">
+    <select id="queryTaskGradeIdByValueName" parameterType="java.lang.String" resultType="Long">
         select `id` from sys_dictionary where value_name=#{taskGradeValueName}
     </select>
 
