@@ -69,7 +69,8 @@ public class DeviceController {
             getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(weldStatisticsData.getUtilization()));
         }
             try {
-                String fileName = URLEncoder.encode("设备生产数据.xlsx", "UTF-8");
+                String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
+                String fileName = URLEncoder.encode("设备生产数据"+time+".xlsx", "UTF-8");
                 response.setContentType("application/octet-stream");
                 response.setHeader("content-disposition", "attachment;filename=" + fileName);
                 response.setHeader("filename", fileName);
