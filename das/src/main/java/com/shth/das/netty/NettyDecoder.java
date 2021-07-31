@@ -57,6 +57,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
             message.writeBytes(byteBuf);
             //读取完之后清空
             this.tempMsg.clear();
+            tempMsg.release();
         } else {
             message = byteBuf;
         }
@@ -74,6 +75,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
         }
+        byteBuf.release();
+        message.release();
     }
 
     /**
