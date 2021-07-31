@@ -193,7 +193,7 @@
                         <span class="line-box-l-tit">电压曲线</span>
                         <span class="line-box-l-unit">V</span>
                     </div>
-                    <line-v></line-v>
+                    <line-v ref="lineComVChild"></line-v>
                 </div>
             </div>
 
@@ -258,7 +258,8 @@ export default {
 
             //曲线数据
             lineDataTime: [],
-            lineDataValue: []
+            lineDataValueE: [],
+            lineDataValueV: []
         }
     },
     created () {
@@ -285,26 +286,20 @@ export default {
             })
             this.client.on('message', (topic, message) => {
                 if (topic == 'rtcdata') {
-                    var datajson = JSON.parse(`${message}`);
-                    // clearTimeout(this.timeout);
-                    //获取曲线数据
-                    this.setLineData(datajson);
-                    //第一条不延时显示
-                    this.setData(datajson);
-                    //后面两条延时显示
-                    // for (let i = 1; i < 3; i++) {
-                    //     ((i) => {
-                    //         this.timeout = setTimeout(() => {
-                    //             this.setData(i, datajson);
-                    //         }, (i + 1) * 1000);
-                    //     })(i)
-                    // }
+                    var datajson = JSON.parse(`${message}`);                
+                    if(datajson.length>0){
+                        //获取曲线数据
+                        this.setLineData(datajson);
+                        //更新列表状态
+                        this.setData(datajson);
+                    }      
                 }
             })
         },
-
+        //更新列表
         setData (arr) {
             let v1 = arr.slice(-1)[0];
+            console.log(v1)
             this.offnum = 0;
             this.warnArray = 0;
             this.standbyArray = 0;
@@ -401,15 +396,22 @@ export default {
                     this.lineDataTime.shift();
                     this.lineDataTime.shift();
                     this.lineDataTime.shift();
-                    this.lineDataValue.shift();
-                    this.lineDataValue.shift();
-                    this.lineDataValue.shift();
+                    
+                    this.lineDataValueE.shift();
+                    this.lineDataValueE.shift();
+                    this.lineDataValueE.shift();
+
+                    this.lineDataValueV.shift();
+                    this.lineDataValueV.shift();
+                    this.lineDataValueV.shift();
                 }
                 filterArr.forEach(item => {
                     this.lineDataTime.push(item.weldTime);
-                    this.lineDataValue.push(item.electricity)
+                    this.lineDataValueE.push(item.electricity);
+                    this.lineDataValueV.push(item.voltage)
                 })
-                this.$refs.lineComEChild.init(this.lineDataValue, this.lineDataTime)
+                this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
+                this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime)
             }
         },
 

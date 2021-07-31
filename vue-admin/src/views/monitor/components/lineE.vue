@@ -25,6 +25,11 @@ export default {
         init (elc, t) {            
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
+
+            this.option.series[0].markLine.data[0][0].yAxis =  elc.slice(-1)[0];
+            this.option.series[0].markLine.data[0][1].yAxis =  elc.slice(-1)[0];
+            this.option.series[0].markLine.data[0][1].value =  elc.slice(-1)[0]; 
+            this.option.series[0].markLine.data[0][1].xAxis =  t.slice(-1)[0];  
             
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
@@ -40,10 +45,10 @@ export default {
         this.myChart = echarts.init(this.$refs.electricity);
         this.option = {
             grid: {
-                top: '10',
-                right: '50',
+                top: '20',
+                right: '80',
                 left:'40',
-                bottom: '70'
+                bottom: '30'
             },
             tooltip: {
                 trigger: 'axis',
@@ -116,6 +121,23 @@ export default {
                 markLine: {
                     symbol: "none",
                     data: [
+                        [{
+                            symbol: 'none',
+                            x: '90%',
+                            yAxis: ''
+                        }, {
+                            symbol: 'circle',
+                            label: {
+                                normal: {
+                                    position: 'start',
+                                    formatter: '{c}A 实时数据'
+                                }
+                            },
+                            name: '实时数据',
+                            value: '',
+                            xAxis: '',
+                            yAxis: ''
+                        }],
                         {
                             yAxis: 550,
                             label: {
