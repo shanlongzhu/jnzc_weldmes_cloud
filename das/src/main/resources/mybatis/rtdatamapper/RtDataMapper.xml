@@ -5,8 +5,7 @@
 
     <!-- 创建实时数据表结构 -->
     <update id="createNewTable" parameterType="java.lang.String">
-        CREATE TABLE IF NOT EXISTS ${tableName}
-        (
+        CREATE TABLE IF NOT EXISTS ${tableName} (
             `id`                 bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
             `weldModel`          int            DEFAULT NULL COMMENT '焊机型号',
             `gatherNo`           varchar(50)    DEFAULT NULL COMMENT '采集编号',
