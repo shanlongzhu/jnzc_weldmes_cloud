@@ -38,7 +38,7 @@
                     <div>
                         <span>关机:<strong>{{offnum}}</strong></span>
                         <span style="color:#f00">故障:<strong>{{warnArray}}</strong></span>
-                        <span style="color:rgb(1, 209, 95">待机:<strong>{{standbyArray}}</strong></span>
+                        <span style="color:rgb(1, 209, 95)">待机:<strong>{{standbyArray}}</strong></span>
                         <span style="color:green">焊接:<strong>{{workArray}}</strong></span>
                     </div>
                 </div>
@@ -116,6 +116,13 @@
                             <p><span>电压</span><strong>30V</strong></p>
                         </div>
                     </div>
+                    <div class="border-tip flex-c">
+                        <span class="border-tip-txt">预置参数</span>
+                        <div class="wel-tip">
+                            <p><span>预置电流</span><strong>100A</strong></p>
+                            <p><span>预置电压</span><strong>30V</strong></p>
+                        </div>
+                    </div>
                     <div
                         class="border-tip flex-c"
                         style="flex:1;margin-right:0px"
@@ -123,46 +130,37 @@
                         <span class="border-tip-txt">设备特征</span>
                         <div class="wel-text">
                             <el-row>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     开机时间：
                                 </el-col>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     通道总数：
                                 </el-col>
-                                <el-col :span="8">
-                                    预置电流：
-                                </el-col>
-
                             </el-row>
                             <el-row>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     关机时间：
                                 </el-col>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     当前通道：自由调节状态
                                 </el-col>
-                                <el-col :span="8">
-                                    预置电压：
-                                </el-col>
-
                             </el-row>
                             <el-row>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     工作时长：
                                 </el-col>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     送丝速度：
                                 </el-col>
 
                             </el-row>
                             <el-row>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     焊接时长：
                                 </el-col>
-                                <el-col :span="8">
+                                <el-col :span="12">
                                     瞬时功率：
                                 </el-col>
-
                             </el-row>
                         </div>
                     </div>

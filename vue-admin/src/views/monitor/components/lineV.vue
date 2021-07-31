@@ -134,7 +134,7 @@ export default {
                     data: [
                         [{
                             symbol: 'none',
-                            x: '90%',
+                            x: '92%',
                             yAxis: ''
                         }, {
                             symbol: 'circle',

@@ -120,13 +120,18 @@ export default {
                         width: 1
                     }
                 },
+                itemStyle: {
+                    normal: {
+                        color: '#42b983'
+                    }
+                },
 
                 markLine: {
                     symbol: "none",
                     data: [
                         [{
                             symbol: 'none',
-                            x: '90%',
+                            x: '92%',
                             yAxis: ''
                         }, {
                             symbol: 'circle',
