@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.artifact.service.ArtifactService;
 import com.gw.entities.RealtimeData;
+import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,7 +34,7 @@ public class ArtifactController {
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2, String taskNo) {
         PageHelper.startPage(pn, 10);
-        List<RealtimeData> list = artifactService.getList(time1, time2, taskNo);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2, taskNo);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
@@ -42,7 +43,7 @@ public class ArtifactController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response, String time1, String time2, String taskNo) {
         HttpResult result = new HttpResult();
-        List<RealtimeData> list = artifactService.getList(time1, time2, taskNo);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2, taskNo);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("工件生产数据");
         String[] titles = {"任务编号", "焊接时间", "工作时间", "焊接效率"};
@@ -53,18 +54,19 @@ public class ArtifactController {
         }
         for (int i = 0; i < list.size(); i++) {
             row = sheet.createRow(i + 1);
-            RealtimeData realtimeData = list.get(i);
+            WeldStatisticsData weldStatisticsData = list.get(i);
             Cell getTaskNoCell = row.createCell(0);
-            getTaskNoCell.setCellValue(realtimeData.getTaskInfo().getTaskNo());
+            getTaskNoCell.setCellValue(weldStatisticsData.getTaskInfo().getTaskNo());
             Cell TimeCell = row.createCell(1);
-            TimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(realtimeData.getTime()));
+            TimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime()));
             Cell Time2Cell = row.createCell(2);
-            Time2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(realtimeData.getTime2()));
+            Time2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime2()));
             Cell getUtilizationCell = row.createCell(3);
-            getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(realtimeData.getUtilization()));
+            getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(weldStatisticsData.getUtilization()));
         }
         try {
-            String fileName = URLEncoder.encode("工件生产数据.xlsx", "UTF-8");
+            String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
+            String fileName = URLEncoder.encode("工件生产数据"+time+".xlsx", "UTF-8");
             response.setContentType("application/octet-stream");
             response.setHeader("content-disposition", "attachment;filename=" + fileName);
             response.setHeader("filename", fileName);
