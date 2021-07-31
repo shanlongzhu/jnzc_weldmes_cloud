@@ -123,60 +123,46 @@
                         <span class="border-tip-txt">设备特征</span>
                         <div class="wel-text">
                             <el-row>
-                                <el-col :span="6">
-                                    开机时长：
+                                <el-col :span="8">
+                                    开机时间：
                                 </el-col>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     通道总数：
                                 </el-col>
-                                <el-col :span="6">
-                                    气体流量：
-                                </el-col>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     预置电流：
                                 </el-col>
+
                             </el-row>
                             <el-row>
-                                <el-col :span="6">
-                                    离线时长：
+                                <el-col :span="8">
+                                    关机时间：
                                 </el-col>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     当前通道：自由调节状态
                                 </el-col>
-                                <el-col :span="6">
-                                    瞬时功率：
-                                </el-col>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     预置电压：
                                 </el-col>
+
                             </el-row>
                             <el-row>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     工作时长：
                                 </el-col>
-                                <el-col :span="6">
-                                    焊接控制：
-                                </el-col>
-                                <el-col :span="6">
-                                    提前送气时间：
-                                </el-col>
-                                <el-col :span="6">
-                                    初期电流：
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="6">
-                                    焊接时长：
-                                </el-col>
-                                <el-col :span="6">
+                                <el-col :span="8">
                                     送丝速度：
                                 </el-col>
-                                <el-col :span="6">
-                                    滞后停气时间：
+
+                            </el-row>
+                            <el-row>
+                                <el-col :span="8">
+                                    焊接时长：
                                 </el-col>
-                                <el-col :span="6">
-                                    收弧电流：
+                                <el-col :span="8">
+                                    瞬时功率：
                                 </el-col>
+
                             </el-row>
                         </div>
                     </div>
@@ -286,25 +272,24 @@ export default {
             })
             this.client.on('message', (topic, message) => {
                 if (topic == 'rtcdata') {
-                    var datajson = JSON.parse(`${message}`);                
-                    if(datajson.length>0){
+                    var datajson = JSON.parse(`${message}`);
+                    if (datajson.length > 0) {
                         //获取曲线数据
                         this.setLineData(datajson);
                         //更新列表状态
                         this.setData(datajson);
-                    }      
+                    }
                 }
             })
         },
         //更新列表
         setData (arr) {
             let v1 = arr.slice(-1)[0];
-            console.log(v1)
             this.offnum = 0;
             this.warnArray = 0;
             this.standbyArray = 0;
             this.workArray = 0;
-            this.list.forEach(item => {                
+            this.list.forEach(item => {
                 if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
                     item.voltage = v1.voltage
                     item.electricity = v1.electricity
@@ -385,33 +370,46 @@ export default {
 
         //点击焊机
         handlerWeld (v) {
+            this.lineDataTime = [];
+            this.lineDataValueE = [];
+            this.lineDataValueV = [];
             this.drawer = true;
             this.selectItem = v;
+            this.$nextTick(() => {
+                this.$refs.lineComEChild.init([this.lineDataValueE], this.lineDataTime);
+                this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
+            })
+
         },
 
         setLineData (arr) {
+            if (!this.drawer) {
+                return
+            }
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
-                if(this.lineDataTime.length>10){
-                    this.lineDataTime.shift();
-                    this.lineDataTime.shift();
-                    this.lineDataTime.shift();
-                    
-                    this.lineDataValueE.shift();
-                    this.lineDataValueE.shift();
-                    this.lineDataValueE.shift();
+                if (filterArr.length > 0) {
+                    if (this.lineDataTime.length > 10) {
+                        this.lineDataTime.shift();
+                        this.lineDataTime.shift();
+                        this.lineDataTime.shift();
 
-                    this.lineDataValueV.shift();
-                    this.lineDataValueV.shift();
-                    this.lineDataValueV.shift();
+                        this.lineDataValueE.shift();
+                        this.lineDataValueE.shift();
+                        this.lineDataValueE.shift();
+
+                        this.lineDataValueV.shift();
+                        this.lineDataValueV.shift();
+                        this.lineDataValueV.shift();
+                    }
+                    filterArr.forEach(item => {
+                        this.lineDataTime.push(item.weldTime);
+                        this.lineDataValueE.push(item.electricity);
+                        this.lineDataValueV.push(item.voltage);
+                    })
+                    this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
+                    this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
                 }
-                filterArr.forEach(item => {
-                    this.lineDataTime.push(item.weldTime);
-                    this.lineDataValueE.push(item.electricity);
-                    this.lineDataValueV.push(item.voltage)
-                })
-                this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
-                this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime)
             }
         },
 

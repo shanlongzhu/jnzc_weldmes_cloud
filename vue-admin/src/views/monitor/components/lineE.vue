@@ -36,6 +36,9 @@ export default {
         },
         echartsLoading () {
             this.myChart.showLoading();
+        },
+        echartsClear(){
+            this.myChart.clear()
         }
     },
     created () {

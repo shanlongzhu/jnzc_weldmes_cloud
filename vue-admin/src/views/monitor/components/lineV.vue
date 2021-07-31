@@ -24,9 +24,7 @@ export default {
     },
     computed: {},
     methods: {
-
         init (v, t) {
-
             this.option.series[0].data = v;
             this.option.xAxis.data = t;
 
@@ -41,6 +39,9 @@ export default {
         },
         echartsLoading () {
             this.myChart.showLoading();
+        },
+        echartsClear(){
+            this.myChart.clear()
         }
     },
     created () {
