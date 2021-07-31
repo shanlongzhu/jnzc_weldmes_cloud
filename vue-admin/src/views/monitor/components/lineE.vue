@@ -22,14 +22,7 @@ export default {
     },
     computed: {},
     methods: {
-        addData(elc, t){
-            this.option.series[0].data = this.option.series[0].data.concat(elc)
-            this.option.xAxis.data = this.option.xAxis.data.concat(t)
-            this.myChart.setOption(this.option);
-            
-        },
         init (elc, t) {            
-            this.myChart.clear()
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
             
@@ -83,17 +76,7 @@ export default {
                 splitLine: {
                     show: false
                 }
-            },
-            dataZoom: [{
-                type: 'inside',
-                start: 0,
-                end: 30
-            },
-            {
-                type: 'slider',
-                start: 0,
-                end: 30
-            }],
+            },            
             visualMap: {
                 top: 10,
                 right: 10,

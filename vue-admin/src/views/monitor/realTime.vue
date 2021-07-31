@@ -11,7 +11,9 @@
                 class="user-l"
                 style='height:100%;width:300px;border:1px solid #ddd;margin-right:10px'
             >
-                <div class="organizational-tit">组织机构菜单</div>
+                <div class="organizational-tit">
+                    组织机构菜单
+                </div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
                     <el-tree
                         :data="treeData"
@@ -30,7 +32,16 @@
                 class="user-r flex-c real-tit"
                 style='height:100%;flex:1; width:0px'
             >
-                <div class="organizational-tit fs14">焊机实时状态监测</div>
+                <div class="organizational-tit fs14 flex real-tj-tit">
+                    <div>焊机实时状态监测</div>
+
+                    <div>
+                        <span>关机:<strong>{{offnum}}</strong></span>
+                        <span style="color:#f00">故障:<strong>{{warnArray}}</strong></span>
+                        <span style="color:rgb(1, 209, 95">待机:<strong>{{standbyArray}}</strong></span>
+                        <span style="color:green">焊接:<strong>{{workArray}}</strong></span>
+                    </div>
+                </div>
                 <div
                     class="real-con"
                     v-loading="loading"
@@ -238,8 +249,16 @@ export default {
             drawer: false,
             //点击的设备
             selectItem: {},
+            //
+            offnum: 0,
+            workArray: 0,
+            standbyArray: 0,
+            warnArray: 0,
+
+
             //曲线数据
-            lineData: []
+            lineDataTime: [],
+            lineDataValue: []
         }
     },
     created () {
@@ -269,7 +288,7 @@ export default {
                     var datajson = JSON.parse(`${message}`);
                     // clearTimeout(this.timeout);
                     //获取曲线数据
-                    //this.setLineData(datajson);
+                    this.setLineData(datajson);
                     //第一条不延时显示
                     this.setData(datajson);
                     //后面两条延时显示
@@ -285,16 +304,20 @@ export default {
         },
 
         setData (arr) {
-            arr.forEach(v1 => {
-                this.list.forEach(item => {
-                    if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
-                        item.voltage = v1.voltage
-                        item.electricity = v1.electricity
-                        item.welderName = v1.welderName
-                        item.taskNo = v1.taskNo
-                        item.weldStatus = v1.weldStatus;//状态
-                    }
-                })
+            let v1 = arr.slice(-1)[0];
+            this.offnum = 0;
+            this.warnArray = 0;
+            this.standbyArray = 0;
+            this.workArray = 0;
+            this.list.forEach(item => {                
+                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.voltage
+                    item.electricity = v1.electricity
+                    item.welderName = v1.welderName
+                    item.taskNo = v1.taskNo
+                    item.weldStatus = v1.weldStatus;//状态
+                }
+                this.totalNum(item.weldStatus);
             })
         },
 
@@ -374,12 +397,19 @@ export default {
         setLineData (arr) {
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
-                console.log(filterArr)
+                if(this.lineDataTime.length>10){
+                    this.lineDataTime.shift();
+                    this.lineDataTime.shift();
+                    this.lineDataTime.shift();
+                    this.lineDataValue.shift();
+                    this.lineDataValue.shift();
+                    this.lineDataValue.shift();
+                }
                 filterArr.forEach(item => {
                     this.lineDataTime.push(item.weldTime);
-                    this.lineDataValue.push(item.weldTime)
+                    this.lineDataValue.push(item.electricity)
                 })
-                // this.$refs.lineComEChild.init(filterArr)
+                this.$refs.lineComEChild.init(this.lineDataValue, this.lineDataTime)
             }
         },
 
@@ -427,6 +457,22 @@ export default {
             }
             return str;
         },
+        totalNum (v) {
+            switch (v) {
+                case -1:
+                    this.offnum++;
+                    break;
+                case 0:
+                    this.standbyArray++;
+                    break;
+                case 3: case 5: case 7:
+                    this.workArray++;
+                    break;
+                default:
+                    this.warnArray++;
+                    break;
+            }
+        }
 
     }
 }
@@ -445,6 +491,14 @@ export default {
     border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
 }
+.real-tj-tit {
+    justify-content: space-between;
+}
+.real-tj-tit span {
+    margin-left: 20px;
+    font-weight: 400;
+}
+
 .real-tit {
     border-top: 1px solid #ddd;
 }
