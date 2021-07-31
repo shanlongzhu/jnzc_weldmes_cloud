@@ -57,6 +57,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
             message.writeBytes(byteBuf);
             //读取完之后清空
             this.tempMsg.clear();
+            this.tempMsg.release();
         } else {
             message = byteBuf;
         }

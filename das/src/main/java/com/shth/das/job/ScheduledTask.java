@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,18 +51,18 @@ public class ScheduledTask {
     SxRtDataService sxRtDataService;
 
     /**
-     * 每天0点执行
+     * 每天晚上23点执行
      * 任务：创建实时数据表结构
      */
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 23 * * ?")
     @Async
     public void scheduled1() {
-        //当天数据库表名
-        String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+        //OTC获取第二天的实时数据表名
+        String otcTableName = "rtdata" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
         int otcCreateResult = rtDataService.createNewTable(otcTableName);
         log.info("otcCreateResult:--->>>>{}", otcCreateResult);
-        //当天数据库表名
-        String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+        //松下获取第二天的实时数据表名
+        String sxTableName = "sxrtd" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
         int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
         log.info("sxCreateResult:--->>>>{}", sxCreateResult);
     }
@@ -85,11 +84,13 @@ public class ScheduledTask {
 
     /**
      * 每个整点执行一次
-     * 任务：实时数据定时统计
+     * 任务：OTC实时数据定时统计
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     @Async
-    public void scheduled3() throws ParseException {
+    public void scheduled3() throws InterruptedException {
+        //延迟1分钟
+        Thread.sleep(1000 * 60);
         //获取今天的表名
         String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
         //系统时间整点作为结束时间点
@@ -123,9 +124,19 @@ public class ScheduledTask {
                 otcStartTime = nowEndTime;
             }
         }
-        /*
-        下面是松下的实时数据定时统计，逻辑同OTC的相似
-         */
+    }
+
+    /**
+     * 每个整点执行一次
+     * 任务：松下实时数据定时统计（逻辑同OTC的相似）
+     */
+    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Async
+    public void scheduled4() throws InterruptedException {
+        //延迟1分钟
+        Thread.sleep(1000 * 60);
+        //系统时间整点作为结束时间点
+        String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
         String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
         String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
         String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
@@ -162,7 +173,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 60 * 10)
     @Async
-    public void scheduled4() {
+    public void scheduled5() {
         try {
             LocalDateTime localDateTime = LocalDateTime.now();
             String year = CommonUtils.lengthJoint(localDateTime.format(DateTimeFormatter.ofPattern("yy")), 2);
@@ -206,7 +217,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 3)
     @Async
-    public void scheduled5() {
+    public void scheduled6() {
         LinkedBlockingQueue<JNRtDataDB> otcLinkedBlockingQueue = CommonDbData.OTC_LINKED_BLOCKING_QUEUE;
         if (otcLinkedBlockingQueue.size() > 0) {
             try {
@@ -225,11 +236,11 @@ public class ScheduledTask {
 
     /**
      * 3秒执行一次
-     * 任务：松下OTC设备实时数据定时存储
+     * 任务：江南松下设备实时数据定时存储
      */
     @Scheduled(fixedRate = 1000 * 3)
     @Async
-    public void scheduled6() {
+    public void scheduled7() {
         LinkedBlockingQueue<SxRtDataDb> sxLinkedBlockingQueue = CommonDbData.SX_LINKED_BLOCKING_QUEUE;
         if (sxLinkedBlockingQueue.size() > 0) {
             try {

@@ -18,7 +18,8 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
     @Override
     protected void encode(ChannelHandlerContext ctx, String str, ByteBuf byteBuf) throws Exception {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        int serverPort = inetSocket.getPort();//服务端端口
+        //服务端端口
+        int serverPort = inetSocket.getPort();
         //端口为port，则为江南版OTC通讯协议
         if (serverPort == DataInitialization.getOtcPort()) {
             //单台设备睡眠250毫秒后再次下发
@@ -31,6 +32,7 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
         //16进制字符串转byte数组
         byte[] bytes = Hex.decodeHex(str.toCharArray());
         byteBuf.writeBytes(bytes);
+        byteBuf.release();
         ctx.flush();
     }
 }

@@ -47,6 +47,16 @@ public class DateTimeUtils {
         return LocalDate.now().format(formatter);
     }
 
+    /**
+     * 获取当前时间的第二天时间
+     *
+     * @param formatter
+     * @return
+     */
+    public static String getNowSecondDate(DateTimeFormatter formatter) {
+        return LocalDate.now().plusDays(1).format(formatter);
+    }
+
     //日期转换时间戳 毫秒
     public static String dateToStamp(String s) throws Exception {
         long time = LocalDateTime.parse(s, DEFAULT_DATETIME).toInstant(ZoneOffset.of("+8")).toEpochMilli();
