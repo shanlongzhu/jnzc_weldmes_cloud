@@ -68,7 +68,7 @@ public class NettyServer {
      * 4.从消息开头跳过initialBytesToStrip长度到达C位置
      * 5.将C位置-D位置之间的内容传送给接下来的处理器进行后续处理
      */
-    protected ChannelHandler getChannelInitializer() {
+    protected ChannelInitializer<SocketChannel> getChannelInitializer() {
         final NettyServerHandler nettyServerHandler = new NettyServerHandler();
         return new ChannelInitializer<SocketChannel>() {
             @Override

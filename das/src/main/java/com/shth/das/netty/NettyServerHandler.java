@@ -171,11 +171,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
                 ctx.disconnect();
                 ctx.channel().close();
                 ctx.close();
-            } else {
-                super.userEventTriggered(ctx, obj);
             }
-        } else {
-            super.userEventTriggered(ctx, obj);
         }
+        super.userEventTriggered(ctx, obj);
     }
 }
