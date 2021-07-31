@@ -38,6 +38,7 @@ spring:
 #      max-total: 5                                          # 最大连接数
 #      max-wait-millis: 200
     # 等待连接获取的最大超时时间
+    # 119.3.100.103   ZJokvtdZ4O0 jnzc
   datasource:
     dynamic:
       primary: master #设置默认的数据源或者数据源组,默认值即为master
