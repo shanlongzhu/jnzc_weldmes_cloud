@@ -147,9 +147,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
         //log.info("异常捕捉：" + cause);
-        ctx.flush();
-        ctx.disconnect();
         ctx.channel().close();
         ctx.close();
     }
@@ -158,21 +157,19 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      * 在规定时间内未收到客户端的任何数据包, 将主动断开该连接
      *
      * @param ctx
-     * @param obj
+     * @param evt
      * @throws Exception
      */
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object obj) throws Exception {
-        if (obj instanceof IdleStateEvent) {
-            IdleState state = ((IdleStateEvent) obj).state();
-            if (state == IdleState.READER_IDLE) {
-                //log.info("5秒内未收到数据,主动断开连接");
-                // 在规定时间内没有收到客户端的上行数据, 主动断开连接
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            //判断读超时，则关闭通道
+            if (IdleState.READER_IDLE.equals((event.state()))) {
                 ctx.disconnect();
                 ctx.channel().close();
                 ctx.close();
             }
         }
-        super.userEventTriggered(ctx, obj);
     }
 }
