@@ -13,17 +13,7 @@
             >
                 <div class="organizational-tit">组织机构菜单</div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
-                    <el-tree
-                        :data="treeData"
-                        ref="treeDom"
-                        :expand-on-click-node="false"
-                        v-loading="treeLoading"
-                        :props="defaultProps"
-                        default-expand-all
-                        @current-change="currentChangeTree"
-                        highlight-current
-                        node-key="id"
-                    ></el-tree>
+                    <organization @currentChangeTree="currentChangeTree" ref="treeDom"></organization>
                 </div>
             </div>
             <div
@@ -181,7 +171,9 @@
 <script>
 import { getTeam } from '_api/productionProcess/process'
 import { getUserTree,getTreeDeptInfo,addDept,findIdDeptInfo,editDept,delDept } from '_api/system/systemApi'
+import organization from '_c/Organization'
 export default {
+    components: { organization },
     name: 'organizational',
     data () {
         
@@ -227,13 +219,7 @@ export default {
             },
             loading: false,
 
-            //部门tree数据
-            treeLoading:false,
-            treeData: [],
-            defaultProps: {
-                children: 'list',
-                label: 'name'
-            },
+            
             //角色下拉数据
             rolesArr: []
         }
@@ -242,7 +228,6 @@ export default {
     created () {
         this.ruleFormObj = { ...this.ruleForm };
         this.getList();
-        this.getUserTreeFun();
         this.getTeamList();
     },
     methods: {
@@ -250,18 +235,7 @@ export default {
             this.page = 1;
             this.getList();
         },
-        //获取部门tree
-        async getUserTreeFun () {
-            this.treeLoading = true;
-            let { data, code } = await getUserTree();
-            this.treeLoading = false;
-            if (code == 200) {
-                this.treeData = [data] || [];
-                this.$nextTick(()=>{
-                    this.$refs.treeDom.setCurrentKey(this.searchObj.id)
-                })
-            }
-        },
+        
 
         //根据部门id获取机构列表
         async getList (id) {
@@ -312,7 +286,7 @@ export default {
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.getList();
-                    this.getUserTreeFun();
+                    this.$refs.treeDom.getUserTreeFun(this.searchObj.id);
                 }
             }).catch(() => { })
 
@@ -342,7 +316,7 @@ export default {
                             this.$message.success('修改成功')
                             this.visable1 = false
                             this.getList();
-                            this.getUserTreeFun();
+                            this.$refs.treeDom.getUserTreeFun(this.searchObj.id);
                         }
                     } else {
                         const req = { ...this.ruleForm }
@@ -352,7 +326,7 @@ export default {
                             this.$message.success('新增成功')
                             this.visable1 = false
                             this.getList();
-                            this.getUserTreeFun();
+                            this.$refs.treeDom.getUserTreeFun(this.searchObj.id);
                         }
                     }
                 } else {

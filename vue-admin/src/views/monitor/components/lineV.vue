@@ -83,35 +83,35 @@ export default {
                 type: 'value',
                 boundaryGap: [0, '100%'],
                 min: 0,
-                max: 62,
+                max: 100,
                 splitLine: {
                     show: false
                 }
             },
-            visualMap: {
-                top: 10,
-                right: 10,
-                textGap: 5,
-                itemWidth: 15,
-                show: false,
-                orient: 'horizontal',
-                left: 'center',
-                pieces: [{
-                    lte: 12,
-                    color: '#f00',
-                    // areaStyle: 'rgba(82,209,176,.2)'
-                }, {
-                    gt: 12,
-                    lte: 50,
-                    color: '#00A1EA',
-                    // areaStyle: 'rgba(231,177,48,.2)'
-                },
-                {
-                    gt: 50,
-                    color: '#f00'
-                }
-                ],
-            },
+            // visualMap: {
+            //     top: 10,
+            //     right: 10,
+            //     textGap: 5,
+            //     itemWidth: 15,
+            //     show: false,
+            //     orient: 'horizontal',
+            //     left: 'center',
+            //     pieces: [{
+            //         lte: 12,
+            //         color: '#f00',
+            //         // areaStyle: 'rgba(82,209,176,.2)'
+            //     }, {
+            //         gt: 12,
+            //         lte: 50,
+            //         color: '#00A1EA',
+            //         // areaStyle: 'rgba(231,177,48,.2)'
+            //     },
+            //     {
+            //         gt: 50,
+            //         color: '#f00'
+            //     }
+            //     ],
+            // },
             series: [{
                 name: '模拟数据',
                 type: 'line',
@@ -149,37 +149,37 @@ export default {
                             xAxis: '',
                             yAxis: ''
                         }],
-                        {
-                            yAxis: 50,
-                            label: {
-                                show: 'true',
-                                position: 'end',
-                                formatter: '50(V)'
-                            },
-                            lineStyle: {
-                                normal: {
-                                    color: "#fe460d",
-                                    width: 1,
-                                    type: "dashed"
-                                }
-                            },
+                        // {
+                        //     yAxis: 50,
+                        //     label: {
+                        //         show: 'true',
+                        //         position: 'end',
+                        //         formatter: '50(V)'
+                        //     },
+                        //     lineStyle: {
+                        //         normal: {
+                        //             color: "#fe460d",
+                        //             width: 1,
+                        //             type: "dashed"
+                        //         }
+                        //     },
 
-                        },
-                        {
-                            yAxis: 12,
-                            lineStyle: {
-                                normal: {
-                                    color: "#fe460d",
-                                    width: 1,
-                                    type: "dashed"
-                                }
-                            },
-                            label: {
-                                show: 'true',
-                                position: 'end',
-                                formatter: '12(V)'
-                            },
-                        }
+                        // },
+                        // {
+                        //     yAxis: 12,
+                        //     lineStyle: {
+                        //         normal: {
+                        //             color: "#fe460d",
+                        //             width: 1,
+                        //             type: "dashed"
+                        //         }
+                        //     },
+                        //     label: {
+                        //         show: 'true',
+                        //         position: 'end',
+                        //         formatter: '12(V)'
+                        //     },
+                        // }
                     ]
                 }
 

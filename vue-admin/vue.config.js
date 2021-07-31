@@ -45,7 +45,8 @@ module.exports = {
       alias: {
         '@': resolve('src'),
         '_conf': resolve('config'),
-        '_api': resolve('src/api')
+        '_api': resolve('src/api'),
+        '_c': resolve('src/components')
       }
     }
   },

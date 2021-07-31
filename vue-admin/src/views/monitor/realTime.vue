@@ -15,17 +15,7 @@
                     组织机构菜单
                 </div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
-                    <el-tree
-                        :data="treeData"
-                        ref="treeDom"
-                        :expand-on-click-node="false"
-                        v-loading="treeLoading"
-                        :props="defaultProps"
-                        default-expand-all
-                        @current-change="currentChangeTree"
-                        highlight-current
-                        node-key="id"
-                    ></el-tree>
+                    <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
             <div
@@ -187,14 +177,13 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getTeam } from '_api/productionProcess/process'
-import { getUserTree, getTreeDeptInfo, addDept, findIdDeptInfo, editDept, delDept } from '_api/system/systemApi'
 import { getModelFindId } from '_api/productionEquipment/production'
 import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
+import organization from '_c/Organization'
 export default {
-    components: { lineE, LineV },
-    name: 'organizational',
+    components: { lineE, LineV,organization },
+    name: 'realTime',
     data () {
 
         return {
@@ -222,13 +211,7 @@ export default {
 
             loading: false,
 
-            //部门tree数据
-            treeLoading: false,
-            treeData: [],
-            defaultProps: {
-                children: 'list',
-                label: 'name'
-            },
+            
             //
             drawer: false,
             //点击的设备
@@ -249,7 +232,6 @@ export default {
     created () {
         this.searchObj.id = 1;
         this.getList();
-        this.getUserTreeFun();
     },
     methods: {
         //mqtt创建
@@ -316,19 +298,7 @@ export default {
         search () {
             this.page = 1;
             this.getList();
-        },
-        //获取部门tree
-        async getUserTreeFun () {
-            this.treeLoading = true;
-            let { data, code } = await getUserTree();
-            this.treeLoading = false;
-            if (code == 200) {
-                this.treeData = [data] || [];
-                this.$nextTick(() => {
-                    this.$refs.treeDom.setCurrentKey(this.searchObj.id)
-                })
-            }
-        },
+        },        
 
         //根据部门id获取设备列表
         async getList (id) {

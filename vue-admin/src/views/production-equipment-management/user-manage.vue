@@ -13,15 +13,7 @@
             >
                 <div class="organizational-tit">组织机构菜单</div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
-                    <el-tree
-                        :data="treeData"
-                        v-loading="treeLoading"
-                        :expand-on-click-node="false"
-                        :props="defaultProps"
-                        default-expand-all
-                        @current-change="currentChangeTree"
-                        highlight-current
-                    ></el-tree>
+                    <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
             <div
@@ -317,7 +309,9 @@
 <script>
 import { getTeam } from '_api/productionProcess/process'
 import { getUserTree, findByIdUserList, getRolesListNoPage, addUser, editUser, delUser, findIdUserInfo } from '_api/system/systemApi'
+import organization from '_c/Organization'
 export default {
+    components: { organization },
     name: 'user-manage',
     data () {
         let validatorPhone = function (rule, value, callback) {
@@ -393,13 +387,7 @@ export default {
             },
             loading: false,
 
-            //部门tree数据
-            treeLoading: false,
-            treeData: [],
-            defaultProps: {
-                children: 'list',
-                label: 'name'
-            },
+            
             //角色下拉数据
             rolesArr: []
         }
@@ -408,7 +396,6 @@ export default {
     created () {
         this.ruleFormObj = { ...this.ruleForm };
         this.getList();
-        this.getUserTreeFun();
         this.getRolesListFun();
         this.getTeamList();
     },
@@ -426,15 +413,7 @@ export default {
             this.page = 1;
             this.getList();
         },
-        //获取部门tree
-        async getUserTreeFun () {
-            this.treeLoading = true;
-            let { data, code } = await getUserTree();
-            this.treeLoading = false;
-            if (code == 200) {
-                this.treeData = [data] || [];
-            }
-        },
+        
 
         //根据部门id获取用户列表
         async getList (id) {

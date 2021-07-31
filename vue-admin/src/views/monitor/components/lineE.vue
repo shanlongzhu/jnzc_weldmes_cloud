@@ -85,30 +85,30 @@ export default {
                     show: false
                 }
             },            
-            visualMap: {
-                top: 10,
-                right: 10,
-                textGap: 5,
-                itemWidth: 15,
-                show: false,
-                orient: 'horizontal',
-                left: 'center',
-                pieces: [{
-                    lte: 30,
-                    color: '#f00',
-                    // areaStyle: 'rgba(82,209,176,.2)'
-                }, {
-                    gt: 30,
-                    lte: 550,
-                    color: '#42b983',
-                    // areaStyle: 'rgba(231,177,48,.2)'
-                },
-                {
-                    gt: 550,
-                    color: '#f00'
-                }
-                ],
-            },
+            // visualMap: {
+            //     top: 10,
+            //     right: 10,
+            //     textGap: 5,
+            //     itemWidth: 15,
+            //     show: false,
+            //     orient: 'horizontal',
+            //     left: 'center',
+            //     pieces: [{
+            //         lte: 30,
+            //         color: '#f00',
+            //         // areaStyle: 'rgba(82,209,176,.2)'
+            //     }, {
+            //         gt: 30,
+            //         lte: 550,
+            //         color: '#42b983',
+            //         // areaStyle: 'rgba(231,177,48,.2)'
+            //     },
+            //     {
+            //         gt: 550,
+            //         color: '#f00'
+            //     }
+            //     ],
+            // },
             series: [{
                 name: '模拟数据',
                 type: 'line',
@@ -146,37 +146,37 @@ export default {
                             xAxis: '',
                             yAxis: ''
                         }],
-                        {
-                            yAxis: 550,
-                            label: {
-                                show: 'true',
-                                position: 'end',
-                                formatter: '550(A)'
-                            },
-                            lineStyle: {
-                                normal: {
-                                    color: "#fe460d",
-                                    width: 1,
-                                    type: "dashed"
-                                }
-                            },
+                        // {
+                        //     yAxis: 550,
+                        //     label: {
+                        //         show: 'true',
+                        //         position: 'end',
+                        //         formatter: '550(A)'
+                        //     },
+                        //     lineStyle: {
+                        //         normal: {
+                        //             color: "#fe460d",
+                        //             width: 1,
+                        //             type: "dashed"
+                        //         }
+                        //     },
 
-                        },
-                        {
-                            yAxis: 30,
-                            lineStyle: {
-                                normal: {
-                                    color: "#fe460d",
-                                    width: 1,
-                                    type: "dashed"
-                                }
-                            },
-                            label: {
-                                show: 'true',
-                                position: 'end',
-                                formatter: '30(A)'
-                            },
-                        }
+                        // },
+                        // {
+                        //     yAxis: 30,
+                        //     lineStyle: {
+                        //         normal: {
+                        //             color: "#fe460d",
+                        //             width: 1,
+                        //             type: "dashed"
+                        //         }
+                        //     },
+                        //     label: {
+                        //         show: 'true',
+                        //         position: 'end',
+                        //         formatter: '30(A)'
+                        //     },
+                        // }
                     ]
                 }
 

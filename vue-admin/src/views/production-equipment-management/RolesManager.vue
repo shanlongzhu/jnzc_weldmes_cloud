@@ -89,7 +89,6 @@
         >
             <el-tabs
                 v-model="activeName"
-                @tab-click="handleClick"
                 class="flex-c"
                 style="height:100%;"
             >
