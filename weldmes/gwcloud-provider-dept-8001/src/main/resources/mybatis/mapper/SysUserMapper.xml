@@ -35,8 +35,11 @@
         left join sys_role on sys_role.id = sys_user_role.role_id
         <where>
             sysUser.del_flag = 0
-            <if test="deptId != null and deptId != ''">
-                and sysUser.dept_id = #{deptId}
+            <if test="ids != null and ids != ''">
+                and sysUser.dept_id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
             <if test="userName != null and userName != ''">
                 and sysUser.`name` = #{userName}

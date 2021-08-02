@@ -4,6 +4,7 @@ package com.gw.sys.service.impl;
 import com.gw.common.DateTimeUtil;
 import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
+import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.dao.SysUserDao;
 import com.gw.sys.dao.UserRolesAndPerDao;
 import com.gw.sys.service.SysUserService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,9 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     UserRolesAndPerDao userRolesAndPerDao;
+
+    @Autowired
+    SysDeptDao sysDeptDao;
 
 
     /**
@@ -68,7 +73,55 @@ public class SysUserServiceImpl implements SysUserService {
     public List<SysUser> getUserInfosByDeptId(Long deptId,String userName,
                                               String loginName,String mobile,Long roleId) {
 
-        List<SysUser> sysUsers = sysUserDao.selectUserInfosByDeptId(deptId,userName,loginName,mobile,roleId);
+        List<SysUser> sysUsers = new ArrayList<>();
+
+        List<Long> ids = new ArrayList<>();
+
+        ids.add(deptId);
+
+        //根据用户部门id、查询该部门下所有的下级部门信息
+        List<SysDept> list = dispatchDao.queryGradeList(deptId);
+
+        if(list.size() == 0){
+
+            sysUsers = sysUserDao.selectUserInfosByDeptId(ids,userName,loginName,mobile,roleId);
+
+            return sysUsers;
+        }
+
+        do{
+            List<SysDept> nextSysDeptInfos = new ArrayList<>();
+
+            for (SysDept sysDeptInfo : list) {
+
+                //获取 当前用户所在部门 的 下级部门
+                List<SysDept> sysDeptList = sysDeptDao.selectDeptInfosByParentId(sysDeptInfo.getId());
+
+                ids.add(sysDeptInfo.getId());
+
+                nextSysDeptInfos.addAll(sysDeptList);
+
+            }
+
+            if (ObjectUtils.isEmpty(nextSysDeptInfos)){
+
+                /*for (SysDept sysInfo : list) {
+
+                    Long id = sysInfo.getId();
+
+                    ids.add(id);
+                }*/
+
+                sysUsers = sysUserDao.selectUserInfosByDeptId(ids,userName,loginName,mobile,roleId);
+
+                return sysUsers;
+            }
+
+            list.clear();
+
+            list = nextSysDeptInfos;
+
+        }while(!ObjectUtils.isEmpty(list));
 
         return sysUsers;
     }

@@ -17,9 +17,9 @@ public interface SysUserDao {
     /**
      * @Date 2021/7/7 16:29
      * @Description 条件查询用户信息
-     * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
+     * @Params ids 部门id列表   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
-    List<SysUser> selectUserInfosByDeptId(@Param("deptId")Long deptId,@Param("userName")String userName,
+    List<SysUser> selectUserInfosByDeptId(@Param("ids")List<Long> ids,@Param("userName")String userName,
                                           @Param("loginName")String loginName,@Param("mobile")String mobile,@Param("roleId")Long roleId);
 
     /**
