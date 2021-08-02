@@ -17,19 +17,20 @@
     <select id="selectDictionaryInfos" parameterType = "com.gw.entities.SysDictionary" resultMap="dictionaryMap">
         select id,`type`,type_name,`value`,value_name,remarks
         from sys_dictionary
-        where 1=1
-        <if test="type != null and type != ''">
-            and `type` = #{type}
-        </if>
-        <if test="typeName != null and typeName != ''">
-            and `type_name` = #{typeName}
-        </if>
-        <if test="value != null and value != ''">
-            and `value` = #{value}
-        </if>
-        <if test="valueName != null and valueName != ''">
-            and value_name = #{valueName}
-        </if>
+        <where>
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
+            <if test="typeName != null and typeName != ''">
+                and `type_name` = #{typeName}
+            </if>
+            <if test="value != null and value != ''">
+                and `value` = #{value}
+            </if>
+            <if test="valueName != null and valueName != ''">
+                and value_name = #{valueName}
+            </if>
+        </where>
     </select>
 
     <!--根据id查询字典信息-->

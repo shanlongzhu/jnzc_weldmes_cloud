@@ -48,7 +48,7 @@ public class SysUserController {
      * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @RequestMapping(value = "user/getUserInfosByOpt")
-    public HttpResult getUserInfosByDeptId(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long deptId,String userName,
+    public HttpResult getUserInfosByOpt(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long deptId,String userName,
                                            String loginName,String mobile,Long roleId) {
 
         PageHelper.startPage(pn,10);

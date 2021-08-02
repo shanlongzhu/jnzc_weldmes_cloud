@@ -55,13 +55,14 @@
         left join sys_dictionary dictionaryTemp on dictionaryTemp.id = task.grade
         left join sys_dictionary dictionaryTP on dictionaryTP.id = task.evaluate_stars
         left join welder_info on welder_info.id = task.welder_id
-        where 1=1
-        <if test="grade != null and grade != ''">
-            and task.dept_id = #{grade}
-        </if>
-        <if test="taskStatus != null and taskStatus != ''">
-            and task.status = #{taskStatus}
-        </if>
+        <where>
+            <if test="grade != null and grade != ''">
+                and task.dept_id = #{grade}
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                and task.status = #{taskStatus}
+            </if>
+        </where>
     </select>
 
     <!--通过所属作业区查询出部门Id-->

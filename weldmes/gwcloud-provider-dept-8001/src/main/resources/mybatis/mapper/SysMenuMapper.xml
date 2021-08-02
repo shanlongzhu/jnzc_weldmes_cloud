@@ -19,10 +19,10 @@
 
     <!-- 根据角色id查询菜单列表 -->
     <select id="getSysMenuByRoleId" parameterType="java.math.BigInteger" resultType="com.gw.entities.SysMenuInfo">
-        SELECT m.* from sys_menu m,sys_role_menu rm
-        WHERE m.id = rm.menu_id
+        select m.* from sys_menu m,sys_role_menu rm
+        where m.id = rm.menu_id
         <if test="roleId != null">
-            AND rm.role_id = #{roleId}
+            and rm.role_id = #{roleId}
         </if>
     </select>
 
