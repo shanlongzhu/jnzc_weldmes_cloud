@@ -57,13 +57,6 @@ public interface DispatchDao {
     public SysDept queryDeptNameListById(@Param("deptId")Long deptId);
 
     /**
-     * @Date 2021/7/31 14:01
-     * @Description 通过部门父级id  查询部门信息列表
-     * @Params deptPId 部门父级id
-     */
-    public List<SysDept> selectDepartmentTrees(@Param("deptPId")Long deptPId);
-
-    /**
      * @Date 2021/5/27 14:45
      * @Description 通过 父级Id 获取到作业区下所有的班组
      * @Params deptId 父级Id

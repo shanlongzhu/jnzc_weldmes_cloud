@@ -52,34 +52,9 @@ public class SysUserServiceImpl implements SysUserService {
         //获取到当前用户所属的机构信息
         SysDept sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
 
-        //获取二级部门信息列表
-        List<SysDept> sysSecondDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
+        List<SysDept> list = getDepartmentList(sysDeptInfo);
 
-        if(!ObjectUtils.isEmpty(sysSecondDeptInfos)){
-
-            for (SysDept sysSecondDeptInfo : sysSecondDeptInfos) {
-
-                //获取三级部门信息列表
-                List<SysDept> sysThirdDeptInfos = dispatchDao.queryGradeList(sysSecondDeptInfo.getId());
-
-                if(!ObjectUtils.isEmpty(sysThirdDeptInfos)){
-
-                    for (SysDept sysThirdDeptInfo : sysThirdDeptInfos) {
-
-                        //获取四级部门信息列表
-                        List<SysDept> sysFourthDeptInfos = dispatchDao.queryGradeList(sysThirdDeptInfo.getId());
-
-                        if(!ObjectUtils.isEmpty(sysFourthDeptInfos)){
-
-                            //将四级部门信息放入三级部门信息中
-                            sysThirdDeptInfo.setList(sysFourthDeptInfos);
-                        }
-                    }
-                    sysSecondDeptInfo.setList(sysThirdDeptInfos);
-                }
-            }
-            sysDeptInfo.setList(sysSecondDeptInfos);
-        }
+        sysDeptInfo.setList(list);
 
         return sysDeptInfo;
     }
@@ -226,17 +201,13 @@ public class SysUserServiceImpl implements SysUserService {
     private List<SysDept> getDepartmentList(SysDept sysDeptInfo) {
 
         //查询用户所在部门的下级部门信息
-        List<SysDept> sysDeptInfos = dispatchDao.selectDepartmentTrees(sysDeptInfo.getParentId());
+        List<SysDept> sysDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
 
-        if (sysDeptInfos.size()>0){
-
-            SysDept sysDept = new SysDept();
+        if (!ObjectUtils.isEmpty(sysDeptInfos)){
 
             for (SysDept sysDeptInfoTemp : sysDeptInfos) {
 
-                sysDept.setParentId(sysDeptInfoTemp.getId());
-
-                List<SysDept> nextSysDeptInfos =getDepartmentList(sysDept);
+                List<SysDept> nextSysDeptInfos =getDepartmentList(sysDeptInfoTemp);
 
                 sysDeptInfoTemp.setList(nextSysDeptInfos);
 

@@ -110,17 +110,12 @@
         select id,`name`,parent_id from sys_dept where `id`=#{deptId}
     </select>
 
-    <!--通过部门父级id  查询部门信息列表-->
-    <select id="selectDepartmentTrees" resultMap="deptInfoMap">
-        select id,`name`,parent_id from sys_dept
-        <where>
-            <if test="deptPId!=null">and parent_id=#{deptPId}</if>
-        </where>
-    </select>
-
     <!--通过工作区父级id获取班组列表-->
     <select id="queryGradeList" parameterType="java.lang.Long" resultMap="deptInfoMap">
-        select id,`name` from sys_dept where parent_id=#{deptId}
+        select id,`name`,parent_id from sys_dept
+        <where>
+            <if test="deptId!=null">and parent_id=#{deptId}</if>
+        </where>
     </select>
 
     <!--通过 类型 获取 字典表信息-->
