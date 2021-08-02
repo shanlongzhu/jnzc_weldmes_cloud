@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-31 14:26:52
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-07-31 14:53:11
+ * @LastEditTime: 2021-08-02 10:39:58
 -->
 <template>
     <el-tree
@@ -34,6 +34,7 @@ export default {
                 children: 'list',
                 label: 'name'
             },
+            once:1,
         }
     },
     watch: {},
@@ -47,7 +48,12 @@ export default {
             if (code == 200) {
                 this.treeData = [data] || [];
                 this.$nextTick(() => {
-                    this.$refs.treeDom.setCurrentKey(id||1)
+                    this.$refs.treeDom.setCurrentKey(id||this.treeData[0].id);
+                    //只加载第一次
+                    if(this.once===1){
+                        this.once++;
+                        this.$emit('currentChangeTree',this.treeData[0]);
+                    }
                 })
             }
         },
