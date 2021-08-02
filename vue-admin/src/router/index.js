@@ -273,33 +273,33 @@ export const asyncRoutes = [
           title: '班组生产数据统计',
           mark:'504'}
       },
-      // {
-      //   path: 'keyboard1',
-      //   component: () => import('@/views/charts/keyboard'),
-      //   name: 'KeyboardChart',
-      //   meta: {
-      //     title: '人员生产数据统计',
-      //     mark:'501',
-      //     noCache: true }
-      // },
-      // {
-      //   path: 'keyboard2',
-      //   component: () => import('@/views/charts/keyboard'),
-      //   name: 'KeyboardChart',
-      //   meta: {
-      //     title: '工件生产数据统计',
-      //     mark:'502',
-      //     noCache: true }
-      // },
-      // {
-      //   path: 'keyboard3',
-      //   component: () => import('@/views/charts/keyboard'),
-      //   name: 'KeyboardChart',
-      //   meta: {
-      //     title: '设备生产数据统计',
-      //     mark:'503',
-      //     noCache: true }
-      // }      
+      {
+        path: 'personnel-production',
+        component: () => import('@/views/productionDataStatistics/personnelProduction'),
+        name: 'personnelProduction',
+        meta: {
+          title: '人员生产数据统计',
+          mark:'501',
+          noCache: true }
+      },
+      {
+        path: 'workpiece-production',
+        component: () => import('@/views/productionDataStatistics/workpieceProduction'),
+        name: 'workpieceProduction',
+        meta: {
+          title: '工件生产数据统计',
+          mark:'502',
+          noCache: true }
+      },
+      {
+        path: 'equ-product',
+        component: () => import('@/views/productionDataStatistics/equProduct'),
+        name: 'equProduct',
+        meta: {
+          title: '设备生产数据统计',
+          mark:'503',
+          noCache: true }
+      }      
     ]
   },
   // {

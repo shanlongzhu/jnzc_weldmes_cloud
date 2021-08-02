@@ -48,7 +48,6 @@
                 :loading="loading"
                 highlight-current-row
                 auto-resize
-                @cell-click="cellClick"
             >
                 <vxe-table-column
                     type="seq"
@@ -57,84 +56,47 @@
                     fixed="left"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="deptName"
-                    title="所属班组"
+                    field="welderName"
+                    title="焊工姓名"
+                    min-width="150"
+                >
+                    <template #default={row}>
+                        {{row.welderInfo.welderName}}
+                    </template>
+                </vxe-table-column>
+                <vxe-table-column
+                    field="welderNo"
+                    title="焊工编号"
                     min-width="150"
                     fixed="left"
-                ></vxe-table-column>
+                >
+                    <template #default={row}>
+                        {{row.welderInfo.welderNo}}
+                    </template>
+                </vxe-table-column>                
                 <vxe-table-column
-                    field="allCount"
-                    title="设备总数"
+                    field="count"
+                    title="焊接任务数"
                     min-width="150"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="onOffCount"
-                    title="开机设备数"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="realWeldOnline"
-                    title="实焊设备数"
+                    field="time"
+                    title="焊接时间"
                     min-width="150"
                 >
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="noTaskCount"
-                    title="未绑定设备数"
+                    field="time2"
+                    title="工作时间"
                     width="100"
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="equipUtilization"
-                    title="设备利用率(%)"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="taskCount"
-                    title="焊接任务数"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="realWeldTime"
-                    title="焊接时间"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="onOffTime"
-                    title="工作时间"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="normalTime"
-                    title="正常焊接时间"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="weldingEfficiency"
+                    field="utilization"
                     title="焊接效率(%)"
                     min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="supergageTime"
-                    title="超规范时间"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="standardPercentage"
-                    title="规范符合率(%)"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="materialsConsumption"
-                    title="焊材消耗(m)"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="powerConsumption"
-                    title="电能消耗(kwh)"
-                    min-width="150"
-                ></vxe-table-column>
+                ></vxe-table-column>                
             </vxe-table>
         </div>
         <el-pagination
@@ -163,10 +125,10 @@
 
 <script>
 import moment from 'moment'
-import { getTeamDataList, exportTeamDataList } from '_api/productDataStat/productDataStatApi'
+import { getPerProDataList, exportPerProDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
 export default {
-    name: 'teamProDataStatistics',
+    name: 'personnelProduction',
     data () {
 
         return {
@@ -209,7 +171,7 @@ export default {
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             this.loading = true;
-            let { data, code } = await getTeamDataList(req);
+            let { data, code } = await getPerProDataList(req);
             this.loading = false;
             if (code == 200) {
                 this.list = data.list || [];
@@ -232,9 +194,9 @@ export default {
             });
             let req = {
                 time1: this.dateTime&&this.dateTime[0] ? this.dateTime[0] : '',
-                time2: this.dateTime&&this.dateTime[1] ? this.dateTime[1] : '',
+                time2: this.dateTime&&this.dateTime[0] ? this.dateTime[1] : '',
             }
-            location.href = exportTeamDataList(req)
+            location.href = exportPerProDataList(req)
         },
         //
         viewDetail (row) {

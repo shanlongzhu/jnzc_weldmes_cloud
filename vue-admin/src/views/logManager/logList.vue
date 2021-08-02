@@ -177,8 +177,8 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime[0] ? this.dateTime[0] : '',
-                time2: this.dateTime[1] ? this.dateTime[1] : '',
+                time1: this.dateTime&&this.dateTime[0] ? this.dateTime[0] : '',
+                time2: this.dateTime&&this.dateTime[1] ? this.dateTime[1] : '',
             }
             location.href = exportTeamDataList(req)
         },
