@@ -8,11 +8,7 @@ import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
-import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.pojo.jnsx.*;
-import com.shth.das.sys.weldmesdb.service.SxWeldService;
-import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
-import com.shth.das.util.BeanContext;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,9 +18,7 @@ import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -154,17 +148,26 @@ public class SxRtDataProtocol {
      *
      * @param sxWeldModel 焊机信息实体类
      */
-    public static void sxWeldDataBinding(SxWeldModel sxWeldModel) {
+    private void sxWeldDataBinding(SxWeldModel sxWeldModel) {
         if (null != sxWeldModel) {
             String weldIp = sxWeldModel.getWeldIp();
             if (CommonUtils.isNotEmpty(weldIp)) {
                 if (!NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(weldIp)) {
                     NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.put(weldIp, sxWeldModel);
                 }
+                //设备存储到松下开机阻塞队列
+                try {
+                    CommonDbData.SX_ON_MACHINE_QUEUES.put(weldIp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            //调用接口，数据存入数据库
-            SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);
-            sxWeldService.insertSxWeld(sxWeldModel);
+            //添加到松下设备阻塞队列，存储到数据库
+            try {
+                CommonDbData.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -182,138 +185,140 @@ public class SxRtDataProtocol {
             }
             //松下焊机GL5实时数据发送到mq
             if (map.containsKey("SxRtDataUi")) {
-                SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
-                //焊机IP地址
-                String clientIp = sxRtDataUi.getWeldIp();
-                if (CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                    SxWeldModel sxWeldModel = NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-                    if (null != sxWeldModel) {
-                        //设备编码
-                        sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
-                        //设备机型
-                        sxRtDataUi.setWeldModel(sxWeldModel.getWeldModel());
-                    }
-                }
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxRtDataUi);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+                    SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
+                    if (null != sxRtDataUi) {
+                        //焊机IP地址
+                        String clientIp = sxRtDataUi.getWeldIp();
+                        if (CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
+                            SxWeldModel sxWeldModel = NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                            if (null != sxWeldModel) {
+                                //设备编码
+                                sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
+                                //设备机型
+                                sxRtDataUi.setWeldModel(sxWeldModel.getWeldModel());
+                            }
+                        }
+                        //实体类转JSON字符串
+                        String message = JSON.toJSONString(sxRtDataUi);
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+                    }
                 });
             }
             //松下焊机GL5实时数据存数据库
             if (map.containsKey("SxRtDataDb")) {
                 SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
-                //焊机IP地址
-                String clientIp = sxRtDataDb.getWeldIp();
-                if (CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                    SxWeldModel sxWeldModel = NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-                    if (null != sxWeldModel) {
-                        sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
-                        sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
-                    }
-                }
                 if (null != sxRtDataDb) {
-                    //添加到松下阻塞队列（通过定时任务定时存储）
+                    //焊机IP地址
+                    String clientIp = sxRtDataDb.getWeldIp();
+                    if (CommonUtils.isNotEmpty(clientIp) && NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
+                        SxWeldModel sxWeldModel = NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                        if (null != sxWeldModel) {
+                            sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
+                            sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
+                        }
+                    }
+                    //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
                     CommonDbData.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
                 }
             }
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {
-                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxStatusDataUi);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxStatusData.name(), message, 0);
                 });
             }
             //松下工艺下发回复发送到mq
             if (map.containsKey("SxProcessReturn")) {
-                SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get("SxProcessReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxProcessReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get("SxProcessReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxProcessReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessReturn.name(), message, 0);
                 });
             }
             //松下工艺索取返回(无数据)
             if (map.containsKey("SxProcessClaimReturn")) {
-                SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxProcessClaimReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下工艺删除返回
             if (map.containsKey("SxProcessDeleteReturn")) {
-                SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxProcessDeleteReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxProcessDeleteReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessDeleteReturn.name(), message, 0);
                 });
             }
             //松下CO2工艺索取返回
             if (map.containsKey("SxCO2ProcessClaimReturn")) {
-                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxCO2ProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下TIG工艺索取返回
             if (map.containsKey("SxTIGProcessClaimReturn")) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxTIGProcessClaimReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxTIGProcessClaimReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxTIGProcessClaimReturn.name(), message, 0);
                 });
             }
             //松下焊机通道设定回复/读取回复发mq
             if (map.containsKey("SxWeldChannelSetReturn")) {
-                SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get("SxWeldChannelSetReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxWeldChannelSetReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get("SxWeldChannelSetReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxWeldChannelSetReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxWeldChannelSetReturn.name(), message, 0);
                 });
             }
             //松下FR2通道参数查询回复（无参数）、下载回复、删除回复
             if (map.containsKey("SxChannelParamReply")) {
-                SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxChannelParamReply);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxChannelParamReply);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReply.name(), message, 0);
                 });
             }
             //松下FR2通道参数查询回复（有参数）
             if (map.containsKey("SxChannelParamReplyHave")) {
-                SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxChannelParamReplyHave);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxChannelParamReplyHave);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReplyHave.name(), message, 0);
                 });
             }
             //松下AT3系列查询回复（有参数）
             if (map.containsKey("At3ParamQueryReturn")) {
-                At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(at3ParamQueryReturn);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(at3ParamQueryReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxAt3ParamQueryReturn.name(), message, 0);
                 });
@@ -1212,34 +1217,30 @@ public class SxRtDataProtocol {
      *
      * @param clientIp 设备IP
      */
-    public static void sxWeldOffDataManage(String clientIp) {
+    public void sxWeldOffDataManage(String clientIp) {
         if (NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
             SxWeldModel sxWeld = NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-            SxRtDataUi sxRtDataUi = new SxRtDataUi();
-            sxRtDataUi.setWeldCode(sxWeld.getWeldCode());
-            sxRtDataUi.setWeldIp(clientIp);
-            sxRtDataUi.setWeldModel(sxWeld.getWeldModel());
-            //-1 为关机
-            sxRtDataUi.setWeldStatus(-1);
-            //实体类转JSON字符串
-            String message = JSON.toJSONString(sxRtDataUi);
-            //通过mqtt发送到服务端
-            EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                SxRtDataUi sxRtDataUi = new SxRtDataUi();
+                if (null != sxWeld) {
+                    sxRtDataUi.setWeldCode(sxWeld.getWeldCode());
+                    sxRtDataUi.setWeldModel(sxWeld.getWeldModel());
+                }
+                sxRtDataUi.setWeldIp(clientIp);
+                //-1 为关机
+                sxRtDataUi.setWeldStatus(-1);
+                //实体类转JSON字符串
+                String message = JSON.toJSONString(sxRtDataUi);
+                //通过mqtt发送到服务端
+                EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+            });
             //log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
             NettyServerHandler.SX_CLIENT_IP_BIND_WELD_INFO.remove(clientIp);
-            //根据IP地址查询松下焊机信息
-            SxWeldService sxWeldService = BeanContext.getBean(SxWeldService.class);
-            SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldIp(clientIp);
-            //新增设备关机时间
-            WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
-            WeldOnOffTime onOffTime = new WeldOnOffTime();
-            onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
-            if (null != sxWeldModel && null != sxWeldModel.getId()) {
-                onOffTime.setMachineId(sxWeldModel.getId());
+            try {
+                CommonDbData.SX_OFF_MACHINE_QUEUES.put(clientIp);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            onOffTime.setMachineType(1);
-            onOffTime.setWeldsxIp(clientIp);
-            onOffTimeService.insertWeldOnOffTime(onOffTime);
         }
     }
 

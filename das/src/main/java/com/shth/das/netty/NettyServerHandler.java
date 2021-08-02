@@ -4,7 +4,6 @@ import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.business.SxRtDataProtocol;
 import com.shth.das.common.DataInitialization;
 import com.shth.das.pojo.db.SxWeldModel;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -21,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * channelRead0 获取消息会自动释放资源，获取的消息必须是指定的泛型。
  */
 @Slf4j
-@Sharable  //表明当前Handler是共享的，只有一个Handler实例
+//@Sharable  //表明当前Handler是共享的，只有一个Handler实例
 public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private final JnRtDataProtocol jnRtDataProtocol = new JnRtDataProtocol();
@@ -81,11 +80,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * @description: 有客户端连接服务器会触发此函数
-     * @return: void
+     * 有客户端连接服务器会触发此函数
+     *
+     * @param ctx 通道
      */
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         int clientPort = insocket.getPort();
@@ -97,14 +97,16 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
             CHANNEL_MAP.put(clientIp, ctx);
             log.info("新增连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
         }
+        ctx.flush();
     }
 
     /**
-     * @param ctx 有客户端终止连接服务器会触发此函数
-     * @return: void
+     * 有客户端终止连接服务器会触发此函数
+     *
+     * @param ctx 通道
      */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
         //客户端IP地址
@@ -121,12 +123,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == DataInitialization.getOtcPort()) {
-            JnRtDataProtocol.jnWeldOffDataManage(clientIp);
+            this.jnRtDataProtocol.jnWeldOffDataManage(clientIp);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == DataInitialization.getSxPort()) {
-            SxRtDataProtocol.sxWeldOffDataManage(clientIp);
+            this.sxRtDataProtocol.sxWeldOffDataManage(clientIp);
         }
+        ctx.flush();
         ctx.disconnect();
         ctx.channel().close();
         ctx.close();
@@ -137,28 +140,32 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      * 在通道读取完成后会在这个方法里通知，对应可以做刷新操作 ctx.flush()
      */
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
     /**
-     * @description: 异常捕捉
-     * @return: void
+     * 异常捕捉
+     *
+     * @param ctx   通道
+     * @param cause 异常
      */
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-        //log.info("异常捕捉：" + cause);
-        ctx.channel().close();
-        ctx.close();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.info("异常捕捉：" + cause.getMessage());
+        ctx.flush();
+        if (ctx.channel().isActive()) {
+            ctx.channel().close();
+            ctx.close();
+        }
     }
 
     /**
      * 在规定时间内未收到客户端的任何数据包, 将主动断开该连接
      *
-     * @param ctx
-     * @param evt
-     * @throws Exception
+     * @param ctx 通道
+     * @param evt 心跳检测实例
+     * @throws Exception 异常
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -171,5 +178,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
                 ctx.close();
             }
         }
+        ctx.flush();
+        super.userEventTriggered(ctx, evt);
     }
 }

@@ -5,7 +5,6 @@ import com.shth.das.job.RtDataJob;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,6 +57,16 @@ public class DasApplication implements CommandLineRunner {
         rtDataJob.startJnOtcJob();
         //创建松下实时数据表
         rtDataJob.startSxJob();
+        //启动OTC阻塞队列消费者
+        rtDataJob.startOtcOnQueueConsumer();
+        //启动OTC阻塞队列消费者
+        rtDataJob.startOtcOffQueueConsumer();
+        //启动松下新增设备的阻塞队列消费者
+        rtDataJob.startSxAddMachineQueue();
+        //启动松下开机设备的阻塞队列消费者
+        rtDataJob.startSxOnMachineQueue();
+        //启动松下关机设备的阻塞队列消费者
+        rtDataJob.startSxOffMachineQueue();
     }
 
     public static void main(String[] args) {

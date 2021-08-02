@@ -8,13 +8,10 @@ import com.shth.das.common.UpTopicEnum;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.db.GatherModel;
+import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldModel;
-import com.shth.das.pojo.db.WeldOnOffTime;
 import com.shth.das.pojo.jnotc.*;
-import com.shth.das.sys.weldmesdb.service.MachineGatherService;
-import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
-import com.shth.das.util.BeanContext;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,21 +33,19 @@ public class JnRtDataProtocol {
     /**
      * 采集盒IP地址盒采集编号绑定
      */
-    private static void gatherNoIpBinding(String clientIp, String gatherNo) {
+    private void gatherNoIpBinding(String clientIp, String gatherNo) {
         //判断map集合是否有，没有则新增
         if (!NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
             NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.put(clientIp, gatherNo);
-            //新增设备开机时间
-            WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
-            WeldOnOffTime onOffTime = new WeldOnOffTime();
-            onOffTime.setGatherNo(gatherNo);
-            onOffTime.setStartTime(DateTimeUtils.getNowDateTime());
-            onOffTime.setMachineId(getMachineIdByGatherNo(gatherNo));
-            onOffTime.setMachineType(0);
-            onOffTimeService.insertWeldOnOffTime(onOffTime);
-            //修改OTC采集表的IP地址
-            MachineGatherService gatherService = BeanContext.getBean(MachineGatherService.class);
-            gatherService.updateGatherIpByNumber(gatherNo, clientIp);
+            try {
+                OtcMachineQueue otcMachineSaveQueue = new OtcMachineQueue();
+                otcMachineSaveQueue.setGatherNo(gatherNo);
+                otcMachineSaveQueue.setWeldIp(clientIp);
+                //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
+                CommonDbData.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -114,70 +109,72 @@ public class JnRtDataProtocol {
         if (map.size() > 0) {
             //实时数据发送到前端
             if (map.containsKey("JNRtDataUI")) {
-                List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
-                String gatherNo = jnRtDataUis.get(0).getGatherNo();
-                String clientIp = jnRtDataUis.get(0).getWeldIp();
-                //采集盒IP地址盒采集编号绑定
-                gatherNoIpBinding(clientIp, gatherNo);
-                //集合转字符串[消除对同一对象的循环引用]
-                String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                 CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), message, 0);
+                    List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
+                    if (CommonUtils.isNotEmpty(jnRtDataUis)) {
+                        String gatherNo = jnRtDataUis.get(0).getGatherNo();
+                        String clientIp = jnRtDataUis.get(0).getWeldIp();
+                        //采集盒IP地址盒采集编号绑定
+                        gatherNoIpBinding(clientIp, gatherNo);
+                        //集合转字符串[消除对同一对象的循环引用]
+                        String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
+                        //通过mqtt发送到服务端
+                        EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), message, 0);
+                    }
                 });
             }
             //实时数据存数据库
             if (map.containsKey("JNRtDataDB")) {
                 List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
                 if (CommonUtils.isNotEmpty(list)) {
-                    //添加到OTC阻塞队列（通过定时任务存储）
+                    //添加到OTC阻塞队列（通过定时任务存储）;offer:当阻塞队列满了，则不再增加
                     list.forEach(CommonDbData.OTC_LINKED_BLOCKING_QUEUE::offer);
                 }
             }
             //工艺下发返回
             if (map.containsKey("JNProcessIssueReturn")) {
-                JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
-                if (null != processIssueReturn) {
-                    //Java类转JSON字符串
-                    String message = JSON.toJSONString(processIssueReturn);
-                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
+                    if (null != processIssueReturn) {
+                        //Java类转JSON字符串
+                        String message = JSON.toJSONString(processIssueReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.processIssueReturn.name(), message, 0);
-                    });
-                }
+                    }
+                });
             }
             //工艺索取返回
             if (map.containsKey("JNProcessClaimReturn")) {
-                JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
-                if (null != processClaimReturn) {
-                    String message = JSON.toJSONString(processClaimReturn);
-                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
+                    if (null != processClaimReturn) {
+                        String message = JSON.toJSONString(processClaimReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.processClaimReturn.name(), message, 0);
-                    });
-                }
+                    }
+                });
             }
             //密码返回
             if (map.containsKey("JNPasswordReturn")) {
-                JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
-                if (null != passwordReturn) {
-                    String message = JSON.toJSONString(passwordReturn);
-                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
+                    if (null != passwordReturn) {
+                        String message = JSON.toJSONString(passwordReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.passwordReturn.name(), message, 0);
-                    });
-                }
+                    }
+                });
             }
             //控制命令返回
             if (map.containsKey("JNCommandReturn")) {
-                JNCommandReturn commandReturn = (JNCommandReturn) map.get("JNCommandReturn");
-                if (null != commandReturn) {
-                    String message = JSON.toJSONString(commandReturn);
-                    CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                    JNCommandReturn commandReturn = (JNCommandReturn) map.get("JNCommandReturn");
+                    if (null != commandReturn) {
+                        String message = JSON.toJSONString(commandReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.commandReturn.name(), message, 0);
-                    });
-                }
+                    }
+                });
             }
         }
     }
@@ -214,6 +211,8 @@ public class JnRtDataProtocol {
                             data.setWeldType(taskClaimIssue.getWeldType());
                         }
                     }
+                    //当前系统时间 yyyy-MM-dd HH:mm:ss
+                    String nowDateTime = DateTimeUtils.getNowDateTime();
                     for (int a = 0; a < 239; a += 80) {
                         String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
                         String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
@@ -222,9 +221,14 @@ public class JnRtDataProtocol {
                         String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
                         String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
                         String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-                        String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                        try {
+                            String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                            data.setWeldTime(weldDateTime);
+                        } catch (Exception e) {
+                            log.error("[jnRtDataUiAnalysis]:" + e.getMessage());
+                            data.setWeldTime(nowDateTime);
+                        }
                         data.setWeldIp(clientIp);
-                        data.setWeldTime(weldDateTime);
                         //电流
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
                         //电压
@@ -234,7 +238,7 @@ public class JnRtDataProtocol {
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
-                        rtData.add((JNRtDataUI)data.clone());
+                        rtData.add((JNRtDataUI) data.clone());
                     }
                 }
             }
@@ -319,13 +323,18 @@ public class JnRtDataProtocol {
                         String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
                         String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
                         String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-                        String weldDate = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
-                        String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
-                        //判断实时数据是否当天数据，true：保存，false；赋值系统时间
-                        if (weldDate.equals(nowDate)) {
-                            data.setWeldTime(weldDateTime);
-                        } else {
-                            //焊机时间
+                        try {
+                            String weldDate = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                            String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                            //判断实时数据是否当天数据，true：保存，false；赋值系统时间
+                            if (weldDate.equals(nowDate)) {
+                                data.setWeldTime(weldDateTime);
+                            } else {
+                                //焊机时间
+                                data.setWeldTime(nowDateTime);
+                            }
+                        } catch (Exception e) {
+                            log.error("[jnRtDataAnalysis]:" + e.getMessage());
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
@@ -353,7 +362,7 @@ public class JnRtDataProtocol {
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
                         data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
-                        rtdata.add((JNRtDataDB)data.clone());
+                        rtdata.add((JNRtDataDB) data.clone());
                     }
                 }
             }
@@ -590,32 +599,37 @@ public class JnRtDataProtocol {
     /**
      * 江南OTC设备关机数据处理
      */
-    public static void jnWeldOffDataManage(String clientIp) {
+    public void jnWeldOffDataManage(String clientIp) {
         //有客户端终止连接则发送关机数据到mq，刷新实时界面
         if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
-            List<JNRtDataUI> dataList = new ArrayList<>();
-            JNRtDataUI jnRtDataUi = new JNRtDataUI();
             //采集编号
             String gatherNo = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.get(clientIp);
-            jnRtDataUi.setGatherNo(gatherNo);
-            //-1 为关机
-            jnRtDataUi.setWeldStatus(-1);
-            jnRtDataUi.setElectricity(BigDecimal.ZERO);
-            jnRtDataUi.setVoltage(BigDecimal.ZERO);
-            jnRtDataUi.setWeldIp(clientIp);
-            dataList.add(jnRtDataUi);
-            String dataArray = JSONArray.toJSONString(dataList);
-            EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
+            //OTC设备关机数据添加到阻塞队列
+            try {
+                OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
+                otcOnMachineQueue.setWeldIp(clientIp);
+                otcOnMachineQueue.setGatherNo(gatherNo);
+                CommonDbData.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //关机数据通过线程池发送到mq
+            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                List<JNRtDataUI> dataList = new ArrayList<>();
+                JNRtDataUI jnRtDataUi = new JNRtDataUI();
+                jnRtDataUi.setGatherNo(gatherNo);
+                //-1 为关机
+                jnRtDataUi.setWeldStatus(-1);
+                jnRtDataUi.setElectricity(BigDecimal.ZERO);
+                jnRtDataUi.setVoltage(BigDecimal.ZERO);
+                jnRtDataUi.setWeldIp(clientIp);
+                jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
+                dataList.add(jnRtDataUi);
+                String dataArray = JSONArray.toJSONString(dataList);
+                EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
+            });
             //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
             NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.remove(clientIp);
-            //新增设备关机时间
-            WeldOnOffTimeService onOffTimeService = BeanContext.getBean(WeldOnOffTimeService.class);
-            WeldOnOffTime onOffTime = new WeldOnOffTime();
-            onOffTime.setGatherNo(gatherNo);
-            onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
-            onOffTime.setMachineId(JnRtDataProtocol.getMachineIdByGatherNo(gatherNo));
-            onOffTime.setMachineType(0);
-            onOffTimeService.insertWeldOnOffTime(onOffTime);
         }
     }
 

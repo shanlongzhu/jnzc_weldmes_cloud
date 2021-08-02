@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.commons.codec.binary.Hex;
 
 import java.net.InetSocketAddress;
@@ -48,7 +49,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
         // 合并报文
-        ByteBuf message = null;
+        ByteBuf message;
         int tmpMsgSize = this.tempMsg.readableBytes();
         // 如果暂存有上一次余下的请求报文，则合并
         if (tmpMsgSize > 0) {
@@ -57,9 +58,10 @@ public class NettyDecoder extends ByteToMessageDecoder {
             message.writeBytes(byteBuf);
             //读取完之后清空
             this.tempMsg.clear();
-            this.tempMsg.release();
+            //ReferenceCountUtil.release(this.tempMsg);
         } else {
             message = byteBuf;
+            //ReferenceCountUtil.release(this.tempMsg);
         }
         //数据可读长度大于0才进行读取
         if (message.readableBytes() > 0) {
@@ -75,6 +77,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
         }
+        ctx.flush();
     }
 
     /**
@@ -112,11 +115,15 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     if (map.size() > 0) {
                         out.add(map);
                     }
-                    this.otcRecursionReadBytes(ctx, message, out);
+                    if (message.readableBytes() > 0) {
+                        this.otcRecursionReadBytes(ctx, message, out);
+                    }
                 } else {
                     //剩下来的数据放到tempMsg暂存
                     this.tempMsg.writeBytes(message.readBytes(bufNum));
                 }
+            } else {
+                System.out.println("-------------7E----------------");
             }
         }
     }
@@ -144,7 +151,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
             //判断是否为两次握手验证
             if (this.sxMap.containsKey(header)) {
                 //获得数据包长度
-                Integer length = this.sxMap.get(header);
+                int length = this.sxMap.get(header);
                 //可读字节是否多于数据包长度（是否为完整包）
                 if (length > 0 && bufNum >= length) {
                     byte[] bytes = new byte[length];

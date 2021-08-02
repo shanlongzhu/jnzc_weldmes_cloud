@@ -15,7 +15,7 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
     WeldOnOffTimeMapper weldOnOffTimeMapper;
 
     @Override
-    public int insertWeldOnOffTime(WeldOnOffTime weldOnOffTime) {
-        return weldOnOffTimeMapper.insert(weldOnOffTime);
+    public void insertWeldOnOffTime(WeldOnOffTime weldOnOffTime) {
+        weldOnOffTimeMapper.insert(weldOnOffTime);
     }
 }

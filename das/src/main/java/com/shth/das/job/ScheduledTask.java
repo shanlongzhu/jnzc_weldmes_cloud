@@ -88,41 +88,45 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     @Async
-    public void scheduled3() throws InterruptedException {
-        //延迟1分钟
-        Thread.sleep(1000 * 60);
-        //获取今天的表名
-        String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-        //系统时间整点作为结束时间点
-        String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
-        //查询出上一次统计的时间
-        String otcMaxEndTime = statisticsDataService.selectOtcMaxEndTime();
-        //今天零点日期时间
-        String otcStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
-        if (CommonUtils.isNotEmpty(otcMaxEndTime)) {
-            if (otcMaxEndTime.length() > 19) {
-                otcMaxEndTime = otcMaxEndTime.substring(0, 19);
+    public void scheduled3() {
+        try {
+            //延迟1分钟
+            Thread.sleep(1000 * 60);
+            //获取今天的表名
+            String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+            //系统时间整点作为结束时间点
+            String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
+            //查询出上一次统计的时间
+            String otcMaxEndTime = statisticsDataService.selectOtcMaxEndTime();
+            //今天零点日期时间
+            String otcStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
+            if (CommonUtils.isNotEmpty(otcMaxEndTime)) {
+                if (otcMaxEndTime.length() > 19) {
+                    otcMaxEndTime = otcMaxEndTime.substring(0, 19);
+                }
+                String otcNowMaxEndTime = LocalDateTime.parse(otcMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
+                if (otcNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
+                    //上一次结束时间作为新的开始时间
+                    otcStartTime = LocalDateTime.parse(otcMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.HOUR_DATE);
+                }
             }
-            String otcNowMaxEndTime = LocalDateTime.parse(otcMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
-            //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
-            if (otcNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
-                //上一次结束时间作为新的开始时间
-                otcStartTime = LocalDateTime.parse(otcMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.HOUR_DATE);
+            //相差了几个小时
+            int hours = DateTimeUtils.differHours(otcStartTime, endTime);
+            if (hours < 2) {
+                //不超过2个小时，则直接新增
+                statisticsDataService.insertWeldStatisticsData(otcStartTime, endTime, otcTableName);
+            } else {
+                //循环每个小时统计
+                String nowEndTime = "";
+                for (int i = 0; i < hours; i++) {
+                    nowEndTime = DateTimeUtils.addDateMinut(otcStartTime, 1);
+                    statisticsDataService.insertWeldStatisticsData(otcStartTime, nowEndTime, otcTableName);
+                    otcStartTime = nowEndTime;
+                }
             }
-        }
-        //相差了几个小时
-        int hours = DateTimeUtils.differHours(otcStartTime, endTime);
-        if (hours < 2) {
-            //不超过2个小时，则直接新增
-            statisticsDataService.insertWeldStatisticsData(otcStartTime, endTime, otcTableName);
-        } else {
-            //循环每个小时统计
-            String nowEndTime = "";
-            for (int i = 0; i < hours; i++) {
-                nowEndTime = DateTimeUtils.addDateMinut(otcStartTime, 1);
-                statisticsDataService.insertWeldStatisticsData(otcStartTime, nowEndTime, otcTableName);
-                otcStartTime = nowEndTime;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -132,38 +136,42 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     @Async
-    public void scheduled4() throws InterruptedException {
-        //延迟1分钟
-        Thread.sleep(1000 * 60);
-        //系统时间整点作为结束时间点
-        String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
-        String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-        String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
-        String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
-        if (CommonUtils.isNotEmpty(sxMaxEndTime)) {
-            if (sxMaxEndTime.length() > 19) {
-                sxMaxEndTime = sxMaxEndTime.substring(0, 19);
+    public void scheduled4() {
+        try {
+            //延迟1分钟
+            Thread.sleep(1000 * 60);
+            //系统时间整点作为结束时间点
+            String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
+            String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+            String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
+            String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
+            if (CommonUtils.isNotEmpty(sxMaxEndTime)) {
+                if (sxMaxEndTime.length() > 19) {
+                    sxMaxEndTime = sxMaxEndTime.substring(0, 19);
+                }
+                String sxNowMaxEndTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
+                if (sxNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
+                    //上一次结束时间作为新的开始时间
+                    sxStartTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.HOUR_DATE);
+                }
             }
-            String sxNowMaxEndTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.TODAY_DATE);
-            //判断上一次统计时间是不是今天，true：作为开始时间，false：默认从今天开始
-            if (sxNowMaxEndTime.equals(DateTimeUtils.getNowDate())) {
-                //上一次结束时间作为新的开始时间
-                sxStartTime = LocalDateTime.parse(sxMaxEndTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.HOUR_DATE);
+            //相差了几个小时
+            int sxHours = DateTimeUtils.differHours(sxStartTime, endTime);
+            if (sxHours < 2) {
+                //不超过2个小时，则直接新增
+                statisticsDataService.insertSxWeldStatisticsData(sxStartTime, endTime, sxTableName);
+            } else {
+                //循环每个小时统计
+                String nowEndTime = "";
+                for (int i = 0; i < sxHours; i++) {
+                    nowEndTime = DateTimeUtils.addDateMinut(sxStartTime, 1);
+                    statisticsDataService.insertSxWeldStatisticsData(sxStartTime, nowEndTime, sxTableName);
+                    sxStartTime = nowEndTime;
+                }
             }
-        }
-        //相差了几个小时
-        int sxHours = DateTimeUtils.differHours(sxStartTime, endTime);
-        if (sxHours < 2) {
-            //不超过2个小时，则直接新增
-            statisticsDataService.insertSxWeldStatisticsData(sxStartTime, endTime, sxTableName);
-        } else {
-            //循环每个小时统计
-            String nowEndTime = "";
-            for (int i = 0; i < sxHours; i++) {
-                nowEndTime = DateTimeUtils.addDateMinut(sxStartTime, 1);
-                statisticsDataService.insertSxWeldStatisticsData(sxStartTime, nowEndTime, sxTableName);
-                sxStartTime = nowEndTime;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -219,18 +227,16 @@ public class ScheduledTask {
     @Async
     public void scheduled6() {
         LinkedBlockingQueue<JNRtDataDB> otcLinkedBlockingQueue = CommonDbData.OTC_LINKED_BLOCKING_QUEUE;
-        if (otcLinkedBlockingQueue.size() > 0) {
-            try {
-                while (!otcLinkedBlockingQueue.isEmpty()) {
-                    List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
-                    Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 1000, Duration.ofMillis(0));
-                    rtDataService.insertRtDataList(jnRtDataDbList);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                otcLinkedBlockingQueue.clear();
+        try {
+            while (!otcLinkedBlockingQueue.isEmpty()) {
+                List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
+                Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 1000, Duration.ofMillis(0));
+                rtDataService.insertRtDataList(jnRtDataDbList);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            otcLinkedBlockingQueue.clear();
         }
     }
 
@@ -242,18 +248,16 @@ public class ScheduledTask {
     @Async
     public void scheduled7() {
         LinkedBlockingQueue<SxRtDataDb> sxLinkedBlockingQueue = CommonDbData.SX_LINKED_BLOCKING_QUEUE;
-        if (sxLinkedBlockingQueue.size() > 0) {
-            try {
-                while (!sxLinkedBlockingQueue.isEmpty()) {
-                    ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
-                    Queues.drain(sxLinkedBlockingQueue, sxRtDataList, 1000, Duration.ofMillis(0));
-                    sxRtDataService.insertSxRtDataList(sxRtDataList);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                sxLinkedBlockingQueue.clear();
+        try {
+            while (!sxLinkedBlockingQueue.isEmpty()) {
+                ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
+                Queues.drain(sxLinkedBlockingQueue, sxRtDataList, 1000, Duration.ofMillis(0));
+                sxRtDataService.insertSxRtDataList(sxRtDataList);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sxLinkedBlockingQueue.clear();
         }
     }
 
