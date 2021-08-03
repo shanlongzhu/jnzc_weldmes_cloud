@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.util.ReferenceCountUtil;
 import org.apache.commons.codec.binary.Hex;
 
 import java.net.InetSocketAddress;
@@ -29,7 +28,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
     /**
      * 用来临时保留没有处理过的请求报文
      */
-    private final ByteBuf tempMsg = Unpooled.buffer();
+    private final ByteBuf tempMsg = Unpooled.buffer(1024);
 
     /**
      * key:包头固定值
@@ -49,20 +48,16 @@ public class NettyDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
         // 合并报文
-        ByteBuf message;
+        ByteBuf message = Unpooled.buffer(1024);
         int tmpMsgSize = this.tempMsg.readableBytes();
         // 如果暂存有上一次余下的请求报文，则合并
         if (tmpMsgSize > 0) {
-            message = Unpooled.buffer();
             message.writeBytes(this.tempMsg);
-            message.writeBytes(byteBuf);
             //读取完之后清空
             this.tempMsg.clear();
-            //ReferenceCountUtil.release(this.tempMsg);
-        } else {
-            message = byteBuf;
-            //ReferenceCountUtil.release(this.tempMsg);
         }
+        //将接收到的byteBuf写入到自己定义的ByteBuf(message)中
+        message.writeBytes(byteBuf);
         //数据可读长度大于0才进行读取
         if (message.readableBytes() > 0) {
             InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
@@ -89,15 +84,17 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private void otcRecursionReadBytes(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
         int bufNum = message.readableBytes();
-        //可读长度小于2，先暂存，大于2则进行读取
-        if (bufNum < 2) {
-            this.tempMsg.writeBytes(message.readBytes(bufNum));
+        //可读长度小于等于2，先暂存，大于2则进行读取
+        if (bufNum <= 2) {
+            this.tempMsg.writeBytes(message);
+            message.clear();
+            message.release();
         } else {
             byte[] headBytes = new byte[1];
             headBytes[0] = message.getByte(0);
             //头部1个字节
-            String header = CommonUtils.bytesToHexString(headBytes);
-            if ("7E".equals(header)) {
+            String head = CommonUtils.bytesToHexString(headBytes);
+            if ("7E".equals(head)) {
                 //查看包长度
                 byte[] lengthBytes = new byte[1];
                 //查看第2字节的数据包长度
@@ -115,15 +112,22 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     if (map.size() > 0) {
                         out.add(map);
                     }
+                    //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
-                        this.otcRecursionReadBytes(ctx, message, out);
+                        otcRecursionReadBytes(ctx, message, out);
+                    } else {
+                        message.clear();
+                        message.release();
                     }
                 } else {
                     //剩下来的数据放到tempMsg暂存
-                    this.tempMsg.writeBytes(message.readBytes(bufNum));
+                    this.tempMsg.writeBytes(message);
+                    message.clear();
+                    message.release();
                 }
             } else {
-                System.out.println("-------------7E----------------");
+                message.clear();
+                message.release();
             }
         }
     }
@@ -139,7 +143,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
         int bufNum = message.readableBytes();
         //判断可读字节数小于5，直接存储，下次读取
         if (bufNum <= 5) {
-            this.tempMsg.writeBytes(message.readBytes(bufNum));
+            this.tempMsg.writeBytes(message);
+            message.clear();
+            message.release();
         } else {
             //查看前4个字节
             byte[] headBytes = new byte[4];
@@ -161,9 +167,18 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     if (map.size() > 0) {
                         out.add(map);
                     }
-                    this.sxRecursionReadBytes(ctx, message, out);
+                    //如果还有可读字节，则继续递归读取
+                    if (message.readableBytes() > 0) {
+                        sxRecursionReadBytes(ctx, message, out);
+                    } else {
+                        message.clear();
+                        message.release();
+                    }
                 } else {
-                    this.tempMsg.writeBytes(message.readBytes(bufNum));
+                    //剩下来的数据放到tempMsg暂存
+                    this.tempMsg.writeBytes(message);
+                    message.clear();
+                    message.release();
                 }
             }
             //非两次握手，正常通讯协议
@@ -194,11 +209,22 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         if (map.size() > 0) {
                             out.add(map);
                         }
-                        this.sxRecursionReadBytes(ctx, message, out);
+                        //如果还有可读字节，则继续递归读取
+                        if (message.readableBytes() > 0) {
+                            sxRecursionReadBytes(ctx, message, out);
+                        } else {
+                            message.clear();
+                            message.release();
+                        }
                     } else {
-                        //不是完整包，进行暂存
-                        this.tempMsg.writeBytes(message.readBytes(bufNum));
+                        //剩下来的数据放到tempMsg暂存
+                        this.tempMsg.writeBytes(message);
+                        message.clear();
+                        message.release();
                     }
+                } else {
+                    message.clear();
+                    message.release();
                 }
             }
         }

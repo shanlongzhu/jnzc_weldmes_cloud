@@ -32,11 +32,16 @@ public class NettyServer {
                     // 服务端启动引导器
                     final ServerBootstrap server = new ServerBootstrap();
                     server.group(bossGroup, workerGroup)
+                            //TCP数据接收缓冲区大小
+                            .option(ChannelOption.SO_RCVBUF, 1024)
                             //设置采用Nio的通道方式来建立请求连接
                             .channel(NioServerSocketChannel.class)
                             .option(ChannelOption.SO_BACKLOG, 128)  //阻塞队列数量
                             .childOption(ChannelOption.SO_KEEPALIVE, true)  //心跳保持
                             .childHandler(new NettyChannelInitializer());
+                    //System.setProperty("io.netty.leakDetection.maxRecords", "1000");
+                    //System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
+                    //ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
                     // 服务端绑定端口并且开始接收进来的连接请求
                     channelFuture = server.bind(port).sync();
                     //channelFuture = server.bind(port).sync();

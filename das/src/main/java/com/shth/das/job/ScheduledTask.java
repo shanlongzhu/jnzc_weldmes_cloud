@@ -230,7 +230,7 @@ public class ScheduledTask {
         try {
             while (!otcLinkedBlockingQueue.isEmpty()) {
                 List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
-                Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 1000, Duration.ofMillis(0));
+                Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 2000, Duration.ofMillis(0));
                 rtDataService.insertRtDataList(jnRtDataDbList);
             }
         } catch (Exception e) {
@@ -251,7 +251,7 @@ public class ScheduledTask {
         try {
             while (!sxLinkedBlockingQueue.isEmpty()) {
                 ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
-                Queues.drain(sxLinkedBlockingQueue, sxRtDataList, 1000, Duration.ofMillis(0));
+                Queues.drain(sxLinkedBlockingQueue, sxRtDataList, 2000, Duration.ofMillis(0));
                 sxRtDataService.insertSxRtDataList(sxRtDataList);
             }
         } catch (Exception e) {

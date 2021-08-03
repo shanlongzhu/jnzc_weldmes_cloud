@@ -32,7 +32,7 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
         //16进制字符串转byte数组
         byte[] bytes = Hex.decodeHex(str.toCharArray());
         byteBuf.writeBytes(bytes);
-        byteBuf.release();
+        //byteBuf.release();
         ctx.flush();
     }
 }

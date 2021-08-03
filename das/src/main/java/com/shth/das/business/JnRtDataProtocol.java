@@ -104,12 +104,11 @@ public class JnRtDataProtocol {
      * 江南OTC实时数据处理（上行）
      */
     @SuppressWarnings("unchecked")
-    public void jnRtDataManage(Object msg) {
-        Map<String, Object> map = (Map<String, Object>) msg;
+    public void jnRtDataManage(Map<String, Object> map) {
         if (map.size() > 0) {
             //实时数据发送到前端
             if (map.containsKey("JNRtDataUI")) {
-                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
                     if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                         String gatherNo = jnRtDataUis.get(0).getGatherNo();
@@ -121,7 +120,7 @@ public class JnRtDataProtocol {
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), message, 0);
                     }
-                });
+                //});
             }
             //实时数据存数据库
             if (map.containsKey("JNRtDataDB")) {
@@ -133,7 +132,7 @@ public class JnRtDataProtocol {
             }
             //工艺下发返回
             if (map.containsKey("JNProcessIssueReturn")) {
-                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
                     if (null != processIssueReturn) {
                         //Java类转JSON字符串
@@ -141,40 +140,40 @@ public class JnRtDataProtocol {
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.processIssueReturn.name(), message, 0);
                     }
-                });
+                //});
             }
             //工艺索取返回
             if (map.containsKey("JNProcessClaimReturn")) {
-                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
                     if (null != processClaimReturn) {
                         String message = JSON.toJSONString(processClaimReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.processClaimReturn.name(), message, 0);
                     }
-                });
+                //});
             }
             //密码返回
             if (map.containsKey("JNPasswordReturn")) {
-                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
                     if (null != passwordReturn) {
                         String message = JSON.toJSONString(passwordReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.passwordReturn.name(), message, 0);
                     }
-                });
+                //});
             }
             //控制命令返回
             if (map.containsKey("JNCommandReturn")) {
-                CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+                //CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
                     JNCommandReturn commandReturn = (JNCommandReturn) map.get("JNCommandReturn");
                     if (null != commandReturn) {
                         String message = JSON.toJSONString(commandReturn);
                         //通过mqtt发送到服务端
                         EmqMqttClient.publishMessage(UpTopicEnum.commandReturn.name(), message, 0);
                     }
-                });
+                //});
             }
         }
     }
@@ -255,11 +254,11 @@ public class JnRtDataProtocol {
      * @return 返回一个集合对象
      */
     public List<JNRtDataDB> jnRtDataAnalysis(String str) {
-        List<JNRtDataDB> rtdata = new ArrayList<>();
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
+                    List<JNRtDataDB> rtdata = new ArrayList<>();
                     JNRtDataDB data = new JNRtDataDB();
                     //焊机型号
                     data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
@@ -364,12 +363,13 @@ public class JnRtDataProtocol {
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
                         rtdata.add((JNRtDataDB) data.clone());
                     }
+                    return rtdata;
                 }
             }
         } catch (Exception e) {
             log.error("江南实时数据协议解析异常：{}", e.getMessage());
         }
-        return rtdata;
+        return null;
     }
 
     /**

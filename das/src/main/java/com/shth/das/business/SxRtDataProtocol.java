@@ -174,8 +174,7 @@ public class SxRtDataProtocol {
     /**
      * 松下设备实时数据处理（上行）
      */
-    public void sxRtDataManage(Object msg) {
-        Map<String, Object> map = (Map<String, Object>) msg;
+    public void sxRtDataManage(Map<String, Object> map) {
         if (map.size() > 0) {
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey("SxWeldModel")) {

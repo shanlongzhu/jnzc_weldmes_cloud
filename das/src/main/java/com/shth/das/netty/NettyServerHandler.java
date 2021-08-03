@@ -8,9 +8,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -53,6 +55,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      * @param ctx：通道
      * @param msg：数据
      */
+    @SuppressWarnings({"ALL"})
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
@@ -68,14 +71,20 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
             ctx.flush();
             return;
         }
-        //端口为otcPort，则为江南版OTC通讯协议
-        if (serverPort == DataInitialization.getOtcPort()) {
-            this.jnRtDataProtocol.jnRtDataManage(msg);
+        if (msg instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) msg;
+            //端口为otcPort，则为江南版OTC通讯协议
+            if (serverPort == DataInitialization.getOtcPort()) {
+                this.jnRtDataProtocol.jnRtDataManage(map);
+            }
+            //端口为sxPort，则为松下通讯协议
+            if (serverPort == DataInitialization.getSxPort()) {
+                this.sxRtDataProtocol.sxRtDataManage(map);
+            }
+            map.clear();
+            ReferenceCountUtil.release(map);
         }
-        //端口为sxPort，则为松下通讯协议
-        if (serverPort == DataInitialization.getSxPort()) {
-            this.sxRtDataProtocol.sxRtDataManage(msg);
-        }
+        ReferenceCountUtil.release(msg);
         ctx.flush();
     }
 
@@ -89,6 +98,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         int clientPort = insocket.getPort();
+        InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
+        String serverIp = inetSocket.getAddress().getHostAddress();
+        int serverPort = inetSocket.getPort();
         //如果map中不包含此连接，就保存连接
         if (CHANNEL_MAP.containsKey(clientIp)) {
             log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
