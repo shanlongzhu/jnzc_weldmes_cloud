@@ -57,7 +57,7 @@
         weld_statistics_data w, task_info t
         <where>
             w.taskId = t.id
-            <if test=" !=null and time1!=''">
+            <if test="time1!=null and time1!=''">
                 and w.startTime &gt;= #{time1}
             </if>
             <if test="time2!=null and time2!=''">
