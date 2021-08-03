@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-31 14:26:52
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-02 10:39:58
+ * @LastEditTime: 2021-08-03 17:54:49
 -->
 <template>
     <el-tree
@@ -56,6 +56,7 @@ export default {
                     }
                 })
             }
+            
         },
         currentChangeTree(v){
             this.$emit('currentChangeTree',v);
