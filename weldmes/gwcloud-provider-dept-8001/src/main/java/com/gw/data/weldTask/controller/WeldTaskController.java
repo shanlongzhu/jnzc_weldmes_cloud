@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.data.weldTask.service.WeldTaskService;
 import com.gw.entities.RealtimeData;
+import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,7 +32,7 @@ public class WeldTaskController {
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Long areaId ,Long teamId,String time1, String time2,Long status) {
         PageHelper.startPage(pn, 10);
-        List<RealtimeData> list = weldTaskService.getList(areaId,teamId,time1, time2,status);
+        List<WeldStatisticsData> list = weldTaskService.getList(areaId,teamId,time1, time2,status);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
@@ -40,7 +41,7 @@ public class WeldTaskController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response, Long areaId ,Long teamId,String time1, String time2,Long status) {
         HttpResult result = new HttpResult();
-        List<RealtimeData> list = weldTaskService.getList(areaId,teamId,time1, time2,status);
+        List<WeldStatisticsData> list = weldTaskService.getList(areaId,teamId,time1, time2,status);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("焊机任务表");
         String[] titles = {"所属班组", "设备编号", "日期", "任务号","状态"};
@@ -51,20 +52,21 @@ public class WeldTaskController {
         }
         for (int i = 0; i < list.size(); i++) {
             row = sheet.createRow(i + 1);
-            RealtimeData realtimeData = list.get(i);
+            WeldStatisticsData weldStatisticsData = list.get(i);
             Cell getNameCell = row.createCell(0);
-            getNameCell.setCellValue(realtimeData.getSysDept().getName());
+            getNameCell.setCellValue(weldStatisticsData.getSysDept().getName());
             Cell getFWeldNoCell = row.createCell(1);
-            getFWeldNoCell.setCellValue(realtimeData.getFWeldNo());
+            getFWeldNoCell.setCellValue(weldStatisticsData.getMachineNo());
             Cell getFWeldTimeCell = row.createCell(2);
-            getFWeldTimeCell.setCellValue(realtimeData.getFWeldTime());
+            getFWeldTimeCell.setCellValue(weldStatisticsData.getCreateTime());
             Cell getTaskNoCell = row.createCell(3);
-            getTaskNoCell.setCellValue(realtimeData.getTaskInfo().getTaskNo());
+            getTaskNoCell.setCellValue(weldStatisticsData.getTaskInfo().getTaskNo());
             Cell getValueNameCell = row.createCell(4);
-            getValueNameCell.setCellValue(realtimeData.getSysDictionary().getValueName());
+            getValueNameCell.setCellValue(weldStatisticsData.getSysDictionary().getValueName());
         }
         try {
-            String fileName = URLEncoder.encode("焊机任务表.xlsx", "UTF-8");
+            String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
+            String fileName = URLEncoder.encode("焊机任务表"+time+".xlsx", "UTF-8");
             response.setContentType("application/octet-stream");
             response.setHeader("content-disposition", "attachment;filename=" + fileName);
             response.setHeader("filename", fileName);

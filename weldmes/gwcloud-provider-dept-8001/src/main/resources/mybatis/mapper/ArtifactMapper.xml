@@ -57,7 +57,7 @@
         weld_statistics_data w, task_info t
         <where>
             w.taskId = t.id
-            <if test="time1!=null and time1!=''">
+            <if test=" !=null and time1!=''">
                 and w.startTime &gt;= #{time1}
             </if>
             <if test="time2!=null and time2!=''">
@@ -105,6 +105,5 @@
         where
         a.task_no = b.task_no
         and a.task_no = c.task_no
-
     </select>
 </mapper>
