@@ -105,6 +105,5 @@
         where
         a.task_no = b.task_no
         and a.task_no = c.task_no
-
     </select>
 </mapper>

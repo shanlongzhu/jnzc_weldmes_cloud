@@ -98,18 +98,7 @@
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"
-        />
-        <el-dialog
-            title="未绑定设备明细"
-            :visible.sync="dialogVisible"
-            width="400"
-        >
-            <el-tag
-                class="mr10"
-                v-for="(item,index) in noTaskModelList"
-                :key="'443'+index"
-            >{{'编号:'+item}}</el-tag>
-        </el-dialog>
+        />        
     </div>
 </template>
 
@@ -140,9 +129,6 @@ export default {
                     return time.getTime() > Date.now() + 3600 * 1000 * 24
                 }
             },
-            //未绑定设备明细
-            dialogVisible: false,
-            noTaskModelList: []
         }
     },
 
@@ -150,7 +136,6 @@ export default {
         this.getList();
     },
     methods: {
-
         search () {
             this.page = 1;
             this.getList();
@@ -186,21 +171,11 @@ export default {
             });
             let req = {
                 taskNo:this.taskNo,
-                time1: this.dateTime&&this.dateTime[0] ? this.dateTime[0] : '',
-                time2: this.dateTime&&this.dateTime[0] ? this.dateTime[1] : '',
+                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             location.href = exportWorkProDataList(req)
-        },
-        //
-        viewDetail (row) {
-            this.dialogVisible = true;
-            this.noTaskModelList = row.noTaskMachineDetail.split(',') || []
-        },
-        cellClick({column,row}){
-            if(column.title=="未绑定设备数"&&row.noTaskCount!=0){
-                this.viewDetail(row);
-            }
-        }
+        },      
 
     }
 }
