@@ -181,8 +181,8 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime&&this.dateTime[0] ? this.dateTime[0] : '',
-                time2: this.dateTime&&this.dateTime[0] ? this.dateTime[1] : '',
+                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             location.href = exportEquProDataList(req)
         }
