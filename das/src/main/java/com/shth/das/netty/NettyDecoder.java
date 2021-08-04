@@ -34,14 +34,17 @@ public class NettyDecoder extends ByteToMessageDecoder {
      * key:包头固定值
      * value：字节长度
      */
+    private final Map<String, Integer> otcMap = new HashMap<>();
     private final Map<String, Integer> sxMap = new HashMap<>();
 
     NettyDecoder() {
-        //第一次验证
+        //OTC通讯协议固定头部
+        this.otcMap.put("7E", 1);
+        //松下第一次握手验证
         this.sxMap.put("4E455430", 21);
-        //第二次验证
-        this.sxMap.put("4C4A5348", 128);
-        //其他
+        //松下第二次握手验证
+        this.sxMap.put("4C4A5348", 64);
+        //其他（握手成功后正常传输的通讯协议）
         this.sxMap.put("FE5AA5", 0);
     }
 
@@ -93,18 +96,18 @@ public class NettyDecoder extends ByteToMessageDecoder {
             byte[] headBytes = new byte[1];
             headBytes[0] = message.getByte(0);
             //头部1个字节
-            String head = CommonUtils.bytesToHexString(headBytes);
-            if ("7E".equals(head)) {
+            String otcHead = CommonUtils.bytesToHexString(headBytes);
+            if (this.otcMap.containsKey(otcHead)) {
                 //查看包长度
                 byte[] lengthBytes = new byte[1];
                 //查看第2字节的数据包长度
                 lengthBytes[0] = message.getByte(1);
                 //数据包长度(数组转16进制再转10进制)
-                int length = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
+                int otcLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
                 //判断可读长度是否多于数据包长度（是否是一个完整数据包）
-                if (length > 0 && bufNum >= length) {
+                if (otcLength > 0 && bufNum >= otcLength) {
                     //将一个完整数据包读取到bytes数组中
-                    byte[] bytes = new byte[length];
+                    byte[] bytes = new byte[otcLength];
                     message.readBytes(bytes);
                     //解析完整数据包成16进制
                     String str = CommonUtils.bytesToHexString(bytes);
@@ -153,11 +156,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 headBytes[index] = message.getByte(index);
             }
             //头部4个字节
-            String header = CommonUtils.bytesToHexString(headBytes);
+            String sxFourHead = CommonUtils.bytesToHexString(headBytes);
             //判断是否为两次握手验证
-            if (this.sxMap.containsKey(header)) {
+            if (this.sxMap.containsKey(sxFourHead)) {
                 //获得数据包长度
-                int length = this.sxMap.get(header);
+                int length = this.sxMap.get(sxFourHead);
                 //可读字节是否多于数据包长度（是否为完整包）
                 if (length > 0 && bufNum >= length) {
                     byte[] bytes = new byte[length];
@@ -189,8 +192,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     headByte[index] = message.getByte(index);
                 }
                 //头部3个字节
-                String head = CommonUtils.bytesToHexString(headByte);
-                if (this.sxMap.containsKey(head)) {
+                String sxThreeHead = CommonUtils.bytesToHexString(headByte);
+                if (this.sxMap.containsKey(sxThreeHead)) {
                     //查看包长度
                     byte[] lengthBytes = new byte[2];
                     //查看第4、5字节的数据包长度
