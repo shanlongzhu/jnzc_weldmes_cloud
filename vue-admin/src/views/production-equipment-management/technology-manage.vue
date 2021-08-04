@@ -209,6 +209,7 @@
         <issue-orders ref="issueOrdersRef"></issue-orders>
         <!-- 松下 co2工艺 -->
         <sxco2 ref="SxCO2"></sxco2>
+        <sxTIG ref="SxTIG"></sxTIG>
     </div>
 </template>
 
@@ -220,9 +221,10 @@ import expandTable from './components/expandTable.vue';
 import AddTech from './components/addTech.vue';
 import IssueOrders from './components/issueOrders.vue';
 import sxco2 from './components/SxCO2.vue';
+import sxTIG from './components/sxTIG.vue';
 
 export default {
-    components: { expandTable, AddTech, IssueOrders, sxco2 },
+    components: { expandTable, AddTech, IssueOrders, sxco2, sxTIG},
     data () {
         return {
             visable1: false,
@@ -396,6 +398,9 @@ export default {
             switch (row.sysDictionary.valueName) {
                 case 'SxCO2':
                     this.$refs.SxCO2.addLibraryFun(row.id);
+                    break;
+                    case 'SxTIG':
+                    this.$refs.SxTIG.addLibraryFun(row.id);
                     break;
                 default:
                     this.$refs.addTech.addLibraryFun(row.id);

@@ -65,3 +65,18 @@ export function exportWorkProDataList(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/artifact/excel?${qs.stringify(params)}`;
 }
 
+// ******生产任务数据统计*******/
+//获取生产任务列表
+export function getTaskDataList(params = {}) {
+  return request({
+    url: "/ProductionTask",
+    method: "get",
+    params
+  });
+}
+
+//导出工件统计列表
+export function exportTaskDataList(params = {}) {
+  return `${process.env.VUE_APP_BASE_API}/ProductionTask/excel?${qs.stringify(params)}`;
+}
+

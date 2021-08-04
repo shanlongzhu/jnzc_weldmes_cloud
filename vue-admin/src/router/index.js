@@ -299,7 +299,16 @@ export const asyncRoutes = [
           title: '设备生产数据统计',
           mark:'503',
           noCache: true }
-      }      
+      },
+      {
+        path: 'task-detail',
+        component: () => import('@/views/productionDataStatistics/taskDetail'),
+        name: 'taskDetail',
+        meta: {
+          title: '生产任务详情',
+          mark:'504',
+          noCache: true }
+      },      
     ]
   },
   // {

@@ -38,152 +38,62 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <!--普通气保焊工艺  -->
-                <sxCO2Tech1></sxCO2Tech1>
-                <!-- GL4工艺 -->
-                <sxCO2GL4></sxCO2GL4>
-                <!-- 手工焊 -->
-                <sxCO2Manual></sxCO2Manual>
                 <div class="border-tip">
-                    <span class="border-tip-txt">报警设置</span>
+                    <span class="border-tip-txt">预置参数</span>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接电流上限(A)"
-                                prop="initialEle"
+                                label="初期电流上限"
+                                prop="initialEleMax"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
+                                    :min="0"
+                                    v-model="ruleForm2.initialEleMax"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接电流下限(A)"
-                                prop="weldingEle"
+                                label="初期电流下限"
+                                prop="initialEleMin"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.weldingEle"
+                                    :min="0"
+                                    v-model="ruleForm2.initialEleMin"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接电压上限(V)"
-                                prop="arcEle"
+                                label="初期电压上限"
+                                prop="initialVolMax"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.arcEle"
+                                    :min="0"
+                                    v-model="ruleForm2.initialVolMax"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接电压下限(V)"
-                                prop="arcEle"
+                                label="初期电压下限"
+                                prop="initialVolMin"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.arcEle"
-                                ></el-input-number>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="6">
-                            <el-form-item prop="initialEle">
-                                <template slot="label">
-                                    报警模式
-                                    <el-tooltip
-                                        class="item"
-                                        effect="light"
-                                        placement="top"
-                                    >
-                                        <template slot="content">
-                                            <span style="color:#f00">请确认焊机是否支持此功能</span>
-                                        </template>
-                                        <i class="el-icon-info"></i>
-                                    </el-tooltip>
-                                </template>
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
-                                ></el-input-number>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="起弧延时时间"
-                                prop="weldingEle"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.weldingEle"
-                                ></el-input-number>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="报警延时(S)"
-                                prop="arcEle"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.arcEle"
-                                ></el-input-number>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-form-item
-                                label="停机冻结(S)"
-                                prop="arcEle"
-                            >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.arcEle"
+                                    :min="0"
+                                    v-model="ruleForm2.initialVolMin"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
@@ -191,54 +101,447 @@
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                prop="initialEle"
-                                label="停机延时(S)"
+                                label="初期送丝速度上限"
+                                prop="initialWireSpeedMax"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
+                                    :min="0"
+                                    v-model="ruleForm2.initialWireSpeedMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期送丝速度下限"
+                                prop="initialWireSpeedMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.initialWireSpeedMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流上限"
+                                prop="weldEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流下限"
+                                prop="weldEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电压上限"
+                                prop="weldVolMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldVolMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电压下限"
+                                prop="weldVolMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldVolMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接送丝速度上限"
+                                prop="weldWireSpeedMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldWireSpeedMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接送丝速度下限"
+                                prop="weldWireSpeedMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.weldWireSpeedMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流上限"
+                                prop="arcEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流下限"
+                                prop="arcEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电压上限"
+                                prop="arcVolMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcVolMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电压下限"
+                                prop="arcVolMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcVolMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧送丝速度上限"
+                                prop="arcWireSpeedMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcWireSpeedMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧送丝速度下限"
+                                prop="arcWireSpeedMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.arcWireSpeedMin"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                     </el-row>
                 </div>
                 <div class="border-tip">
-                    <span class="border-tip-txt">限流设置</span>
+                    <span class="border-tip-txt">焊接条件</span>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接限流上限(A)"
-                                prop="initialEle"
+                                label="模式选择"
+                                prop="modeSelect"
                             >
-                                <el-input-number
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
+                                <el-select
+                                    v-model="ruleForm2.modeSelect"
+                                    placeholder="请选择"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
-                                ></el-input-number>
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in modeArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="超限时间(S)"
-                                prop="weldingEle"
+                                label="焊接控制"
+                                prop="weldingControl"
                             >
-                                <el-input-number
+                                <el-select
+                                    v-model="ruleForm2.weldingControl"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in weldingControlArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接方式"
+                                prop="weldingManner"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.weldingManner"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in weldingMannerArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="材质"
+                                prop="texture"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.texture"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in textureArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="丝径"
+                                prop="wireDiameter"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.wireDiameter"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in wireDiameterArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="气体"
+                                prop="gases"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.gases"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in gasesArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="手动送丝"
+                                prop="wireFeed"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.wireFeed"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in wireFeedArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="检气状态"
+                                prop="checkGasStatus"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.checkGasStatus"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in checkGasStatusArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="切换状态"
+                                prop="cutStatus"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.cutStatus"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in cutStatusArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="锁定状态"
+                                prop="lockStatus"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.lockStatus"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in lockStatusArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="电流显示选择"
+                                prop="eleShowSelect"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.eleShowSelect"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in eleShowSelectArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="转速"
+                                prop="rev"
+                            >
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.weldingEle"
+                                    :min="0"
+                                    :max="250"
+                                    v-model="ruleForm2.rev"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
@@ -246,37 +549,537 @@
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                label="焊接限流下限(A)"
-                                prop="initialEle"
+                                label="板厚"
+                                prop="boardThickness"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
+                                    :min="0"
+                                    :max="200"
+                                    v-model="ruleForm2.boardThickness"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="修正周期(MS)"
-                                prop="weldingEle"
+                                label="点焊时间"
+                                prop="spotWeldingTime"
                             >
-                                <el-input-number
+                                <el-input-number :precision="0"
                                     :controls="false"
-                                    :precision="0"
                                     size="mini"
                                     style="width:110px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.weldingEle"
+                                    :min="0"
+                                    :max="300"
+                                    v-model="ruleForm2.spotWeldingTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="电压显示选择"
+                                prop="volShowSelect"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.volShowSelect"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in volShowArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="弧长"
+                                prop="arcLength"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    :max="100"
+                                    v-model="ruleForm2.arcLength"
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
                     </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="电弧特性"
+                                prop="arcCharacter"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    :max="20"
+                                    v-model="ruleForm2.arcCharacter"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="熔深控制"
+                                prop="penetrationControl"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    :max="3"
+                                    v-model="ruleForm2.penetrationControl"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="提前送气时间"
+                                prop="beforeAspiratedTime"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    :max="300"
+                                    v-model="ruleForm2.beforeAspiratedTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="滞后停气时间"
+                                prop="afterStopGasTime"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    :max="300"
+                                    v-model="ruleForm2.afterStopGasTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="一元/分别"
+                                prop="unitaryDifference"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.unitaryDifference"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in unitaryDifferenceArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="当前通道"
+                                prop="nowChannel"
+                            >
+                                <el-select
+                                    v-model="ruleForm2.nowChannel"
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in channelNoArr"
+                                        :key="item.id"
+                                        :label="item.valueName"
+                                        :value="item.id"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>                        
+                    </el-row>                    
+                </div>
+                <div class="border-tip">
+                    <span class="border-tip-txt">动态限流参数</span>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电流上限"
+                                prop="dclInitialEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclInitialEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电流下限"
+                                prop="dclInitialEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclInitialEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流上限"
+                                prop="dclWeldEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclWeldEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流下限"
+                                prop="dclWeldEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclWeldEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流上限"
+                                prop="dclArcEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclArcEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流下限"
+                                prop="dclArcEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.dclArcEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="启动延时时间"
+                                prop="startDelayTime"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.startDelayTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="限流修正周期"
+                                prop="clAmendPeriod"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.clAmendPeriod"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div class="border-tip">
+                    <span class="border-tip-txt">超限报警参数</span>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电流上限"
+                                prop="oaInitialEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaInitialEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电流下限"
+                                prop="oaInitialEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaInitialEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电压上限"
+                                prop="oaInitialVolMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaInitialVolMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="初期电压下限"
+                                prop="oaInitialVolMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaInitialVolMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流上限"
+                                prop="oaWeldEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaWeldEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电流下限"
+                                prop="oaWeldEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaWeldEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电压上限"
+                                prop="oaWeldVolMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaWeldVolMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="焊接电压下限"
+                                prop="oaWeldVolMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaWeldVolMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流上限"
+                                prop="oaArcEleMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaArcEleMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电流下限"
+                                prop="oaArcEleMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaArcEleMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电压上限"
+                                prop="oaArcVolMax"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaArcVolMax"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="收弧电压下限"
+                                prop="oaArcVolMin"
+                            >
+                                <el-input-number :precision="0"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0"
+                                    v-model="ruleForm2.oaArcVolMin"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="起弧延时时间"
+                                prop="arcDelayTime"
+                            >
+                                <el-input-number :precision="1"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0.1"
+                                    :max="3"
+                                    v-model="ruleForm2.arcDelayTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="报警延时时间"
+                                prop="alarmDelayTime"
+                            >
+                                <el-input-number :precision="1"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0.1"
+                                    :max="25"
+                                    v-model="ruleForm2.alarmDelayTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="停机延时时间"
+                                prop="haltDelayTime"
+                            >
+                                <el-input-number :precision="1"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0.1"
+                                    :max="25"
+                                    v-model="ruleForm2.haltDelayTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="停机冻结时间"
+                                prop="haltFreezeTime"
+                            >
+                                <el-input-number :precision="1"
+                                    :controls="false"
+                                    size="mini"
+                                    style="width:110px"
+                                    :min="0.1"
+                                    :max="25"
+                                    v-model="ruleForm2.haltFreezeTime"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
                 </div>
                 <el-form-item
                     class="mt10 tc"
@@ -427,12 +1230,8 @@ import mqtt from 'mqtt'
 import { getTeam, getDictionaries, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
 
 import { getWelderList } from '_api/productionEquipment/production'
-import sxCO2Tech1 from './SxCO2Tech1.vue'
-import sxCO2GL4 from './SxCO2GL4.vue'
-import sxCO2Manual from './SxCO2Manual.vue'
 export default {
     name: 'SxCO2',
-    components: { sxCO2Tech1, sxCO2GL4,sxCO2Manual },
     props: {},
     data () {
         return {
@@ -454,45 +1253,6 @@ export default {
             title2: '新增工艺',
             ruleFormObj2: {},
             ruleForm2: {
-                // wpsLibraryId: '',//工艺库id
-                // id: '',
-                // channelNo: '',//通道号
-                // initialCondition: false,//初期条件
-                // fusionControl: false,//熔深控制
-                // unitarySeveral: 1,//一元/个别
-                // controlArc: '000',//收弧方式
-                // controlArcType: '7',//收弧方式
-                // softArcSchema: false,//柔软电弧模式
-                // arcCharacter: 0,//电弧特性
-                // spotWeldingTime: 3,//点焊时间
-                // weldingStickTexture: '0',//焊丝材质
-                // weldingStickTextureType: '8',//焊丝材质Type
-                // weldingStickDiameter: '12',//焊丝直径
-                // weldingStickDiameterType: '10',//焊丝直径Type
-                // inAdvanceAspirated: 0.1,//提前送气
-                // hysteresisAspirated: 0.1,//滞后送气
-                // gases: '0',//气体
-                // gasesType: '9',//气体Typez
-                // weldingProcess: '1',//焊接过程
-                // weldingProcessType: '11',//焊接过程Type
-                // initialEle: 100,//初期电流
-                // initialVol: 19,//初期电压
-                // weldingEle: 100,//焊接电流
-                // weldingVol: 19,//焊接电压
-                // arcEle: 100,//收弧电流
-                // arcVol: 19,//收弧电压
-                // initialVolUnitary: 0,//初期电压一元
-                // weldingVolUnitary: 0,//焊接电压一元
-                // arcVolUnitary: 0,//收弧电压一元
-                // weldingEleAdjust: 0,//焊接电流微调
-                // weldingVolAdjust: 0,//焊接电压微调
-                // arcEleAdjust: 0,//收弧电流微调
-                // arcVolAdjust: 0,//收弧电压微调
-                // alarmsEleMax: 0,//报警电流上限
-                // alarmsEleMin: 0,//报警电流下限
-                // alarmsVolMax: 0,//报警电压上限
-                // alarmsVolMin: 0,//报警电压下限
-
                 //松下co2工艺
                 channelNo: '',//通道编号
                 weldIp: '',//下发的焊机IP
@@ -501,6 +1261,7 @@ export default {
                 initialEleMax: 0,//初期电流上限
                 initialEleMin: 0,//初期电流下限
                 initialVolMax: 0,//初期电压上限
+                initialVolMin: 0,//初期电压下限
                 initialWireSpeedMax: '',//初期送丝速度上限
                 initialWireSpeedMin: '',//初期送丝速度下限
                 weldEleMax: '',//焊接电流上限
@@ -642,154 +1403,314 @@ export default {
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
             },
+            //模式选择
+            modeArr:[
+                {
+                    label:'焊接',
+                    value:0
+                },
+                {
+                    label:'详细',
+                    value:1
+                },
+                {
+                    label:'调用',
+                    value:2
+                },
+                {
+                    label:'存储',
+                    value:3
+                }
+            ],
+            //焊接控制
+            weldingControlArr:[
+                {
+                    label:'收弧无',
+                    value:0
+                },
+                {
+                    label:'收弧有',
+                    value:1
+                },
+                {
+                    label:'初期有',
+                    value:2
+                },
+                {
+                    label:'电焊',
+                    value:3
+                }
+            ],
+            //焊接方式
+            weldingMannerArr:[
+                {
+                    label:'脉冲无',
+                    value:0
+                },
+                {
+                    label:'脉冲有',
+                    value:1
+                },
+                {
+                    label:'根焊',
+                    value:2
+                },
+                {
+                    label:'大熔深',
+                    value:3
+                }
+            ],
+            //材质
+            textureArr:[
+                {
+                    label:'碳钢',
+                    value:0
+                },
+                {
+                    label:'药芯碳钢',
+                    value:1
+                },
+                {
+                    label:'不锈钢3系',
+                    value:2
+                },
+                {
+                    label:'不锈钢4系',
+                    value:3
+                },
+                {
+                    label:'药芯不锈钢',
+                    value:4
+                },
+                {
+                    label:'OP1',
+                    value:5
+                },
+                {
+                    label:'OP2',
+                    value:6
+                },
+            ],
+            //丝径
+            wireDiameterArr:[
+                {
+                    label:'0.8',
+                    value:0
+                },
+                {
+                    label:'0.9',
+                    value:1
+                },
+                {
+                    label:'1.0',
+                    value:2
+                },
+                {
+                    label:'1.2',
+                    value:3
+                },
+                {
+                    label:'1.4',
+                    value:4
+                },
+                {
+                    label:'1.6',
+                    value:5
+                },
+                {
+                    label:'OP1',
+                    value:6
+                },
+            ],
+            //气体
+            gasesArr: [
+                {
+                    label:'CO2',
+                    value:0
+                },
+                {
+                    label:'MAG',
+                    value:1
+                },
+                {
+                    label:'MIG',
+                    value:2
+                },
+                {
+                    label:'OP1',
+                    value:3
+                },
+                {
+                    label:'OP2',
+                    value:4
+                },
+                {
+                    label:'OP3',
+                    value:5
+                },
+                {
+                    label:'OP4',
+                    value:6
+                },
+            ],
+            //手动送丝
+            wireFeedArr: [
+                {
+                    label:'送丝停止',
+                    value:0
+                },
+                {
+                    label:'送丝启动',
+                    value:1
+                },                
+            ],
+            //检气状态
+            checkGasStatusArr: [
+                {
+                    label:'检气停止',
+                    value:0
+                },
+                {
+                    label:'检气启动',
+                    value:1
+                },                
+            ],
+            //切换状态
+            cutStatusArr:[
+                {
+                    label:'初期',
+                    value:0
+                },
+                {
+                    label:'焊接',
+                    value:1
+                },   
+                {
+                    label:'收弧',
+                    value:2
+                },                
+            ],
+            //锁定状态
+            lockStatusArr:[
+                {
+                    label:'锁定无',
+                    value:0
+                },
+                {
+                    label:'锁定有',
+                    value:1
+                },                 
+            ],
 
+            //电流显示选择
+            eleShowSelectArr:[
+                {
+                    label:'电流',
+                    value:0
+                },
+                {
+                    label:'速度',
+                    value:1
+                },  
+                {
+                    label:'板厚',
+                    value:2
+                },             
+                {
+                    label:'电焊时间',
+                    value:3
+                },      
+            ],
+            //电压显示选择
+            volShowArr:[
+                {
+                    label:'电压',
+                    value:0
+                },
+                {
+                    label:'弧长',
+                    value:1
+                },  
+                {
+                    label:'电弧特性',
+                    value:2
+                },             
+                {
+                    label:'熔深控制',
+                    value:3
+                }, 
+            ],
+            
+            //一元/分别
+            unitaryDifferenceArr:[
+                {
+                    label:'一元化',
+                    value:1
+                },
+                {
+                    label:'分别',
+                    value:2
+                },   
+            ],
+            //通道号下拉            
+            channelNoArr: [
+                {
+                    id: 0,
+                    valueName: '通道1'
+                },
+                {
+                    id: 1,
+                    valueName: '通道2'
+                },
+                {
+                    id: 2,
+                    valueName: '通道3'
+                },
+                {
+                    id: 3,
+                    valueName: '通道4'
+                },
+                {
+                    id: 4,
+                    valueName: '通道5'
+                },
+                {
+                    id: 5,
+                    valueName: '通道6'
+                },
+                {
+                    id: 6,
+                    valueName: '通道7'
+                },
+                {
+                    id: 7,
+                    valueName: '通道8'
+                },
+                {
+                    id: 8,
+                    valueName: '通道9'
+                },
+                {
+                    id: 9,
+                    valueName: '通道10'
+                },
+            ],
+
+
+            
             //收弧方式下拉
             controlArcArr: [],
             //焊丝材质
             weldingStickTextureArr: [],
-            //气体
-            gasesArr: [],
+            
             gasesArrSource: [],
             //焊丝直径
             weldingStickDiameterArr: [],
             weldingStickDiameterArrSource: [],
             //焊接过程
             weldingProcessArr: [],
-            //一元/个别下拉
-            unitarySeveralArr: [
-                {
-                    id: 0,
-                    valueName: '一元'
-                },
-                {
-                    id: 1,
-                    valueName: '个别'
-                },
-            ],
-            //通道号下拉
-            channelNoSourceArr: [
-                {
-                    id: 1,
-                    valueName: '通道1'
-                },
-                {
-                    id: 2,
-                    valueName: '通道2'
-                },
-                {
-                    id: 3,
-                    valueName: '通道3'
-                },
-                {
-                    id: 4,
-                    valueName: '通道4'
-                },
-                {
-                    id: 5,
-                    valueName: '通道5'
-                },
-                {
-                    id: 6,
-                    valueName: '通道6'
-                },
-                {
-                    id: 7,
-                    valueName: '通道7'
-                },
-                {
-                    id: 8,
-                    valueName: '通道8'
-                },
-                {
-                    id: 9,
-                    valueName: '通道9'
-                },
-                {
-                    id: 10,
-                    valueName: '通道10'
-                },
-                {
-                    id: 11,
-                    valueName: '通道11'
-                },
-                {
-                    id: 12,
-                    valueName: '通道12'
-                },
-                {
-                    id: 13,
-                    valueName: '通道13'
-                },
-                {
-                    id: 14,
-                    valueName: '通道14'
-                },
-                {
-                    id: 15,
-                    valueName: '通道15'
-                },
-                {
-                    id: 16,
-                    valueName: '通道16'
-                },
-                {
-                    id: 17,
-                    valueName: '通道17'
-                },
-                {
-                    id: 18,
-                    valueName: '通道18'
-                },
-                {
-                    id: 19,
-                    valueName: '通道19'
-                },
-                {
-                    id: 20,
-                    valueName: '通道20'
-                },
-                {
-                    id: 21,
-                    valueName: '通道21'
-                },
-                {
-                    id: 22,
-                    valueName: '通道22'
-                },
-                {
-                    id: 23,
-                    valueName: '通道23'
-                },
-                {
-                    id: 24,
-                    valueName: '通道24'
-                },
-                {
-                    id: 25,
-                    valueName: '通道25'
-                },
-                {
-                    id: 26,
-                    valueName: '通道26'
-                },
-                {
-                    id: 27,
-                    valueName: '通道27'
-                },
-                {
-                    id: 28,
-                    valueName: '通道28'
-                },
-                {
-                    id: 29,
-                    valueName: '通道29'
-                },
-                {
-                    id: 30,
-                    valueName: '通道30'
-                },
-            ],
-            channelNoArr: [],
+            
+            
 
             //选择设备
             model2: false,
@@ -814,21 +1735,7 @@ export default {
     },
     watch: {},
     computed: {
-        //电焊时间是否禁用
-        spotWeldingTimeDisabled () {
-            //收弧方式选择点焊可填
-            return this.ruleForm2.controlArc !== '100'
-        },
-        //初期电流是否禁用
-        initialEleDisabled () {
-            //初期条件且收弧方式有或反复
-            return !this.ruleForm2.initialCondition || this.ruleForm2.controlArc !== '001' && this.ruleForm2.controlArc !== '011'
-        },
-        //收弧是否可填
-        arcDisabled () {
-            return this.ruleForm2.controlArc !== '001' && this.ruleForm2.controlArc !== '011'
-        },
-
+        
     },
     methods: {
         //mqtt创建
@@ -911,31 +1818,7 @@ export default {
 
         doPublish (msg) {
             this.client.publish('processClaim', msg, 0)
-        },
-
-
-
-
-
-        //获取数据字典
-        async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["7", "8", "9", "10", "11"] });
-            if (code == 200) {
-                //收弧方式
-                this.controlArcArr = data['7'] || [];
-                //焊丝材质
-                this.weldingStickTextureArr = data['8'] || [];
-                //气体
-                this.gasesArrSource = data['9'] || [];
-                this.gasesArr = (data['9'] || []).filter(item => item.value == '0' || item.value == '1');
-                //焊丝直径
-                this.weldingStickDiameterArrSource = data['10'] || [];
-                this.weldingStickDiameterArr = data['10'] || [];
-                //焊接过程
-                this.weldingProcessArr = data['11'] || [];
-
-            }
-        },
+        },        
 
         //选择柔软电弧模式
         changeSoftArcSchema (v) {
@@ -990,10 +1873,6 @@ export default {
             }
         },
 
-        //切换一元/个别
-        changeWelderType (v) {
-        },
-
         submitForm2 (formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
@@ -1029,31 +1908,7 @@ export default {
                 }
             }
         },
-
-
-
-
-        //切换材质过滤直径和气体
-        changekDiameter (v) {
-            switch (v) {
-                case '0'://低碳钢实芯焊丝
-                    this.weldingStickDiameterArr = this.weldingStickDiameterArrSource.filter(item => ['8', '9', '10', '12', '14', '16'].includes(item.value));
-                    this.gasesArr = this.gasesArrSource.map(item => ['0', '1'].includes(item.value))
-                    break;
-                case '2'://低碳钢药芯焊丝
-                    this.weldingStickDiameterArr = this.weldingStickDiameterArrSource.filter(item => ['12', '14', '16'].includes(item.value));
-                    this.gasesArr = this.gasesArrSource.map(item => ['0'].includes(item.value))
-                    break;
-                case '1'://不锈钢实芯焊丝
-                    this.weldingStickDiameterArr = this.weldingStickDiameterArrSource.filter(item => ['8', '9', '10', '12', '14', '16'].includes(item.value));
-                    this.gasesArr = this.gasesArrSource.map(item => ['2'].includes(item.value))
-                    break;
-                case '3'://不锈钢药芯焊丝
-                    this.weldingStickDiameterArr = this.weldingStickDiameterArrSource.filter(item => ['8', '9', '10', '12', '14', '16'].includes(item.value));
-                    this.gasesArr = this.gasesArrSource.map(item => ['0'].includes(item.value))
-                    break;
-            }
-        },
+       
 
         //索取规范
         requestSpec () {
@@ -1143,7 +1998,6 @@ export default {
     },
     created () {
         this.ruleFormObj2 = { ...this.ruleForm2 }
-        this.getDicFun();
         this.getTeamList();
     },
     mounted () { }
