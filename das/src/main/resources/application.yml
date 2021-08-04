@@ -83,6 +83,12 @@ dataInsertForNumber:
   otc: 100
   sx: 100
 
+# OTC待机数据是否存储
+otcStandbySave: false
+
+# 松下待机数据是否存储
+sxStandbySave: false
+
 # mybatis-plus 配置
 mybatis-plus:
   # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml

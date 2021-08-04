@@ -3,6 +3,7 @@ package com.shth.das.job;
 import com.google.common.collect.Queues;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonMap;
+import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.sys.rtdata.service.RtDataService;
@@ -226,7 +227,7 @@ public class ScheduledTask {
     @Scheduled(fixedRate = 1000 * 3)
     @Async
     public void scheduled6() {
-        LinkedBlockingQueue<JNRtDataDB> otcLinkedBlockingQueue = CommonDbData.OTC_LINKED_BLOCKING_QUEUE;
+        LinkedBlockingQueue<JNRtDataDB> otcLinkedBlockingQueue = CommonQueue.OTC_LINKED_BLOCKING_QUEUE;
         try {
             while (!otcLinkedBlockingQueue.isEmpty()) {
                 List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
@@ -247,7 +248,7 @@ public class ScheduledTask {
     @Scheduled(fixedRate = 1000 * 3)
     @Async
     public void scheduled7() {
-        LinkedBlockingQueue<SxRtDataDb> sxLinkedBlockingQueue = CommonDbData.SX_LINKED_BLOCKING_QUEUE;
+        LinkedBlockingQueue<SxRtDataDb> sxLinkedBlockingQueue = CommonQueue.SX_LINKED_BLOCKING_QUEUE;
         try {
             while (!sxLinkedBlockingQueue.isEmpty()) {
                 ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();

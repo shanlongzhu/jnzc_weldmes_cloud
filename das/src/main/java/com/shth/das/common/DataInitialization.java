@@ -11,6 +11,16 @@ import org.springframework.stereotype.Component;
 public class DataInitialization {
 
     /**
+     * OTC待机数据是否存储（默认：true 存储）
+     */
+    private static boolean otcStandbySave = true;
+
+    /**
+     * 松下待机数据是否存储（默认：true 存储）
+     */
+    private static boolean sxStandbySave = true;
+
+    /**
      * OTC焊机IP
      */
     private static String otcIp = "127.0.0.1";
@@ -99,5 +109,23 @@ public class DataInitialization {
         if (CommonUtils.isNotEmpty(ip)) {
             sxIp = ip;
         }
+    }
+
+    public static boolean isOtcStandbySave() {
+        return otcStandbySave;
+    }
+
+    @Value("${otcStandbySave}")
+    private void setOtcStandbySave(boolean otcStandbySave) {
+        DataInitialization.otcStandbySave = otcStandbySave;
+    }
+
+    public static boolean isSxStandbySave() {
+        return sxStandbySave;
+    }
+
+    @Value("${sxStandbySave}")
+    private void setSxStandbySave(boolean sxStandbySave) {
+        DataInitialization.sxStandbySave = sxStandbySave;
     }
 }

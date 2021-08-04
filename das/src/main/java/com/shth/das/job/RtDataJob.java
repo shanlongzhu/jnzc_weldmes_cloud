@@ -2,6 +2,7 @@ package com.shth.das.job;
 
 import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.common.CommonDbData;
+import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.WeldOnOffTime;
@@ -65,7 +66,7 @@ public class RtDataJob {
             try {
                 while (true) {
                     //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
-                    OtcMachineQueue queue = CommonDbData.OTC_ON_MACHINE_QUEUES.take();
+                    OtcMachineQueue queue = CommonQueue.OTC_ON_MACHINE_QUEUES.take();
                     String gatherNo = queue.getGatherNo();
                     String weldIp = queue.getWeldIp();
                     //新增设备开机时间
@@ -93,7 +94,7 @@ public class RtDataJob {
             while (true) {
                 try {
                     //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
-                    OtcMachineQueue queue = CommonDbData.OTC_OFF_MACHINE_QUEUES.take();
+                    OtcMachineQueue queue = CommonQueue.OTC_OFF_MACHINE_QUEUES.take();
                     String gatherNo = queue.getGatherNo();
                     //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
                     //新增设备关机时间
@@ -118,7 +119,7 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
-                    SxWeldModel sxWeldModel = CommonDbData.SX_ADD_MACHINE_QUEUES.take();
+                    SxWeldModel sxWeldModel = CommonQueue.SX_ADD_MACHINE_QUEUES.take();
                     //调用接口，数据存入数据库
                     sxWeldService.insertSxWeld(sxWeldModel);
                 } catch (Exception e) {
@@ -136,7 +137,7 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
-                    String weldIp = CommonDbData.SX_ON_MACHINE_QUEUES.take();
+                    String weldIp = CommonQueue.SX_ON_MACHINE_QUEUES.take();
                     //根据IP地址查询松下焊机信息
                     SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldIp(weldIp);
                     //新增设备关机时间
@@ -165,7 +166,7 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
-                    String weldIp = CommonDbData.SX_OFF_MACHINE_QUEUES.take();
+                    String weldIp = CommonQueue.SX_OFF_MACHINE_QUEUES.take();
                     //根据IP地址查询松下焊机信息
                     SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldIp(weldIp);
                     //新增设备关机时间

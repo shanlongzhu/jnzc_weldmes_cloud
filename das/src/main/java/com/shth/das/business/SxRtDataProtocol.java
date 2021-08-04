@@ -1,10 +1,7 @@
 package com.shth.das.business;
 
 import com.alibaba.fastjson.JSON;
-import com.shth.das.common.CommonDbData;
-import com.shth.das.common.CommonMap;
-import com.shth.das.common.SxVerificationCode;
-import com.shth.das.common.UpTopicEnum;
+import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
@@ -195,14 +192,14 @@ public class SxRtDataProtocol {
                 }
                 //设备存储到松下开机阻塞队列
                 try {
-                    CommonDbData.SX_ON_MACHINE_QUEUES.put(weldIp);
+                    CommonQueue.SX_ON_MACHINE_QUEUES.put(weldIp);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             //添加到松下设备阻塞队列，存储到数据库
             try {
-                CommonDbData.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
+                CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -255,7 +252,7 @@ public class SxRtDataProtocol {
                         }
                     }
                     //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
-                    CommonDbData.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
+                    CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
                 }
             }
             //松下焊机GL5状态信息发送到mq
@@ -449,6 +446,14 @@ public class SxRtDataProtocol {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
+                    //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
+                    if (!DataInitialization.isSxStandbySave()) {
+                        Integer sxStandby = Integer.valueOf(str.substring(84, 88), 16);
+                        //焊接状态为0表示待机，则直接进入下一次循环
+                        if (sxStandby == 0) {
+                            return null;
+                        }
+                    }
                     SxRtDataDb sxRtDataDb = new SxRtDataDb();
                     String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
                     String month = CommonUtils.hexToDecLengthJoint(str.substring(48, 50), 2);
@@ -887,6 +892,14 @@ public class SxRtDataProtocol {
      */
     public SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
+            //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
+            if (!DataInitialization.isSxStandbySave()) {
+                Integer sxStandby = Integer.valueOf(str.substring(70, 72), 16);
+                //焊接状态为0表示待机，则直接进入下一次循环
+                if (sxStandby == 0) {
+                    return null;
+                }
+            }
             SxRtDataDb rtDataDb = new SxRtDataDb();
             rtDataDb.setWeldIp(clientIp);
             String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
@@ -973,7 +986,15 @@ public class SxRtDataProtocol {
      * @return FR2系列TIG实体类
      */
     public SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
-        if (CommonUtils.isNotEmpty(str)) {
+        if (CommonUtils.isNotEmpty(str) && str.length() == 118) {
+            //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
+            if (!DataInitialization.isSxStandbySave()) {
+                Integer sxStandby = Integer.valueOf(str.substring(70, 72), 16);
+                //焊接状态为0表示待机，则直接进入下一次循环
+                if (sxStandby == 0) {
+                    return null;
+                }
+            }
             SxRtDataDb rtDataDb = new SxRtDataDb();
             rtDataDb.setWeldIp(clientIp);
             String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
@@ -1272,7 +1293,7 @@ public class SxRtDataProtocol {
             //log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
             CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.remove(clientIp);
             try {
-                CommonDbData.SX_OFF_MACHINE_QUEUES.put(clientIp);
+                CommonQueue.SX_OFF_MACHINE_QUEUES.put(clientIp);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -18,41 +18,6 @@ import java.util.concurrent.*;
 public class CommonDbData {
 
     /**
-     * 阻塞队列存储实时数据，并定时同步到MySQL数据库
-     */
-    public static final LinkedBlockingQueue<JNRtDataDB> OTC_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);
-    /**
-     * 阻塞队列存储实时数据，并定时同步到MySQL数据库
-     */
-    public static final LinkedBlockingQueue<SxRtDataDb> SX_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);
-
-    /**
-     * OTC开机设备阻塞队列
-     */
-    public static final LinkedBlockingQueue<OtcMachineQueue> OTC_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
-
-    /**
-     * OTC关机设备阻塞队列
-     */
-    public static final LinkedBlockingQueue<OtcMachineQueue> OTC_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
-
-    /**
-     * 松下设备新增到阻塞队列
-     */
-    public static final LinkedBlockingQueue<SxWeldModel> SX_ADD_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
-
-    /**
-     * 松下开机设备阻塞队列
-     * String:焊机IP
-     */
-    public static final LinkedBlockingQueue<String> SX_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
-
-    /**
-     * 松下关机设备阻塞队列
-     */
-    public static final LinkedBlockingQueue<String> SX_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
-
-    /**
      * 执行THREAD_POOL_EXECUTOR多出的任务
      */
     private static final ThreadPoolExecutor CUSTOM_THREAD_POOL = new ThreadPoolExecutor(10, 200, 30000, TimeUnit.MILLISECONDS,

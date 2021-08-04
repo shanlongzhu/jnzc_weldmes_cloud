@@ -3,9 +3,7 @@ package com.shth.das.business;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.shth.das.common.CommonDbData;
-import com.shth.das.common.CommonMap;
-import com.shth.das.common.UpTopicEnum;
+import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.pojo.db.OtcMachineQueue;
@@ -42,7 +40,7 @@ public class JnRtDataProtocol {
                 otcMachineSaveQueue.setGatherNo(gatherNo);
                 otcMachineSaveQueue.setWeldIp(clientIp);
                 //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
-                CommonDbData.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
+                CommonQueue.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -137,7 +135,7 @@ public class JnRtDataProtocol {
                 List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
                 if (CommonUtils.isNotEmpty(list)) {
                     //添加到OTC阻塞队列（通过定时任务存储）;offer:当阻塞队列满了，则不再增加
-                    list.forEach(CommonDbData.OTC_LINKED_BLOCKING_QUEUE::offer);
+                    list.forEach(CommonQueue.OTC_LINKED_BLOCKING_QUEUE::offer);
                 }
             }
             //工艺下发返回
@@ -262,62 +260,70 @@ public class JnRtDataProtocol {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
                     List<JNRtDataDB> rtdata = new ArrayList<>();
-                    JNRtDataDB data = new JNRtDataDB();
-                    //焊机型号
-                    data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
-                    //采集模块编号
-                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                    //焊工号
-                    //data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
-                    //当前日期：yyyy-MM-dd
-                    String nowDate = DateTimeUtils.getNowDate();
-                    //当前系统时间 yyyy-MM-dd HH:mm:ss
-                    String nowDateTime = DateTimeUtils.getNowDateTime();
-                    //创建时间
-                    data.setCreateTime(nowDateTime);
                     //采集模块信息查询并绑定
                     List<GatherModel> gatherList = CommonDbData.getGatherList();
-                    if (CommonUtils.isNotEmpty(gatherList)) {
-                        for (GatherModel gather : gatherList) {
-                            if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
-                                data.setGatherId(gather.getId());
-                                data.setGatherDeptId(gather.getDeptId());
-                                break;
-                            }
-                        }
-                    }
                     //刷卡领取任务后进行数据绑定
                     ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
-                    if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
-                        TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
-                        if (null != taskClaimIssue) {
-                            data.setWelderId(taskClaimIssue.getWelderId());
-                            data.setWelderNo(taskClaimIssue.getWelderNo());
-                            data.setWelderName(taskClaimIssue.getWelderName());
-                            data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                            data.setTaskId(taskClaimIssue.getTaskId());
-                            data.setTaskName(taskClaimIssue.getTaskName());
-                            data.setTaskNo(taskClaimIssue.getTaskNo());
-                            data.setMachineId(taskClaimIssue.getMachineId());
-                            data.setMachineNo(taskClaimIssue.getMachineNo());
-                            data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                    for (int a = 0; a < 239; a += 80) {
+                        //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
+                        if (!DataInitialization.isOtcStandbySave()) {
+                            Integer otcStandby = Integer.valueOf(str.substring(78 + a, 80 + a), 16);
+                            //焊接状态为0表示待机，则直接进入下一次循环
+                            if (otcStandby == 0) {
+                                continue;
+                            }
                         }
-                    } else {
-                        //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
-                        List<WeldModel> weldList = CommonDbData.getWeldList();
-                        if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
-                            for (WeldModel weld : weldList) {
-                                //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
-                                    data.setMachineId(weld.getId());
-                                    data.setMachineNo(weld.getMachineNo());
-                                    data.setMachineDeptId(weld.getDeptId());
+                        JNRtDataDB data = new JNRtDataDB();
+                        //焊机型号
+                        data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
+                        //采集模块编号
+                        data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
+                        //焊工号
+                        //data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
+                        //当前日期：yyyy-MM-dd
+                        String nowDate = DateTimeUtils.getNowDate();
+                        //当前系统时间 yyyy-MM-dd HH:mm:ss
+                        String nowDateTime = DateTimeUtils.getNowDateTime();
+                        //创建时间
+                        data.setCreateTime(nowDateTime);
+                        if (CommonUtils.isNotEmpty(gatherList)) {
+                            for (GatherModel gather : gatherList) {
+                                if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
+                                    data.setGatherId(gather.getId());
+                                    data.setGatherDeptId(gather.getDeptId());
                                     break;
                                 }
                             }
                         }
-                    }
-                    for (int a = 0; a < 239; a += 80) {
+                        if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                            TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
+                            if (null != taskClaimIssue) {
+                                data.setWelderId(taskClaimIssue.getWelderId());
+                                data.setWelderNo(taskClaimIssue.getWelderNo());
+                                data.setWelderName(taskClaimIssue.getWelderName());
+                                data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                                data.setTaskId(taskClaimIssue.getTaskId());
+                                data.setTaskName(taskClaimIssue.getTaskName());
+                                data.setTaskNo(taskClaimIssue.getTaskNo());
+                                data.setMachineId(taskClaimIssue.getMachineId());
+                                data.setMachineNo(taskClaimIssue.getMachineNo());
+                                data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                            }
+                        } else {
+                            //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
+                            List<WeldModel> weldList = CommonDbData.getWeldList();
+                            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
+                                for (WeldModel weld : weldList) {
+                                    //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+                                    if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
+                                        data.setMachineId(weld.getId());
+                                        data.setMachineNo(weld.getMachineNo());
+                                        data.setMachineDeptId(weld.getDeptId());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
                         String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
                         String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
@@ -364,7 +370,7 @@ public class JnRtDataProtocol {
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
                         data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
-                        rtdata.add((JNRtDataDB) data.clone());
+                        rtdata.add(data);
                     }
                     return rtdata;
                 }
@@ -614,7 +620,7 @@ public class JnRtDataProtocol {
                 OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
                 otcOnMachineQueue.setWeldIp(clientIp);
                 otcOnMachineQueue.setGatherNo(gatherNo);
-                CommonDbData.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
+                CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
