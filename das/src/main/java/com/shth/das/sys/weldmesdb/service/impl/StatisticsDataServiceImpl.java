@@ -15,12 +15,22 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
 
     @Override
     public void insertWeldStatisticsData(String startTime, String endTime, String tableName) {
-        statisticsDataMapper.insertWeldStatisticsData(startTime, endTime, tableName);
+        try {
+            statisticsDataMapper.insertWeldStatisticsData(startTime, endTime, tableName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public void insertSxWeldStatisticsData(String startTime, String endTime, String tableName) {
-        statisticsDataMapper.insertSxWeldStatisticsData(startTime, endTime, tableName);
+        try {
+            statisticsDataMapper.insertSxWeldStatisticsData(startTime, endTime, tableName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override

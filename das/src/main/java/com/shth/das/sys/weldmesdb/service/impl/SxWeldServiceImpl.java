@@ -18,24 +18,31 @@ public class SxWeldServiceImpl implements SxWeldService {
 
     @Override
     public int insertSxWeld(SxWeldModel sxWeldModel) {
-        QueryWrapper<SxWeldModel> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("weld_ip", sxWeldModel.getWeldIp());
-        //根据焊机IP查询个数
-        Integer count = sxWeldMapper.selectCount(queryWrapper);
-        //如果已经存在，则直接返回，不再增加
-        if (null != count && count > 0) {
-            return 0;
+        int result = 0;
+        try {
+            QueryWrapper<SxWeldModel> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("weld_ip", sxWeldModel.getWeldIp());
+            //根据焊机IP查询个数
+            Integer count = sxWeldMapper.selectCount(queryWrapper);
+            //如果已经存在，则直接返回，不再增加
+            if (null != count && count > 0) {
+                return 0;
+            }
+            //查询焊机编号最大值，并增加1作为新的焊机编号
+            QueryWrapper<SxWeldModel> wrapper = new QueryWrapper<>();
+            wrapper.select("max(weld_no) as weldNo");
+            SxWeldModel sxWeld = sxWeldMapper.selectOne(wrapper);
+            if (null != sxWeld) {
+                int weldNo = Integer.parseInt(sxWeld.getWeldNo());
+                weldNo++;
+                sxWeldModel.setWeldNo(CommonUtils.stringLengthJoint(String.valueOf(weldNo), 4));
+            }
+            result = sxWeldMapper.insert(sxWeldModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        //查询焊机编号最大值，并增加1作为新的焊机编号
-        QueryWrapper<SxWeldModel> wrapper = new QueryWrapper<>();
-        wrapper.select("max(weld_no) as weldNo");
-        SxWeldModel sxWeld = sxWeldMapper.selectOne(wrapper);
-        if (null != sxWeld) {
-            int weldNo = Integer.parseInt(sxWeld.getWeldNo());
-            weldNo++;
-            sxWeldModel.setWeldNo(CommonUtils.stringLengthJoint(String.valueOf(weldNo), 4));
-        }
-        return sxWeldMapper.insert(sxWeldModel);
+        return result;
     }
 
     @Override

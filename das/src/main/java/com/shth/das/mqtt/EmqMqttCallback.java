@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.business.SxRtDataProtocol;
 import com.shth.das.common.CommonDbData;
+import com.shth.das.common.CommonMap;
 import com.shth.das.common.DownTopicEnum;
-import com.shth.das.netty.NettyServerHandler;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnotc.JNCommandIssue;
 import com.shth.das.pojo.jnotc.JNPasswordIssue;
@@ -163,7 +163,7 @@ public class EmqMqttCallback implements MqttCallback {
                             if (CommonUtils.isNotEmpty(gatherNo)) {
                                 gatherNo = Integer.valueOf(gatherNo).toString();
                                 //如果已经开始任务，则会将之前的任务顶掉
-                                CommonDbData.OTC_TASK_CLAIM_MAP.put(gatherNo, taskClaimIssue);
+                                CommonMap.OTC_TASK_CLAIM_MAP.put(gatherNo, taskClaimIssue);
                             }
                         }
                         //否则就是结束任务
@@ -171,7 +171,7 @@ public class EmqMqttCallback implements MqttCallback {
                             String gatherNo = taskClaimIssue.getGatherNo();
                             if (CommonUtils.isNotEmpty(gatherNo)) {
                                 gatherNo = Integer.valueOf(gatherNo).toString();
-                                CommonDbData.OTC_TASK_CLAIM_MAP.remove(gatherNo);
+                                CommonMap.OTC_TASK_CLAIM_MAP.remove(gatherNo);
                             }
                         }
                     }
@@ -182,14 +182,14 @@ public class EmqMqttCallback implements MqttCallback {
                             String weldIp = taskClaimIssue.getWeldIp();
                             if (CommonUtils.isNotEmpty(weldIp)) {
                                 //如果已经开始任务，则会将之前的任务顶掉
-                                CommonDbData.SX_TASK_CLAIM_MAP.put(weldIp, taskClaimIssue);
+                                CommonMap.SX_TASK_CLAIM_MAP.put(weldIp, taskClaimIssue);
                             }
                         }
                         //否则就是结束任务
                         else {
                             String weldIp = taskClaimIssue.getWeldIp();
                             if (CommonUtils.isNotEmpty(weldIp)) {
-                                CommonDbData.SX_TASK_CLAIM_MAP.remove(weldIp);
+                                CommonMap.SX_TASK_CLAIM_MAP.remove(weldIp);
                             }
                         }
                     }
@@ -238,8 +238,8 @@ public class EmqMqttCallback implements MqttCallback {
     private void channelWrite(String weldIp, String str, String msg, String topic) {
         try {
             if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
-                if (NettyServerHandler.CHANNEL_MAP.size() > 0 && NettyServerHandler.CHANNEL_MAP.containsKey(weldIp)) {
-                    Channel channel = NettyServerHandler.CHANNEL_MAP.get(weldIp).channel();
+                if (CommonMap.CHANNEL_MAP.size() > 0 && CommonMap.CHANNEL_MAP.containsKey(weldIp)) {
+                    Channel channel = CommonMap.CHANNEL_MAP.get(weldIp).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str).sync();

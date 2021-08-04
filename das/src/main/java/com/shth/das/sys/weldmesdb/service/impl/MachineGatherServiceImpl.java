@@ -25,10 +25,15 @@ public class MachineGatherServiceImpl implements MachineGatherService {
 
     @Override
     public void updateGatherIpByNumber(String gatherNo, String weldIp) {
-        gatherNo = CommonUtils.stringLengthJoint(gatherNo,4);
-        GatherModel gatherModel = new GatherModel();
-        gatherModel.setIpPath(weldIp);
-        gatherMapper.update(gatherModel, new QueryWrapper<GatherModel>().eq("gather_no", gatherNo));
+        try {
+            gatherNo = CommonUtils.stringLengthJoint(gatherNo, 4);
+            GatherModel gatherModel = new GatherModel();
+            gatherModel.setIpPath(weldIp);
+            gatherMapper.update(gatherModel, new QueryWrapper<GatherModel>().eq("gather_no", gatherNo));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
 }

@@ -2,8 +2,8 @@ package com.shth.das.netty;
 
 import com.shth.das.business.JnRtDataProtocol;
 import com.shth.das.business.SxRtDataProtocol;
+import com.shth.das.common.CommonMap;
 import com.shth.das.common.DataInitialization;
-import com.shth.das.pojo.db.SxWeldModel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Netty服务端处理器
@@ -27,27 +26,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private final JnRtDataProtocol jnRtDataProtocol = new JnRtDataProtocol();
     private final SxRtDataProtocol sxRtDataProtocol = new SxRtDataProtocol();
-
-    /**
-     * key:客户端IP地址
-     * value:连接通道
-     * 保存连接进服务端的通道数量
-     */
-    public static final ConcurrentHashMap<String, ChannelHandlerContext> CHANNEL_MAP = new ConcurrentHashMap<>();
-
-    /**
-     * key:客户端IP地址
-     * value:采集编号
-     * 采集盒的IP地址和采集编号对应关系(用来向前端发送关机数据)
-     */
-    public static final ConcurrentHashMap<String, String> CLIENT_IP_GATHER_NO_MAP = new ConcurrentHashMap<>();
-
-    /**
-     * key：客户端IP地址
-     * value：松下设备信息
-     * 松下焊机设备数据暂存
-     */
-    public static final ConcurrentHashMap<String, SxWeldModel> SX_CLIENT_IP_BIND_WELD_INFO = new ConcurrentHashMap<>();
 
     /**
      * 服务端收到消息执行的方法
@@ -102,12 +80,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         String serverIp = inetSocket.getAddress().getHostAddress();
         int serverPort = inetSocket.getPort();
         //如果map中不包含此连接，就保存连接
-        if (CHANNEL_MAP.containsKey(clientIp)) {
-            log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
+        if (CommonMap.CHANNEL_MAP.containsKey(clientIp)) {
+            log.info("存在连接：" + clientIp + ":" + clientPort + "--->连接通道数量: " + CommonMap.CHANNEL_MAP.size());
         } else {
             //保存连接
-            CHANNEL_MAP.put(clientIp, ctx);
-            log.info("新增连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
+            CommonMap.CHANNEL_MAP.put(clientIp, ctx);
+            log.info("新增连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CommonMap.CHANNEL_MAP.size());
         }
         ctx.flush();
     }
@@ -128,10 +106,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         //服务端端口
         int serverPort = inetSocket.getPort();
         //包含此客户端才去删除
-        if (CHANNEL_MAP.containsKey(clientIp)) {
+        if (CommonMap.CHANNEL_MAP.containsKey(clientIp)) {
             //删除连接
-            CHANNEL_MAP.remove(clientIp);
-            log.info("终止连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CHANNEL_MAP.size());
+            CommonMap.CHANNEL_MAP.remove(clientIp);
+            log.info("终止连接:" + clientIp + "：" + clientPort + "--->连接通道数量: " + CommonMap.CHANNEL_MAP.size());
         }
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == DataInitialization.getOtcPort()) {

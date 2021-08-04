@@ -84,8 +84,8 @@ public class DataSourceConfig {
     public StatFilter statFilter(){
         StatFilter statFilter = new StatFilter();
         //慢sql时间设置,即执行时间大于2000毫秒的都是慢sql
-        statFilter.setSlowSqlMillis(2000);
-        statFilter.setLogSlowSql(true);
+        //statFilter.setSlowSqlMillis(2000);
+        //statFilter.setLogSlowSql(true);
         //statFilter.setMergeSql(true);
         return statFilter;
     }

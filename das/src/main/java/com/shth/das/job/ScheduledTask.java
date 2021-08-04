@@ -2,7 +2,7 @@ package com.shth.das.job;
 
 import com.google.common.collect.Queues;
 import com.shth.das.common.CommonDbData;
-import com.shth.das.netty.NettyServerHandler;
+import com.shth.das.common.CommonMap;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.sys.rtdata.service.RtDataService;
@@ -192,8 +192,8 @@ public class ScheduledTask {
             String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
             String head = "007E1001010145";
             String foot = "007D";
-            if (NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.size() > 0 && NettyServerHandler.CHANNEL_MAP.size() > 0) {
-                Iterator<Map.Entry<String, String>> entries = NettyServerHandler.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
+            if (CommonMap.CLIENT_IP_GATHER_NO_MAP.size() > 0 && CommonMap.CHANNEL_MAP.size() > 0) {
+                Iterator<Map.Entry<String, String>> entries = CommonMap.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> next = entries.next();
                     //采集盒IP地址
@@ -202,8 +202,8 @@ public class ScheduledTask {
                     String gatherNo = next.getValue();
                     gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
                     if (CommonUtils.isNotEmpty(clientIp) && CommonUtils.isNotEmpty(gatherNo)) {
-                        if (NettyServerHandler.CHANNEL_MAP.containsKey(clientIp)) {
-                            Channel channel = NettyServerHandler.CHANNEL_MAP.get(clientIp).channel();
+                        if (CommonMap.CHANNEL_MAP.containsKey(clientIp)) {
+                            Channel channel = CommonMap.CHANNEL_MAP.get(clientIp).channel();
                             if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                                 String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
                                 timeString = timeString.toUpperCase();

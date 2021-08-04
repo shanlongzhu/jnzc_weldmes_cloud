@@ -87,19 +87,6 @@ public class CommonDbData {
     //private static List<WelderModel> WELDER_LIST = new ArrayList<>();
 
     /**
-     * OTC设备领任务存储
-     * key:采集编号
-     * value:任务信息
-     */
-    public static ConcurrentHashMap<String, TaskClaimIssue> OTC_TASK_CLAIM_MAP = new ConcurrentHashMap<>();
-    /**
-     * 松下设备领任务存储
-     * key:设备IP
-     * value：任务信息
-     */
-    public static ConcurrentHashMap<String, TaskClaimIssue> SX_TASK_CLAIM_MAP = new ConcurrentHashMap<>();
-
-    /**
      * 自定义拒绝策略
      */
     private static class CustomRejectedExecutionHandler implements RejectedExecutionHandler {
