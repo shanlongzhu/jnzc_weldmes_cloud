@@ -23,7 +23,7 @@ public interface WelderDao {
 
     int deleteWelder(Long id);
 
-    Byte getTypeId(String type);
+    Byte getTypeId(@Param("type")String type,@Param("dictionaryType")String dictionaryType);
 
     Long getDeptId(String deptName);
 

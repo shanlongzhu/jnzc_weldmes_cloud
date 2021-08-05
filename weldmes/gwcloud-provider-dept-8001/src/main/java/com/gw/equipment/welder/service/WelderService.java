@@ -16,7 +16,7 @@ public interface WelderService {
 
     int deleteWelder(Long id);
 
-    Byte getTypeId(String type);
+    Byte getTypeId(String type,String dictionaryType);
 
 
     Long getDeptId(String deptName);

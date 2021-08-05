@@ -29,4 +29,9 @@ public class ConstantInfo {
      * 焊机绑定任务标识    1 -->有绑定     0 -->没有绑定
      */
     public static final int WELD_NO_EXIST_FLAG = 0;
+
+    /**
+     * 字典表焊机设备类型标识
+     */
+    public static final String DICTIONARY_WELD_TYPE_FLAG = "3";
 }

@@ -182,7 +182,13 @@
     </delete>
 
     <select id="getTypeId" resultType="java.lang.Byte">
-        select id from sys_dictionary where value_name=#{type}
+        select id from sys_dictionary
+        <where>
+            value_name=#{type}
+            <if test="dictionaryType != null and dictionaryType !=''">
+                `type` = #{dictionaryType}
+            </if>
+        </where>
     </select>
 
     <select id="getDeptId" resultType="java.lang.Long">
