@@ -53,12 +53,12 @@
         </where>
     </select>
 
+    <!--采集信息新增-->
     <insert id="addCollection" parameterType="com.gw.entities.MachineGatherInfo">
         insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,production_date)
-         values (#{machineGatherInfo.gatherNo},#{machineGatherInfo.deptId},#{machineGatherInfo.status},#{machineGatherInfo.protocol},
-         #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.productionDate})
+        values (#{machineGatherInfo.gatherNo},#{machineGatherInfo.deptId},#{machineGatherInfo.status},#{machineGatherInfo.protocol},
+                #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.productionDate})
     </insert>
-
 
     <delete id="deleteCollection">
         delete from machine_gather_info where id=#{id}
@@ -84,9 +84,18 @@
         where id=#{machineGatherInfo.id}
     </update>
 
+    <!--采集信息excel导入数据库  采集编号不存在-新增 存在-更新 -->
     <insert id="save">
        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,create_time)
        values (#{gatherNo},#{deptId},#{status},#{protocol},#{ipPath},#{macPath},#{createTime})
+       ON DUPLICATE KEY UPDATE
+        gather_no = #{machineGatherInfo.gatherNo},
+        dept_id = #{machineGatherInfo.deptId},
+        status = #{machineGatherInfo.status},
+        protocol = #{machineGatherInfo.protocol},
+        ip_path = #{machineGatherInfo.ipPath},
+        mac_path = #{machineGatherInfo.macPath},
+        last_update_time = #{machineGatherInfo.createTime}
     </insert>
 
     <select id="getDeptId" resultType="java.lang.Long">

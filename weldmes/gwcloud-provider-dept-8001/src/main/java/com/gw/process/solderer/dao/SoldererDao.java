@@ -11,7 +11,7 @@ public interface SoldererDao {
     List<WelderInfo> getList(@Param("welderName") String welderName, @Param("welderNo")String welderNo, @Param("rate")Integer rate,
                              @Param("talent")Integer talent,@Param("grade")Integer grade);
 
-    int addSolderer(WelderInfo welderInfo);
+    int addSolderer(@Param("welderInfo")WelderInfo welderInfo);
 
     List<WelderInfo> getById(Long id);
 

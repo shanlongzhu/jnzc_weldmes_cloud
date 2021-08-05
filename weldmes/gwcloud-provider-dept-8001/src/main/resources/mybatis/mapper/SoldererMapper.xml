@@ -53,16 +53,23 @@
 
     <insert id="addSolderer">
         insert into welder_info(welder_no,welder_name,cellphone,rank,certification,dept_id,remarks)
-        values (#{welderNo},#{welderName},#{cellphone},#{rank},#{certification},#{deptId},#{remarks  })
+        values (#{welderInfo.welderNo},#{welderInfo.welderName},#{welderInfo.cellphone},
+                #{welderInfo.rank},#{welderInfo.certification},#{welderInfo.deptId},#{welderInfo.remarks})
+        ON DUPLICATE KEY UPDATE
+         welder_no = #{welderInfo.welderNo},
+         welder_name = #{welderInfo.welderName},
+         cellphone = #{welderInfo.status},
+         rank = #{welderInfo.rank},
+         certification = #{welderInfo.certification},
+         dept_id = #{welderInfo.deptId},
+         remarks = #{welderInfo.remarks}
     </insert>
-
 
     <select id="getById" resultType="com.gw.entities.WelderInfo">
     select id,welder_name,cellphone,welder_no,remarks,rank,certification,dept_id
     from welder_info
     where id =#{id}
     </select>
-
 
     <update id="updateSolderer">
         update welder_info
@@ -96,7 +103,16 @@
 
     <insert id="save">
         insert into welder_info(welder_no,welder_name,cellphone,rank,certification,dept_id,remarks)
-        values (#{welderNo},#{welderName},#{cellphone},#{rank},#{certification},#{deptId},#{remarks  })
+        values (#{welderInfo.welderNo},#{welderInfo.welderName},#{welderInfo.cellphone},
+                #{welderInfo.rank},#{welderInfo.certification},#{welderInfo.deptId},#{welderInfo.remarks})
+        ON DUPLICATE KEY UPDATE
+         welder_no = #{welderInfo.welderNo},
+         welder_name = #{welderInfo.welderName},
+         cellphone = #{welderInfo.status},
+         rank = #{welderInfo.rank},
+         certification = #{welderInfo.certification},
+         dept_id = #{welderInfo.deptId},
+         remarks = #{welderInfo.remarks}
     </insert>
 
     <!--获取历史曲线中焊工id、姓名以及编号-->
