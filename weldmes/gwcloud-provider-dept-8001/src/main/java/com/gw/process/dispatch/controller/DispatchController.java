@@ -52,8 +52,12 @@ public class DispatchController {
 
         UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
 
+        if(ObjectUtils.isEmpty(userInfo)){
+            return HttpResult.ok();
+        }
+
         if(ObjectUtils.isEmpty(userInfo.getRoles())){
-            return HttpResult.ok("当前用户尚未分配角色,无法查询作业区信息");
+            return HttpResult.ok();
         }
 
         if(userInfo.getRoles().get(0).equals(ConstantInfo.ADMIN_FLAG)){
