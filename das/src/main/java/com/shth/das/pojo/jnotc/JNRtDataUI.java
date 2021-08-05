@@ -111,6 +111,41 @@ public class JNRtDataUI implements Serializable,Cloneable {
      */
     private int weldType;
 
+    /**
+     *当前通道号
+     */
+    private String channelNo;
+
+    /**
+     * 预置(给定)电流
+     */
+    private BigDecimal presetEle;
+
+    /**
+     * 预置(给定)电压
+     */
+    private BigDecimal presetVol;
+
+    /**
+     * 焊接电流
+     */
+    private BigDecimal weldElectricity;
+
+    /**
+     * 焊接电压
+     */
+    private BigDecimal weldVoltage;
+
+    /**
+     * 焊接电流微调
+     */
+    private BigDecimal weldEleAdjust;
+
+    /**
+     * 焊接电压微调
+     */
+    private BigDecimal weldVolAdjust;
+
     @Override
     public Object clone() {
         JNRtDataUI jnr = null;

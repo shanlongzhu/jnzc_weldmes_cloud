@@ -235,8 +235,21 @@ public class JnRtDataProtocol {
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
                         data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
+                        //给定电流(焊机面板上的值)
+                        data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));
+                        //给定电压(焊机面板上的值)
+                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)));
                         //焊机状态
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
+                        //焊接电流
+                        data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));
+                        //焊接电压
+                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)));
+                        //焊接电流微调
+                        data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));
+                        //焊接电压微调
+                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)));
+                        data.setChannelNo(Integer.valueOf(str.substring(94 + a, 96 + a), 16).toString());
                         rtData.add((JNRtDataUI) data.clone());
                     }
                     return rtData;
