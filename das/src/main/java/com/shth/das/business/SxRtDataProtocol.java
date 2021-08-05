@@ -44,6 +44,7 @@ public class SxRtDataProtocol {
                 SxWeldModel sxWeldModel = sxWeldAnalysis(clientIp, str);
                 if (null != sxWeldModel) {
                     map.put("SxWeldModel", sxWeldModel);
+                    ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
                 }
             }
             //松下焊机GL5实时数据
