@@ -7,6 +7,7 @@ import com.gw.common.HttpResult;
 
 import com.gw.entities.MachineGatherInfo;
 import com.gw.entities.MachineWeldInfo;
+import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +32,9 @@ public class CollectionController {
     @Autowired
     private CollectionService collectionService;
 
+    @Autowired
+    private CollectionDao collectionDao;
+
     //列表展示
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Integer grade, Integer gatherNo) {
@@ -40,41 +45,31 @@ public class CollectionController {
         return HttpResult.ok(page);
     }
 
+
     //新增信息
     @PostMapping
     public HttpResult addCollection(@RequestBody MachineGatherInfo machineGatherInfo) {
-        try {
-            HttpResult result = new HttpResult();
 
-            int i = collectionService.addCollection(machineGatherInfo);
+        //判断新增信息的采集编号是否存在
+        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo());
 
-            if (i > 0) {
+        if(!ObjectUtils.isEmpty(judge)){
 
-                result.setMsg("新增成功！");
-            } else {
-
-                result.setMsg("新增失败！");
-            }
-
-            return result;
-
-        } catch (Exception e) {
-
-            return HttpResult.error();
+            return HttpResult.ok("当前信息中采集编号已存在,是否覆盖此条信息?");
         }
+
+        collectionService.addCollection(machineGatherInfo);
+
+        return HttpResult.ok("采集信息新增成功");
     }
 
     //删除信息
     @DeleteMapping
     public HttpResult deleteCollection(Long id) {
-        HttpResult result = new HttpResult();
-        int i = collectionService.deleteCollection(id);
-        if (i > 0) {
-            result.setMsg("删除成功！");
-        } else {
-            result.setMsg("删除失败！");
-        }
-        return result;
+
+        collectionService.deleteCollection(id);
+
+        return HttpResult.ok("修改成功！");
 
     }
 
@@ -91,17 +86,17 @@ public class CollectionController {
     @PutMapping
     public HttpResult updateCollection(@RequestBody MachineGatherInfo machineGatherInfo){
 
-        int i = collectionService.updateCollection(machineGatherInfo);
+        //判断新增信息的采集编号是否存在
+        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo());
 
-        if(i>0){
+        if(!ObjectUtils.isEmpty(judge)){
 
-            return HttpResult.ok("修改成功！");
-
-        }else {
-
-            return HttpResult.error("修改失败！");
-
+            return HttpResult.ok("当前信息中采集编号不可重复,请更换采集编号");
         }
+
+        collectionService.updateCollection(machineGatherInfo);
+
+        return HttpResult.ok("修改成功！");
     }
 
 
@@ -216,6 +211,20 @@ public class CollectionController {
         List<MachineGatherInfo> list = collectionService.queryGatherNos();
 
         return HttpResult.ok(list);
+    }
+
+    /**
+     * @Date 2021/8/5 15:41
+     * @Description 直接新增信息
+     * @Params
+     */
+    @RequestMapping("judgeAfterAddGatherInfo")
+    public HttpResult judgeGatherNo(@RequestBody MachineGatherInfo machineGatherInfo){
+
+        collectionService.addCollection(machineGatherInfo);
+
+        return HttpResult.ok("新增成功！");
+
     }
 }
 

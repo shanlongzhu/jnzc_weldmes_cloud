@@ -8,13 +8,13 @@ import java.util.List;
 public interface CollectionService {
     List<MachineGatherInfo> getList(Integer grade,Integer gatherNo);
 
-    int addCollection(MachineGatherInfo machineGatherInfo);
+    void addCollection(MachineGatherInfo machineGatherInfo);
 
-    int deleteCollection(long id);
+    void deleteCollection(long id);
 
     List<MachineGatherInfo> getById(Long id);
 
-    int updateCollection(MachineGatherInfo machineGatherInfo);
+    void updateCollection(MachineGatherInfo machineGatherInfo);
 
     void importExcel(List<MachineGatherInfo> machineGatherInfoList);
 

@@ -36,4 +36,11 @@ public interface CollectionDao {
      */
     List<MachineGatherInfo> queryGatherNos();
 
+    /**
+     * @Date 2021/8/5 15:18
+     * @Description 判断采集编号是否存在
+     * @Params
+     */
+    public Integer judgeGatherNoYesOrNo(@Param("GatherNo") String GatherNo);
+
 }

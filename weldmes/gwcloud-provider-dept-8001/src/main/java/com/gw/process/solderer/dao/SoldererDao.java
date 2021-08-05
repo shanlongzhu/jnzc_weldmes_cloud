@@ -33,4 +33,11 @@ public interface SoldererDao {
      * @Params
      */
     public List<WelderInfo> selectHistoryWelderInfos();
+
+    /**
+     * @Date 2021/8/5 15:18
+     * @Description 判断焊工编号是否存在
+     * @Params
+     */
+    public Integer judgeWelderNoYesOrNo(@Param("WelderNo") String WelderNo);
 }

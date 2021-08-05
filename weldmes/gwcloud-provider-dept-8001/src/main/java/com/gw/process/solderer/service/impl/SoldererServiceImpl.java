@@ -25,8 +25,9 @@ public class SoldererServiceImpl implements SoldererService {
     }
 
     @Override
-    public int addSolderer(WelderInfo welderInfo) {
-        return soldererDao.addSolderer(welderInfo);
+    public void addSolderer(WelderInfo welderInfo) {
+
+        soldererDao.addSolderer(welderInfo);
     }
 
     @Override
@@ -35,13 +36,15 @@ public class SoldererServiceImpl implements SoldererService {
     }
 
     @Override
-    public int updateSolderer(WelderInfo welderInfo) {
-        return soldererDao.updateSolderer(welderInfo);
+    public void updateSolderer(WelderInfo welderInfo) {
+
+        soldererDao.updateSolderer(welderInfo);
     }
 
     @Override
-    public int deleteSolderer(Long id) {
-        return soldererDao.deleteSolderer(id);
+    public void deleteSolderer(Long id) {
+
+        soldererDao.deleteSolderer(id);
     }
 
     @Override

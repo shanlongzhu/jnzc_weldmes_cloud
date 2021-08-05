@@ -9,13 +9,13 @@ public interface SoldererService {
     List<WelderInfo> getList(String welderName,String welderNo,Integer rate,
                              Integer talent,Integer grade);
 
-    int addSolderer(WelderInfo welderInfo);
+    void addSolderer(WelderInfo welderInfo);
 
     List<WelderInfo> getById(Long id);
 
-    int updateSolderer(WelderInfo welderInfo);
+    void updateSolderer(WelderInfo welderInfo);
 
-    int deleteSolderer(Long id);
+    void deleteSolderer(Long id);
 
 
     Byte getRankId(String rank);

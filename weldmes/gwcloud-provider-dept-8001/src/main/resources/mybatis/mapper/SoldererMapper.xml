@@ -120,4 +120,9 @@
         select id,welder_name welderName,welder_no welderNo from welder_info
     </select>
 
+    <!--判断焊工编号是否存在-->
+    <select id="judgeWelderNoYesOrNo" parameterType="String" resultType="java.lang.Integer">
+        select (1) from welder_info where welder_no = #{WelderNo}
+    </select>
+
 </mapper>

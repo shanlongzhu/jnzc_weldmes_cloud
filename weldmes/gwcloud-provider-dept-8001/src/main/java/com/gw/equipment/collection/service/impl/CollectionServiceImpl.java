@@ -1,14 +1,15 @@
 package com.gw.equipment.collection.service.impl;
 
 
+
+import com.gw.common.DateTimeUtil;
 import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -26,14 +27,20 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public int addCollection(MachineGatherInfo machineGatherInfo) {
+    public void addCollection(MachineGatherInfo machineGatherInfo) {
 
-        return collectionDao.addCollection(machineGatherInfo);
+        //获取当前时间
+        String time = DateTimeUtil.getCurrentTime();
+
+        machineGatherInfo.setCreateTime(time);
+
+        collectionDao.addCollection(machineGatherInfo);
     }
 
     @Override
-    public int deleteCollection(long id) {
-        return collectionDao.deleteCollection(id);
+    public void deleteCollection(long id) {
+
+        collectionDao.deleteCollection(id);
     }
 
     @Override
@@ -44,9 +51,9 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public int updateCollection(MachineGatherInfo machineGatherInfo) {
+    public void updateCollection(MachineGatherInfo machineGatherInfo) {
 
-        return collectionDao.updateCollection(machineGatherInfo);
+        collectionDao.updateCollection(machineGatherInfo);
     }
 
     @Transactional

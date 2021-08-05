@@ -4,8 +4,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
+import com.gw.entities.MachineGatherInfo;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
+import com.gw.process.solderer.dao.SoldererDao;
 import com.gw.process.solderer.service.SoldererService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +36,9 @@ public class SoldererController {
 
     @Autowired
     private SoldererService soldererService;
+
+    @Autowired
+    private SoldererDao soldererDao;
 
     //列表展示
     @GetMapping
@@ -56,18 +62,17 @@ public class SoldererController {
     //新增焊工信息
     @PostMapping
     public HttpResult addSolderer(@RequestBody WelderInfo welderInfo) {
-        try {
-            HttpResult result = new HttpResult();
-            int i = soldererService.addSolderer(welderInfo);
-            if (i > 0) {
-                result.setMsg("新增成功！");
-            } else {
-                result.setMsg("新增失败！");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
+
+        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo());
+
+        if(!ObjectUtils.isEmpty(judge)){
+
+            return HttpResult.ok("当前信息中焊工编号已存在,是否覆盖此条信息?");
         }
+
+        soldererService.addSolderer(welderInfo);
+
+        return HttpResult.ok("新增成功！");
     }
 
     //修改前先查询
@@ -80,35 +85,27 @@ public class SoldererController {
     //修改焊工信息
     @PutMapping
     public HttpResult updateSolderer(@RequestBody WelderInfo welderInfo) {
-        try {
-            HttpResult result = new HttpResult();
-            int i = soldererService.updateSolderer(welderInfo);
-            if (i > 0) {
-                result.setMsg("修改成功！");
-            } else {
-                result.setMsg("修改失败！");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
+
+        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo());
+
+        if(!ObjectUtils.isEmpty(judge)){
+
+            return HttpResult.ok("当前信息中采集编号不可重复,请更换采集编号");
         }
+
+        soldererService.updateSolderer(welderInfo);
+
+        return HttpResult.ok("修改成功");
+
     }
 
     //删除焊工信息
     @DeleteMapping
     public HttpResult deleteSolderer(Long id) {
-        try {
-            HttpResult result = new HttpResult();
-            int i = soldererService.deleteSolderer(id);
-            if (i > 0) {
-                result.setMsg("删除成功！");
-            } else {
-                result.setMsg("删除失败！");
-            }
-            return result;
-        } catch (Exception e) {
-            return HttpResult.error();
-        }
+
+        soldererService.deleteSolderer(id);
+
+        return HttpResult.ok("删除成功");
     }
 
     //导出Excel
@@ -215,5 +212,19 @@ public class SoldererController {
         Set<WelderInfo> list = soldererService.getHistoryWelderInfos();
 
         return HttpResult.ok(list);
+    }
+
+    /**
+     * @Date 2021/8/5 15:41
+     * @Description 直接新增信息
+     * @Params
+     */
+    @RequestMapping("judgeAfterAddWelderInfo")
+    public HttpResult judgeWelderNo(@RequestBody WelderInfo welderInfo){
+
+        soldererService.addSolderer(welderInfo);
+
+        return HttpResult.ok("新增成功！");
+
     }
 }

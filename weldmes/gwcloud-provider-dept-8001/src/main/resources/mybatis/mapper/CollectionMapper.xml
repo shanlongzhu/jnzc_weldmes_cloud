@@ -55,9 +55,17 @@
 
     <!--采集信息新增-->
     <insert id="addCollection" parameterType="com.gw.entities.MachineGatherInfo">
-        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,production_date)
+        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,production_date,create_time)
         values (#{machineGatherInfo.gatherNo},#{machineGatherInfo.deptId},#{machineGatherInfo.status},#{machineGatherInfo.protocol},
-                #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.productionDate})
+                #{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.productionDate},#{machineGatherInfo.createTime})
+        ON DUPLICATE KEY UPDATE
+         gather_no = #{machineGatherInfo.gatherNo},
+         dept_id = #{machineGatherInfo.deptId},
+         status = #{machineGatherInfo.status},
+         protocol = #{machineGatherInfo.protocol},
+         ip_path = #{machineGatherInfo.ipPath},
+         mac_path = #{machineGatherInfo.macPath},
+         last_update_time = #{machineGatherInfo.createTime}
     </insert>
 
     <delete id="deleteCollection">
@@ -119,5 +127,10 @@
 	machine_gather_info
     where
 	NOT FIND_IN_SET( machine_gather_info.id, ( select GROUP_CONCAT( g_id ) from machine_weld_info ) )
+    </select>
+
+    <!--判断采集编号是否存在-->
+    <select id="judgeGatherNoYesOrNo" parameterType="String" resultType="java.lang.Integer">
+        select (1) from machine_gather_info where gather_no = #{GatherNo}
     </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.gw.process.dispatch.service.impl;
 
 import com.gw.common.DateTimeUtil;
+import com.gw.common.DictionaryEnum;
 import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.dao.TaskClaimDao;
@@ -90,6 +91,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
 
         taskClaim.setClaimTime(time);
 
+        //领取表信息新增
         taskClaimDao.insertTaskClaimInfo(taskClaim);
 
         //判断任务表中该数据的实际开始时间是否为空
@@ -98,6 +100,8 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         if(ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
 
             taskInfo.setRealityStarttime(taskClaim.getClaimTime());
+
+            taskInfo.setStatus(DictionaryEnum.TASK_STATUS_WORKING.getId());
 
             dispatchDao.updateTaskInfo(taskInfo);
         }
