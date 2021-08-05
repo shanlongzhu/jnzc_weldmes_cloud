@@ -83,8 +83,8 @@ public class WelderServiceImpl implements WelderService {
     }
 
     @Override
-    public Byte getTypeId(String type) {
-        return welderDao.getTypeId(type);
+    public Byte getTypeId(String type,String dictionaryType) {
+        return welderDao.getTypeId(type,dictionaryType);
     }
 
     @Override

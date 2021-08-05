@@ -3,6 +3,7 @@ package com.gw.equipment.welder.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gw.common.ConstantInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.entities.MachineWeldInfo;
@@ -199,7 +200,7 @@ public class WelderController {
                 MachineWeldInfo machineWeldInfo=new MachineWeldInfo();
                 machineWeldInfo.setMachineNo((String) obs[0]);
                 String type=(String) obs[1];
-                Byte id=welderService.getTypeId(type);
+                Byte id=welderService.getTypeId(type,ConstantInfo.DICTIONARY_WELD_TYPE_FLAG);
                 machineWeldInfo.setType(id);
                 machineWeldInfo.setCreateTime((String) obs[2]);
                 String deptName=(String) obs[3];
