@@ -17,7 +17,6 @@ export function exportTeamDataList(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/team/excel?${qs.stringify(params)}`;
 }
 
-
 // ******设备生产数据统计*******/
 //获取设备统计列表
 export function getEquProDataList(params = {}) {
@@ -32,7 +31,6 @@ export function getEquProDataList(params = {}) {
 export function exportEquProDataList(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/device/excel?${qs.stringify(params)}`;
 }
-
 
 // ******人员生产数据统计*******/
 //获取人员统计列表
@@ -49,7 +47,6 @@ export function exportPerProDataList(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/person/excel?${qs.stringify(params)}`;
 }
 
-
 // ******工件生产数据统计*******/
 //获取工件统计列表
 export function getWorkProDataList(params = {}) {
@@ -62,7 +59,9 @@ export function getWorkProDataList(params = {}) {
 
 //导出工件统计列表
 export function exportWorkProDataList(params = {}) {
-  return `${process.env.VUE_APP_BASE_API}/artifact/excel?${qs.stringify(params)}`;
+  return `${process.env.VUE_APP_BASE_API}/artifact/excel?${qs.stringify(
+    params
+  )}`;
 }
 
 // ******生产任务数据统计*******/
@@ -77,6 +76,25 @@ export function getTaskDataList(params = {}) {
 
 //导出工件统计列表
 export function exportTaskDataList(params = {}) {
-  return `${process.env.VUE_APP_BASE_API}/ProductionTask/excel?${qs.stringify(params)}`;
+  return `${process.env.VUE_APP_BASE_API}/ProductionTask/excel?${qs.stringify(
+    params
+  )}`;
 }
 
+
+// ******焊机任务数据统计*******/
+//获取焊机任务列表
+export function getWeldingTaskDataList(params = {}) {
+  return request({
+    url: "/weldTask",
+    method: "get",
+    params
+  });
+}
+
+//导出焊机任务统计列表
+export function exportWeldingTaskDataList(params = {}) {
+  return `${process.env.VUE_APP_BASE_API}/weldTask/excel?${qs.stringify(
+    params
+  )}`;
+}

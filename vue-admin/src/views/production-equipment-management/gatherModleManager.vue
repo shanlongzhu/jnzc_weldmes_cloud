@@ -300,7 +300,7 @@
 </template>
 
 <script>
-import { getEquList, getEquDetail, delEqu, exportExcel, addEqu, editEqu } from '_api/productionEquipment/production'
+import { getEquList, getEquDetail, delEqu, exportExcel, addEqu, editEqu, coverEqu } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
@@ -489,20 +489,32 @@ export default {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await editEqu(req)
-                        if (code == 200) {
-                            this.$message.success('修改成功')
+                        
+                        const { msg, code } = await editEqu(req)
+                        if (code == 200&& msg == "修改成功") {
+                            this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
+                        }else{
+                            this.$message.error(msg);
                         }
                     } else {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await addEqu(req);
-                        if (code == 200) {
-                            this.$message.success('新增成功')
+                        const { msg, code } = await addEqu(req);
+                        if (code == 200 && msg == "新增成功！") {
+                            this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
+                        } else {
+                            this.$confirm(msg, '提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning'
+                            }).then(() => {
+                                this.addItem(req);
+                            }).catch(() => { })
+                            
                         }
                     }
                 } else {
@@ -511,6 +523,15 @@ export default {
                 }
             })
         },
+
+        async addItem (req) {
+            let { data, code } = await coverEqu(req);
+            if (code == 200) {
+                this.$message.success('覆盖成功')
+                this.visable1 = false
+                this.getList()
+            }
+        }
 
     }
 }

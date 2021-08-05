@@ -86,9 +86,9 @@ export default {
   },
 
   created() {
-    getTaskInfos().then(res => {
-      this.list = res.data.list
-    })
+    // getTaskInfos().then(res => {
+    //   this.list = res.data.list
+    // })
   }
 }
 </script>

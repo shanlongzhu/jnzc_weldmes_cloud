@@ -161,6 +161,15 @@ export function editWelderPeople(data = {}) {
   });
 }
 
+//删除焊工
+export function delWelderPeople(params={}) {
+  return request({
+    url: `/solderer`,
+    method: "delete",
+    params
+  });
+}
+
 // 获取焊工详情
 export function getWelderPeopleDetail(id) {
   return request({
@@ -168,6 +177,17 @@ export function getWelderPeopleDetail(id) {
     method: "get",
   });
 }
+
+
+// 覆盖焊工
+export function coverWelderPeople(data = {}) {
+  return request({
+    url: "/solderer/judgeAfterAddWelderInfo",
+    method: "post",
+    data
+  });
+}
+
 
 // 导出
 export function exportWelderPeopleExcel(params = {}) {

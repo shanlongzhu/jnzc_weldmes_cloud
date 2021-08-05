@@ -50,6 +50,15 @@ export function delEqu(params = {}) {
   });
 }
 
+// 采集编号重复后覆盖采集模块
+export function coverEqu(data = {}) {
+  return request({
+    url: "/collection/judgeAfterAddGatherInfo",
+    method: "post",
+    data
+  });
+}
+
 // 导出
 export function exportExcel(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/collection/excel?${qs.stringify(

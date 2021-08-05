@@ -86,7 +86,7 @@
                             class="real-con-item flex-n"
                             style="width:300px"
                         >
-                            <span class="real-con-item-img">
+                            <span class="real-con-item-img" @click="drawer=false">
                                 <img :src="`/swipes/${imgType(selectItem.typeStr)}${statusText(selectItem.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
@@ -102,15 +102,15 @@
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">焊接参数</span>
                         <div class="wel-tip">
-                            <p><span>电流</span><strong>100A</strong></p>
-                            <p><span>电压</span><strong>30V</strong></p>
+                            <p><span>焊接电流</span><strong>{{mqttLastData.electricity}}A</strong></p>
+                            <p><span>焊接电压</span><strong>{{mqttLastData.voltage}}V</strong></p>
                         </div>
                     </div>
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">预置参数</span>
                         <div class="wel-tip">
-                            <p><span>预置电流</span><strong>100A</strong></p>
-                            <p><span>预置电压</span><strong>30V</strong></p>
+                            <p><span>预置电流</span><strong>{{mqttLastData.presetEle}}A</strong></p>
+                            <p><span>预置电压</span><strong>{{mqttLastData.presetVol}}V</strong></p>
                         </div>
                     </div>
                     <div
@@ -124,15 +124,15 @@
                                     开机时间：
                                 </el-col>
                                 <el-col :span="12">
-                                    通道总数：
+                                    通道总数：30
                                 </el-col>
                             </el-row>
                             <el-row>
                                 <el-col :span="12">
                                     关机时间：
                                 </el-col>
-                                <el-col :span="12">
-                                    当前通道：自由调节状态
+                                <el-col :span="12">                                    
+                                    当前通道：{{mqttLastData.channelNo==0||mqttLastData.channelNo==255?'自由调节状态':mqttLastData.channelNo}}
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -140,7 +140,7 @@
                                     工作时长：
                                 </el-col>
                                 <el-col :span="12">
-                                    送丝速度：
+                                    送丝速度：{{mqttLastData.wireFeedRate}}
                                 </el-col>
 
                             </el-row>
@@ -149,7 +149,7 @@
                                     焊接时长：
                                 </el-col>
                                 <el-col :span="12">
-                                    瞬时功率：
+                                    瞬时功率：{{mqttLastData.electricity*mqttLastData.voltage}}
                                 </el-col>
                             </el-row>
                         </div>
@@ -182,7 +182,7 @@ import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
 import organization from '_c/Organization'
 export default {
-    components: { lineE, LineV,organization },
+    components: { lineE, LineV, organization },
     name: 'realTime',
     data () {
 
@@ -211,7 +211,7 @@ export default {
 
             loading: false,
 
-            
+
             //
             drawer: false,
             //点击的设备
@@ -226,7 +226,9 @@ export default {
             //曲线数据
             lineDataTime: [],
             lineDataValueE: [],
-            lineDataValueV: []
+            lineDataValueV: [],
+
+            mqttLastData:{}
         }
     },
     created () {
@@ -254,10 +256,13 @@ export default {
                 if (topic == 'rtcdata') {
                     var datajson = JSON.parse(`${message}`);
                     if (datajson.length > 0) {
-                        //获取曲线数据
-                        this.setLineData(datajson);
-                        //更新列表状态
-                        this.setData(datajson);
+                        if (!this.drawer) {
+                            //更新列表状态
+                            this.setData(datajson);
+                        } else {
+                            //获取曲线数据
+                            this.setLineData(datajson);
+                        }
                     }
                 }
             })
@@ -298,7 +303,7 @@ export default {
         search () {
             this.page = 1;
             this.getList();
-        },        
+        },
 
         //根据部门id获取设备列表
         async getList (id) {
@@ -320,6 +325,7 @@ export default {
                     objItem.taskNo = '';//任务编号
                     return objItem;
                 });
+                this.offnum = data.total;
                 this.total = data.total;
                 this.createConnection();
             }
@@ -351,12 +357,10 @@ export default {
         },
 
         setLineData (arr) {
-            if (!this.drawer) {
-                return
-            }
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
                 if (filterArr.length > 0) {
+                    this.mqttLastData = filterArr.slice(-1)[0];
                     if (this.lineDataTime.length > 10) {
                         this.lineDataTime.shift();
                         this.lineDataTime.shift();

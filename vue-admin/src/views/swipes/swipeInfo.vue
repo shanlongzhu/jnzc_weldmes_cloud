@@ -54,7 +54,7 @@
                                 :class="{'current':item.id==curModel.id,'taskCur':item.taskFlag}"
                             >
                                 <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
-                                <img src="/swipes/AT.png" />
+                                <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
                                 <span>{{item.machineNo}}--{{item.machineGatherInfo.gatherNo}}</span>
                             </li>
                         </ul>
@@ -148,6 +148,7 @@ export default {
     data () {
         return {
             //mqtt
+            client2: {},
             client: {},
             options: {
                 timeout: 50,
@@ -190,11 +191,134 @@ export default {
             //确定按钮loading
             butLoading:false,
 
+            //
+            offnum: 0,
+            workArray: 0,
+            standbyArray: 0,
+            warnArray: 0,
+
         }
     },
     watch: {},
     computed: {},
     methods: {
+        //mqtt创建
+        createConnection2 () {
+            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
+            try {
+                this.client2 = mqtt.connect(connectUrl, this.options)
+            } catch (error) {
+                console.log('连接失败', error)
+            }
+            this.client2.on('connect', () => {
+                // console.log('连接成功')
+                this.doSubscribe2();
+
+            })
+            this.client2.on('error', error => {
+                console.log('连接失败', error)
+            })
+            this.client2.on('message', (topic, message) => {
+                if (topic == 'rtcdata') {
+                    var datajson = JSON.parse(`${message}`);
+                    if (datajson.length > 0) {
+                        //更新列表状态
+                        this.setData(datajson);
+                    }
+                }
+            })
+        },
+        //更新列表
+        setData (arr) {
+            let v1 = arr.slice(-1)[0];
+            this.offnum = 0;
+            this.warnArray = 0;
+            this.standbyArray = 0;
+            this.workArray = 0;
+            this.list.forEach(item => {
+                if (parseInt(v1.gatherNo) == parseInt(item.machineGatherInfo.gatherNo)) {
+                    item.voltage = v1.voltage
+                    item.electricity = v1.electricity
+                    item.welderName = v1.welderName
+                    item.taskNo = v1.taskNo
+                    item.weldStatus = v1.weldStatus;//状态
+                }
+                this.totalNum(item.weldStatus);
+            })
+        },
+
+        //订阅主题
+        doSubscribe2 () {
+            this.client2.subscribe('rtcdata', 0, (error, res) => {
+                // console.log('订阅rtcdata')
+                if (error) {
+                    this.$message.error("订阅rtcdata超时")
+                    return
+                }
+            })
+        },
+
+        totalNum (v) {
+            switch (v) {
+                case -1:
+                    this.offnum++;
+                    break;
+                case 0:
+                    this.standbyArray++;
+                    break;
+                case 3: case 5: case 7:
+                    this.workArray++;
+                    break;
+                default:
+                    this.warnArray++;
+                    break;
+            }
+        },
+        //图片类型
+        imgType (v) {
+            let str = '';
+            switch (v) {
+                case '手工焊':
+                    str = 'AT';
+                    break;
+                case '气保焊':
+                    str = 'FR';
+                    break;
+                default:
+                    str = 'GL';
+                    break;
+            }
+            return str;
+        },
+        //焊机状态
+        statusText (v) {
+            let str = '关机';
+            let imgN = '';
+            switch (v) {
+                case -1:
+                    str = '关机';
+                    imgN = '';
+                    break;
+                case 0:
+                    str = '待机';
+                    imgN = 'S';
+                    break;
+                case 3: case 5: case 7:
+                    str = '焊接';
+                    imgN = 'W';
+                    break;
+                default:
+                    str = '故障';
+                    imgN = 'O';
+                    break;
+            }
+            return {
+                str: str,
+                imgN: imgN
+            };
+        },
+
+
         async getList () {
             let req = {
                 area: this.area,
@@ -204,7 +328,17 @@ export default {
             let { data, code } = await getWelderListNoPage(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data || [];
+                this.list = (data || []).map(item => {
+                    let objItem = { ...item };
+                    objItem.electricity = '';//电流
+                    objItem.voltage = '';//电压
+                    objItem.weldIp = '';//IP
+                    objItem.weldStatus = -1;//状态
+                    objItem.welderName = '';//操作人
+                    objItem.taskNo = '';//任务编号
+                    return objItem;
+                });
+                 this.createConnection2();
 
             }
         },

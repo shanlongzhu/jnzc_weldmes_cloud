@@ -308,6 +308,15 @@ export const asyncRoutes = [
           title: '生产任务详情',
           mark:'504',
           noCache: true }
+      }, 
+      {
+        path: 'welding-task',
+        component: () => import('@/views/productionDataStatistics/weldingMachine'),
+        name: 'weldingMachine',
+        meta: {
+          title: '焊机任务列表',
+          mark:'505',
+          noCache: true }
       },      
     ]
   },

@@ -158,7 +158,7 @@
                         {{scope.row.sysDictionary.valueName}}
                     </template>
                 </el-table-column>
-                
+
                 <el-table-column
                     prop="macPath"
                     label="资质"
@@ -265,7 +265,7 @@
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
-                <el-form-item
+                <!-- <el-form-item
                     label="卡号"
                     prop="welderNo"
                 >
@@ -273,7 +273,7 @@
                         v-model="ruleForm.welderNo"
                         style="width:250px"
                     ></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item
                     label="资质"
                     prop="certification"
@@ -346,7 +346,7 @@
 </template>
 
 <script>
-import { getTeam, getDictionaries, getWelderPeopleList, addWelderPeople,editWelderPeople,getWelderPeopleDetail,exportWelderPeopleExcel } from '_api/productionProcess/process'
+import { getTeam, getDictionaries, getWelderPeopleList, addWelderPeople, editWelderPeople, delWelderPeople, getWelderPeopleDetail, exportWelderPeopleExcel, coverWelderPeople } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     name: 'welderManagement',
@@ -367,16 +367,16 @@ export default {
             total: 0,
 
             //搜索条件
-            searchObj:{
-                welderName:'',
-                welderNo:'',
-                rate:'',
-                talent:'',
-                grade:''
+            searchObj: {
+                welderName: '',
+                welderNo: '',
+                rate: '',
+                talent: '',
+                grade: ''
             },
 
             visable1: false,
-            ruleFormObj: {                
+            ruleFormObj: {
             },
             ruleForm: {
                 welderNo: '',//编号
@@ -424,7 +424,7 @@ export default {
     },
 
     created () {
-        this.ruleFormObj = {...this.ruleForm};
+        this.ruleFormObj = { ...this.ruleForm };
         // 获取班组
         if (this.teamArr.length == 0) {
             this.getTeamList()
@@ -490,7 +490,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                let { code, data } = await delEqu({ id })
+                let { code, data } = await delWelderPeople({ id })
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.getList()
@@ -537,20 +537,31 @@ export default {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await editWelderPeople(req)
-                        if (code == 200) {
-                            this.$message.success('修改成功')
+                        const { msg, code } = await editWelderPeople(req)
+                        if (code == 200&& msg == "修改成功！") {
+                            this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
+                        }else{
+                            this.$message.error(msg);
                         }
                     } else {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        const { data, code } = await addWelderPeople(req);
-                        if (code == 200) {
-                            this.$message.success('新增成功')
+                        const { msg, code } = await addWelderPeople(req);
+                        if (code == 200 && msg == "新增成功！") {
+                            this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
+                        } else {
+                            this.$confirm(msg, '提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning'
+                            }).then(() => {
+                                this.coverWelderFun(req);
+                            }).catch(() => { })
+
                         }
                     }
                 } else {
@@ -559,6 +570,14 @@ export default {
                 }
             })
         },
+        async coverWelderFun (req) {
+            let { data, code } = await coverWelderPeople(req);
+            if (code == 200) {
+                this.$message.success('覆盖成功')
+                this.visable1 = false
+                this.getList()
+            }
+        }
 
     }
 }

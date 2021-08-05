@@ -16,14 +16,7 @@
                     :show-all-levels="false"
                 />
             </div>
-            <div class="con-w">
-                <span>焊工编号：</span>
-                <el-input size="mini" v-model="welderNo" class="w120" placeholder=""></el-input>
-            </div>
-            <div class="con-w">
-                <span>任务编号：</span>
-                <el-input size="mini" v-model="junctionNo" class="w120" placeholder=""></el-input>
-            </div>
+            
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
@@ -38,6 +31,13 @@
                     :picker-options="disabledDate"
                 >
                 </el-date-picker>
+            </div>
+            <div class="con-w">
+                <el-radio-group v-model="status" size="mini">
+                    <el-radio :label="3">未分配</el-radio>
+                    <el-radio :label="6">已分配</el-radio>
+                    <el-radio :label="9">全部</el-radio>
+                </el-radio-group>
             </div>
             <div class="con-w">
                 <el-button
@@ -77,88 +77,44 @@
                 ></vxe-table-column>
                 <vxe-table-column
                     field="name"
-                    title="焊工班组"
+                    title="所属班组"
                     min-width="150"
                     fixed="left"
                 >
                     <template #default={row}>
                         {{row.sysDept.name}}
                     </template>
-                </vxe-table-column>                
+                </vxe-table-column>
                 <vxe-table-column
-                    field="welderNo"
-                    title="焊工编号"
+                    field="machineNo"
+                    title="设备编号"
                     min-width="150"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="welderName"
-                    title="焊工姓名"
+                    field="createTime"
+                    title="日期"
                     min-width="150"
                 >
-                <template #default={row}>
-                        {{row.welderInfo.welderName}}
-                    </template>
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="machineNo"
-                    title="焊机编号"
+                    field="taskNo"
+                    title="任务号"
                     width="100"
                 >
+                    <template #default={row}>
+                        {{row.taskInfo.taskNo}}
+                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="taskNo"
-                    title="任务编号"
-                    min-width="150"
-                ></vxe-table-column>    
-                <vxe-table-column
-                    field="realityStarttime"
-                    title="开始时间"
+                    title="状态"
                     min-width="150"
                 >
-                <template #default={row}>
-                        {{row.taskInfo.realityStarttime}}
+                    <template #default={row}>
+                        {{row.sysDictionary.valueName}}
                     </template>
-                </vxe-table-column>        
-                <vxe-table-column
-                    field="realityEndtime"
-                    title="结束时间"
-                    min-width="150"
-                >
-                <template #default={row}>
-                        {{row.taskInfo.realityEndtime}}
-                    </template>
-                </vxe-table-column>  
-                <vxe-table-column
-                    field="utilization"
-                    title="适用通道"
-                    min-width="150"
-                ></vxe-table-column> 
-                <vxe-table-column
-                    field="time"
-                    title="良好段"
-                    min-width="150"
-                ></vxe-table-column>    
-                <vxe-table-column
-                    field="time2"
-                    title="报警段"
-                    min-width="150"
-                ></vxe-table-column> 
-                <vxe-table-column
-                    field="electricity"
-                    title="平均焊接电流"
-                    min-width="150"
-                ></vxe-table-column>   
-                <vxe-table-column
-                    field="voltage"
-                    title="平均焊接电压"
-                    min-width="150"
-                ></vxe-table-column> 
-                <vxe-table-column
-                    field="utilization"
-                    title="规范符合率(%)"
-                    min-width="150"
-                ></vxe-table-column>                        
+                </vxe-table-column>
             </vxe-table>
         </div>
         <el-pagination
@@ -171,17 +127,17 @@
             :total="total"
             @current-change="handleCurrentChange"
         />
-        
+
     </div>
 </template>
 
 <script>
 import moment from 'moment'
-import { getTeam} from '_api/productionProcess/process'
-import { getTaskDataList, exportTaskDataList } from '_api/productDataStat/productDataStatApi'
+import { getTeam } from '_api/productionProcess/process'
+import { getWeldingTaskDataList, exportWeldingTaskDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
 export default {
-    name: 'taskDetail',
+    name: 'weldingMachine',
     data () {
 
         return {
@@ -192,9 +148,8 @@ export default {
 
             //搜索条件
             dateTime: [moment(new Date()).startOf('day'), new Date()],
-            teamId:'',
-            welderNo:'',
-            junctionNo:'',
+            teamId: '',
+            status:'',
 
             loading: false,
             headers: {
@@ -214,7 +169,7 @@ export default {
                 value: 'id',
                 children: 'list'
             },
-            
+
         }
     },
 
@@ -238,14 +193,13 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
-                teamId:this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
-                welderNo:this.welderNo,
-                junctionNo:this.junctionNo
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                teamId: this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
+                status:this.status
             }
             this.loading = true;
-            let { data, code } = await getTaskDataList(req);
+            let { data, code } = await getWeldingTaskDataList(req);
             this.loading = false;
             if (code == 200) {
                 this.list = data.list || [];
@@ -267,19 +221,24 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
-                teamId:this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
-                welderNo:this.welderNo,
-                junctionNo:this.junctionNo
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                teamId: this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
+                status:this.status
             }
-            location.href = exportTaskDataList(req)
+            location.href = exportWeldingTaskDataList(req)
         }
     }
 }
 </script>
 
-<style scoped>
+<style>
+.con-w .el-radio{
+    margin-right:14px
+}
+.con-w .el-radio .el-radio__label{
+    padding-left: 5px;
+}
 </style>
 
 
