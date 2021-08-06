@@ -21,7 +21,6 @@ import java.util.Map;
  * channelRead0 获取消息会自动释放资源，获取的消息必须是指定的泛型。
  */
 @Slf4j
-//@Sharable  //表明当前Handler是共享的，只有一个Handler实例
 public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private final JnRtDataProtocol jnRtDataProtocol = new JnRtDataProtocol();
@@ -142,7 +141,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.info("异常捕捉：" + cause.getMessage());
+        log.error("异常捕捉：" + cause.getMessage());
         ctx.flush();
         if (ctx.channel().isActive()) {
             ctx.channel().close();

@@ -15,7 +15,7 @@ import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +32,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 定时任务类
  */
 @Component
-@EnableScheduling
 @Slf4j
+@EnableAsync
 public class ScheduledTask {
 
     @Autowired

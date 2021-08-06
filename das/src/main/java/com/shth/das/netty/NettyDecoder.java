@@ -74,6 +74,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
             if (serverPort == DataInitialization.getSxPort()) {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
+        } else {
+            message.clear();
+            message.release();
         }
         ctx.flush();
     }
@@ -117,7 +120,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     }
                     //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
-                        otcRecursionReadBytes(ctx, message, out);
+                        this.otcRecursionReadBytes(ctx, message, out);
                     } else {
                         message.clear();
                         message.release();
@@ -172,7 +175,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     }
                     //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
-                        sxRecursionReadBytes(ctx, message, out);
+                        this.sxRecursionReadBytes(ctx, message, out);
                     } else {
                         message.clear();
                         message.release();
@@ -214,7 +217,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         }
                         //如果还有可读字节，则继续递归读取
                         if (message.readableBytes() > 0) {
-                            sxRecursionReadBytes(ctx, message, out);
+                            this.sxRecursionReadBytes(ctx, message, out);
                         } else {
                             message.clear();
                             message.release();

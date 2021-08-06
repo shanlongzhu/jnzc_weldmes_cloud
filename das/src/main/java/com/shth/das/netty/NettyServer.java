@@ -3,7 +3,6 @@ package com.shth.das.netty;
 import com.shth.das.common.CommonDbData;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -24,7 +23,8 @@ public class NettyServer {
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
             // Netty i/o 处理事件的线程池
             final EventLoopGroup workerGroup = new NioEventLoopGroup();
-            ChannelFuture channelFuture = null;
+            //业务线程池
+            final EventLoopGroup handlerGroup = new NioEventLoopGroup();
 
             @Override
             public void run() {
@@ -36,14 +36,17 @@ public class NettyServer {
                             .option(ChannelOption.SO_RCVBUF, 1024)
                             //设置采用Nio的通道方式来建立请求连接
                             .channel(NioServerSocketChannel.class)
-                            .option(ChannelOption.SO_BACKLOG, 128)  //阻塞队列数量
-                            .childOption(ChannelOption.SO_KEEPALIVE, true)  //心跳保持
-                            .childHandler(new NettyChannelInitializer());
+                            //阻塞队列数量
+                            .option(ChannelOption.SO_BACKLOG, 128)
+                            //心跳保持
+                            .childOption(ChannelOption.SO_KEEPALIVE, true)
+                            //通道初始化
+                            .childHandler(new NettyChannelInitializer(handlerGroup));
                     //System.setProperty("io.netty.leakDetection.maxRecords", "1000");
                     //System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
                     //ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
                     // 服务端绑定端口并且开始接收进来的连接请求
-                    channelFuture = server.bind(port).sync();
+                    ChannelFuture channelFuture = server.bind(port).sync();
                     //channelFuture = server.bind(port).sync();
                     // 查看一下操作是不是成功结束了
                     if (channelFuture.isSuccess()) {
@@ -55,8 +58,6 @@ public class NettyServer {
                     log.error("服务端启动异常：{}", e.getMessage());
                 } finally {
                     // 关闭事件处理组
-                    channelFuture.channel().close().addListener(ChannelFutureListener.CLOSE);
-                    channelFuture.awaitUninterruptibly(); //阻塞
                     bossGroup.shutdownGracefully();
                     workerGroup.shutdownGracefully();
                     log.info("Netty服务端已关闭!");
