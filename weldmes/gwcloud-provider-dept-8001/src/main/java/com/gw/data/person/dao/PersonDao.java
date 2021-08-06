@@ -1,6 +1,5 @@
 package com.gw.data.person.dao;
 
-import com.gw.entities.RealtimeData;
 import com.gw.entities.WeldStatisticsData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

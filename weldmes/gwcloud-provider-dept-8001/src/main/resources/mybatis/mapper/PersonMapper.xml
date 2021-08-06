@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gw.data.person.dao.PersonDao">
-    <resultMap id="WeldStatisticsData" type="com.gw.entities.WeldStatisticsData">
+	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsData">
 		<id property="id"  column="id"></id>
 		<result property="weldModel" column="weldModel"></result>
 		<result property="gatherNo" column="gatherNo"></result>
@@ -33,86 +33,62 @@
 		<result property="count3" column="count3"></result>
 		<result property="count4" column="count4"></result>
 		<result property="count5" column="count5"></result>
-		<result property="utilization" column="utilization"></result>
+		<result property="weldingEfficiency" column="weldingEfficiency"></result>
+		<result property="onOffTime" column="onOffTime"></result>
+		<result property="realWeldTime" column="realWeldTime"></result>
+		<result property="normalTime" column="normalTime"></result>
+		<result property="supergageTime" column="supergageTime"></result>
+		<result property="standardPercentage" column="standardPercentage"></result>
+		<result property="materialsConsumption" column="materialsConsumption"></result>
+		<result property="powerConsumption" column="powerConsumption"></result>
 		<result property="time" column="time"></result>
 		<result property="time2" column="time2"></result>
-		<result property="utilization2" column="utilization2"></result>
-    <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
+		<association property="sysDept" javaType="com.gw.entities.SysDept">
+			<id property="id" column="id"></id>
+			<result property="name" column="name"></result>
+			<result property="parentId" column="parent_id"></result>
+		</association>
+        <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
         <id property="id"  column="id"></id>
         <result property="welderName" column="welder_name"></result>
         <result property="welderNo" column="welder_no"></result>
-    </association>
+        </association>
     </resultMap>
-    <select id="getList" resultMap="WeldStatisticsData">
-		select
-		a.*,
-		b.*,
-		c.*,
-		d.*,
-		cast(c.time / d.time2 *100 as decimal (13,2)) utilization
-		from
-		( select distinct
-		wsd.welderNo, w.welder_name
-		from
-		weld_statistics_data wsd, welder_info w
-		<where>
-			wsd.welderId = w.id
-			<if test="time1!=null and time2!=''">
-				and wsd.startTime &gt;= #{time1}
-			</if>
-			<if test="time2!=null and time2!=''">
-				and wsd.endTime &lt;= #{time2}
-			</if>
-		</where>
-		) a,
-		(
-		select
-		count( wsd.welderId ) count,
-		wsd.welderNo
-		from
-		weld_statistics_data wsd,
+    <select id="getList" resultMap="weldStatisticsData">
+		SELECT
+		w.id,
+		w.welder_name,
+		w.welder_no,
+		d.NAME,
+		GROUP_CONCAT( DISTINCT s.taskNo ) taskNo,
+		COUNT( DISTINCT s.taskId ) count,
+		GROUP_CONCAT( DISTINCT s.machineNo ) machineNo,
+		COUNT( DISTINCT s.machineId ) count2,
+		SEC_TO_TIME( SUM( s.weldDuration ) ) onOffTime,
+		SEC_TO_TIME( SUM( s1.weldDuration ) ) realWeldTime,
+		SEC_TO_TIME( SUM( s2.weldDuration ) ) normalTime,
+		SEC_TO_TIME( SUM( s3.weldDuration ) ) supergageTime,
+		CONVERT ( SUM( s1.weldDuration ) / SUM( s.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) weldingEfficiency,
+		CONVERT ( SUM( s2.weldDuration ) / SUM( s1.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) standardPercentage,
+		CONVERT ( sum( s.wireFeedRate * s.weldDuration ) / 600, DECIMAL ( 10, 2 ) ) materialsConsumption,
+		CONVERT (
+		sum( ( s.electricity * s.voltage * s.weldDuration ) / 3600 / 1000 ) + ( s.weldDuration - s1.weldDuration ) / 36000,
+		DECIMAL ( 10, 2 )
+		) powerConsumption
+		FROM
 		welder_info w
-		where
-		wsd.taskId != 0
-		and wsd.welderId = w.id
-		group by
-		wsd.welderNo
-		) b,(
-		select
-		SEC_TO_TIME(
-		count( wsd.id )) time,
-		w.welder_no
-		from
-		weld_statistics_data wsd,
-		welder_info w
-		where
-		wsd.welderId = w.id
-		and ( wsd.weldStatus = 3 or wsd.weldStatus = 99 )
-		group by
-		w.welder_no
-		) c,(
-		select
-		SEC_TO_TIME(
-		count( wsd.id )) time2,
-		w.welder_no
-		from
-		weld_statistics_data wsd,
-		welder_info w
-		where
-		wsd.welderId = w.id
-		and (
-		wsd.weldStatus = 0
-		or wsd.weldStatus = 3
-		or wsd.weldStatus = 5
-		or wsd.weldStatus = 7
-		or wsd.weldStatus = 99
-		)
-		group by
-		w.welder_no
-		) d
-		where
-		a.welderNo = b.welderNo
-		and a.welderNo = c.welder_no
-		and a.welderNo = d.welder_no
+		LEFT JOIN sys_dept d ON w.dept_id = d.id
+		INNER JOIN weld_statistics_data s ON d.id = s.welderDeptId
+		AND w.id = s.welderId
+	    AND s.startTime &gt;= #{time1}
+        AND s.endTime &lt;= #{time2}
+		LEFT JOIN weld_statistics_data s1 ON s.id = s1.id
+		AND s1.weldStatus IN ( 3, 5, 7, 99 )
+		LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id
+		AND s2.weldStatus IN ( 3, 5, 7 )
+		LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id
+		AND s3.weldStatus = 99
+		GROUP BY
+		w.id
     </select>
 </mapper>
