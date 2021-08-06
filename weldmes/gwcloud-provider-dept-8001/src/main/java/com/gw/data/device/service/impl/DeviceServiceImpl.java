@@ -17,8 +17,7 @@ public class DeviceServiceImpl implements DeviceService {
 
 
     @Override
-    public List<WeldStatisticsData> getList(Long areaId , Long teamId, String time1, String time2) {
-        String teamName=deviceDao.getTeamName(teamId);
-        return deviceDao.getList(areaId,teamName,time1,time2);
+    public List<WeldStatisticsData> getList(String time1, String time2) {
+        return deviceDao.getList(time1,time2);
     }
 }
