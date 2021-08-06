@@ -6,5 +6,5 @@ import com.gw.entities.WeldStatisticsData;
 import java.util.List;
 
 public interface ProductionTaskService {
-    List<WeldStatisticsData> getList(Long areaId, Long teamId, String welderNo, String junctionNo, String time1, String time2);
+    List<WeldStatisticsData> getList(String time1, String time2);
 }

@@ -34,130 +34,70 @@
         <result property="count3" column="count3"></result>
         <result property="count4" column="count4"></result>
         <result property="count5" column="count5"></result>
-        <result property="utilization" column="utilization"></result>
+        <result property="weldingEfficiency" column="weldingEfficiency"></result>
+        <result property="onOffTime" column="onOffTime"></result>
+        <result property="realWeldTime" column="realWeldTime"></result>
+        <result property="normalTime" column="normalTime"></result>
+        <result property="supergageTime" column="supergageTime"></result>
+        <result property="standardPercentage" column="standardPercentage"></result>
+        <result property="materialsConsumption" column="materialsConsumption"></result>
+        <result property="powerConsumption" column="powerConsumption"></result>
         <result property="time" column="time"></result>
         <result property="time2" column="time2"></result>
-        <result property="utilization2" column="utilization2"></result>
-        <association property="sysDept" javaType="com.gw.entities.SysDept">
+        <result property="eleScope" column="eleScope"></result>
+        <result property="volScope" column="volScope"></result>
+        <association property="taskClaim" javaType="com.gw.entities.TaskClaim">
             <id property="id" column="id"></id>
-            <result property="name" column="name"></result>
-            <result property="parentId" column="parent_id"></result>
+            <result property="welderId" column="welder_id"></result>
+            <result property="taskId" column="task_id"></result>
+            <result property="weldId" column="weld_id"></result>
         </association>
         <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
             <id property="id" column="id"></id>
             <result property="taskNo" column="task_no"></result>
-            <result property="status" column="status"></result>
             <result property="realityStarttime" column="reality_starttime"></result>
             <result property="realityEndtime" column="reality_endtime"></result>
+            <result property="eleMin" column="eleMin"></result>
+            <result property="eleMax" column="eleMax"></result>
+            <result property="volMin" column="volMin"></result>
+            <result property="volMax" column="volMax"></result>
         </association>
         <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
             <id property="id"  column="id"></id>
             <result property="welderName" column="welder_name"></result>
             <result property="welderNo" column="welder_no"></result>
-            <result property="deptId" column="dept_id"></result>
-            <result property="gender" column="gender"></result>
-            <result property="cellphone" column="cellphone"></result>
-            <result property="rank" column="rank"></result>
-            <result property="certification" column="certification"></result>
-            <result property="remarks" column="remarks"></result>
-            <result property="status" column="status"></result>
+        </association>
+        <association property="machineWeldInfo" javaType="com.gw.entities.MachineWeldInfo">
+            <id property="id"  column="id"></id>
+            <result property="machineNo" column="machine_no"></result>
         </association>
     </resultMap>
     <select id="getList" resultMap="weldStatisticsData">
-        select
-        a.*,
-        b.*,
-        c.*,
-        cast(a.time / c.time3 * 100 as decimal ( 13, 2 )) utilization
-        from
-        (select
-        wsd.welderId,
-        s.NAME,
-        s.parent_id,
-        wsd.welderNo,
-        w.welder_name,
-        wsd.machineNo,
-        wsd.taskNo,
-        t.reality_starttime,
-        t.reality_endtime,
-        SEC_TO_TIME(
-        count( wsd.welderId )) time
-        from
-        weld_statistics_data wsd,
-        sys_dept s,
-        welder_info w,
-        task_info t
-        <where>
-            wsd.welderDeptId = s.id
-            and wsd.taskId = t.id
-            and wsd.welderId = w.id
-            and ( wsd.weldStatus = 3 or wsd.weldStatus = 5 or wsd.weldStatus = 7 )
-            <if test="time1!=null and time1!=''">
-                and wsd.startTime &gt;= #{time1}
-            </if>
-            <if test="time2!=null and time2!=''">
-                and wsd.endTime &lt;= #{time2}
-            </if>
-            <if test="areaId!=null and areaId!=''">
-                and s.parent_id = #{areaId}
-            </if>
-            <if test="teamName!=null and teamName!=''">
-                and s.name = #{teamName}
-            </if>
-            <if test="welderNo!=null and welderNo!=''">
-                and wsd.welderNo = #{welderNo}
-            </if>
-            <if test="junctionNo!=null and junctionNo!=''">
-                and wsd.taskNo = #{junctionNo}
-            </if>
-        </where>
-        group by
-        wsd.welderId,
-        wsd.taskNo)a,
-        (select
-        wsd.welderId,
-        wsd.taskNo,
-        SEC_TO_TIME(
-        count( case when wsd.weldStatus = 99  then 1 else null end )) time2,
-        wsd.electricity,
-        wsd.voltage
-        from
-        weld_statistics_data wsd,
-        welder_info w,
-        task_info t
-        where
-        wsd.welderId = w.id
-        and wsd.taskId = t.id
-        group by
-        wsd.welderId,
-        wsd.taskNo
-        )b,(
-        select
-        wsd.welderId,
-        wsd.taskNo,
-        SEC_TO_TIME(
-        count( case when wsd.weldStatus = 3 or wsd.weldStatus = 5 or wsd.weldStatus = 7 or wsd.weldStatus = 99  then 1 else null end )) time3
-        from
-        weld_statistics_data wsd,
-        welder_info w,
-        task_info t
-        where
-        wsd.welderId = w.id
-        and wsd.taskId = t.id
-        group by
-        wsd.welderId,
-        wsd.taskNo
-        )c
-        where
-        a.welderId=b.welderId
-        and
-        a.taskNo=b.taskNo
-        and
-        a.welderId=c.welderId
-        and
-        a.taskNo=c.taskNo
-    </select>
-    <select id="getTeamName" resultType="java.lang.String">
-        select name from sys_dept where id=#{teamId}
+    SELECT
+	w.welder_no,
+	w.welder_name,
+	m.machine_no,
+	t.task_no,
+	t.reality_starttime,
+	t.reality_endtime,
+	CONCAT( t.eleMin, '~', t.eleMax ),
+	AVG( s.electricity ) electricity,
+	CONCAT( t.volMin, '~', t.volMax ),
+	AVG( s.voltage ) voltage
+    FROM
+	task_claim c
+	INNER JOIN welder_info w ON c.welder_id = w.id
+	INNER JOIN machine_weld_info m ON c.weld_id = m.id
+	INNER JOIN task_info t ON c.task_id = t.id
+	LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
+	AND s.startTime &gt;= #{time1}
+    AND s.endTime &lt;= #{time2}
+	AND c.weld_id = s.machineId
+	AND c.welder_id = s.welderId
+	AND s.weldStatus IN ( 3, 99 )
+GROUP BY
+	c.task_id,
+	c.weld_id,
+	c.welder_id
     </select>
 </mapper>

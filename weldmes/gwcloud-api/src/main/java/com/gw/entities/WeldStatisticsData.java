@@ -62,6 +62,7 @@ public class WeldStatisticsData implements Serializable {
     private WelderInfo welderInfo;
     private TaskInfo taskInfo;
     private SysDictionary sysDictionary;
+    private TaskClaim taskClaim;
 
     /**
      * 所属班组
@@ -142,4 +143,15 @@ public class WeldStatisticsData implements Serializable {
      * 正常时间
      */
     private String normalTime;
+
+    /**
+     * 电流范围
+     */
+    private String eleScope;
+
+    /**
+     * 电压范围
+     */
+    private String volScope;
+
 }
