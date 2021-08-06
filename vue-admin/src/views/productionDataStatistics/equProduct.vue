@@ -11,6 +11,7 @@
                     size="small"
                     v-model="dateTime"
                     type="datetimerange"
+                    :clearable="false"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
@@ -68,35 +69,83 @@
                     field="name"
                     title="班组"
                     min-width="150"
-                    fixed="left"
                 >
                     <template #default={row}>
                         {{row.sysDept.name}}
                     </template>
                 </vxe-table-column>                
                 <vxe-table-column
-                    field="count"
+                    field="count2"
                     title="焊接任务数"
                     min-width="150"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="time"
+                    field="realWeldTime"
                     title="焊接时间"
                     min-width="150"
                 >
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="time2"
+                    field="onOffTime"
                     title="工作时间"
                     width="100"
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="utilization"
-                    title="焊接效率(%)"
-                    min-width="150"
-                ></vxe-table-column>                
+                    field="count"
+                    title="使用人员数"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="welderName"
+                    title="焊工姓名"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="taskNo"
+                    title="任务编号"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="normalTime"
+                    title="正常时间"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="supergageTime"
+                    title="超规范时间"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="weldingEfficiency"
+                    title="焊接效率"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="standardPercentage"
+                    title="规范符合率"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="materialsConsumption"
+                    title="焊材消耗"
+                    width="100"
+                >
+                </vxe-table-column>
+                <vxe-table-column
+                    field="powerConsumption"
+                    title="电能消耗"
+                    width="100"
+                >
+                </vxe-table-column>               
             </vxe-table>
         </div>
         <el-pagination
