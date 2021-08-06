@@ -1,6 +1,9 @@
 <template>
-    <div ref="electricity" style="height:100%;flex:1;">
-        </div>
+    <div
+        ref="electricity"
+        style="height:100%;flex:1;"
+    >
+    </div>
 </template>
 
 <script>
@@ -15,6 +18,33 @@ export default {
         return {
             myChart: {},
             option: {},
+            lineObj: {
+                yAxis: 550,
+                lineStyle: {
+                    normal: {
+                        color: "#fe460d",
+                        width: 1,
+                        type: "dashed"
+                    }
+                },
+            },
+            lineObjFirstData: [{
+                symbol: 'none',
+                x: '92%',
+                yAxis: ''
+            }, {
+                symbol: 'circle',
+                label: {
+                    normal: {
+                        position: 'start',
+                        formatter: '{c}A 实时数据'
+                    }
+                },
+                name: '实时数据',
+                value: '',
+                xAxis: '',
+                yAxis: ''
+            }],
         }
     },
     watch: {
@@ -22,22 +52,51 @@ export default {
     },
     computed: {},
     methods: {
-        init (elc, t) {            
+        init (arr) {
+            let elc = arr.map(item => item.electricity);
+            let t = arr.map(item => item.weldTime);
+
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
 
-            this.option.series[0].markLine.data[0][0].yAxis =  elc.slice(-1)[0];
-            this.option.series[0].markLine.data[0][1].yAxis =  elc.slice(-1)[0];
-            this.option.series[0].markLine.data[0][1].value =  elc.slice(-1)[0]; 
-            this.option.series[0].markLine.data[0][1].xAxis =  t.slice(-1)[0];  
-            
+            if (arr.length > 0) {
+                let lastData = arr.slice(-1)[0];
+                this.lineObjFirstData[0].yAxis = elc.slice(-1)[0];
+                this.lineObjFirstData[1].yAxis = elc.slice(-1)[0];
+                this.lineObjFirstData[1].value = elc.slice(-1)[0];
+                this.lineObjFirstData[1].xAxis = t.slice(-1)[0];
+                if (lastData.weldEleAdjust && lastData.weldElectricity) {
+                    let upLine = { ...this.lineObj };
+                    let downLine = { ...this.lineObj };
+
+                    upLine.yAxis = lastData.weldElectricity + lastData.weldEleAdjust;//上限
+                    upLine.label = {
+                        show: 'true',
+                        position: 'end',
+                        formatter: `${lastData.weldElectricity + lastData.weldEleAdjust}(A)`
+                    };
+
+                    downLine.yAxis = lastData.weldElectricity - lastData.weldEleAdjust;//下限
+                    downLine.label = {
+                        show: 'true',
+                        position: 'end',
+                        formatter: `${lastData.weldElectricity - lastData.weldEleAdjust}(A)`
+                    };
+                    this.option.series[0].markLine.data = [this.lineObjFirstData, upLine, downLine];
+                } else {
+                    this.option.series[0].markLine.data = [this.lineObjFirstData];
+                }
+
+            }
+
+
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
         },
         echartsLoading () {
             this.myChart.showLoading();
         },
-        echartsClear(){
+        echartsClear () {
             this.myChart.clear()
         }
     },
@@ -50,7 +109,7 @@ export default {
             grid: {
                 top: '20',
                 right: '80',
-                left:'40',
+                left: '40',
                 bottom: '30'
             },
             tooltip: {
@@ -84,7 +143,7 @@ export default {
                 splitLine: {
                     show: false
                 }
-            },            
+            },
             // visualMap: {
             //     top: 10,
             //     right: 10,
@@ -129,23 +188,23 @@ export default {
                 markLine: {
                     symbol: "none",
                     data: [
-                        [{
-                            symbol: 'none',
-                            x: '92%',
-                            yAxis: ''
-                        }, {
-                            symbol: 'circle',
-                            label: {
-                                normal: {
-                                    position: 'start',
-                                    formatter: '{c}A 实时数据'
-                                }
-                            },
-                            name: '实时数据',
-                            value: '',
-                            xAxis: '',
-                            yAxis: ''
-                        }],
+                        // [{
+                        //     symbol: 'none',
+                        //     x: '92%',
+                        //     yAxis: ''
+                        // }, {
+                        //     symbol: 'circle',
+                        //     label: {
+                        //         normal: {
+                        //             position: 'start',
+                        //             formatter: '{c}A 实时数据'
+                        //         }
+                        //     },
+                        //     name: '实时数据',
+                        //     value: '',
+                        //     xAxis: '',
+                        //     yAxis: ''
+                        // }],
                         // {
                         //     yAxis: 550,
                         //     label: {

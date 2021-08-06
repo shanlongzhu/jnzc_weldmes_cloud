@@ -11,6 +11,7 @@
                     size="small"
                     v-model="dateTime"
                     type="datetimerange"
+                    :clearable="false"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
@@ -208,6 +209,8 @@ export default {
                 time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
+
+            
             this.loading = true;
             let { data, code } = await getTeamDataList(req);
             this.loading = false;
@@ -233,6 +236,7 @@ export default {
             let req = {
                 time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                Authorization: getToken()
             }
             location.href = exportTeamDataList(req)
         },

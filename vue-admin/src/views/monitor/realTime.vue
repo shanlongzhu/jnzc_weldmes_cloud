@@ -86,7 +86,10 @@
                             class="real-con-item flex-n"
                             style="width:300px"
                         >
-                            <span class="real-con-item-img" @click="drawer=false">
+                            <span
+                                class="real-con-item-img"
+                                @click="drawer=false"
+                            >
                                 <img :src="`/swipes/${imgType(selectItem.typeStr)}${statusText(selectItem.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
@@ -131,7 +134,7 @@
                                 <el-col :span="12">
                                     关机时间：
                                 </el-col>
-                                <el-col :span="12">                                    
+                                <el-col :span="12">
                                     当前通道：{{mqttLastData.channelNo==0||mqttLastData.channelNo==255?'自由调节状态':mqttLastData.channelNo}}
                                 </el-col>
                             </el-row>
@@ -224,11 +227,9 @@ export default {
 
 
             //曲线数据
-            lineDataTime: [],
-            lineDataValueE: [],
-            lineDataValueV: [],
+            lineData: [],
 
-            mqttLastData:{}
+            mqttLastData: {},
         }
     },
     created () {
@@ -344,14 +345,12 @@ export default {
 
         //点击焊机
         handlerWeld (v) {
-            this.lineDataTime = [];
-            this.lineDataValueE = [];
-            this.lineDataValueV = [];
+            this.lineData = [];
             this.drawer = true;
             this.selectItem = v;
             this.$nextTick(() => {
-                this.$refs.lineComEChild.init([this.lineDataValueE], this.lineDataTime);
-                this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
+                this.$refs.lineComEChild.init(this.lineData);
+                this.$refs.lineComVChild.init(this.lineData);
             })
 
         },
@@ -361,26 +360,16 @@ export default {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
                 if (filterArr.length > 0) {
                     this.mqttLastData = filterArr.slice(-1)[0];
-                    if (this.lineDataTime.length > 10) {
-                        this.lineDataTime.shift();
-                        this.lineDataTime.shift();
-                        this.lineDataTime.shift();
-
-                        this.lineDataValueE.shift();
-                        this.lineDataValueE.shift();
-                        this.lineDataValueE.shift();
-
-                        this.lineDataValueV.shift();
-                        this.lineDataValueV.shift();
-                        this.lineDataValueV.shift();
+                    if (this.lineData.length > 15) {
+                        this.lineData.shift();
+                        this.lineData.shift();
+                        this.lineData.shift();
                     }
                     filterArr.forEach(item => {
-                        this.lineDataTime.push(item.weldTime);
-                        this.lineDataValueE.push(item.electricity);
-                        this.lineDataValueV.push(item.voltage);
+                        this.lineData.push(item);
                     })
-                    this.$refs.lineComEChild.init(this.lineDataValueE, this.lineDataTime);
-                    this.$refs.lineComVChild.init(this.lineDataValueV, this.lineDataTime);
+                    this.$refs.lineComEChild.init(this.lineData);
+                    this.$refs.lineComVChild.init(this.lineData);
                 }
             }
         },

@@ -17,6 +17,33 @@ export default {
         return {
             myChart: {},
             option: {},
+            lineObj: {
+                yAxis: 550,
+                lineStyle: {
+                    normal: {
+                        color: "#fe460d",
+                        width: 1,
+                        type: "dashed"
+                    }
+                },
+            },
+            lineObjFirstData: [{
+                symbol: 'none',
+                x: '92%',
+                yAxis: ''
+            }, {
+                symbol: 'circle',
+                label: {
+                    normal: {
+                        position: 'start',
+                        formatter: '{c}A 实时数据'
+                    }
+                },
+                name: '实时数据',
+                value: '',
+                xAxis: '',
+                yAxis: ''
+            }],
         }
     },
     watch: {
@@ -24,14 +51,42 @@ export default {
     },
     computed: {},
     methods: {
-        init (v, t) {
+        init (arr) {
+            let v = arr.map(item => item.voltage);
+            let t = arr.map(item => item.weldTime);
+
             this.option.series[0].data = v;
             this.option.xAxis.data = t;
 
-            this.option.series[0].markLine.data[0][0].yAxis =  v.slice(-1)[0];
-            this.option.series[0].markLine.data[0][1].yAxis =  v.slice(-1)[0];
-            this.option.series[0].markLine.data[0][1].value =  v.slice(-1)[0]; 
-            this.option.series[0].markLine.data[0][1].xAxis =  t.slice(-1)[0];       
+            if (arr.length > 0) {
+                let lastData = arr.slice(-1)[0];
+                this.lineObjFirstData[0].yAxis = v.slice(-1)[0];
+                this.lineObjFirstData[1].yAxis = v.slice(-1)[0];
+                this.lineObjFirstData[1].value = v.slice(-1)[0];
+                this.lineObjFirstData[1].xAxis = t.slice(-1)[0];
+                if (lastData.weldVoltage && lastData.weldVolAdjust) {
+                    let upLine = { ...this.lineObj };
+                    let downLine = { ...this.lineObj };
+
+                    upLine.yAxis = lastData.weldVoltage + lastData.weldVolAdjust;//上限
+                    upLine.label = {
+                        show: 'true',
+                        position: 'end',
+                        formatter: `${lastData.weldVoltage + lastData.weldVolAdjust}(A)`
+                    };
+
+                    downLine.yAxis = lastData.weldVoltage - lastData.weldVolAdjust;//下限
+                    downLine.label = {
+                        show: 'true',
+                        position: 'end',
+                        formatter: `${lastData.weldVoltage - lastData.weldVolAdjust}(A)`
+                    };
+                    this.option.series[0].markLine.data = [this.lineObjFirstData, upLine, downLine];
+                } else {
+                    this.option.series[0].markLine.data = [this.lineObjFirstData];
+                }
+
+            }      
 
             this.myChart.setOption(this.option);
             this.myChart.hideLoading();
@@ -132,23 +187,23 @@ export default {
                 markLine: {
                     symbol: "none",
                     data: [
-                        [{
-                            symbol: 'none',
-                            x: '92%',
-                            yAxis: ''
-                        }, {
-                            symbol: 'circle',
-                            label: {
-                                normal: {
-                                    position: 'start',
-                                    formatter: '{c}V 实时数据'
-                                }
-                            },
-                            name: '实时数据',
-                            value: '',
-                            xAxis: '',
-                            yAxis: ''
-                        }],
+                        // [{
+                        //     symbol: 'none',
+                        //     x: '92%',
+                        //     yAxis: ''
+                        // }, {
+                        //     symbol: 'circle',
+                        //     label: {
+                        //         normal: {
+                        //             position: 'start',
+                        //             formatter: '{c}V 实时数据'
+                        //         }
+                        //     },
+                        //     name: '实时数据',
+                        //     value: '',
+                        //     xAxis: '',
+                        //     yAxis: ''
+                        // }],
                         // {
                         //     yAxis: 50,
                         //     label: {
