@@ -32,21 +32,21 @@ public class ArtifactController {
 
     //工件生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2, String taskNo) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2) {
         PageHelper.startPage(pn, 10);
-        List<WeldStatisticsData> list = artifactService.getList(time1, time2, taskNo);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
 
     //导出excel
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2, String taskNo) {
+    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2) {
         HttpResult result = new HttpResult();
-        List<WeldStatisticsData> list = artifactService.getList(time1, time2, taskNo);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("工件生产数据");
-        String[] titles = {"任务编号", "焊接时间", "工作时间", "焊接效率"};
+        String[] titles = {"任务编号", "参与人员数","使用设备数","焊接时间", "工作时间", "正常时间","焊接效率","超规范时间","焊材消耗","电能消耗"};
         Row row = sheet.createRow(0);
         for (int i = 0; i < titles.length; i++) {
             Cell cell = row.createCell(i);
@@ -57,12 +57,46 @@ public class ArtifactController {
             WeldStatisticsData weldStatisticsData = list.get(i);
             Cell getTaskNoCell = row.createCell(0);
             getTaskNoCell.setCellValue(weldStatisticsData.getTaskInfo().getTaskNo());
-            Cell TimeCell = row.createCell(1);
-            TimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime()));
-            Cell Time2Cell = row.createCell(2);
-            Time2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatisticsData.getTime2()));
-            Cell getUtilizationCell = row.createCell(3);
-            getUtilizationCell.setCellValue(new DecimalFormat("#.00").format(weldStatisticsData.getUtilization()));
+            Cell countCell = row.createCell(1);
+            countCell.setCellValue(weldStatisticsData.getCount());
+            Cell count2Cell = row.createCell(2);
+            count2Cell.setCellValue(weldStatisticsData.getCount2());
+            Cell realWeldTimeCell = row.createCell(3);
+            realWeldTimeCell.setCellValue(weldStatisticsData.getRealWeldTime());
+            Cell onOffTimeCell = row.createCell(4);
+            onOffTimeCell.setCellValue(weldStatisticsData.getOnOffTime());
+            Cell normalTimeCell = row.createCell(5);
+            normalTimeCell.setCellValue(weldStatisticsData.getNormalTime());
+            if(weldStatisticsData.getWeldingEfficiency()==null){
+                Cell weldingEfficiencyCell = row.createCell(6);
+                weldingEfficiencyCell.setCellValue(" ");
+            }else{
+                Cell weldingEfficiencyCell = row.createCell(6);
+                weldingEfficiencyCell.setCellValue(weldStatisticsData.getWeldingEfficiency());
+            }
+            Cell supergageTimeCell = row.createCell(7);
+            supergageTimeCell.setCellValue(weldStatisticsData.getSupergageTime());
+            if(weldStatisticsData.getStandardPercentage()==null){
+                Cell standardPercentageCell = row.createCell(8);
+                standardPercentageCell.setCellValue(" ");
+            }else {
+                Cell standardPercentageCell = row.createCell(8);
+                standardPercentageCell.setCellValue(weldStatisticsData.getStandardPercentage());
+            }
+            if(weldStatisticsData.getMaterialsConsumption()==null){
+                Cell materialsConsumptionCell = row.createCell(9);
+                materialsConsumptionCell.setCellValue(" ");
+            }else {
+                Cell materialsConsumptionCell = row.createCell(9);
+                materialsConsumptionCell.setCellValue(weldStatisticsData.getMaterialsConsumption());
+            }
+            if(weldStatisticsData.getPowerConsumption()==null){
+                Cell powerConsumptioCell = row.createCell(10);
+                powerConsumptioCell.setCellValue(" ");
+            }else {
+                Cell powerConsumptioCell = row.createCell(10);
+                powerConsumptioCell.setCellValue(weldStatisticsData.getPowerConsumption());
+            }
         }
         try {
             String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());

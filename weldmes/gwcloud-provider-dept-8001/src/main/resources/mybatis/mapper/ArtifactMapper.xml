@@ -33,10 +33,21 @@
         <result property="count3" column="count3"></result>
         <result property="count4" column="count4"></result>
         <result property="count5" column="count5"></result>
-        <result property="utilization" column="utilization"></result>
+        <result property="weldingEfficiency" column="weldingEfficiency"></result>
+        <result property="onOffTime" column="onOffTime"></result>
+        <result property="realWeldTime" column="realWeldTime"></result>
+        <result property="normalTime" column="normalTime"></result>
+        <result property="supergageTime" column="supergageTime"></result>
+        <result property="standardPercentage" column="standardPercentage"></result>
+        <result property="materialsConsumption" column="materialsConsumption"></result>
+        <result property="powerConsumption" column="powerConsumption"></result>
         <result property="time" column="time"></result>
         <result property="time2" column="time2"></result>
-        <result property="utilization2" column="utilization2"></result>
+        <association property="sysDept" javaType="com.gw.entities.SysDept">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+            <result property="parentId" column="parent_id"></result>
+        </association>
         <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
             <id property="id" column="id"></id>
             <result property="taskName" column="task_name"></result>
@@ -45,65 +56,40 @@
     </resultMap>
 
     <select id="getList" resultMap="weldStatisticsData">
-        select
-        a.*,
-        b.*,
-        c.*,
-        cast(
-        b.time / c.time2 * 100 as decimal ( 13, 2 )) utilization
-        from
-        ( select distinct task_no
-        from
-        weld_statistics_data w, task_info t
-        <where>
-            w.taskId = t.id
-            <if test="time1!=null and time1!=''">
-                and w.startTime &gt;= #{time1}
-            </if>
-            <if test="time2!=null and time2!=''">
-                and w.endTime &lt;= #{time2}
-            </if>
-            <if test="taskNo!=null and taskNo!=''">
-                and w.taskNo = #{taskNo}
-            </if>
-        </where>
-        ) a,
-        (
-        select
-        SEC_TO_TIME(
-        count( w.id )) time,
-        t.task_no
-        from
-        weld_statistics_data w,
-        task_info t
-        where
-        w.taskId = t.id
-        and ( w.weldStatus = 3 or w.weldStatus = 99 )
-        group by
-        t.task_no
-        ) b,
-        (
-        select
-        SEC_TO_TIME(
-        count( w.id )) time2,
-        t.task_no
-        from
-        weld_statistics_data w,
-        task_info t
-        where
-        w.taskId = t.id
-        and (
-        w.weldStatus = 0
-        or w.weldStatus = 3
-        or w.weldStatus = 5
-        or w.weldStatus = 7
-        or w.weldStatus = 99
-        )
-        group by
-        t.task_no
-        ) c
-        where
-        a.task_no = b.task_no
-        and a.task_no = c.task_no
+    SELECT
+	t.id,
+	t.task_name,
+	t.task_no,
+	d.NAME,
+	GROUP_CONCAT( DISTINCT s.welderNo ) welderNo,
+	COUNT( DISTINCT s.welderId ) count,
+	GROUP_CONCAT( DISTINCT s.machineNo ) machineNo,
+	COUNT( DISTINCT s.machineId ) count2,
+	SEC_TO_TIME( SUM( s.weldDuration ) ) onOffTime,
+	SEC_TO_TIME( SUM( s1.weldDuration ) ) realWeldTime,
+	SEC_TO_TIME( SUM( s2.weldDuration ) ) normalTime,
+	SEC_TO_TIME( SUM( s3.weldDuration ) ) supergageTime,
+	CONVERT ( SUM( s1.weldDuration ) / SUM( s.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) weldingEfficiency,
+	CONVERT ( SUM( s2.weldDuration ) / SUM( s1.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) standardPercentage,
+	CONVERT ( sum( s.wireFeedRate * s.weldDuration ) / 600, DECIMAL ( 10, 2 ) ) materialsConsumption,
+	CONVERT (
+	sum( ( s.electricity * s.voltage * s.weldDuration ) / 3600 / 1000 ) + ( s.weldDuration - s1.weldDuration ) / 36000,
+	DECIMAL ( 10, 2 )
+	) powerConsumption
+    FROM
+	task_info t
+	LEFT JOIN sys_dept d ON t.dept_id = d.id
+	INNER JOIN weld_statistics_data s ON d.id = s.welderDeptId
+	AND t.id = s.taskId
+	AND s.startTime &gt;= #{time1}
+    AND s.endTime &lt;= #{time2}
+	LEFT JOIN weld_statistics_data s1 ON s.id = s1.id
+	AND s1.weldStatus IN ( 3, 5, 7, 99 )
+	LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id
+	AND s2.weldStatus IN ( 3, 5, 7 )
+	LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id
+	AND s3.weldStatus = 99
+    GROUP BY
+	t.id
     </select>
 </mapper>

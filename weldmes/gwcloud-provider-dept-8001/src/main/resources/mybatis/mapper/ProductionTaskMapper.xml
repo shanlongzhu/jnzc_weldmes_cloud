@@ -80,10 +80,10 @@
 	t.task_no,
 	t.reality_starttime,
 	t.reality_endtime,
-	CONCAT( t.eleMin, '~', t.eleMax ),
-	AVG( s.electricity ) electricity,
-	CONCAT( t.volMin, '~', t.volMax ),
-	AVG( s.voltage ) voltage
+	CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
+	convert (AVG( s.electricity ),decimal (10,2)) electricity,
+	CONCAT( t.volMin, '~', t.volMax ) volScope,
+	convert (AVG( s.voltage ),decimal (10,2)) voltage
     FROM
 	task_claim c
 	INNER JOIN welder_info w ON c.welder_id = w.id
