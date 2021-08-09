@@ -27,7 +27,7 @@ public class TeamServiceImpl implements TeamService {
 
 
     @Override
-    public List<WeldStatisticsData> getList(String time1, String time2) {
+    public List<WeldStatisticsData> getList(String time1, String time2,String deptId) {
 
         List<WeldStatisticsData> weldStatisticsDataList = new ArrayList<>();
 
@@ -44,24 +44,8 @@ public class TeamServiceImpl implements TeamService {
             time2 = DateTimeUtil.getCurrentTime();
         }
 
-        //获取当前登录用户
-        Subject currentUser = SecurityUtils.getSubject();
-
-        //获取到当前登录用户信息
-        UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
-
-        //保证当前用户的部门id非空
-        if(ObjectUtils.isEmpty(subject) && ObjectUtils.isEmpty(subject.getDeptId())){
-
-            //部门id为空
-            return weldStatisticsDataList;
-        }
-
-        //获取到当前用户部门id
-        Long deptId = subject.getDeptId();
-
         //获取当前用户 所在部门的  下一级所有部门信息
-        List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(deptId);
+        List<SysDept> sysDeptInfos = sysDeptDao.selectDeptInfosByParentId(Long.parseLong(deptId));
 
         if (ObjectUtils.isEmpty(sysDeptInfos)){
 

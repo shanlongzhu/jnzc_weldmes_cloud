@@ -29,11 +29,11 @@ public class TeamController {
 
     //班组生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,String time1,String time2){
+    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,String time1,String time2,String deptId){
 
         PageHelper.startPage(pn,10);
 
-        List<WeldStatisticsData> list=teamService.getList(time1,time2);
+        List<WeldStatisticsData> list=teamService.getList(time1,time2,deptId);
 
         PageInfo page=new PageInfo(list,5);
 
@@ -42,9 +42,9 @@ public class TeamController {
 
     //导出excel
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response,String time1,String time2){
+    public HttpResult exportExcel(HttpServletResponse response,String time1,String time2,String deptId){
         HttpResult result=new HttpResult();
-        List<WeldStatisticsData> list = teamService.getList(time1,time2);
+        List<WeldStatisticsData> list = teamService.getList(time1,time2,deptId);
         Workbook workbook=new XSSFWorkbook();
         Sheet sheet=workbook.createSheet("班组生产数据");
         String[] titles={"班组","设备总数","开机设备数","实焊设备数","未绑定设备数","设备利用率","焊接任务数","焊接时间","工作时间","焊接效率"};

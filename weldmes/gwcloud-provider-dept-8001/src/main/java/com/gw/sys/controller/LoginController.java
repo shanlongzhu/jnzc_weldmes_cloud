@@ -132,6 +132,7 @@ public class LoginController {
         Map<String,Object> map = new HashMap<>();
 
         map.put("id",userLoginInfo.getId());
+        map.put("deptId",userLoginInfo.getDeptId());
         map.put("userName",userLoginInfo.getUserName());
         map.put("roles",userLoginInfo.getRoles());
         map.put("menus",menus);
