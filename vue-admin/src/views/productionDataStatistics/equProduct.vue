@@ -239,7 +239,7 @@ export default {
         cellClick ({ column, row }) {
             if (column.title == "使用人员数" && row.count != 0) {
                 this.title = "使用人员数";
-                this.layerCon = row.welderName;
+                this.layerCon = row.welderNo;
                 this.dialogVisible = true;
             } else if (column.title == "焊接任务数" && row.count2 != 0) {
                 this.title = "焊接任务数";
