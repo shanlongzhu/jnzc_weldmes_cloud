@@ -49,6 +49,7 @@
                 :loading="loading"
                 highlight-current-row
                 auto-resize
+                @cell-click="cellClick"
             >
                 <vxe-table-column
                     type="seq"
@@ -56,10 +57,11 @@
                     width="50"
                     fixed="left"
                 ></vxe-table-column>
+
                 <vxe-table-column
                     field="welderName"
                     title="焊工姓名"
-                    min-width="150"
+                    min-width="100"
                 >
                     <template #default={row}>
                         {{row.welderInfo.welderName}}
@@ -68,75 +70,77 @@
                 <vxe-table-column
                     field="welderNo"
                     title="焊工编号"
-                    min-width="150"
+                    min-width="100"
                     fixed="left"
                 >
                     <template #default={row}>
                         {{row.welderInfo.welderNo}}
                     </template>
-                </vxe-table-column>                
+                </vxe-table-column>
                 <vxe-table-column
                     field="name"
                     title="班组"
-                    min-width="150"
+                    min-width="100"
                 >
                     <template #default={row}>
                         {{row.sysDept.name}}
                     </template>
                 </vxe-table-column>
+
                 <vxe-table-column
                     field="count"
                     title="焊接任务数"
-                    min-width="150"
+                    min-width="100"
                 >
                 </vxe-table-column>
 
                 <vxe-table-column
                     field="count2"
                     title="使用设备数"
-                    width="100"
+                    min-width="100"
                 >
                 </vxe-table-column>
+
                 <vxe-table-column
                     field="onOffTime"
                     title="工作时间"
-                    width="100"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="realWeldTime"
                     title="焊接时间"
-                    width="100"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="normalTime"
                     title="正常时间"
-                    width="100"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="supergageTime"
-                    title="超规范时间"
-                    width="100"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="weldingEfficiency"
                     title="焊接效率"
-                    width="100"
+                    min-width="100"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="supergageTime"
+                    title="超规范时间"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="standardPercentage"
                     title="规范符合率"
-                    width="100"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="materialsConsumption"
                     title="焊材消耗"
-                    width="100"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="powerConsumption"
                     title="电能消耗"
-                    width="100"
-                ></vxe-table-column>              
+                    min-width="100"
+                ></vxe-table-column>
             </vxe-table>
         </div>
         <el-pagination
@@ -148,7 +152,14 @@
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"
-        />        
+        />
+        <el-dialog
+            :title="title"
+            :visible.sync="dialogVisible"
+            width="400"
+        >
+            {{layerCon}}
+        </el-dialog>
     </div>
 </template>
 
@@ -177,7 +188,11 @@ export default {
                 disabledDate (time) {
                     return time.getTime() > Date.now() + 3600 * 1000 * 24
                 }
-            },            
+            },
+            //未绑定设备明细
+            dialogVisible: false,
+            layerCon: '',
+            title: '焊接任务'
         }
     },
 
@@ -193,8 +208,8 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             this.loading = true;
             let { data, code } = await getPerProDataList(req);
@@ -219,10 +234,21 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             location.href = exportPerProDataList(req)
+        },
+        cellClick ({ column, row }) {
+            if (column.title == "焊接任务数" && row.count != 0) {
+                this.title = "焊接任务";
+                this.layerCon = row.taskNo;
+                this.dialogVisible = true;
+            } else if (column.title == "使用设备数" && row.count2 != 0) {
+                this.title = "使用设备";
+                this.layerCon = row.machineNo;
+                this.dialogVisible = true;
+            }
         }
     }
 }

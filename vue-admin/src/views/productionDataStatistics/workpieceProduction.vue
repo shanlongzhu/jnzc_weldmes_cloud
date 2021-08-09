@@ -4,15 +4,16 @@
         class="flex-c"
     >
         <div class="top-con flex-n">
-            <div class="con-w">
+            <!-- <div class="con-w">
                 <span>任务编号：</span>
                 <el-input v-model="taskNo" placeholder="" class="w150"></el-input>
-            </div>
+            </div> -->
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
                     style="width:350px"
                     size="small"
+                    :clearable="false"
                     v-model="dateTime"
                     type="datetimerange"
                     range-separator="至"
@@ -52,6 +53,7 @@
                 :loading="loading"
                 highlight-current-row
                 auto-resize
+                @cell-click="cellClick"
             >
                 <vxe-table-column
                     type="seq"
@@ -59,6 +61,7 @@
                     width="50"
                     fixed="left"
                 ></vxe-table-column>
+
                 <vxe-table-column
                     field="taskNo"
                     title="任务编号"
@@ -68,30 +71,32 @@
                         {{row.taskInfo.taskNo}}
                     </template>
                 </vxe-table-column>
+
                 <vxe-table-column
                     field="count"
                     title="参与人员数"
-                    min-width="150"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="count2"
                     title="使用设备数"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="realWeldTime"
-                    title="焊接时间"
-                    min-width="150"
-                ></vxe-table-column>
+                    min-width="100"
+                ></vxe-table-column>                
                 <vxe-table-column
                     field="onOffTime"
                     title="工作时间"
-                    min-width="150"
-                ></vxe-table-column>                
+                    min-width="100"
+                ></vxe-table-column>   
+                <vxe-table-column
+                    field="realWeldTime"
+                    title="焊接时间"
+                    min-width="100"
+                ></vxe-table-column>
+                             
                 <vxe-table-column
                     field="normalTime"
                     title="正常时间"
-                    min-width="150"
+                    min-width="100"
                 >
                 </vxe-table-column>
                 <vxe-table-column
@@ -103,17 +108,22 @@
                 <vxe-table-column
                     field="supergageTime"
                     title="超规范时间"
-                    min-width="150"
+                    min-width="100"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="standardPercentage"
+                    title="规范符合率"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="materialsConsumption"
                     title="焊材消耗"
-                    min-width="150"
+                    min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
                     field="powerConsumption"
                     title="电能消耗"
-                    min-width="150"
+                    min-width="100"
                 ></vxe-table-column>                
             </vxe-table>
         </div>
@@ -126,7 +136,14 @@
             layout="total, prev, pager, next"
             :total="total"
             @current-change="handleCurrentChange"
-        />        
+        />
+        <el-dialog
+            :title="title"
+            :visible.sync="dialogVisible"
+            width="400"
+        >
+            {{layerCon}}
+        </el-dialog>        
     </div>
 </template>
 
@@ -157,6 +174,11 @@ export default {
                     return time.getTime() > Date.now() + 3600 * 1000 * 24
                 }
             },
+
+            //未绑定设备明细
+            dialogVisible: false,
+            layerCon: '',
+            title: '焊接任务'
         }
     },
 
@@ -203,7 +225,19 @@ export default {
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             location.href = exportWorkProDataList(req)
-        },      
+        }, 
+        
+        cellClick ({ column, row }) {
+            if (column.title == "参与人员数" && row.count != 0) {
+                this.title = "参与人员数";
+                this.layerCon = row.welderNo;
+                this.dialogVisible = true;
+            } else if (column.title == "使用设备数" && row.count2 != 0) {
+                this.title = "使用设备数";
+                this.layerCon = row.machineNo;
+                this.dialogVisible = true;
+            }
+        }
 
     }
 }

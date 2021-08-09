@@ -49,6 +49,7 @@
                 :loading="loading"
                 highlight-current-row
                 auto-resize
+                @cell-click="cellClick"
             >
                 <vxe-table-column
                     type="seq"
@@ -59,7 +60,7 @@
                 <vxe-table-column
                     field="machineNo"
                     title="设备编号"
-                    min-width="150"
+                    min-width="100"
                 >
                     <template #default={row}>
                         {{row.machineWeldInfo.machineNo}}
@@ -68,23 +69,24 @@
                 <vxe-table-column
                     field="name"
                     title="班组"
-                    min-width="150"
+                    min-width="100"
                 >
                     <template #default={row}>
                         {{row.sysDept.name}}
                     </template>
                 </vxe-table-column>                
                 <vxe-table-column
-                    field="count2"
-                    title="焊接任务数"
-                    min-width="150"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="realWeldTime"
-                    title="焊接时间"
-                    min-width="150"
+                    field="count"
+                    title="使用人员数"
+                    min-width="100"
                 >
                 </vxe-table-column>
+                <vxe-table-column
+                    field="count2"
+                    title="焊接任务数"
+                    min-width="100"
+                ></vxe-table-column>
+                
 
                 <vxe-table-column
                     field="onOffTime"
@@ -93,21 +95,9 @@
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="count"
-                    title="使用人员数"
-                    width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="welderName"
-                    title="焊工姓名"
-                    width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="taskNo"
-                    title="任务编号"
-                    width="100"
+                    field="realWeldTime"
+                    title="焊接时间"
+                    min-width="150"
                 >
                 </vxe-table-column>
                 <vxe-table-column
@@ -117,17 +107,17 @@
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="supergageTime"
-                    title="超规范时间"
-                    width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
                     field="weldingEfficiency"
                     title="焊接效率"
                     width="100"
                 >
                 </vxe-table-column>
+                <vxe-table-column
+                    field="supergageTime"
+                    title="超规范时间"
+                    width="100"
+                >
+                </vxe-table-column>             
                 <vxe-table-column
                     field="standardPercentage"
                     title="规范符合率"
@@ -145,7 +135,7 @@
                     title="电能消耗"
                     width="100"
                 >
-                </vxe-table-column>               
+                </vxe-table-column>           
             </vxe-table>
         </div>
         <el-pagination
@@ -158,6 +148,13 @@
             :total="total"
             @current-change="handleCurrentChange"
         />
+        <el-dialog
+            :title="title"
+            :visible.sync="dialogVisible"
+            width="400"
+        >
+            {{layerCon}}
+        </el-dialog>        
         
     </div>
 </template>
@@ -188,6 +185,10 @@ export default {
                     return time.getTime() > Date.now() + 3600 * 1000 * 24
                 }
             },
+            //未绑定设备明细
+            dialogVisible: false,
+            layerCon: '',
+            title: '焊接任务'
             
         }
     },
@@ -234,6 +235,17 @@ export default {
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
             }
             location.href = exportEquProDataList(req)
+        },
+        cellClick ({ column, row }) {
+            if (column.title == "使用人员数" && row.count != 0) {
+                this.title = "使用人员数";
+                this.layerCon = row.welderName;
+                this.dialogVisible = true;
+            } else if (column.title == "焊接任务数" && row.count2 != 0) {
+                this.title = "焊接任务数";
+                this.layerCon = row.taskNo;
+                this.dialogVisible = true;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@
         class="flex-c"
     >
         <div class="top-con flex-n">
-            <div class="con-w">
+            <!-- <div class="con-w">
                 <span>班组：</span>
                 <el-cascader
                     v-model="teamId"
@@ -15,7 +15,7 @@
                     :props="defalutProps"
                     :show-all-levels="false"
                 />
-            </div>
+            </div> -->
             
             <div class="con-w">
                 <span>时间：</span>
