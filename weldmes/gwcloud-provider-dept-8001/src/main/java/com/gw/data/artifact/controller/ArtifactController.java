@@ -83,25 +83,18 @@ public class ArtifactController {
                 Cell standardPercentageCell = row.createCell(8);
                 standardPercentageCell.setCellValue(weldStatisticsData.getStandardPercentage());
             }
-            if(weldStatisticsData.getStandardPercentage()==null){
-                Cell standardPercentageCell = row.createCell(9);
-                standardPercentageCell.setCellValue(" ");
-            }else {
-                Cell standardPercentageCell = row.createCell(9);
-                standardPercentageCell.setCellValue(weldStatisticsData.getStandardPercentage());
-            }
             if(weldStatisticsData.getMaterialsConsumption()==null){
-                Cell materialsConsumptionCell = row.createCell(10);
+                Cell materialsConsumptionCell = row.createCell(9);
                 materialsConsumptionCell.setCellValue(" ");
             }else {
-                Cell materialsConsumptionCell = row.createCell(10);
+                Cell materialsConsumptionCell = row.createCell(9);
                 materialsConsumptionCell.setCellValue(weldStatisticsData.getMaterialsConsumption());
             }
             if(weldStatisticsData.getPowerConsumption()==null){
-                Cell powerConsumptioCell = row.createCell(11);
+                Cell powerConsumptioCell = row.createCell(10);
                 powerConsumptioCell.setCellValue(" ");
             }else {
-                Cell powerConsumptioCell = row.createCell(11);
+                Cell powerConsumptioCell = row.createCell(10);
                 powerConsumptioCell.setCellValue(weldStatisticsData.getPowerConsumption());
             }
         }
