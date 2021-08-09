@@ -105,13 +105,6 @@ public class SysUserServiceImpl implements SysUserService {
 
             if (ObjectUtils.isEmpty(nextSysDeptInfos)){
 
-                /*for (SysDept sysInfo : list) {
-
-                    Long id = sysInfo.getId();
-
-                    ids.add(id);
-                }*/
-
                 sysUsers = sysUserDao.selectUserInfosByDeptId(ids,userName,loginName,mobile,roleId);
 
                 return sysUsers;
