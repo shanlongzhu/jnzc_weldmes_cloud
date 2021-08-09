@@ -136,12 +136,7 @@
                     field="powerConsumption"
                     title="电能消耗"
                     width="100"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="onOffTime"
-                    title="工作时间"
-                    min-width="150"
-                ></vxe-table-column>                
+                ></vxe-table-column>              
             </vxe-table>
         </div>
         <el-pagination

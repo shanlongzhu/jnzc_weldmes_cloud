@@ -68,23 +68,51 @@
                         {{row.taskInfo.taskNo}}
                     </template>
                 </vxe-table-column>
-                
                 <vxe-table-column
-                    field="time"
+                    field="count"
+                    title="参与人员数"
+                    min-width="150"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="count2"
+                    title="使用设备数"
+                    min-width="150"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="realWeldTime"
                     title="焊接时间"
+                    min-width="150"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="onOffTime"
+                    title="工作时间"
+                    min-width="150"
+                ></vxe-table-column>                
+                <vxe-table-column
+                    field="normalTime"
+                    title="正常时间"
                     min-width="150"
                 >
                 </vxe-table-column>
-
                 <vxe-table-column
-                    field="time2"
-                    title="工作时间"
+                    field="weldingEfficiency"
+                    title="焊接效率"
                     width="100"
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="utilization"
-                    title="焊接效率(%)"
+                    field="supergageTime"
+                    title="超规范时间"
+                    min-width="150"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="materialsConsumption"
+                    title="焊材消耗"
+                    min-width="150"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="powerConsumption"
+                    title="电能消耗"
                     min-width="150"
                 ></vxe-table-column>                
             </vxe-table>
