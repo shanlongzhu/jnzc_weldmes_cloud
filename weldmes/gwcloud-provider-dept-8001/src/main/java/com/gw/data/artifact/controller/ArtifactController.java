@@ -46,7 +46,7 @@ public class ArtifactController {
         List<WeldStatisticsData> list = artifactService.getList(time1, time2);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("工件生产数据");
-        String[] titles = {"任务编号", "参与人员数","使用设备数","焊接时间", "工作时间", "正常时间","焊接效率","超规范时间","焊材消耗","电能消耗"};
+        String[] titles = {"任务编号", "参与人员数","使用设备数","工作时间", "焊接时间", "正常时间","焊接效率","超规范时间","规范符合率","焊材消耗","电能消耗"};
         Row row = sheet.createRow(0);
         for (int i = 0; i < titles.length; i++) {
             Cell cell = row.createCell(i);
@@ -61,10 +61,10 @@ public class ArtifactController {
             countCell.setCellValue(weldStatisticsData.getCount());
             Cell count2Cell = row.createCell(2);
             count2Cell.setCellValue(weldStatisticsData.getCount2());
-            Cell realWeldTimeCell = row.createCell(3);
-            realWeldTimeCell.setCellValue(weldStatisticsData.getRealWeldTime());
-            Cell onOffTimeCell = row.createCell(4);
+            Cell onOffTimeCell = row.createCell(3);
             onOffTimeCell.setCellValue(weldStatisticsData.getOnOffTime());
+            Cell realWeldTimeCell = row.createCell(4);
+            realWeldTimeCell.setCellValue(weldStatisticsData.getRealWeldTime());
             Cell normalTimeCell = row.createCell(5);
             normalTimeCell.setCellValue(weldStatisticsData.getNormalTime());
             if(weldStatisticsData.getWeldingEfficiency()==null){
@@ -83,18 +83,25 @@ public class ArtifactController {
                 Cell standardPercentageCell = row.createCell(8);
                 standardPercentageCell.setCellValue(weldStatisticsData.getStandardPercentage());
             }
+            if(weldStatisticsData.getStandardPercentage()==null){
+                Cell standardPercentageCell = row.createCell(9);
+                standardPercentageCell.setCellValue(" ");
+            }else {
+                Cell standardPercentageCell = row.createCell(9);
+                standardPercentageCell.setCellValue(weldStatisticsData.getStandardPercentage());
+            }
             if(weldStatisticsData.getMaterialsConsumption()==null){
-                Cell materialsConsumptionCell = row.createCell(9);
+                Cell materialsConsumptionCell = row.createCell(10);
                 materialsConsumptionCell.setCellValue(" ");
             }else {
-                Cell materialsConsumptionCell = row.createCell(9);
+                Cell materialsConsumptionCell = row.createCell(10);
                 materialsConsumptionCell.setCellValue(weldStatisticsData.getMaterialsConsumption());
             }
             if(weldStatisticsData.getPowerConsumption()==null){
-                Cell powerConsumptioCell = row.createCell(10);
+                Cell powerConsumptioCell = row.createCell(11);
                 powerConsumptioCell.setCellValue(" ");
             }else {
-                Cell powerConsumptioCell = row.createCell(10);
+                Cell powerConsumptioCell = row.createCell(11);
                 powerConsumptioCell.setCellValue(weldStatisticsData.getPowerConsumption());
             }
         }

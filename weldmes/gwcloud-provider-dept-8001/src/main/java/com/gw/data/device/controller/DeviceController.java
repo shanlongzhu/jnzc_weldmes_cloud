@@ -44,7 +44,7 @@ public class DeviceController {
         List<WeldStatisticsData> list = deviceService.getList(time1,time2);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("设备生产数据");
-        String[] titles = {"设备编号", "班组","使用人员数", "焊接任务数", "焊接时间", "工作时间","正常时间","超规范时间", "焊接效率","规范符合率","焊材消耗","电能消耗"};
+        String[] titles = {"设备编号", "班组","使用人员数", "焊接任务数", "工作时间", "焊接时间","正常时间","焊接效率", "超规范时间","规范符合率","焊材消耗","电能消耗"};
         Row row = sheet.createRow(0);
         for (int i = 0; i < titles.length; i++) {
             Cell cell = row.createCell(i);
@@ -63,19 +63,19 @@ public class DeviceController {
             cellCountCell.setCellValue(weldStatisticsData.getCount2());
             Cell TimeCell = row.createCell(4);
             TimeCell.setCellValue(weldStatisticsData.getRealWeldTime());
-            Cell Time2Cell = row.createCell(5);
-            Time2Cell.setCellValue(weldStatisticsData.getOnOffTime());
-            Cell normalTimeCell = row.createCell(6);
+            Cell normalTimeCell = row.createCell(5);
             normalTimeCell.setCellValue(weldStatisticsData.getNormalTime());
-            Cell supergageTimeCell = row.createCell(7);
-            supergageTimeCell.setCellValue(weldStatisticsData.getSupergageTime());
+            Cell Time2Cell = row.createCell(6);
+            Time2Cell.setCellValue(weldStatisticsData.getOnOffTime());
             if(weldStatisticsData.getWeldingEfficiency()==null){
-                Cell getUtilizationCell = row.createCell(8);
+                Cell getUtilizationCell = row.createCell(7);
                 getUtilizationCell.setCellValue(" ");
             }else{
-                Cell getUtilizationCell = row.createCell(8);
+                Cell getUtilizationCell = row.createCell(7);
                 getUtilizationCell.setCellValue(weldStatisticsData.getWeldingEfficiency());
             }
+            Cell supergageTimeCell = row.createCell(8);
+            supergageTimeCell.setCellValue(weldStatisticsData.getSupergageTime());
             if(weldStatisticsData.getStandardPercentage()==null){
                 Cell standardPercentageCell = row.createCell(9);
                 standardPercentageCell.setCellValue(" ");
