@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class TeamController {
 
     //导出excel
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response,String time1,String time2,String deptId){
+    public HttpResult exportExcel(HttpServletResponse response,String time1,String time2,String deptId) throws ParseException {
         HttpResult result=new HttpResult();
         List<WeldStatisticsData> list = teamService.getList(time1,time2,deptId);
         Workbook workbook=new XSSFWorkbook();
@@ -60,21 +61,52 @@ public class TeamController {
             WeldStatisticsData weldStatistics= list.get(i);
 
             Cell getNameCell=row.createCell(0);
-            getNameCell.setCellValue(weldStatistics.getDeptName());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getDeptName())){
+
+                getNameCell.setCellValue("");
+            }else{
+                getNameCell.setCellValue(weldStatistics.getDeptName());
+            }
 
             Cell WelderCountCell=row.createCell(1);
-            WelderCountCell.setCellValue(weldStatistics.getAllCount());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getAllCount())){
+
+                WelderCountCell.setCellValue("");
+            }else{
+                WelderCountCell.setCellValue(weldStatistics.getAllCount());
+            }
 
             Cell cellCount2Cell=row.createCell(2);
-            cellCount2Cell.setCellValue(weldStatistics.getOnOffCount());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getOnOffCount())){
+
+                cellCount2Cell.setCellValue("");
+            }else {
+                cellCount2Cell.setCellValue(weldStatistics.getOnOffCount());
+            }
 
             Cell count3Cell=row.createCell(3);
-            count3Cell.setCellValue(weldStatistics.getRealWeldOnline());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getRealWeldOnline())){
+
+                count3Cell.setCellValue("");
+            }else {
+                count3Cell.setCellValue(weldStatistics.getRealWeldOnline());
+            }
 
             Cell count4Cell=row.createCell(4);
-            count4Cell.setCellValue(weldStatistics.getNoTaskCount());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getNoTaskCount())){
+
+                count4Cell.setCellValue("");
+            }else {
+                count4Cell.setCellValue(weldStatistics.getNoTaskCount());
+            }
 
             Cell getUtilizationCell=row.createCell(5);
+
             if(ObjectUtils.isEmpty(weldStatistics.getEquipUtilization())){
                 weldStatistics.setEquipUtilization(0.00);
             }
@@ -87,23 +119,69 @@ public class TeamController {
             getUtilizationCell.setCellStyle(cellStyle);
 
             Cell getCount5Cell=row.createCell(6);
+
+            if(ObjectUtils.isEmpty(weldStatistics.getTaskCount())){
+
+                getCount5Cell.setCellValue("");
+            }
+
             getCount5Cell.setCellValue(weldStatistics.getTaskCount());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
             Cell getTimeCell=row.createCell(7);
-            getTimeCell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getRealWeldTime()));
+
+            if(ObjectUtils.isEmpty(weldStatistics.getRealWeldTime())){
+
+                getTimeCell.setCellValue("");
+            }else{
+                getTimeCell.setCellValue(sdf.parse(weldStatistics.getRealWeldTime()));
+            }
+
             Cell getTime2Cell=row.createCell(8);
-            getTime2Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getOnOffTime()));
+
+            if(ObjectUtils.isEmpty(weldStatistics.getOnOffTime())){
+
+                getTime2Cell.setCellValue("");
+            }else{
+                getTime2Cell.setCellValue(sdf.parse(weldStatistics.getOnOffTime()));
+            }
 
             Cell getTime3Cell=row.createCell(9);
-            getTime3Cell.setCellValue(new SimpleDateFormat("HH:mm:ss").format(weldStatistics.getSupergageTime()));
+
+            if(ObjectUtils.isEmpty(weldStatistics.getSupergageTime())){
+
+                getTime3Cell.setCellValue("");
+            }else{
+                getTime3Cell.setCellValue(sdf.parse(weldStatistics.getSupergageTime()));
+            }
 
             Cell getStandardPercentageCell=row.createCell(10);
-            getStandardPercentageCell.setCellValue(weldStatistics.getStandardPercentage());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getStandardPercentage())){
+
+                getStandardPercentageCell.setCellValue("");
+            }else{
+                getStandardPercentageCell.setCellValue(weldStatistics.getStandardPercentage());
+            }
 
             Cell getMaterialsConsumptionCell=row.createCell(11);
-            getMaterialsConsumptionCell.setCellValue(weldStatistics.getMaterialsConsumption());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getMaterialsConsumption())){
+
+                getMaterialsConsumptionCell.setCellValue("");
+            }else{
+                getMaterialsConsumptionCell.setCellValue(weldStatistics.getMaterialsConsumption());
+            }
 
             Cell getPowerConsumptionCell=row.createCell(12);
-            getPowerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
+
+            if(ObjectUtils.isEmpty(weldStatistics.getPowerConsumption())){
+
+                getPowerConsumptionCell.setCellValue("");
+            }else{
+                getPowerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
+            }
         }
         try { String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
             String fileName= URLEncoder.encode("班组生产数据"+time+".xlsx","UTF-8");
