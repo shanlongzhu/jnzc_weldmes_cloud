@@ -89,9 +89,9 @@
 	INNER JOIN welder_info w ON c.welder_id = w.id
 	INNER JOIN machine_weld_info m ON c.weld_id = m.id
 	INNER JOIN task_info t ON c.task_id = t.id
-	LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
 	AND t.reality_starttime &gt;= #{time1}
     AND t.reality_starttime &lt;= #{time2}
+	LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
 	AND c.weld_id = s.machineId
 	AND c.welder_id = s.welderId
 	AND s.weldStatus IN ( 3, 99 )
