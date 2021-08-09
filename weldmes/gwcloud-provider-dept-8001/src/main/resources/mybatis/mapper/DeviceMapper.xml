@@ -67,7 +67,7 @@
 	m.dept_id,
 	d.NAME,
 	COUNT( DISTINCT s.welderId ) count,
-	GROUP_CONCAT( DISTINCT s.welderName ) welderName,
+	GROUP_CONCAT( DISTINCT s.welderNo ) welderNo,
 	COUNT( DISTINCT s.taskId ) count2,
 	GROUP_CONCAT( DISTINCT s.taskNo ) taskNo,
 	SEC_TO_TIME( SUM( s.weldDuration ) ) onOffTime,
