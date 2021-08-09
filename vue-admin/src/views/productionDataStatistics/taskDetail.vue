@@ -29,6 +29,7 @@
                 <el-date-picker
                     style="width:350px"
                     size="small"
+                    :clearable="false"
                     v-model="dateTime"
                     type="datetimerange"
                     range-separator="至"
@@ -74,22 +75,16 @@
                     title="序号"
                     width="50"
                     fixed="left"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="name"
-                    title="焊工班组"
-                    min-width="150"
-                    fixed="left"
-                >
-                    <template #default={row}>
-                        {{row.sysDept.name}}
-                    </template>
-                </vxe-table-column>                
+                ></vxe-table-column>                
                 <vxe-table-column
                     field="welderNo"
                     title="焊工编号"
                     min-width="150"
-                ></vxe-table-column>
+                >
+                    <template #default={row}>
+                        {{row.welderInfo.welderNo}}
+                    </template>
+                </vxe-table-column>
                 <vxe-table-column
                     field="welderName"
                     title="焊工姓名"
@@ -105,12 +100,19 @@
                     title="焊机编号"
                     width="100"
                 >
+                <template #default={row}>
+                        {{row.machineWeldInfo.machineNo}}
+                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="taskNo"
                     title="任务编号"
                     min-width="150"
-                ></vxe-table-column>    
+                >
+                    <template #default={row}>
+                        {{row.taskInfo.taskNo}}
+                    </template>
+                </vxe-table-column>    
                 <vxe-table-column
                     field="realityStarttime"
                     title="开始时间"
@@ -130,35 +132,25 @@
                     </template>
                 </vxe-table-column>  
                 <vxe-table-column
-                    field="utilization"
-                    title="适用通道"
-                    min-width="150"
-                ></vxe-table-column> 
-                <vxe-table-column
-                    field="time"
-                    title="良好段"
-                    min-width="150"
-                ></vxe-table-column>    
-                <vxe-table-column
-                    field="time2"
-                    title="报警段"
+                    field="eleScope"
+                    title="电流范围"
                     min-width="150"
                 ></vxe-table-column> 
                 <vxe-table-column
                     field="electricity"
-                    title="平均焊接电流"
+                    title="平均电流"
                     min-width="150"
-                ></vxe-table-column>   
+                ></vxe-table-column>    
                 <vxe-table-column
-                    field="voltage"
-                    title="平均焊接电压"
+                    field="volScope"
+                    title="电压范围"
                     min-width="150"
                 ></vxe-table-column> 
                 <vxe-table-column
-                    field="utilization"
-                    title="规范符合率(%)"
+                    field="voltage"
+                    title="平均电压"
                     min-width="150"
-                ></vxe-table-column>                        
+                ></vxe-table-column>                                        
             </vxe-table>
         </div>
         <el-pagination

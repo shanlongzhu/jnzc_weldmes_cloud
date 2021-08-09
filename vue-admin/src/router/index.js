@@ -279,8 +279,8 @@ export const asyncRoutes = [
         name: 'personnelProduction',
         meta: {
           title: '人员生产数据统计',
-          mark:'501',
-          noCache: true }
+          mark:'501'
+        }
       },
       {
         path: 'workpiece-production',
@@ -288,8 +288,8 @@ export const asyncRoutes = [
         name: 'workpieceProduction',
         meta: {
           title: '工件生产数据统计',
-          mark:'502',
-          noCache: true }
+          mark:'502'
+         }
       },
       {
         path: 'equ-product',
@@ -297,8 +297,8 @@ export const asyncRoutes = [
         name: 'equProduct',
         meta: {
           title: '设备生产数据统计',
-          mark:'503',
-          noCache: true }
+          mark:'503'
+         }
       },
       {
         path: 'task-detail',
@@ -306,18 +306,18 @@ export const asyncRoutes = [
         name: 'taskDetail',
         meta: {
           title: '生产任务详情',
-          mark:'504',
-          noCache: true }
+          mark:'504'
+        }
       }, 
-      {
-        path: 'welding-task',
-        component: () => import('@/views/productionDataStatistics/weldingMachine'),
-        name: 'weldingMachine',
-        meta: {
-          title: '焊机任务列表',
-          mark:'505',
-          noCache: true }
-      },      
+      // {
+      //   path: 'welding-task',
+      //   component: () => import('@/views/productionDataStatistics/weldingMachine'),
+      //   name: 'weldingMachine',
+      //   meta: {
+      //     title: '焊机任务列表',
+      //     mark:'505'
+      //   }
+      // },      
     ]
   },
   // {

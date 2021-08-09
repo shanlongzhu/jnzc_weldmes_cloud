@@ -163,6 +163,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { getTeamDataList, exportTeamDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
@@ -193,8 +194,14 @@ export default {
             noTaskModelList: []
         }
     },
+    computed: {
+        ...mapGetters([
+            'user'
+        ])
+    },
 
     created () {
+        console.log(this.user)
         this.getList();
     },
     methods: {
@@ -206,11 +213,12 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId:this.user.user.deptId
             }
 
-            
+
             this.loading = true;
             let { data, code } = await getTeamDataList(req);
             this.loading = false;
@@ -234,9 +242,9 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
-                Authorization: getToken()
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId:this.user.user.deptId
             }
             location.href = exportTeamDataList(req)
         },
@@ -245,8 +253,8 @@ export default {
             this.dialogVisible = true;
             this.noTaskModelList = row.noTaskMachineDetail.split(',') || []
         },
-        cellClick({column,row}){
-            if(column.title=="未绑定设备数"&&row.noTaskCount!=0){
+        cellClick ({ column, row }) {
+            if (column.title == "未绑定设备数" && row.noTaskCount != 0) {
                 this.viewDetail(row);
             }
         }
