@@ -2,6 +2,7 @@ package com.gw.sys.service.impl;
 
 import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtil;
+import com.gw.entities.SysDept;
 import com.gw.entities.SysMenuInfo;
 import com.gw.entities.UserLoginInfo;
 import com.gw.sys.dao.SysMenuDao;
@@ -58,34 +59,8 @@ public class SysMenuServiceImpl implements SysMenuService {
         //获取菜单信息列表中的每一个顶级菜单
         for (SysMenuInfo menuAndButtonInfo : list) {
 
-            //通过 顶级菜单的id 查询顶级菜单下的子菜单信息
-            List<SysMenuInfo> childrenMenuInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(menuAndButtonInfo.getId());
-
-            //获取每一个顶级菜单中的每一个子菜单
-            for (SysMenuInfo childrenMenuInfo : childrenMenuInfos) {
-
-                //通过 子菜单的id 查询按钮信息 或 三级菜单信息
-                List<SysMenuInfo> buttonOrThreeLevelMenuInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(childrenMenuInfo.getId());
-
-                for (SysMenuInfo buttonOrThreeLevelMenuInfo : buttonOrThreeLevelMenuInfos) {
-
-                    //判断是否存在三级菜单
-                    if(buttonOrThreeLevelMenuInfo.getType().equals(ConstantInfo.BUTTON_FLAG)){
-
-                        //不存在三级菜单时  直接将按钮信息放入子菜单中
-                        childrenMenuInfo.setMenus(buttonOrThreeLevelMenuInfos);
-                        break;
-                    }
-
-                    List<SysMenuInfo> threeLevelMenuButtonInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(buttonOrThreeLevelMenuInfo.getId());
-
-                    //存在三级菜单时   将按钮信息放入三级菜单中
-                    buttonOrThreeLevelMenuInfo.setMenus(threeLevelMenuButtonInfos);
-
-                }
-                //将三级菜单信息放入子菜单中
-                childrenMenuInfo.setMenus(buttonOrThreeLevelMenuInfos);
-            }
+            //递归查询顶级菜单下的子菜单信息
+            List<SysMenuInfo> childrenMenuInfos = getMenuInfoList(menuAndButtonInfo);
 
             //将子菜单信息放入顶级菜单中
             menuAndButtonInfo.setMenus(childrenMenuInfos);
@@ -230,5 +205,28 @@ public class SysMenuServiceImpl implements SysMenuService {
         menus = sysMenuDao.queryMenuInfoByMenuId(menuIds);
 
         return menus;
+    }
+
+    /**
+     * @Date 2021/7/31 13:52
+     * @Description  递归查询菜单树状信息
+     * @Params menuAndButtonInfo 顶级菜单项信息
+     */
+    private List<SysMenuInfo> getMenuInfoList(SysMenuInfo menuAndButtonInfo) {
+
+        //通过 顶级菜单的id 查询顶级菜单下的子菜单信息
+        List<SysMenuInfo> childrenMenuInfos = sysMenuDao.selectChildrenMenuInfoListByMenuId(menuAndButtonInfo.getId());
+
+        if (!ObjectUtils.isEmpty(childrenMenuInfos)){
+
+            for (SysMenuInfo sysMenuInfoInfoTemp : childrenMenuInfos) {
+
+                List<SysMenuInfo> nextSysDeptInfos =getMenuInfoList(sysMenuInfoInfoTemp);
+
+                sysMenuInfoInfoTemp.setMenus(nextSysDeptInfos);
+
+            }
+        }
+        return childrenMenuInfos;
     }
 }
