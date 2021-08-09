@@ -3,7 +3,6 @@ package com.gw.process.craft.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
-import com.gw.entities.MachineWeldInfo;
 import com.gw.entities.SysDictionary;
 import com.gw.entities.WpsLibrary;
 import com.gw.process.craft.service.LibraryService;

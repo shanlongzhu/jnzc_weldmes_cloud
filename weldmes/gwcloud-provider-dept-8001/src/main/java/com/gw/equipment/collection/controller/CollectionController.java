@@ -6,7 +6,6 @@ import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 
 import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -114,22 +113,67 @@ public class CollectionController {
             cell.setCellValue(titles[i]);
         }
         for (int i = 0; i < list.size(); i++) {
+
             row = sheet.createRow(i + 1);
+
             MachineGatherInfo machineGatherInfo = list.get(i);
+
             Cell getGatherNoCell = row.createCell(0);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getGatherNo())){
+
+                machineGatherInfo.setGatherNo("");
+            }
             getGatherNoCell.setCellValue(machineGatherInfo.getGatherNo());
+
             Cell nameCell = row.createCell(1);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDept().getName())){
+
+                machineGatherInfo.getSysDept().setName("");
+            }
             nameCell.setCellValue(machineGatherInfo.getSysDept().getName());
+
             Cell valueNameCell = row.createCell(2);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDictionary().getValueName())){
+
+                machineGatherInfo.getSysDictionary().setValueName("");
+            }
             valueNameCell.setCellValue(machineGatherInfo.getSysDictionary().getValueName());
+
             Cell valuesNameCell = row.createCell(3);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDictionary().getValueNames())){
+
+                machineGatherInfo.getSysDictionary().setValueNames("");
+            }
             valuesNameCell.setCellValue(machineGatherInfo.getSysDictionary().getValueNames());
+
             Cell ipPathCell = row.createCell(4);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getIpPath())){
+
+                machineGatherInfo.setIpPath("");
+            }
             ipPathCell.setCellValue(machineGatherInfo.getIpPath());
+
             Cell macPathCell = row.createCell(5);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getMacPath())){
+
+                machineGatherInfo.setMacPath("");
+            }
             macPathCell.setCellValue(machineGatherInfo.getMacPath());
+
             Cell createTimeCell = row.createCell(6);
+
+            if (ObjectUtils.isEmpty(machineGatherInfo.getCreateTime())){
+
+                machineGatherInfo.setCreateTime("");
+            }
             createTimeCell.setCellValue(machineGatherInfo.getCreateTime());
+
         }
         try {
             String fileName = URLEncoder.encode("采集模块管理.xlsx", "UTF-8");

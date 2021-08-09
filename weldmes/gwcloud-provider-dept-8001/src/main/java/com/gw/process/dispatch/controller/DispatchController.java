@@ -230,20 +230,6 @@ public class DispatchController {
     }
 
     /**
-     * @Date 2021/6/1 9:27
-     * @Description  工人刷卡领取任务后,需要记录工人领取时间及一些其他信息到 task_claim 表
-     *               然后task_info表中 该 任务信息状态 变更为 进行中
-     * @Params  taskClaim task_claim实体类
-     */
-    /*@RequestMapping(value = "task/getTaskInfo")
-    public HttpResult updateTaskStatusAndInsertInfoController(@RequestBody TaskClaim taskClaim){
-
-        HttpResult httpResult = dispatchService.updateTaskStatusAndInsertInfo(taskClaim);
-
-        return httpResult.;
-    }*/
-
-    /**
      * @Date 2021/5/28 10:44
      * @Description 任务状态变更接口 即
      * @Params id 任务主键   statusStr 任务当前状态

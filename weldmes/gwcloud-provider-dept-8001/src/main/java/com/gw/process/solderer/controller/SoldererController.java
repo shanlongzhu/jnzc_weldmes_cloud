@@ -123,21 +123,65 @@ public class SoldererController {
             cell.setCellValue(titles[i]);
         }
         for (int i = 0; i <list.size() ; i++) {
+
             row=sheet.createRow(i+1);
+
             WelderInfo welderInfo=list.get(i);
+
             Cell getWelderNameCell=row.createCell(0);
+
+            if (ObjectUtils.isEmpty(welderInfo.getWelderName())){
+
+                welderInfo.setWelderName("");
+            }
             getWelderNameCell.setCellValue(welderInfo.getWelderName());
+
             Cell WelderNoCell=row.createCell(1);
+
+            if (ObjectUtils.isEmpty(welderInfo.getWelderNo())){
+
+                welderInfo.setWelderNo("");
+            }
             WelderNoCell.setCellValue(welderInfo.getWelderNo());
+
             Cell cellphoneCell=row.createCell(2);
+
+            if (ObjectUtils.isEmpty(welderInfo.getCellphone())){
+
+                welderInfo.setCellphone("");
+            }
             cellphoneCell.setCellValue(welderInfo.getCellphone());
+
             Cell rankCell=row.createCell(3);
+
+            if (ObjectUtils.isEmpty(welderInfo.getSysDictionary().getValueName())){
+
+                welderInfo.getSysDictionary().setValueName("");
+            }
             rankCell.setCellValue(welderInfo.getSysDictionary().getValueName());
+
             Cell certificationCell=row.createCell(4);
+
+            if (ObjectUtils.isEmpty(welderInfo.getSysDictionary().getValueNames())){
+
+                welderInfo.getSysDictionary().setValueNames("");
+            }
             certificationCell.setCellValue(welderInfo.getSysDictionary().getValueNames());
+
             Cell getDeptNameCell=row.createCell(5);
+
+            if (ObjectUtils.isEmpty(welderInfo.getSysDept().getName())){
+
+                welderInfo.getSysDept().setName("");
+            }
             getDeptNameCell.setCellValue(welderInfo.getSysDept().getName());
+
             Cell getRemarksCell=row.createCell(6);
+
+            if (ObjectUtils.isEmpty(welderInfo.getRemarks())){
+
+                welderInfo.setRemarks("");
+            }
             getRemarksCell.setCellValue(welderInfo.getRemarks());
         }
         try {

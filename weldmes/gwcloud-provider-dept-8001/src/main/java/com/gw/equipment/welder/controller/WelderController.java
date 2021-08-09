@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
@@ -129,29 +130,82 @@ public class WelderController {
             cell.setCellValue(titles[i]);
         }
         for (int i = 0; i <list.size() ; i++) {
+
             row=sheet.createRow(i+1);
+
             MachineWeldInfo machineWeldInfo=list.get(i);
+
             Cell getMachineNoCell=row.createCell(0);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getMachineNo())){
+
+                machineWeldInfo.setMachineNo("");
+            }
             getMachineNoCell.setCellValue(machineWeldInfo.getMachineNo());
+
             Cell valueNameCell=row.createCell(1);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueName())){
+
+                machineWeldInfo.getSysDictionary().setValueName("");
+            }
             valueNameCell.setCellValue(machineWeldInfo.getSysDictionary().getValueName());
+
             Cell createTimeCell=row.createCell(2);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getCreateTime())){
+
+                machineWeldInfo.setCreateTime("");
+            }
             createTimeCell.setCellValue(machineWeldInfo.getCreateTime());
+
             Cell nameCell=row.createCell(3);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDept().getName())){
+
+                machineWeldInfo.getSysDept().setName("");
+            }
             nameCell.setCellValue(machineWeldInfo.getSysDept().getName());
+
             Cell getValueNamesCell=row.createCell(4);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNames())){
+
+                machineWeldInfo.getSysDictionary().setValueNames("");
+            }
             getValueNamesCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNames());
+
             Cell getValueNamessCell=row.createCell(5);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNamess())){
+
+                machineWeldInfo.getSysDictionary().setValueNamess("");
+            }
             getValueNamessCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamess());
+
             Cell getIsNetworkCell=row.createCell(6);
             getIsNetworkCell.setCellValue(machineWeldInfo.getIsNetwork()==0?"是":"否");
+
             Cell getGatherNoCell=row.createCell(7);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getMachineGatherInfo().getGatherNo())){
+
+                machineWeldInfo.getMachineGatherInfo().setGatherNo("");
+            }
             getGatherNoCell.setCellValue(machineWeldInfo.getMachineGatherInfo().getGatherNo());
+
             Cell positionCell=row.createCell(8);
             positionCell.setCellValue("");
+
             Cell ipPathCell=row.createCell(9);
             ipPathCell.setCellValue("");
+
             Cell getValueNamesssCell=row.createCell(10);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNamesss())){
+
+                machineWeldInfo.getSysDictionary().setValueNamesss("");
+            }
             getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamesss());
 
         }

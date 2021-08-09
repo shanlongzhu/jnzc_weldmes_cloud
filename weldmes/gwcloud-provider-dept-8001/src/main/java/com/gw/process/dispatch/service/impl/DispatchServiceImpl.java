@@ -494,41 +494,83 @@ public class DispatchServiceImpl implements DispatchService{
 
         //将 任务编号 字段值插入单元格
         Cell getTaskNoCell = row.createCell(0);
+
+        if (ObjectUtils.isEmpty(taskInfo.getTaskNo())){
+
+            taskInfo.setTaskNo("");
+        }
         getTaskNoCell.setCellValue(taskInfo.getTaskNo());
 
         //将 任务等级 字段值插入单元格
         Cell getTaskGradeCell = row.createCell(1);
+
+        if (ObjectUtils.isEmpty(taskInfo.getGradeIdToStr())){
+
+            taskInfo.setGradeIdToStr("");
+        }
         getTaskGradeCell.setCellValue(taskInfo.getGradeIdToStr());
 
         //将 所属班组 字段值插入单元格
         Cell getTaskGradeNameCell = row.createCell(2);
-        getTaskGradeNameCell.setCellValue(taskInfo.getDeptName());
 
+        if (ObjectUtils.isEmpty(taskInfo.getDeptName())){
+
+            taskInfo.setDeptName("");
+        }
+        getTaskGradeNameCell.setCellValue(taskInfo.getDeptName());
 
         //将 计划开始时间 字段值插入单元格
         Cell getPlanStartTimeCell = row.createCell(3);
 
+        if (ObjectUtils.isEmpty(taskInfo.getPlanStarttime())){
+
+            taskInfo.setPlanStarttime("");
+        }
         getPlanStartTimeCell.setCellValue(taskInfo.getPlanStarttime());
 
         //将 计划结束时间 字段值插入单元格
         Cell getPlanEndTimeCell = row.createCell(4);
 
+        if (ObjectUtils.isEmpty(taskInfo.getPlanEndtime())){
+
+            taskInfo.setPlanEndtime("");
+        }
         getPlanEndTimeCell.setCellValue(taskInfo.getPlanEndtime());
 
         //将 实际开始时间 字段值插入单元格
         Cell getRealityStartTimeCell = row.createCell(5);
+
+        if (ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
+
+            taskInfo.setRealityStarttime("");
+        }
         getRealityStartTimeCell.setCellValue(taskInfo.getRealityStarttime());
 
         //将 实际结束时间 字段值插入单元格
         Cell getRealityEndTimeCell = row.createCell(6);
+
+        if (ObjectUtils.isEmpty(taskInfo.getRealityEndtime())){
+
+            taskInfo.setRealityEndtime("");
+        }
         getRealityEndTimeCell.setCellValue(taskInfo.getRealityEndtime());
 
         //将 任务评价 字段值插入单元格
         Cell evaluateContent = row.createCell(7);
+
+        if (ObjectUtils.isEmpty(taskInfo.getEvaluateContent())){
+
+            taskInfo.setEvaluateContent("");
+        }
         evaluateContent.setCellValue(taskInfo.getEvaluateContent());
 
         //将 评价等级 字段值插入单元格
         Cell evaluateStars = row.createCell(8);
+
+        if (ObjectUtils.isEmpty(taskInfo.getEvaluateStarsIdToStr())){
+
+            taskInfo.setEvaluateStarsIdToStr("");
+        }
         evaluateStars.setCellValue(taskInfo.getEvaluateStarsIdToStr());
     }
 
