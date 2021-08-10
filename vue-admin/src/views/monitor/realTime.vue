@@ -348,6 +348,9 @@ export default {
             this.lineData = [];
             this.drawer = true;
             this.selectItem = v;
+            this.mqttLastData = {};
+            // this.$refs.lineComEChild.echartsClear();
+            // this.$refs.lineComVChild.echartsClear();            
             this.$nextTick(() => {
                 this.$refs.lineComEChild.init(this.lineData);
                 this.$refs.lineComVChild.init(this.lineData);
@@ -489,6 +492,9 @@ export default {
 
 .real-con-layer * {
     color: #333;
+}
+.real-con-layer .el-dialog__headerbtn{
+    font-size: 24px;
 }
 
 .real-con-layer .border-tip {

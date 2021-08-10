@@ -99,6 +99,7 @@ export default {
         },
         init () {
             this.getDicFun();
+            this.bindfirm = "";
             this.machvisable = true;
         },
         //选择的型号

@@ -223,6 +223,7 @@
                 >
                     <el-input
                         v-model="ruleForm.password"
+                        auto-complete="new-password"
                         style="width:250px"
                         type="password"
                     ></el-input>

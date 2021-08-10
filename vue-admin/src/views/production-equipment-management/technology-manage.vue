@@ -224,7 +224,7 @@ import sxco2 from './components/SxCO2.vue';
 import sxTIG from './components/sxTIG.vue';
 
 export default {
-    components: { expandTable, AddTech, IssueOrders, sxco2, sxTIG},
+    components: { expandTable, AddTech, IssueOrders, sxco2, sxTIG },
     data () {
         return {
             visable1: false,
@@ -394,12 +394,12 @@ export default {
 
         //新增工艺
         addLibraryFun (row) {
-            console.log(row.sysDictionary.valueName)
+            console.log(row)
             switch (row.sysDictionary.valueName) {
                 case 'SxCO2':
                     this.$refs.SxCO2.addLibraryFun(row.id);
                     break;
-                    case 'SxTIG':
+                case 'SxTIG':
                     this.$refs.SxTIG.addLibraryFun(row.id);
                     break;
                 default:
