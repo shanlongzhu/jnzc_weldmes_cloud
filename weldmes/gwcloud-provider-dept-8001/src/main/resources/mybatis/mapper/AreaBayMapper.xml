@@ -15,4 +15,9 @@
     <insert id="insertAreaBayInfo" parameterType="com.gw.entities.AreaBayInfo">
         insert into area_bay(area_id,bay_id) values(#{areaBayInfo.areaId},#{areaBayInfo.bayId})
     </insert>
+
+    <!--根据区域id 删除区域跨间信息-->
+    <delete id="deleteAreaBayInfoById" parameterType="Long">
+        delete from area_bay where area_id = #{areaId}
+    </delete>
 </mapper>

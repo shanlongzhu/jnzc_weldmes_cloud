@@ -27,6 +27,10 @@ public class AreaBayServiceImpl implements AreaBayService {
     @Override
     public void addAreaBayInfo(List<AreaBayInfo> areaBayInfos) {
 
+        //删除原有的区域跨间信息
+        areaBayDao.deleteAreaBayInfoById(areaBayInfos.get(0).getAreaId());
+
+        //添加区域跨间信息
         for (AreaBayInfo areaBayInfo : areaBayInfos) {
 
             areaBayDao.insertAreaBayInfo(areaBayInfo);

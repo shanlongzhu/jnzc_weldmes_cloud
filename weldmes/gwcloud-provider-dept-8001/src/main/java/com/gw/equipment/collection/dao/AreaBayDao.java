@@ -18,4 +18,11 @@ public interface AreaBayDao {
      * @Params areaBayInfo 区域跨间实体类
      */
     public void insertAreaBayInfo(@Param("areaBayInfo") AreaBayInfo areaBayInfo);
+
+    /**
+     * @Date 2021/8/10 14:50
+     * @Description 根据区域id 删除区域跨间信息
+     * @Params
+     */
+    public void deleteAreaBayInfoById(@Param("areaId") Long areaId);
 }
