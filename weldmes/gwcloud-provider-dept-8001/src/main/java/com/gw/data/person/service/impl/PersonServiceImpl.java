@@ -17,7 +17,8 @@ public class PersonServiceImpl implements PersonService {
     PersonDao personDao;
 
     @Override
-    public List<WeldStatisticsData> getList(String time1, String time2) {
-        return personDao.getList(time1,time2);
+    public List<WeldStatisticsData> getList(String time1, String time2,String welderNo,String welderName,Long deptId) {
+        String name=personDao.getDeptId(deptId);
+        return personDao.getList(time1,time2,welderNo,welderName,name);
     }
 }
