@@ -94,7 +94,18 @@ FROM
 	AND s2.weldStatus IN ( 3, 5, 7 )
 	LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id
 	AND s3.weldStatus = 99
+        <where>
+        <if test="machineNo!=null and machineNo!=''">
+            m.machine_no = #{machineNo}
+        </if>
+            <if test="name!=null and name!=''">
+                d.NAME = #{name}
+            </if>
+        </where>
 GROUP BY
 	m.machine_no
+    </select>
+    <select id="getName" resultType="java.lang.String">
+        select name from sys_dept where id=#{deptId}
     </select>
 </mapper>
