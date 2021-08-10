@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface DeviceService {
 
-    List<WeldStatisticsData> getList(String time1, String time2);
+    List<WeldStatisticsData> getList(String time1, String time2,String machineNo,Long deptId);
 }
