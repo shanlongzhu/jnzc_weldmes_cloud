@@ -23,4 +23,31 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
             throw new RuntimeException();
         }
     }
+
+    @Override
+    public void updateWeldOnOffTime(WeldOnOffTime weldOnOffTime) {
+        try {
+            //判断是否是OTC设备
+            if (weldOnOffTime.getMachineType() == 0) {
+                //根据采集编号查询开机时间最近的一条记录
+                WeldOnOffTime onOffTime = weldOnOffTimeMapper.selectWeldByGatherNo(weldOnOffTime);
+                if (null != onOffTime) {
+                    onOffTime.setEndTime(weldOnOffTime.getEndTime());
+                    weldOnOffTimeMapper.updateById(onOffTime);
+                }
+            }
+            //判断是否是松下设备
+            if (weldOnOffTime.getMachineType() == 1) {
+                //根据采集编号查询开机时间最近的一条记录
+                WeldOnOffTime onOffTime = weldOnOffTimeMapper.selectWeldByWeldIp(weldOnOffTime);
+                if (null != onOffTime) {
+                    onOffTime.setEndTime(weldOnOffTime.getEndTime());
+                    weldOnOffTimeMapper.updateById(onOffTime);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
 }

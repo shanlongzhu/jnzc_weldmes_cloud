@@ -1,8 +1,8 @@
 package com.shth.das.mqtt;
 
 import com.alibaba.fastjson.JSON;
-import com.shth.das.business.JnRtDataProtocol;
-import com.shth.das.business.SxRtDataProtocol;
+import com.shth.das.business.JnOtcRtDataProtocol;
+import com.shth.das.business.JnSxRtDataProtocol;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonMap;
 import com.shth.das.common.DownTopicEnum;
@@ -76,9 +76,9 @@ public class EmqMqttCallback implements MqttCallback {
                     for (JNProcessIssue issue : list) {
                         String gatherNo = issue.getGatherNo();
                         //Java对象解析成16进制字符串
-                        String str = JnRtDataProtocol.jnIssueProtocol(issue);
-                        String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
-                        channelWrite(clientIp, str, "----->OTC工艺下发成功", topic);
+                        String str = JnOtcRtDataProtocol.jnIssueProtocol(issue);
+                        String clientAddress = JnOtcRtDataProtocol.getClientAddressByGatherNo(gatherNo);
+                        otcChannelWrite(clientAddress, str, "----->OTC工艺下发成功", topic);
                     }
                 }
             }
@@ -88,9 +88,9 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnProcessClaim) {
                     String gatherNo = jnProcessClaim.getGatherNo();
                     //Java对象解析成16进制字符串
-                    String str = JnRtDataProtocol.jnClaimProtocol(jnProcessClaim);
-                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
-                    channelWrite(clientIp, str, "----->OTC工艺索取成功", topic);
+                    String str = JnOtcRtDataProtocol.jnClaimProtocol(jnProcessClaim);
+                    String clientAddress = JnOtcRtDataProtocol.getClientAddressByGatherNo(gatherNo);
+                    otcChannelWrite(clientAddress, str, "----->OTC工艺索取成功", topic);
                 }
             }
             //OTC密码下发
@@ -99,9 +99,9 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnPasswordIssue) {
                     String gatherNo = jnPasswordIssue.getGatherNo();
                     //java对象转16进制字符串
-                    String str = JnRtDataProtocol.jnPasswordProtocol(jnPasswordIssue);
-                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
-                    channelWrite(clientIp, str, "----->OTC密码下发成功", topic);
+                    String str = JnOtcRtDataProtocol.jnPasswordProtocol(jnPasswordIssue);
+                    String clientAddress = JnOtcRtDataProtocol.getClientAddressByGatherNo(gatherNo);
+                    otcChannelWrite(clientAddress, str, "----->OTC密码下发成功", topic);
                 }
             }
             //OTC控制命令下发
@@ -110,9 +110,9 @@ public class EmqMqttCallback implements MqttCallback {
                 if (null != jnCommandIssue) {
                     String gatherNo = jnCommandIssue.getGatherNo();
                     //java对象转16进制字符串
-                    String str = JnRtDataProtocol.jnCommandProtocol(jnCommandIssue);
-                    String clientIp = JnRtDataProtocol.getClientIpByGatherNo(gatherNo);
-                    channelWrite(clientIp, str, "----->OTC控制命令下发成功", topic);
+                    String str = JnOtcRtDataProtocol.jnCommandProtocol(jnCommandIssue);
+                    String clientAddress = JnOtcRtDataProtocol.getClientAddressByGatherNo(gatherNo);
+                    otcChannelWrite(clientAddress, str, "----->OTC控制命令下发成功", topic);
                 }
             }
             //松下GL5系列CO2工艺下发
@@ -120,8 +120,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxCO2ProcessIssue sxCo2ProcessIssue = JSON.parseObject(message, SxCO2ProcessIssue.class);
                 if (null != sxCo2ProcessIssue) {
                     String weldIp = sxCo2ProcessIssue.getWeldIp();
-                    String str = SxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
-                    channelWrite(weldIp, str, "----->松下CO2工艺下发成功", topic);
+                    String str = JnSxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
+                    sxChannelWrite(weldIp, str, "----->松下CO2工艺下发成功", topic);
                 }
             }
             //松下GL5系列TIG工艺下发
@@ -129,8 +129,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxTIGProcessIssue sxTigProcessIssue = JSON.parseObject(message, SxTIGProcessIssue.class);
                 if (null != sxTigProcessIssue) {
                     String weldIp = sxTigProcessIssue.getWeldIp();
-                    String str = SxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
-                    channelWrite(weldIp, str, "----->松下TIG工艺下发成功", topic);
+                    String str = JnSxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
+                    sxChannelWrite(weldIp, str, "----->松下TIG工艺下发成功", topic);
                 }
             }
             //松下GL5系列焊机通道设定/读取
@@ -138,8 +138,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxWeldChannelSetting sxWeldChannelSetting = JSON.parseObject(message, SxWeldChannelSetting.class);
                 if (null != sxWeldChannelSetting) {
                     String weldIp = sxWeldChannelSetting.getWeldIp();
-                    String str = SxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
-                    channelWrite(weldIp, str, "----->松下焊机通道设定/读取成功", topic);
+                    String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+                    sxChannelWrite(weldIp, str, "----->松下焊机通道设定/读取成功", topic);
                 }
             }
             //松下GL5系列工艺索取/删除
@@ -147,8 +147,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxProcessClaim sxProcessClaim = JSON.parseObject(message, SxProcessClaim.class);
                 if (null != sxProcessClaim) {
                     String weldIp = sxProcessClaim.getWeldIp();
-                    String str = SxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
-                    channelWrite(weldIp, str, "----->松下工艺索取/删除成功", topic);
+                    String str = JnSxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
+                    sxChannelWrite(weldIp, str, "----->松下工艺索取/删除成功", topic);
                 }
             }
             //焊工刷卡领取任务
@@ -200,8 +200,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxChannelParamQuery sxChannelParamQuery = JSON.parseObject(message, SxChannelParamQuery.class);
                 if (null != sxChannelParamQuery) {
                     String weldIp = sxChannelParamQuery.getWeldIp();
-                    String str = SxRtDataProtocol.sxChannelParamQueryProtocol(sxChannelParamQuery);
-                    channelWrite(weldIp, str, "----->FR2系列通道参数查询/删除成功", topic);
+                    String str = JnSxRtDataProtocol.sxChannelParamQueryProtocol(sxChannelParamQuery);
+                    sxChannelWrite(weldIp, str, "----->FR2系列通道参数查询/删除成功", topic);
                 }
             }
             //松下松下FR2系列通道参数下载
@@ -209,8 +209,8 @@ public class EmqMqttCallback implements MqttCallback {
                 SxChannelParamReplyHave channelParamReplyHave = JSON.parseObject(message, SxChannelParamReplyHave.class);
                 if (null != channelParamReplyHave) {
                     String weldIp = channelParamReplyHave.getWeldIp();
-                    String str = SxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
-                    channelWrite(weldIp, str, "----->松下FR2系列通道参数下载成功", topic);
+                    String str = JnSxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
+                    sxChannelWrite(weldIp, str, "----->松下FR2系列通道参数下载成功", topic);
                 }
             }
             //松下AT3系列参数下载
@@ -218,8 +218,8 @@ public class EmqMqttCallback implements MqttCallback {
                 At3ParamDownload at3ParamDownload = JSON.parseObject(message, At3ParamDownload.class);
                 if (null != at3ParamDownload) {
                     String weldIp = at3ParamDownload.getWeldIp();
-                    String str = SxRtDataProtocol.At3ParamDownloadProtocol(at3ParamDownload);
-                    channelWrite(weldIp, str, "----->松下AT3系列参数下载成功", topic);
+                    String str = JnSxRtDataProtocol.At3ParamDownloadProtocol(at3ParamDownload);
+                    sxChannelWrite(weldIp, str, "----->松下AT3系列参数下载成功", topic);
                 }
             }
         } catch (Exception e) {
@@ -230,16 +230,41 @@ public class EmqMqttCallback implements MqttCallback {
     /**
      * 根据设备IP查找通道并写入数据
      *
-     * @param weldIp 设备IP
-     * @param str    16进制字符串
-     * @param msg    打印内容
-     * @param topic  主题
+     * @param clientAddress 设备IP+端口
+     * @param str           16进制字符串
+     * @param msg           打印内容
+     * @param topic         主题
      */
-    private void channelWrite(String weldIp, String str, String msg, String topic) {
+    private void otcChannelWrite(String clientAddress, String str, String msg, String topic) {
         try {
-            if (CommonUtils.isNotEmpty(weldIp) && CommonUtils.isNotEmpty(str)) {
-                if (CommonMap.CHANNEL_MAP.size() > 0 && CommonMap.CHANNEL_MAP.containsKey(weldIp)) {
-                    Channel channel = CommonMap.CHANNEL_MAP.get(weldIp).channel();
+            if (CommonUtils.isNotEmpty(clientAddress) && CommonUtils.isNotEmpty(str)) {
+                if (CommonMap.OTC_CHANNEL_MAP.size() > 0 && CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
+                    Channel channel = CommonMap.OTC_CHANNEL_MAP.get(clientAddress).channel();
+                    //判断该焊机通道是否打开、是否活跃、是否可写
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        channel.writeAndFlush(str).sync();
+                        log.info("{}:{}", msg, topic);
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            log.error("数据下行异常：{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 根据设备IP查找通道并写入数据
+     *
+     * @param clientAddress 设备IP+端口
+     * @param str           16进制字符串
+     * @param msg           打印内容
+     * @param topic         主题
+     */
+    private void sxChannelWrite(String clientAddress, String str, String msg, String topic) {
+        try {
+            if (CommonUtils.isNotEmpty(clientAddress) && CommonUtils.isNotEmpty(str)) {
+                if (CommonMap.SX_CHANNEL_MAP.size() > 0 && CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
+                    Channel channel = CommonMap.SX_CHANNEL_MAP.get(clientAddress).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str).sync();

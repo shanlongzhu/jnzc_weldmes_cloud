@@ -1,7 +1,8 @@
 package com.shth.das.netty;
 
-import com.shth.das.business.JnRtDataProtocol;
-import com.shth.das.business.SxRtDataProtocol;
+import com.shth.das.common.HandlerParam;
+import com.shth.das.business.JnOtcDecoderAnalysis;
+import com.shth.das.business.JnSxDecoderAnalysis;
 import com.shth.das.common.DataInitialization;
 import com.shth.das.util.CommonUtils;
 import io.netty.buffer.ByteBuf;
@@ -22,8 +23,8 @@ import java.util.Map;
  */
 public class NettyDecoder extends ByteToMessageDecoder {
 
-    private final JnRtDataProtocol jnRtDataProtocol = new JnRtDataProtocol();
-    private final SxRtDataProtocol sxRtDataProtocol = new SxRtDataProtocol();
+    private final JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
+    private final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
 
     /**
      * 用来临时保留没有处理过的请求报文
@@ -114,11 +115,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     message.readBytes(bytes);
                     //解析完整数据包成16进制
                     String str = CommonUtils.bytesToHexString(bytes);
-                    Map<String, Object> map = this.jnRtDataProtocol.jnRtDataDecoderManage(ctx, str);
-                    if (map.size() > 0) {
-                        out.add(map);
+                    HandlerParam handlerParam = this.jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    if (null != handlerParam) {
+                        out.add(handlerParam);
                     }
-                    //如果还有可读字节，则继续递归读取
+                    //如果还有可读字节，则继续递归读取 16578538676
                     if (message.readableBytes() > 0) {
                         this.otcRecursionReadBytes(ctx, message, out);
                     } else {
@@ -169,9 +170,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     byte[] bytes = new byte[length];
                     message.readBytes(bytes);
                     String str = CommonUtils.bytesToHexString(bytes);
-                    Map<String, Object> map = this.sxRtDataProtocol.sxRtDataDecoderManage(ctx, str);
-                    if (map.size() > 0) {
-                        out.add(map);
+                    final HandlerParam handlerParam = this.jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    if (null != handlerParam) {
+                        out.add(handlerParam);
                     }
                     //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
@@ -211,9 +212,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         message.readBytes(bytes);
                         //解析完整数据包成16进制
                         String str = CommonUtils.bytesToHexString(bytes);
-                        Map<String, Object> map = this.sxRtDataProtocol.sxRtDataDecoderManage(ctx, str);
-                        if (map.size() > 0) {
-                            out.add(map);
+                        final HandlerParam handlerParam = this.jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                        if (null != handlerParam) {
+                            out.add(handlerParam);
                         }
                         //如果还有可读字节，则继续递归读取
                         if (message.readableBytes() > 0) {

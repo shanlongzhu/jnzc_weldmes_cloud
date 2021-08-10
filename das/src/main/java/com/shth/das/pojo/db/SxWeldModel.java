@@ -1,6 +1,7 @@
 package com.shth.das.pojo.db;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -46,5 +47,8 @@ public class SxWeldModel implements Serializable {
     private Integer weldFirm;       //设备厂商（字典OTC、松下）
     private BigInteger deptId;      //组织机构ID
     private String createTime;      //创建时间
+
+    @TableField(exist = false)
+    private int weldPort;           //设备端口（暂存）
 
 }

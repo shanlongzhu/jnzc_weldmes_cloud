@@ -14,21 +14,28 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonMap {
 
     /**
-     * key:客户端IP地址
-     * value:连接通道
-     * 保存连接进服务端的通道数量
+     * key:（IP+端口）IP:port
+     * value：连接通道
+     * 保存连接进服务端的通道数量（临时存储）
      */
-    public static volatile ConcurrentHashMap<String, ChannelHandlerContext> CHANNEL_MAP = new ConcurrentHashMap<>();
+    public static volatile ConcurrentHashMap<String, ChannelHandlerContext> OTC_CHANNEL_MAP = new ConcurrentHashMap<>();
 
     /**
-     * key:客户端IP地址
-     * value:采集编号
+     * key:（IP+端口）IP:port
+     * value：连接通道
+     * 保存连接进服务端的通道数量（临时存储）
+     */
+    public static volatile ConcurrentHashMap<String, ChannelHandlerContext> SX_CHANNEL_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * key:（IP+端口）IP:port
+     * value：采集编号
      * 采集盒的IP地址和采集编号对应关系(用来向前端发送关机数据)
      */
     public static volatile ConcurrentHashMap<String, String> CLIENT_IP_GATHER_NO_MAP = new ConcurrentHashMap<>();
 
     /**
-     * key：客户端IP地址
+     * key:（IP+端口）IP:port
      * value：松下设备信息
      * 松下焊机设备数据暂存
      */
@@ -40,6 +47,7 @@ public class CommonMap {
      * value:任务信息
      */
     public static volatile ConcurrentHashMap<String, TaskClaimIssue> OTC_TASK_CLAIM_MAP = new ConcurrentHashMap<>();
+
     /**
      * 松下设备领任务存储
      * key:设备IP

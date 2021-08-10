@@ -193,18 +193,18 @@ public class ScheduledTask {
             String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
             String head = "007E1001010145";
             String foot = "007D";
-            if (CommonMap.CLIENT_IP_GATHER_NO_MAP.size() > 0 && CommonMap.CHANNEL_MAP.size() > 0) {
+            if (CommonMap.CLIENT_IP_GATHER_NO_MAP.size() > 0 && CommonMap.OTC_CHANNEL_MAP.size() > 0) {
                 Iterator<Map.Entry<String, String>> entries = CommonMap.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> next = entries.next();
                     //采集盒IP地址
-                    String clientIp = next.getKey();
+                    String clientAddress = next.getKey();
                     //采集编号
                     String gatherNo = next.getValue();
                     gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
-                    if (CommonUtils.isNotEmpty(clientIp) && CommonUtils.isNotEmpty(gatherNo)) {
-                        if (CommonMap.CHANNEL_MAP.containsKey(clientIp)) {
-                            Channel channel = CommonMap.CHANNEL_MAP.get(clientIp).channel();
+                    if (CommonUtils.isNotEmpty(clientAddress) && CommonUtils.isNotEmpty(gatherNo)) {
+                        if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
+                            Channel channel = CommonMap.OTC_CHANNEL_MAP.get(clientAddress).channel();
                             if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                                 String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
                                 timeString = timeString.toUpperCase();

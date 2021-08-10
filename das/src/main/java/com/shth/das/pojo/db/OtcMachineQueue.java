@@ -21,4 +21,6 @@ public class OtcMachineQueue implements Serializable {
      */
     private String weldIp;
 
+    private String weldTime;
+
 }

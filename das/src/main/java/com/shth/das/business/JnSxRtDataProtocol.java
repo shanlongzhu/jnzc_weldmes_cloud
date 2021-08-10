@@ -8,176 +8,17 @@ import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"ALL"})
 @Slf4j
-public class SxRtDataProtocol {
-
-    /**
-     * 松下实时数据解码处理（上行）
-     */
-    public Map<String, Object> sxRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
-        //客户端IP（焊机IP）
-        String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        Map<String, Object> map = new HashMap<>(6);
-        try {
-            //松下焊机GL5/FR2/AT第一次验证（下行）
-            if (str.length() == 42 && "4E455430".equals(str.substring(0, 8))) {
-                ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION).sync();
-            }
-            //松下焊机GL5/FR2/AT第二次验证（下行）
-            if (str.length() == 128 && "4C4A5348".equals(str.substring(0, 8))) {
-                ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION).sync();
-            }
-            //松下焊机GL5软硬件参数
-            if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
-                SxWeldModel sxWeldModel = sxWeldAnalysis(clientIp, str);
-                if (null != sxWeldModel) {
-                    map.put("SxWeldModel", sxWeldModel);
-                    ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
-                }
-            }
-            //松下焊机GL5实时数据
-            if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
-                SxRtDataUi sxRtDataUi = sxRtDataUiAnalysis(clientIp, str);
-                SxRtDataDb sxRtDataDb = sxRtDataDbAnalysis(clientIp, str);
-                if (null != sxRtDataUi) {
-                    map.put("SxRtDataUI", sxRtDataUi);
-                }
-                if (null != sxRtDataDb) {
-                    map.put("SxRtDataDb", sxRtDataDb);
-                }
-            }
-            //松下焊机GL5系列CO2状态信息
-            if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
-                SxStatusDataUI sxStatusDataUi = sxStatusDataUiAnalysis(clientIp, str);
-                if (null != sxStatusDataUi) {
-                    map.put("SxStatusDataUI", sxStatusDataUi);
-                }
-            }
-            if (str.length() == 106) {
-                //松下GL5工艺下发回复/索取返回
-                if ("1201".equals(str.substring(40, 44))) {
-                    //读写标志：0：主动上传；1：读取；2：设置；3：删除
-                    if ("1".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
-                        //松下工艺索取返回（无数据）
-                        SxProcessClaimReturn sxProcessClaimReturn = sxProcessClaimReturnAnalysis(clientIp, str);
-                        if (null != sxProcessClaimReturn) {
-                            map.put("SxProcessClaimReturn", sxProcessClaimReturn);
-                        }
-                    }
-                    if ("2".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
-                        //松下工艺下发回复
-                        SxProcessReturn sxProcessReturn = sxProcessReturnAnalysis(clientIp, str);
-                        if (null != sxProcessReturn) {
-                            map.put("SxProcessReturn", sxProcessReturn);
-                        }
-                    }
-                    if ("3".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50028".equals(str.substring(0, 10))) {
-                        //松下工艺删除回复
-                        SxProcessDeleteReturn sxProcessDeleteReturn = sxProcessDeleteReturnAnalysis(clientIp, str);
-                        if (null != sxProcessDeleteReturn) {
-                            map.put("SxProcessDeleteReturn", sxProcessDeleteReturn);
-                        }
-                    }
-                }
-                //松下GL5焊接规范通道设定回复/读取回复
-                if ("1202".equals(str.substring(40, 44)) && "FE5AA50035".equals(str.substring(0, 10))) {
-                    SxWeldChannelSetReturn weldChannelSetReturn = sxWeldChannelSetReturnAnalysis(clientIp, str);
-                    if (null != weldChannelSetReturn) {
-                        map.put("SxWeldChannelSetReturn", weldChannelSetReturn);
-                    }
-                }
-            }
-            //松下GL5系列CO2工艺索取返回
-            if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                SxCO2ProcessClaimReturn claimReturn = sxCO2ProcessClaimReturnAnalysis(clientIp, str);
-                if (null != claimReturn) {
-                    map.put("SxCO2ProcessClaimReturn", claimReturn);
-                }
-            }
-            //松下GL5系列TIG工艺索取返回
-            if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = sxTIGProcessClaimReturnAnalysis(clientIp, str);
-                if (null != sxTIGProcessClaimReturn) {
-                    map.put("SxTIGProcessClaimReturn", sxTIGProcessClaimReturn);
-                }
-            }
-            //松下FR2系列CO2实时数据
-            if (str.length() == 126 && "FE5AA5003F".equals(str.substring(0, 10))) {
-                SxRtDataDb sxRtDataDb = fr2Co2RtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = fr2Co2RtDataUiAnalysis(clientIp, str);
-                if (null != sxRtDataDb) {
-                    map.put("SxRtDataDb", sxRtDataDb);
-                }
-                if (null != sxRtDataUi) {
-                    map.put("SxRtDataUi", sxRtDataUi);
-                }
-            }
-            //松下FR2系列TIG实时数据
-            if (str.length() == 118 && "FE5AA5003B".equals(str.substring(0, 10))) {
-                SxRtDataDb sxRtDataDb = fr2TigRtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = fr2TigRtDataUiAnalysis(clientIp, str);
-                if (null != sxRtDataDb) {
-                    map.put("SxRtDataDb", sxRtDataDb);
-                }
-                if (null != sxRtDataUi) {
-                    map.put("SxRtDataUi", sxRtDataUi);
-                }
-            }
-            //松下FR2系列CO2/TIG状态信息
-            if (str.length() == 156 && "FE5AA5004E".equals(str.substring(0, 10))) {
-                //CO2焊机
-                if ("0102".equals(str.substring(40, 44)) && 1 == Integer.valueOf(str.substring(68, 70), 16)) {
-                    SxStatusDataUI sxStatusDataUi = fr2Co2StatusUiAnalysis(clientIp, str);
-                    if (null != sxStatusDataUi) {
-                        map.put("SxStatusDataUI", sxStatusDataUi);
-                    }
-                }
-                //TIG焊机
-                if ("0102".equals(str.substring(40, 44)) && 4 == Integer.valueOf(str.substring(68, 70), 16)) {
-                    SxStatusDataUI sxStatusDataUi = fr2TigStatusUiAnalysis(clientIp, str);
-                    if (null != sxStatusDataUi) {
-                        map.put("SxStatusDataUI", sxStatusDataUi);
-                    }
-                }
-            }
-            //松下FR2系列通道参数查询（无参数）、下载、删除回复
-            if (str.length() == 52 && "FE5AA5001A".equals(str.substring(0, 10))) {
-                SxChannelParamReply sxChannelParamReply = sxChannelParamReplyAnalysis(clientIp, str);
-                if (null != sxChannelParamReply) {
-                    map.put("SxChannelParamReply", sxChannelParamReply);
-                }
-            }
-            //松下FR2系列通道参数查询（有参数）
-            if (str.length() == 218 && "FE5AA5006E".equals(str.substring(0, 10))) {
-                SxChannelParamReplyHave sxChannelParamReplyHave = sxChannelParamReplyHaveAnalysis(clientIp, str);
-                if (null != sxChannelParamReplyHave) {
-                    map.put("SxChannelParamReplyHave", sxChannelParamReplyHave);
-                }
-            }
-            //松下AT3系列查询回复（有参数）
-            if (str.length() == 92 && "FE5AA5002E".equals(str.substring(0, 10))) {
-                At3ParamQueryReturn at3ParamQueryReturn = at3ParamQueryReturnAnalysis(clientIp, str);
-                if (null != at3ParamQueryReturn) {
-                    map.put("At3ParamQueryReturn", at3ParamQueryReturn);
-                }
-            }
-        } catch (Exception e) {
-            log.error("sxRtDataDecoderManage Exception:" + e.getMessage());
-        }
-        return map;
-    }
+public class JnSxRtDataProtocol {
 
     /**
      * 松下设备信息绑定到IP地址
@@ -187,9 +28,11 @@ public class SxRtDataProtocol {
     private void sxWeldDataBinding(SxWeldModel sxWeldModel) {
         if (null != sxWeldModel) {
             String weldIp = sxWeldModel.getWeldIp();
+            final int clientPort = sxWeldModel.getWeldPort();
             if (CommonUtils.isNotEmpty(weldIp)) {
-                if (!CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(weldIp)) {
-                    CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.put(weldIp, sxWeldModel);
+                String clientAddress = weldIp + ":" + clientPort;
+                if (!CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientAddress)) {
+                    CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.put(clientAddress, sxWeldModel);
                 }
                 //设备存储到松下开机阻塞队列
                 try {
@@ -208,54 +51,42 @@ public class SxRtDataProtocol {
     }
 
     /**
-     * 松下设备实时数据处理（上行）
+     * 松下焊机GL5软硬件参数存数据库
+     *
+     * @param param
      */
-    public void sxRtDataManage(Map<String, Object> map) {
-        if (map.size() > 0) {
+    public void jnSxSoftHardParam(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey("SxWeldModel")) {
                 SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
                 //松下参数绑定
                 sxWeldDataBinding(sxWeldModel);
             }
-            //松下焊机GL5实时数据发送到mq
-            if (map.containsKey("SxRtDataUi")) {
-                SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
-                if (null != sxRtDataUi) {
-                    //焊机IP地址
-                    String clientIp = sxRtDataUi.getWeldIp();
-                    if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                        SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-                        if (null != sxWeldModel) {
-                            //设备编码
-                            sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
-                            //设备机型
-                            sxRtDataUi.setWeldModel(sxWeldModel.getWeldModel());
-                        }
-                    }
-                    //实体类转JSON字符串
-                    String message = JSON.toJSONString(sxRtDataUi);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
-                }
-            }
-            //松下焊机GL5实时数据存数据库
-            if (map.containsKey("SxRtDataDb")) {
-                SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
-                if (null != sxRtDataDb) {
-                    //焊机IP地址
-                    String clientIp = sxRtDataDb.getWeldIp();
-                    if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                        SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-                        if (null != sxWeldModel) {
-                            sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
-                            sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
-                        }
-                    }
-                    //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
-                    CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
-                }
-            }
+        }
+    }
+
+    /**
+     * 松下焊机GL5实时数据处理
+     *
+     * @param param
+     */
+    public void jnSxGl5RtDataManage(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            jnSxRtdManage(map);
+        }
+    }
+
+    /**
+     * 松下焊机GL5系列CO2状态信息
+     *
+     * @param param
+     */
+    public void jnSxGl5StatusManage(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {
                 SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
@@ -264,6 +95,27 @@ public class SxRtDataProtocol {
                     String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxStatusData.name(), message, 0);
+                }
+            }
+        }
+    }
+
+    /**
+     * 松下GL5系列工艺信息和焊接通道设定
+     *
+     * @param param
+     */
+    public void jnSxGl5ProcessWeldSet(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            //松下工艺索取返回(无数据)
+            if (map.containsKey("SxProcessClaimReturn")) {
+                SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
+                if (null != sxProcessClaimReturn) {
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxProcessClaimReturn);
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxProcessClaimReturn.name(), message, 0);
                 }
             }
             //松下工艺下发回复发送到mq
@@ -276,16 +128,6 @@ public class SxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessReturn.name(), message, 0);
                 }
             }
-            //松下工艺索取返回(无数据)
-            if (map.containsKey("SxProcessClaimReturn")) {
-                SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
-                if (null != sxProcessClaimReturn) {
-                    //实体类转JSON字符串
-                    String message = JSON.toJSONString(sxProcessClaimReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.sxProcessClaimReturn.name(), message, 0);
-                }
-            }
             //松下工艺删除返回
             if (map.containsKey("SxProcessDeleteReturn")) {
                 SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
@@ -294,26 +136,6 @@ public class SxRtDataProtocol {
                     String message = JSON.toJSONString(sxProcessDeleteReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessDeleteReturn.name(), message, 0);
-                }
-            }
-            //松下CO2工艺索取返回
-            if (map.containsKey("SxCO2ProcessClaimReturn")) {
-                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
-                if (null != sxCO2ProcessClaimReturn) {
-                    //实体类转JSON字符串
-                    String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.sxCO2ProcessClaimReturn.name(), message, 0);
-                }
-            }
-            //松下TIG工艺索取返回
-            if (map.containsKey("SxTIGProcessClaimReturn")) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
-                if (null != sxTIGProcessClaimReturn) {
-                    //实体类转JSON字符串
-                    String message = JSON.toJSONString(sxTIGProcessClaimReturn);
-                    //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.sxTIGProcessClaimReturn.name(), message, 0);
                 }
             }
             //松下焊机通道设定回复/读取回复发mq
@@ -326,6 +148,104 @@ public class SxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxWeldChannelSetReturn.name(), message, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * 松下GL5系列CO2工艺索取返回
+     *
+     * @param param
+     */
+    public void jnSxCo2ProcessClaimReturn(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            //松下CO2工艺索取返回
+            if (map.containsKey("SxCO2ProcessClaimReturn")) {
+                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
+                if (null != sxCO2ProcessClaimReturn) {
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxCO2ProcessClaimReturn.name(), message, 0);
+                }
+            }
+        }
+    }
+
+    /**
+     * 松下GL5系列TIG工艺索取返回
+     *
+     * @param param
+     */
+    public void jnSxTigProcessClaimReturn(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            //松下TIG工艺索取返回
+            if (map.containsKey("SxTIGProcessClaimReturn")) {
+                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
+                if (null != sxTIGProcessClaimReturn) {
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxTIGProcessClaimReturn);
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxTIGProcessClaimReturn.name(), message, 0);
+                }
+            }
+        }
+    }
+
+    /**
+     * 松下焊机Fr2实时数据
+     *
+     * @param param
+     */
+    public void jnSxFr2Co2RtDataDbManage(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            jnSxRtdManage(map);
+        }
+    }
+
+    /**
+     * 松下FR2系列TIG实时数据
+     *
+     * @param param
+     */
+    public void jnSxFr2TigRtDataDbManage(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            jnSxRtdManage(map);
+        }
+    }
+
+    /**
+     * 松下焊机FR2状态信息发送到mq
+     *
+     * @param param
+     */
+    public void jnSxFr2StatusUiManage(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            //松下焊机GL5状态信息发送到mq
+            if (map.containsKey("SxStatusDataUI")) {
+                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
+                if (null != sxStatusDataUi) {
+                    //实体类转JSON字符串
+                    String message = JSON.toJSONString(sxStatusDataUi);
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(UpTopicEnum.sxStatusData.name(), message, 0);
+                }
+            }
+        }
+    }
+
+    /**
+     * 松下FR2通道参数查询回复（无参数）、下载回复、删除回复
+     *
+     * @param param
+     */
+    public void jnSxChannelParamReply(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
             //松下FR2通道参数查询回复（无参数）、下载回复、删除回复
             if (map.containsKey("SxChannelParamReply")) {
                 SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
@@ -336,6 +256,17 @@ public class SxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReply.name(), message, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * 松下FR2通道参数查询回复（有参数）
+     *
+     * @param param
+     */
+    public void jnSxChannelParamReplyHave(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
             //松下FR2通道参数查询回复（有参数）
             if (map.containsKey("SxChannelParamReplyHave")) {
                 SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
@@ -346,6 +277,17 @@ public class SxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxChannelParamReplyHave.name(), message, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * 松下AT3系列查询回复（有参数）
+     *
+     * @param param
+     */
+    public void jnSxAt3ParamQueryReturn(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
             //松下AT3系列查询回复（有参数）
             if (map.containsKey("At3ParamQueryReturn")) {
                 At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
@@ -359,14 +301,56 @@ public class SxRtDataProtocol {
         }
     }
 
+    private void jnSxRtdManage(Map<String, Object> map) {
+        //松下焊机实时数据发送到mq
+        if (map.containsKey("SxRtDataUi")) {
+            SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
+            if (null != sxRtDataUi) {
+                //焊机IP地址
+                String clientIp = sxRtDataUi.getWeldIp();
+                if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
+                    SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                    if (null != sxWeldModel) {
+                        //设备编码
+                        sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
+                        //设备机型
+                        sxRtDataUi.setWeldModel(sxWeldModel.getWeldModel());
+                    }
+                }
+                //实体类转JSON字符串
+                String message = JSON.toJSONString(sxRtDataUi);
+                //通过mqtt发送到服务端
+                EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+            }
+        }
+        //松下焊机实时数据存数据库
+        if (map.containsKey("SxRtDataDb")) {
+            SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
+            if (null != sxRtDataDb) {
+                //焊机IP地址
+                String clientIp = sxRtDataDb.getWeldIp();
+                if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
+                    SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                    if (null != sxWeldModel) {
+                        sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
+                        sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
+                    }
+                }
+                //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
+                CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
+            }
+        }
+    }
+
     /**
      * 松下GL5软硬件参数解析
      */
-    public SxWeldModel sxWeldAnalysis(String clientIp, String str) {
+    public SxWeldModel sxWeldAnalysis(String clientIp, int clientPort, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
                 SxWeldModel sxWeldModel = new SxWeldModel();
                 sxWeldModel.setWeldIp(clientIp);//客户端IP地址
+                sxWeldModel.setWeldPort(clientPort);
                 sxWeldModel.setWeldModel(CommonUtils.convertHexToString(str.substring(44, 62))); //设备机型
                 sxWeldModel.setPowerSupply(Integer.valueOf(str.substring(62, 64), 16));//电源类型
                 sxWeldModel.setWireFeederModel(Integer.valueOf(str.substring(64, 66), 16));//送丝机类型
@@ -1164,7 +1148,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxChannelParamReply
      */
-    private SxChannelParamReply sxChannelParamReplyAnalysis(String clientIp, String str) {
+    public SxChannelParamReply sxChannelParamReplyAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if ("0211".equals(str.substring(40, 44))) {
                 SxChannelParamReply sxChannelParamReply = new SxChannelParamReply();
@@ -1247,7 +1231,7 @@ public class SxRtDataProtocol {
      * @param str      16进制字符串
      * @return At3ParamQueryReturn
      */
-    public static At3ParamQueryReturn at3ParamQueryReturnAnalysis(String clientIp, String str) {
+    public At3ParamQueryReturn at3ParamQueryReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 92) {
             At3ParamQueryReturn at3ParamQueryReturn = new At3ParamQueryReturn();
             at3ParamQueryReturn.setWeldIp(clientIp);

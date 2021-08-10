@@ -1,6 +1,6 @@
 package com.shth.das.job;
 
-import com.shth.das.business.JnRtDataProtocol;
+import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.db.OtcMachineQueue;
@@ -69,11 +69,12 @@ public class RtDataJob {
                     OtcMachineQueue queue = CommonQueue.OTC_ON_MACHINE_QUEUES.take();
                     String gatherNo = queue.getGatherNo();
                     String weldIp = queue.getWeldIp();
+                    String weldTime = queue.getWeldTime();
                     //新增设备开机时间
                     WeldOnOffTime onOffTime = new WeldOnOffTime();
                     onOffTime.setGatherNo(gatherNo);
-                    onOffTime.setStartTime(DateTimeUtils.getNowDateTime());
-                    onOffTime.setMachineId(JnRtDataProtocol.getMachineIdByGatherNo(gatherNo));
+                    onOffTime.setStartTime(weldTime);
+                    onOffTime.setMachineId(JnOtcRtDataProtocol.getMachineIdByGatherNo(gatherNo));
                     onOffTime.setMachineType(0);
                     weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
                     //修改OTC采集表的IP地址
@@ -97,13 +98,13 @@ public class RtDataJob {
                     OtcMachineQueue queue = CommonQueue.OTC_OFF_MACHINE_QUEUES.take();
                     String gatherNo = queue.getGatherNo();
                     //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
-                    //新增设备关机时间
+                    //修改设备关机时间
                     WeldOnOffTime onOffTime = new WeldOnOffTime();
                     onOffTime.setGatherNo(gatherNo);
                     onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
-                    onOffTime.setMachineId(JnRtDataProtocol.getMachineIdByGatherNo(gatherNo));
+                    onOffTime.setMachineId(JnOtcRtDataProtocol.getMachineIdByGatherNo(gatherNo));
                     onOffTime.setMachineType(0);
-                    weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
+                    weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

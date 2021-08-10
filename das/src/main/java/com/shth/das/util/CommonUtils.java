@@ -36,7 +36,7 @@ public class CommonUtils {
      * @return
      */
     public static boolean isNotEmpty(String str) {
-        return null != str && !"".equals(str);
+        return null != str && !"".equals(str.trim());
     }
 
     /**
@@ -45,7 +45,7 @@ public class CommonUtils {
      * @return
      */
     public static boolean isNotEmpty(List<?> list) {
-        return null != list && list.size() > 0;
+        return null != list && !list.isEmpty();
     }
 
     /**

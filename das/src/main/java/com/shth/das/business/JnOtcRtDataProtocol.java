@@ -12,12 +12,10 @@ import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,17 +24,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * 江南项目数据解析类
  */
 @Slf4j
-public class JnRtDataProtocol {
+public class JnOtcRtDataProtocol {
 
     /**
      * 采集盒IP地址盒采集编号绑定
      */
-    private void gatherNoIpBinding(String clientIp, String gatherNo) {
+    private void gatherNoIpBinding(String clientIp, int weldPort, String gatherNo) {
+        String clientAddress = clientIp + ":" + weldPort;
         //判断map集合是否有，没有则新增
-        if (!CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
-            CommonMap.CLIENT_IP_GATHER_NO_MAP.put(clientIp, gatherNo);
+        if (!CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientAddress)) {
+            CommonMap.CLIENT_IP_GATHER_NO_MAP.put(clientAddress, gatherNo);
             try {
                 OtcMachineQueue otcMachineSaveQueue = new OtcMachineQueue();
+                otcMachineSaveQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 otcMachineSaveQueue.setGatherNo(gatherNo);
                 otcMachineSaveQueue.setWeldIp(clientIp);
                 //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
@@ -48,82 +48,23 @@ public class JnRtDataProtocol {
     }
 
     /**
-     * 江南版实时数据协议解码处理（上行）
-     */
-    public Map<String, Object> jnRtDataDecoderManage(ChannelHandlerContext ctx, String str) {
-        //客户端IP（焊机IP）
-        String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        Map<String, Object> map = new HashMap<>(6);
-        /*
-        江南版实时数据协议解析
-         */
-        if (str.length() == 282) {
-            //存数据库
-            List<JNRtDataDB> jnRtDataDbs = jnRtDataAnalysis(str);
-            //发送前端
-            List<JNRtDataUI> jnRtDataUis = jnRtDataUiAnalysis(clientIp, str);
-            if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
-                map.put("JNRtDataDB", jnRtDataDbs);
-            }
-            if (CommonUtils.isNotEmpty(jnRtDataUis)) {
-                map.put("JNRtDataUI", jnRtDataUis);
-            }
-        }
-        /*
-        下发规范返回
-         */
-        if (str.length() == 24) {
-            JNProcessIssueReturn issueReturn = jnIssueReturnAnalysis(str);
-            if (null != issueReturn) {
-                map.put("JNProcessIssueReturn", issueReturn);
-            }
-        }
-        /*
-        索取规范返回
-         */
-        if (str.length() == 112) {
-            JNProcessClaimReturn claimReturn = jnClaimReturnAnalysis(str);
-            if (null != claimReturn) {
-                map.put("JNProcessClaimReturn", claimReturn);
-            }
-        }
-        /*
-        密码返回
-        控制命令返回
-         */
-        if (str.length() == 22) {
-            //密码返回
-            if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                JNPasswordReturn passwordReturn = jnPasswordReturnAnalysis(str);
-                if (null != passwordReturn) {
-                    map.put("JNPasswordReturn", passwordReturn);
-                }
-            }
-            //控制命令返回
-            if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                JNCommandReturn commandReturn = jnCommandReturnAnalysis(str);
-                if (null != commandReturn) {
-                    map.put("JNCommandReturn", commandReturn);
-                }
-            }
-        }
-        return map;
-    }
-
-    /**
-     * 江南OTC实时数据处理（上行）
+     * OTC1.0实时数据处理
+     *
+     * @param handlerParam 入参
      */
     @SuppressWarnings("unchecked")
-    public void jnRtDataManage(Map<String, Object> map) {
-        if (map.size() > 0) {
+    public void jnRtDataManage(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, Object> map = handlerParam.getValue();
             //实时数据发送到前端
             if (map.containsKey("JNRtDataUI")) {
                 List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
                 if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
+                    int weldPort = jnRtDataUis.get(0).getWeldPort();
                     //采集盒IP地址盒采集编号绑定
-                    gatherNoIpBinding(clientIp, gatherNo);
+                    this.gatherNoIpBinding(clientIp, weldPort, gatherNo);
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                     //通过mqtt发送到服务端
@@ -138,6 +79,17 @@ public class JnRtDataProtocol {
                     list.forEach(CommonQueue.OTC_LINKED_BLOCKING_QUEUE::offer);
                 }
             }
+        }
+    }
+
+    /**
+     * 工艺下发返回解析
+     *
+     * @param handlerParam
+     */
+    public void otcIssueReturnManage(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, Object> map = handlerParam.getValue();
             //工艺下发返回
             if (map.containsKey("JNProcessIssueReturn")) {
                 JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
@@ -148,6 +100,17 @@ public class JnRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.processIssueReturn.name(), message, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * 索取返回协议解析
+     *
+     * @param handlerParam
+     */
+    public void otcClaimReturnManage(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, Object> map = handlerParam.getValue();
             //工艺索取返回
             if (map.containsKey("JNProcessClaimReturn")) {
                 JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
@@ -157,6 +120,17 @@ public class JnRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.processClaimReturn.name(), message, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * 密码返回和控制命令返回
+     *
+     * @param handlerParam
+     */
+    public void otcPwdCmdReturnManage(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, Object> map = handlerParam.getValue();
             //密码返回
             if (map.containsKey("JNPasswordReturn")) {
                 JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
@@ -267,7 +241,7 @@ public class JnRtDataProtocol {
      * @param str 需要解析的16进制字符串
      * @return 返回一个集合对象
      */
-    public List<JNRtDataDB> jnRtDataAnalysis(String str) {
+    public List<JNRtDataDB> jnRtDataDbAnalysis(String str) {
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
@@ -623,11 +597,12 @@ public class JnRtDataProtocol {
     /**
      * 江南OTC设备关机数据处理
      */
-    public void jnWeldOffDataManage(String clientIp) {
+    public void jnWeldOffDataManage(String clientIp, int clientPort) {
+        String clientAddress = clientIp + ":" + clientPort;
         //有客户端终止连接则发送关机数据到mq，刷新实时界面
-        if (CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientIp)) {
+        if (CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientAddress)) {
             //采集编号
-            String gatherNo = CommonMap.CLIENT_IP_GATHER_NO_MAP.get(clientIp);
+            String gatherNo = CommonMap.CLIENT_IP_GATHER_NO_MAP.get(clientAddress);
             //OTC设备关机数据添加到阻塞队列
             try {
                 OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
@@ -647,23 +622,24 @@ public class JnRtDataProtocol {
                 jnRtDataUi.setElectricity(BigDecimal.ZERO);
                 jnRtDataUi.setVoltage(BigDecimal.ZERO);
                 jnRtDataUi.setWeldIp(clientIp);
+                jnRtDataUi.setWeldPort(clientPort);
                 jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
                 dataList.add(jnRtDataUi);
                 String dataArray = JSONArray.toJSONString(dataList);
                 EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
             });
             //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
-            CommonMap.CLIENT_IP_GATHER_NO_MAP.remove(clientIp);
+            CommonMap.CLIENT_IP_GATHER_NO_MAP.remove(clientAddress);
         }
     }
 
     /**
-     * 根据采集编号查找采集盒IP地址
+     * 根据采集编号查找采集盒IP+port
      *
      * @param gatherNo 采集编号
-     * @return 返回采集盒IP地址
+     * @return 返回采集盒地址（IP+port）
      */
-    public static String getClientIpByGatherNo(String gatherNo) {
+    public static String getClientAddressByGatherNo(String gatherNo) {
         if (CommonUtils.isNotEmpty(gatherNo)) {
             Iterator<Map.Entry<String, String>> entries = CommonMap.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
             while (entries.hasNext()) {

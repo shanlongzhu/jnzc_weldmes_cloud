@@ -46,6 +46,7 @@ public class CommonQueue {
 
     /**
      * 松下关机设备阻塞队列
+     * String:焊机IP
      */
     public static final LinkedBlockingQueue<String> SX_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
