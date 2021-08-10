@@ -89,6 +89,11 @@
 	AND s2.weldStatus IN ( 3, 5, 7 )
 	LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id
 	AND s3.weldStatus = 99
+        <where>
+        <if test="taskNo!=null and taskNo!=''">
+            t.task_no = #{taskNo}
+        </if>
+        </where>
     GROUP BY
 	t.id
     </select>
