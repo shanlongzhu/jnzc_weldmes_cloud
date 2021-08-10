@@ -15,4 +15,9 @@
     <insert id="insertFirmMachineInfo" parameterType="com.gw.entities.FirmMachineInfo">
         insert into firm_machine(firm_id,machine_id) values(#{firmMachineInfo.firmId},#{firmMachineInfo.machineId})
     </insert>
+
+    <!--根据厂家id删除 厂家设备绑定信息-->
+    <delete id="deleteFirmMachineInfo" parameterType="Long">
+        delete from firm_machine where firm_id = #{firmId}
+    </delete>
 </mapper>

@@ -18,4 +18,11 @@ public interface FirmMachineDao {
      * @Params firmMachineInfo 厂家设备信息
      */
     public void insertFirmMachineInfo(@Param("firmMachineInfo") FirmMachineInfo firmMachineInfo);
+
+    /**
+     * @Date 2021/8/10 14:20
+     * @Description 根据厂家id删除 厂家设备绑定信息
+     * @Params
+     */
+    public void deleteFirmMachineInfo(@Param("firmId") Long firmId);
 }

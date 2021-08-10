@@ -27,6 +27,10 @@ public class FirmMachineServiceImpl implements FirmMachineService {
     @Override
     public void addFirmMachineInfo(List<FirmMachineInfo> firmMachineInfos) {
 
+        //删除表中原有的厂家设备绑定信息
+        firmMachineDao.deleteFirmMachineInfo(firmMachineInfos.get(0).getFirmId());
+
+        //查询新的厂家设备绑定信息
         for (FirmMachineInfo firmMachineInfo : firmMachineInfos) {
 
             firmMachineDao.insertFirmMachineInfo(firmMachineInfo);
