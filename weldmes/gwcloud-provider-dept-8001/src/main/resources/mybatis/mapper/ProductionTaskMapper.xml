@@ -73,31 +73,57 @@
         </association>
     </resultMap>
     <select id="getList" resultMap="weldStatisticsData">
-    SELECT
-	w.welder_no,
-	w.welder_name,
-	m.machine_no,
-	t.task_no,
-	t.reality_starttime,
-	t.reality_endtime,
-	CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
-	convert (AVG( s.electricity ),decimal (10,2)) electricity,
-	CONCAT( t.volMin, '~', t.volMax ) volScope,
-	convert (AVG( s.voltage ),decimal (10,2)) voltage
-    FROM
-	task_claim c
-	INNER JOIN welder_info w ON c.welder_id = w.id
-	INNER JOIN machine_weld_info m ON c.weld_id = m.id
-	INNER JOIN task_info t ON c.task_id = t.id
-	AND t.reality_starttime &gt;= #{time1}
-    AND t.reality_starttime &lt;= #{time2}
-	LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
-	AND c.weld_id = s.machineId
-	AND c.welder_id = s.welderId
-	AND s.weldStatus IN ( 3, 99 )
+   SELECT
+ w.welder_no,
+ w.welder_name,
+ m.machine_no,
+ t.task_no,
+ d.NAME,
+ t.reality_starttime,
+ t.reality_endtime,
+ CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
+ CONVERT (
+  AVG( s.electricity ),
+ DECIMAL ( 10, 2 )) electricity,
+ CONCAT( t.volMin, '~', t.volMax ) volScope,
+ CONVERT (
+  AVG( s.voltage ),
+ DECIMAL ( 10, 2 )) voltage
+FROM
+ task_claim c
+ INNER JOIN welder_info w ON c.welder_id = w.id
+ INNER JOIN machine_weld_info m ON c.weld_id = m.id
+ INNER JOIN task_info t ON c.task_id = t.id
+ AND t.reality_starttime &gt;= #{time1}
+ AND t.reality_starttime &lt;= #{time2}
+ LEFT JOIN sys_dept d ON d.id = t.dept_id
+ LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
+ AND c.weld_id = s.machineId
+ AND c.welder_id = s.welderId
+ AND s.weldStatus IN ( 3, 99 )
+        <where>
+            <if test="welderNo!=null and welderNo!=''">
+                w.welder_no = #{welderNo}
+            </if>
+            <if test="welderName!=null and welderName!=''">
+                and w.welder_name = #{welderName}
+            </if>
+            <if test="machineNo!=null and machineNo!=''">
+                and m.machine_no = #{machineNo}
+            </if>
+            <if test="taskNo!=null and taskNo!=''">
+                and t.task_no = #{taskNo}
+            </if>
+            <if test="name!=null and name!=''">
+                and d.NAME = #{name}
+            </if>
+        </where>
 GROUP BY
-	c.task_id,
-	c.weld_id,
-	c.welder_id
+ c.task_id,
+ c.weld_id,
+ c.welder_id
+    </select>
+    <select id="getName" resultType="java.lang.String">
+        select name from sys_dept where id=#{deptId}
     </select>
 </mapper>

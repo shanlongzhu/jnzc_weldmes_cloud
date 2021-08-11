@@ -16,7 +16,12 @@ public class ProductionTaskServiceImpl implements ProductionTaskService {
     private ProductionTaskDao productionTaskDao;
 
     @Override
-    public List<WeldStatisticsData> getList(String time1, String time2) {
-        return productionTaskDao.getList(time1,time2);
+    public List<WeldStatisticsData> getList(String time1, String time2,String welderNo,String welderName,String machineNo,String taskNo,String name) {
+        return productionTaskDao.getList(time1,time2,welderNo,welderName,machineNo,taskNo,name);
+    }
+
+    @Override
+    public String getName(Long deptId) {
+        return productionTaskDao.getName(deptId);
     }
 }

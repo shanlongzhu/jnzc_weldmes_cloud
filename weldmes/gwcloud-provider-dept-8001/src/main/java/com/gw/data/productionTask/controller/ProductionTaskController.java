@@ -26,18 +26,20 @@ public class ProductionTaskController {
 
     //生产任务详情数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,String time1, String time2) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,String time1, String time2,String welderNo,String welderName,String machineNo,String taskNo,Long deptId) {
+        String name=productionTaskService.getName(deptId);
         PageHelper.startPage(pn, 10);
-        List<WeldStatisticsData> list = productionTaskService.getList(time1, time2);
+        List<WeldStatisticsData> list = productionTaskService.getList(time1, time2,welderNo,welderName,machineNo,taskNo,name);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
 
     //导出excel
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response,String time1, String time2) {
+    public HttpResult exportExcel(HttpServletResponse response,String time1, String time2,String welderNo,String welderName,String machineNo,String taskNo,Long deptId) {
         HttpResult result = new HttpResult();
-        List<WeldStatisticsData> list = productionTaskService.getList(time1, time2);
+        String name=productionTaskService.getName(deptId);
+        List<WeldStatisticsData> list = productionTaskService.getList(time1, time2,welderNo,welderName,machineNo,taskNo,name);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("生产任务详情");
         String[] titles = {"焊工编号", "焊工姓名", "焊机编号","任务编号","开始时间","结束时间","电流范围","平均电流","电压范围","平均电压"};
