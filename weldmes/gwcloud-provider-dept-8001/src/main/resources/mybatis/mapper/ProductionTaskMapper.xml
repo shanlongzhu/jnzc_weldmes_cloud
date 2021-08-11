@@ -71,6 +71,11 @@
             <id property="id"  column="id"></id>
             <result property="machineNo" column="machine_no"></result>
         </association>
+        <association property="sysDept" javaType="com.gw.entities.SysDept">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+            <result property="parentId" column="parent_id"></result>
+        </association>
     </resultMap>
     <select id="getList" resultMap="weldStatisticsData">
    SELECT
