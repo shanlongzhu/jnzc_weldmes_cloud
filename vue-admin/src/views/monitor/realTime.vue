@@ -90,15 +90,15 @@
                                 class="real-con-item-img"
                                 @click="drawer=false"
                             >
-                                <img :src="`/swipes/${imgType(selectItem.typeStr)}${statusText(selectItem.weldStatus).imgN}.png`" />
+                                <img :src="`/swipes/${imgType(mqttLastData.typeStr)}${statusText(mqttLastData.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
-                                <p><span>设备编号：</span>{{selectItem.machineNo||'--'}}</p>
-                                <p><span>任务编号：</span>{{selectItem.taskNo||'--'}}</p>
-                                <p><span>操作人员：</span>{{selectItem.welderName||'--'}}</p>
-                                <p><span>焊接电流：</span>{{selectItem.electricity||selectItem.electricity===0?selectItem.electricity:'--'}}A</p>
-                                <p><span>焊接电压：</span>{{selectItem.voltage||selectItem.voltage===0?selectItem.voltage:'--'}}V</p>
-                                <p><span>焊机状态：</span><strong>{{statusText(selectItem.weldStatus).str}}</strong></p>
+                                <p><span>设备编号：</span>{{mqttLastData.machineNo||'--'}}</p>
+                                <p><span>任务编号：</span>{{mqttLastData.taskNo||'--'}}</p>
+                                <p><span>操作人员：</span>{{mqttLastData.welderName||'--'}}</p>
+                                <p><span>焊接电流：</span>{{mqttLastData.electricity||mqttLastData.electricity===0?mqttLastData.electricity:'--'}}A</p>
+                                <p><span>焊接电压：</span>{{mqttLastData.voltage||mqttLastData.voltage===0?mqttLastData.voltage:'--'}}V</p>
+                                <p><span>焊机状态：</span><strong>{{statusText(mqttLastData.weldStatus).str}}</strong></p>
                             </div>
                         </div>
                     </div>
