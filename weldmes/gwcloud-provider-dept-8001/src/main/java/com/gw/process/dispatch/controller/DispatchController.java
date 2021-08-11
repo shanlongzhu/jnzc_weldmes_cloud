@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +80,22 @@ public class DispatchController {
     @RequestMapping(value = "task/list")
     public HttpResult queryTaskListController(@RequestParam(value="pn",defaultValue = "1") Integer pn,Integer grade,Integer taskStatus){
 
+        List<Integer> gradIds = new ArrayList<>();
+
+        if(!ObjectUtils.isEmpty(grade)){
+
+            //获取班组id列表
+            gradIds = dispatchService.getGradeIds(grade);
+
+        }
+
         PageHelper.startPage(pn,10);
 
         //获取任务列表
-        List<TaskInfo> taskInfos=dispatchService.queryTaskList(grade,taskStatus);
+        List<TaskInfo> taskInfos = dispatchService.queryTaskList(gradIds,taskStatus);
 
         //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(taskInfos,10);
+        PageInfo<TaskInfo> page = new PageInfo(taskInfos,10);
 
         return HttpResult.ok(page);
     }
@@ -95,7 +105,7 @@ public class DispatchController {
      * @Description  获取分页任务列表
      * @Params pn 当前页码
      */
-    @RequestMapping(value = "task/listT/{pn}")
+    /*@RequestMapping(value = "task/listT/{pn}")
     public HttpResult queryCurrentPageTaskListController(@PathVariable Integer pn){
 
         if(ObjectUtils.isEmpty(pn)){
@@ -110,7 +120,7 @@ public class DispatchController {
         PageInfo<TaskInfo> page=new PageInfo(taskInfos,10);
 
         return HttpResult.ok(page);
-    }
+    }*/
 
     /**
      * @Date 2021/5/28 10:52
