@@ -1,15 +1,14 @@
 package com.shth.das.netty;
 
-import com.shth.das.common.HandlerParam;
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.business.JnSxRtDataProtocol;
 import com.shth.das.common.CommonMap;
 import com.shth.das.common.DataInitialization;
+import com.shth.das.common.HandlerParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -115,7 +114,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 }
             }
         }
-        ReferenceCountUtil.release(param);
         ctx.flush();
     }
 
@@ -195,7 +193,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             this.jnSxRtDataProtocol.sxWeldOffDataManage(clientIp);
         }
         ctx.flush();
-        ctx.disconnect();
         ctx.channel().close();
         ctx.close();
     }
@@ -239,7 +236,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             IdleStateEvent event = (IdleStateEvent) evt;
             //判断读超时，则关闭通道
             if (IdleState.READER_IDLE.equals((event.state()))) {
-                ctx.disconnect();
                 ctx.channel().close();
                 ctx.close();
             }

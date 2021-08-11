@@ -1,9 +1,9 @@
 package com.shth.das.netty;
 
-import com.shth.das.common.HandlerParam;
 import com.shth.das.business.JnOtcDecoderAnalysis;
 import com.shth.das.business.JnSxDecoderAnalysis;
 import com.shth.das.common.DataInitialization;
+import com.shth.das.common.HandlerParam;
 import com.shth.das.util.CommonUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -51,19 +51,19 @@ public class NettyDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
-        // 合并报文
-        ByteBuf message = Unpooled.buffer(1024);
-        int tmpMsgSize = this.tempMsg.readableBytes();
-        // 如果暂存有上一次余下的请求报文，则合并
-        if (tmpMsgSize > 0) {
-            message.writeBytes(this.tempMsg);
-            //读取完之后清空
+        if (byteBuf.readableBytes() == 0) {
+            return;
+        }
+        ByteBuf message;
+        if (this.tempMsg == null || this.tempMsg.readableBytes() == 0) {
+            message = Unpooled.wrappedBuffer(byteBuf);
+        } else {
+            //wrappedBuffer()方法：将两个ByteBuf进行包装，实现零拷贝
+            message = Unpooled.wrappedBuffer(this.tempMsg, byteBuf);
             this.tempMsg.clear();
         }
-        //将接收到的byteBuf写入到自己定义的ByteBuf(message)中
-        message.writeBytes(byteBuf);
         //数据可读长度大于0才进行读取
-        if (message.readableBytes() > 0) {
+        if (message != null && message.readableBytes() > 0) {
             InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
             //服务端端口
             int serverPort = inetSocket.getPort();
@@ -75,10 +75,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
             if (serverPort == DataInitialization.getSxPort()) {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
-        } else {
-            message.clear();
-            message.release();
         }
+        //读写指针清空
+        byteBuf.clear();
+        //内容清零
+        byteBuf.setZero(0, byteBuf.capacity());
         ctx.flush();
     }
 
@@ -91,11 +92,13 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private void otcRecursionReadBytes(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
         int bufNum = message.readableBytes();
+        if (bufNum == 0) {
+            return;
+        }
         //可读长度小于等于2，先暂存，大于2则进行读取
         if (bufNum <= 2) {
+            //将message拷贝到tempMsg中暂存
             this.tempMsg.writeBytes(message);
-            message.clear();
-            message.release();
         } else {
             byte[] headBytes = new byte[1];
             headBytes[0] = message.getByte(0);
@@ -119,22 +122,14 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     if (null != handlerParam) {
                         out.add(handlerParam);
                     }
-                    //如果还有可读字节，则继续递归读取 16578538676
+                    //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
                         this.otcRecursionReadBytes(ctx, message, out);
-                    } else {
-                        message.clear();
-                        message.release();
                     }
                 } else {
-                    //剩下来的数据放到tempMsg暂存
+                    //将message拷贝到tempMsg中暂存
                     this.tempMsg.writeBytes(message);
-                    message.clear();
-                    message.release();
                 }
-            } else {
-                message.clear();
-                message.release();
             }
         }
     }
@@ -148,11 +143,12 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private void sxRecursionReadBytes(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
         int bufNum = message.readableBytes();
+        if (bufNum == 0) {
+            return;
+        }
         //判断可读字节数小于5，直接存储，下次读取
         if (bufNum <= 5) {
             this.tempMsg.writeBytes(message);
-            message.clear();
-            message.release();
         } else {
             //查看前4个字节
             byte[] headBytes = new byte[4];
@@ -177,15 +173,10 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     //如果还有可读字节，则继续递归读取
                     if (message.readableBytes() > 0) {
                         this.sxRecursionReadBytes(ctx, message, out);
-                    } else {
-                        message.clear();
-                        message.release();
                     }
                 } else {
-                    //剩下来的数据放到tempMsg暂存
+                    //将message拷贝到tempMsg中暂存
                     this.tempMsg.writeBytes(message);
-                    message.clear();
-                    message.release();
                 }
             }
             //非两次握手，正常通讯协议
@@ -195,15 +186,16 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 for (int index = 0; index < 3; index++) {
                     headByte[index] = message.getByte(index);
                 }
-                //头部3个字节
+                //头部3个字节（FE5AA5）
                 String sxThreeHead = CommonUtils.bytesToHexString(headByte);
+                //判断是否是松下的正常通讯协议
                 if (this.sxMap.containsKey(sxThreeHead)) {
                     //查看包长度
                     byte[] lengthBytes = new byte[2];
                     //查看第4、5字节的数据包长度
                     lengthBytes[0] = message.getByte(3);
                     lengthBytes[1] = message.getByte(4);
-                    //数据包长度(字节长度)
+                    //查看数据包应该有的长度(字节长度)
                     int length = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
                     //判断可读长度是否多于数据包长度（是否是一个完整数据包）
                     if (length > 0 && bufNum >= length) {
@@ -219,19 +211,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         //如果还有可读字节，则继续递归读取
                         if (message.readableBytes() > 0) {
                             this.sxRecursionReadBytes(ctx, message, out);
-                        } else {
-                            message.clear();
-                            message.release();
                         }
                     } else {
-                        //剩下来的数据放到tempMsg暂存
+                        //将message拷贝到tempMsg中暂存
                         this.tempMsg.writeBytes(message);
-                        message.clear();
-                        message.release();
                     }
-                } else {
-                    message.clear();
-                    message.release();
                 }
             }
         }
