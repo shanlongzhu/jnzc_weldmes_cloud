@@ -192,16 +192,7 @@ export default {
 
         return {
             //mqtt
-            client: {},
-            options: {
-                timeout: 50,
-                keepAliveInterval: 60,
-                cleanSession: false,
-                useSSL: false,
-                reconnect: true,
-                clientId: "adminTest" + new Date().getTime()
-            },
-            timeout: '',
+             newClientMq: {},
 
             list: [],
             //分页
@@ -220,7 +211,7 @@ export default {
             drawer: false,
             //点击的设备
             selectItem: {},
-            
+
             workArray: [],//焊接
             standbyArray: [],//待机
             warnArray: [],//故障
@@ -230,38 +221,52 @@ export default {
             lineData: [],
 
             mqttLastData: {},
+
+
+           
         }
     },
-    computed:{
-        offnum(){
-           return this.list.length-(this.workArray.length+this.standbyArray.length+this.warnArray.length)
+    computed: {
+        offnum () {
+            return this.list.length - (this.workArray.length + this.standbyArray.length + this.warnArray.length)
         }
     },
 
     created () {
         this.searchObj.id = 1;
         this.getList();
+        this.newMqtt();
     },
     methods: {
         //mqtt创建
-        createConnection () {
-            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
-            try {
-                this.client = mqtt.connect(connectUrl, this.options)
-            } catch (error) {
-                console.log('连接失败', error)
-            }
-            this.client.on('connect', () => {
-                // console.log('连接成功')
-                this.doSubscribe();
-
+        newMqtt () {
+            const PahoMQTT = require('paho-mqtt');
+            const name = new Date().getTime() + 'client';
+            this.newClientMq = new PahoMQTT.Client(`${process.env.VUE_APP_MQTT_API}`, Number(8083), name);
+            this.newClientMq.connect({
+                timeout: 50,
+                keepAliveInterval: 60,
+                cleanSession: false,
+                useSSL: false,
+                onFailure: function (e) {
+                    console.log(e);
+                },
+                reconnect: true,
+                onSuccess: (res) => {
+                    this.newClientMq.subscribe('rtcdata', {
+                        qos: 0,
+                        onSuccess: function (e) {
+                            console.log("下发返回主题订阅成功：rtcdata");
+                        },
+                        onFailure: function (e) {
+                            console.log(e);
+                        }
+                    })
+                }
             })
-            this.client.on('error', error => {
-                console.log('连接失败', error)
-            })
-            this.client.on('message', (topic, message) => {
-                if (topic == 'rtcdata') {
-                    var datajson = JSON.parse(`${message}`);                    
+            this.newClientMq.onMessageArrived = ({destinationName,payloadString})=> {
+                if (destinationName == 'rtcdata') {
+                    var datajson = JSON.parse(payloadString);               
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -272,8 +277,9 @@ export default {
                         }
                     }
                 }
-            })
+            }
         },
+        
         //更新列表
         setData (arr) {
             let v1 = arr.slice(-1)[0];
@@ -288,21 +294,6 @@ export default {
                 this.totalNum(item);
             })
         },
-
-        //订阅主题
-        doSubscribe () {
-            this.client.subscribe('rtcdata', 0, (error, res) => {
-                // console.log('订阅rtcdata')
-                if (error) {
-                    this.$message.error("订阅rtcdata超时")
-                    return
-                }
-            })
-        },
-
-
-
-
         search () {
             this.page = 1;
             this.getList();
@@ -330,7 +321,7 @@ export default {
                 });
                 // this.offnum = data.total;
                 this.total = data.total;
-                this.createConnection();
+                // this.createConnection();
             }
         },
 
@@ -370,8 +361,7 @@ export default {
                         this.lineData.shift();
                         this.lineData.shift();
                     }
-                    filterArr.forEach(item => {        
-                        console.log(item.weldTime)                
+                    filterArr.forEach(item => {
                         this.lineData.push(item);
                     })
                     this.$refs.lineComEChild.init(this.lineData);
@@ -494,12 +484,12 @@ export default {
             }
         },
         //待机状态
-        setStandbyArray(v){
+        setStandbyArray (v) {
             //判断焊接是否存在
             let workInNum = this.isArrNum(v.gatherNo, this.workArray);
             //有则删除
             if (workInNum !== -1) {
-                this.workArray.splice(workInNum,1);
+                this.workArray.splice(workInNum, 1);
             }
 
             //判断待机是否存在
@@ -518,19 +508,19 @@ export default {
         },
 
         //故障状态
-        setWarnArray(v){
+        setWarnArray (v) {
             //判断焊接是否存在
             let workInNum = this.isArrNum(v.gatherNo, this.workArray);
             //有则删除
             if (workInNum !== -1) {
-                this.workArray.splice(workInNum,1);
+                this.workArray.splice(workInNum, 1);
             }
 
             //判断待机是否存在
             let standbyInNum = this.isArrNum(v.gatherNo, this.standbyArray);
             //有则删除
             if (standbyInNum !== -1) {
-                this.standbyArray.splice(standbyInNum,1);
+                this.standbyArray.splice(standbyInNum, 1);
             }
 
             //判断故障是否存在
