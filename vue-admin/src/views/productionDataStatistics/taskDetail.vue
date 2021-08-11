@@ -4,7 +4,7 @@
         class="flex-c"
     >
         <div class="top-con flex-n">
-            <!-- <div class="con-w">
+            <div class="con-w">
                 <span>班组：</span>
                 <el-cascader
                     v-model="teamId"
@@ -21,9 +21,17 @@
                 <el-input size="mini" v-model="welderNo" class="w120" placeholder=""></el-input>
             </div>
             <div class="con-w">
+                <span>焊工姓名：</span>
+                <el-input size="mini" v-model="welderNo" class="w120" placeholder=""></el-input>
+            </div>
+            <div class="con-w">
+                <span>焊机编号：</span>
+                <el-input size="mini" v-model="welderNo" class="w120" placeholder=""></el-input>
+            </div>
+            <div class="con-w">
                 <span>任务编号：</span>
                 <el-input size="mini" v-model="junctionNo" class="w120" placeholder=""></el-input>
-            </div> -->
+            </div>
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
