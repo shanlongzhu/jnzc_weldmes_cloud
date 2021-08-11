@@ -282,6 +282,10 @@ export default {
         
         //更新列表
         setData (arr) {
+            //统计
+            for(let b of arr){
+                this.totalNum(b);
+            }
             let v1 = arr.slice(-1)[0];
             this.list.forEach(item => {
                 if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
@@ -290,8 +294,7 @@ export default {
                     item.welderName = v1.welderName
                     item.taskNo = v1.taskNo
                     item.weldStatus = v1.weldStatus;//状态
-                }
-                this.totalNum(item);
+                }                
             })
         },
         search () {
@@ -341,7 +344,7 @@ export default {
             this.lineData = [];
             this.drawer = true;
             this.selectItem = v;
-            this.mqttLastData = {};
+            this.mqttLastData = {...v};
             // this.$refs.lineComEChild.echartsClear();
             // this.$refs.lineComVChild.echartsClear();            
             this.$nextTick(() => {
