@@ -610,8 +610,8 @@ export default {
                 protocol: '',//通讯协议
                 createTime: '',//入厂时间
                 ipPath: '',//ip
-                area: '',
-                bay: ''
+                area: '',//区域
+                bay: ''//跨间
             },
             rules: {
                 machineNo: [
@@ -630,6 +630,12 @@ export default {
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
                 model: [
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
+                area: [
+                    { required: true, message: '不能为空', trigger: 'change' }
+                ],
+                bay: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
             },

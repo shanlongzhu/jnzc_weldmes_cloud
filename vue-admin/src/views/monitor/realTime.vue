@@ -266,7 +266,7 @@ export default {
             })
             this.newClientMq.onMessageArrived = ({destinationName,payloadString})=> {
                 if (destinationName == 'rtcdata') {
-                    var datajson = JSON.parse(payloadString);               
+                    var datajson = JSON.parse(payloadString);                                 
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -284,7 +284,10 @@ export default {
         setData (arr) {
             //统计
             for(let b of arr){
-                this.totalNum(b);
+                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+                if(isThat.length>0){
+                    this.totalNum(b);
+                }                
             }
             let v1 = arr.slice(-1)[0];
             this.list.forEach(item => {
@@ -335,6 +338,9 @@ export default {
         },
 
         currentChangeTree (v) {
+            this.workArray = [];//焊接
+            this.standbyArray = [];//待机
+            this.warnArray = [];//故障
             this.searchObj.id = v.id;
             this.search();
         },
