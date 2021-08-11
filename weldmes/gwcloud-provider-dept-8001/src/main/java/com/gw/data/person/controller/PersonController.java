@@ -31,8 +31,9 @@ public class PersonController {
     //人员生产数据列表展示
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String welderNo,String welderName,Long deptId) {
+        String name=personService.getDeptId(deptId);
         PageHelper.startPage(pn, 10);
-        List<WeldStatisticsData> list = personService.getList(time1,time2,welderNo,welderName,deptId);
+        List<WeldStatisticsData> list = personService.getList(time1,time2,welderNo,welderName,name);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
@@ -41,7 +42,8 @@ public class PersonController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response, String time1, String time2,String welderNo,String welderName,Long deptId) {
         HttpResult result = new HttpResult();
-        List<WeldStatisticsData> list = personService.getList(time1,time2,welderNo,welderName,deptId);
+        String name=personService.getDeptId(deptId);
+        List<WeldStatisticsData> list = personService.getList(time1,time2,welderNo,welderName,name);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("人员生产数据");
         String[] titles = {"焊工编号", "焊工姓名","班组", "焊接任务数", "使用设备数","工作时间", "焊接时间","正常时间", "焊接效率","超规范时间","规范符合率","焊材消耗","电能消耗"};

@@ -16,7 +16,12 @@ public class ArtifactServiceImpl implements ArtifactService {
     private ArtifactDao artifactDao;
 
     @Override
-    public List<WeldStatisticsData> getList(String time1, String time2,String taskNo) {
-        return artifactDao.getList(time1,time2,taskNo);
+    public List<WeldStatisticsData> getList(String time1, String time2,String taskNo,String name) {
+        return artifactDao.getList(time1,time2,taskNo,name);
+    }
+
+    @Override
+    public String getName(Long deptId) {
+        return artifactDao.getName(deptId);
     }
 }

@@ -31,8 +31,9 @@ public class DeviceController {
     //设备生产数据列表展示
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String machineNo,Long deptId) {
+        String name=deviceService.getName(deptId);
         PageHelper.startPage(pn, 10);
-        List<WeldStatisticsData> list = deviceService.getList(time1,time2,machineNo,deptId);
+        List<WeldStatisticsData> list = deviceService.getList(time1,time2,machineNo,name);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
@@ -41,7 +42,8 @@ public class DeviceController {
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String time1, String time2,String machineNo,Long deptId) {
         HttpResult result = new HttpResult();
-        List<WeldStatisticsData> list = deviceService.getList(time1,time2,machineNo,deptId);
+        String name=deviceService.getName(deptId);
+        List<WeldStatisticsData> list = deviceService.getList(time1,time2,machineNo,name);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("设备生产数据");
         String[] titles = {"设备编号", "班组","使用人员数", "焊接任务数", "工作时间", "焊接时间","正常时间","焊接效率", "超规范时间","规范符合率","焊材消耗","电能消耗"};

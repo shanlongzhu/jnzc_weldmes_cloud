@@ -154,9 +154,14 @@ public class SysUserServiceImpl implements SysUserService {
 
         sysUserRole.setLastUpdateTime(time);
 
-        String newPwdMD5 = DigestUtils.md5Hex(sysUser.getPassword());
+        SysUser userInfo = sysUserDao.selectUserInfosById(sysUser.getId());
 
-        sysUser.setPassword(newPwdMD5);
+        if(!userInfo.getPassword().equals(sysUser.getPassword())){
+
+            String newPwdMD5 = DigestUtils.md5Hex(sysUser.getPassword());
+
+            sysUser.setPassword(newPwdMD5);
+        }
 
         //修改用户信息
         sysUserDao.updateUserInfo(sysUser);

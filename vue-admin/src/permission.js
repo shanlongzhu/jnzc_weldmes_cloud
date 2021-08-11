@@ -48,8 +48,8 @@ router.beforeEach(async(to, from, next) => {
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           const { roles,menus } = await store.dispatch('user/getInfo')
           let objData = {
-            menusArr:menus.menus,
-            roles:roles
+            menusArr:menus.menus||[],
+            roles:roles||[]
           }
 
           // generate accessible routes map based on roles
@@ -58,7 +58,11 @@ router.beforeEach(async(to, from, next) => {
           router.addRoutes(accessRoutes)
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
+          if(accessRoutes.length==0){
+            next();
+          }else{
+            next({ ...to, replace: true })
+          }
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')

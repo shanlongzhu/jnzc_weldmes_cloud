@@ -3,6 +3,7 @@ package com.gw.config;
 import com.gw.entities.UserLoginInfo;
 import com.gw.entities.SysUser;
 import com.gw.sys.service.UserRolesAndPerService;
+import lombok.SneakyThrows;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -50,6 +51,7 @@ public class UserRealm extends AuthorizingRealm {
      * @Description 用户登录身份认证
      * @Params
      */
+    @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
@@ -79,6 +81,11 @@ public class UserRealm extends AuthorizingRealm {
 
         //获取用户的角色名称
         List<String> roleNames = userRolesAndPerService.queryUserRoles(roleList);
+
+        if(ObjectUtils.isEmpty(roleNames)){
+
+            throw new Exception("用户角色不存在,登陆失败");
+        }
 
         UserLoginInfo userLoginInfo = new UserLoginInfo();
 

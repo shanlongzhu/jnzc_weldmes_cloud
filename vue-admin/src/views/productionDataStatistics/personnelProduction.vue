@@ -5,6 +5,36 @@
     >
         <div class="top-con flex-n">
             <div class="con-w">
+                <span>班组：</span>
+                <el-cascader
+                    v-model="deptId"
+                    size="small"
+                    class="w150"
+                    clearable
+                    :options="teamArr"
+                    :props="defalutProps"
+                    :show-all-levels="false"
+                />
+            </div>
+            <div class="con-w">
+                <span>编号：</span>
+                <el-input
+                    size="mini"
+                    v-model="welderNo"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
+            </div>
+            <div class="con-w">
+                <span>姓名：</span>
+                <el-input
+                    size="mini"
+                    v-model="welderName"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
+            </div>
+            <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
                     style="width:350px"
@@ -166,6 +196,7 @@
 <script>
 import moment from 'moment'
 import { getPerProDataList, exportPerProDataList } from '_api/productDataStat/productDataStatApi'
+import { getTeam } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     name: 'personnelProduction',
@@ -179,6 +210,10 @@ export default {
 
             //搜索条件
             dateTime: [moment(new Date()).startOf('day'), new Date()],
+            welderNo: '',
+            welderName: '',
+            deptId:'',
+
 
             loading: false,
             headers: {
@@ -189,6 +224,16 @@ export default {
                     return time.getTime() > Date.now() + 3600 * 1000 * 24
                 }
             },
+
+            //机构数据
+            teamArr: [],
+            // 级联下拉配置
+            defalutProps: {
+                label: 'name',
+                value: 'id',
+                children: 'list'
+            },
+
             //未绑定设备明细
             dialogVisible: false,
             layerCon: '',
@@ -198,9 +243,16 @@ export default {
 
     created () {
         this.getList();
+        if (this.teamArr.length == 0) {
+            this.getTeamList()
+        }
     },
     methods: {
-
+        // 获取班组
+        async getTeamList () {
+            const { data, code } = await getTeam()
+            this.teamArr = data.workArea || []
+        },
         search () {
             this.page = 1;
             this.getList();
@@ -210,6 +262,9 @@ export default {
                 pn: this.page,
                 time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                welderNo: this.welderNo,
+                welderName: this.welderName,
+                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
             }
             this.loading = true;
             let { data, code } = await getPerProDataList(req);
@@ -236,6 +291,9 @@ export default {
             let req = {
                 time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                welderNo: this.welderNo,
+                welderName: this.welderName,
+                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
             }
             location.href = exportPerProDataList(req)
         },

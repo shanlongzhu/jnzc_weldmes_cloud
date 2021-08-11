@@ -72,14 +72,14 @@ export default {
                     upLine.label = {
                         show: 'true',
                         position: 'end',
-                        formatter: `${lastData.weldVoltage + lastData.weldVolAdjust}(A)`
+                        formatter: `${lastData.weldVoltage + lastData.weldVolAdjust}(V)`
                     };
 
                     downLine.yAxis = lastData.weldVoltage - lastData.weldVolAdjust;//下限
                     downLine.label = {
                         show: 'true',
                         position: 'end',
-                        formatter: `${lastData.weldVoltage - lastData.weldVolAdjust}(A)`
+                        formatter: `${lastData.weldVoltage - lastData.weldVolAdjust}(V)`
                     };
                     this.option.series[0].markLine.data = [this.lineObjFirstData, upLine, downLine];
                 } else {
