@@ -6,5 +6,7 @@ import com.gw.entities.WeldStatisticsData;
 import java.util.List;
 
 public interface ArtifactService {
-    List<WeldStatisticsData> getList(String time1, String time2,String taskNo);
+    List<WeldStatisticsData> getList(String time1, String time2,String taskNo,String name);
+
+    String getName(Long deptId);
 }

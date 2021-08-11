@@ -10,5 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface ArtifactDao {
-    List<WeldStatisticsData> getList(@Param("time1") String time1, @Param("time2") String time2,@Param("taskNo") String taskNo);
+    List<WeldStatisticsData> getList(@Param("time1") String time1, @Param("time2") String time2,@Param("taskNo") String taskNo,@Param("name") String name);
+
+    String getName(Long deptId);
 }

@@ -55,7 +55,7 @@
         </association>
     </resultMap>
 
-    <select id="getList" resultMap="weldStatisticsData">
+     <select id="getList" resultMap="weldStatisticsData">
     SELECT
 	t.id,
 	t.task_name,
@@ -93,8 +93,14 @@
         <if test="taskNo!=null and taskNo!=''">
             t.task_no = #{taskNo}
         </if>
+            <if test="name!=null and name!=''">
+                d.NAME = #{name}
+            </if>
         </where>
     GROUP BY
 	t.id
+    </select>
+    <select id="getName" resultType="java.lang.String">
+        select name from sys_dept where id=#{deptId}
     </select>
 </mapper>

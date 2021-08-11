@@ -32,18 +32,20 @@ public class ArtifactController {
 
     //工件生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String taskNo) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String taskNo,Long deptId) {
+        String name=artifactService.getName(deptId);
         PageHelper.startPage(pn, 10);
-        List<WeldStatisticsData> list = artifactService.getList(time1, time2,taskNo);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2,taskNo,name);
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
     }
 
     //导出excel
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2,String taskNo) {
+    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2,String taskNo,Long deptId) {
         HttpResult result = new HttpResult();
-        List<WeldStatisticsData> list = artifactService.getList(time1, time2,taskNo);
+        String name=artifactService.getName(deptId);
+        List<WeldStatisticsData> list = artifactService.getList(time1, time2,taskNo,name);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("工件生产数据");
         String[] titles = {"任务编号", "参与人员数","使用设备数","工作时间", "焊接时间", "正常时间","焊接效率","超规范时间","规范符合率","焊材消耗","电能消耗"};
