@@ -192,7 +192,7 @@ export default {
 
         return {
             //mqtt
-             newClientMq: {},
+            newClientMq: {},
 
             list: [],
             //分页
@@ -223,7 +223,7 @@ export default {
             mqttLastData: {},
 
 
-           
+
         }
     },
     computed: {
@@ -264,9 +264,9 @@ export default {
                     })
                 }
             })
-            this.newClientMq.onMessageArrived = ({destinationName,payloadString})=> {
+            this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
                 if (destinationName == 'rtcdata') {
-                    var datajson = JSON.parse(payloadString);                                 
+                    var datajson = JSON.parse(payloadString);
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -279,15 +279,19 @@ export default {
                 }
             }
         },
-        
+
         //更新列表
         setData (arr) {
             //统计
-            for(let b of arr){
+            for (let b of arr) {
                 let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
-                if(isThat.length>0){
+                if (this.searchObj.id!=1) {
+                    if (isThat.length > 0) {
+                        this.totalNum(b);
+                    }
+                } else {
                     this.totalNum(b);
-                }                
+                }
             }
             let v1 = arr.slice(-1)[0];
             this.list.forEach(item => {
@@ -297,7 +301,7 @@ export default {
                     item.welderName = v1.welderName
                     item.taskNo = v1.taskNo
                     item.weldStatus = v1.weldStatus;//状态
-                }                
+                }
             })
         },
         search () {
@@ -350,7 +354,7 @@ export default {
             this.lineData = [];
             this.drawer = true;
             this.selectItem = v;
-            this.mqttLastData = {...v};
+            this.mqttLastData = { ...v };
             // this.$refs.lineComEChild.echartsClear();
             // this.$refs.lineComVChild.echartsClear();            
             this.$nextTick(() => {
