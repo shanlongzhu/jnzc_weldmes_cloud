@@ -39,5 +39,5 @@ public interface SoldererDao {
      * @Description 判断焊工编号是否存在
      * @Params
      */
-    public Integer judgeWelderNoYesOrNo(@Param("WelderNo") String WelderNo);
+    public Integer judgeWelderNoYesOrNo(@Param("WelderNo") String WelderNo,@Param("id")Long id);
 }

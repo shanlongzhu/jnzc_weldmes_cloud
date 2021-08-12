@@ -63,7 +63,7 @@ public class SoldererController {
     @PostMapping
     public HttpResult addSolderer(@RequestBody WelderInfo welderInfo) {
 
-        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo());
+        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo(),welderInfo.getId());
 
         if(!ObjectUtils.isEmpty(judge)){
 
@@ -86,11 +86,11 @@ public class SoldererController {
     @PutMapping
     public HttpResult updateSolderer(@RequestBody WelderInfo welderInfo) {
 
-        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo());
+        Integer judge = soldererDao.judgeWelderNoYesOrNo(welderInfo.getWelderNo(),welderInfo.getId());
 
         if(!ObjectUtils.isEmpty(judge)){
 
-            return HttpResult.ok("当前信息中采集编号不可重复,请更换采集编号");
+            return HttpResult.ok("当前信息中焊工编号不可重复,请更换焊工编号");
         }
 
         soldererService.updateSolderer(welderInfo);
