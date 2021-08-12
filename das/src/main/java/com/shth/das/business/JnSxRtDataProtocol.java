@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"ALL"})
 @Slf4j
@@ -94,7 +93,7 @@ public class JnSxRtDataProtocol {
             if (map.containsKey("SxStatusDataUI")) {
                 SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
                 if (null != sxStatusDataUi) {
-                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)){
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxStatusDataUi.setWeldCid(weldCid);
                     }
@@ -402,6 +401,33 @@ public class JnSxRtDataProtocol {
                         sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
                         //设备机型
                         sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
+                    }
+                }
+                //如果待机数据不存储。则根据起弧、收弧各存储一条待机数据
+                if (!DataInitialization.isSxStandbySave()) {
+                    //初期焊接（起弧），增加一条待机数据
+                    if (sxRtDataDb.getWeldStatus() == 5) {
+                        SxRtDataDb sxdata = (SxRtDataDb) sxRtDataDb.clone();
+                        sxdata.setWeldStatus(0);
+                        final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        //减去1秒
+                        final String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                        sxdata.setWeldTime(weldTime);
+                        sxdata.setRealityWeldEle(BigDecimal.ZERO);
+                        sxdata.setRealityWeldVol(BigDecimal.ZERO);
+                        CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxdata);
+                    }
+                    //收弧焊接（收弧），增加一条待机数据
+                    else if (sxRtDataDb.getWeldStatus() == 10) {
+                        SxRtDataDb sxdata = (SxRtDataDb) sxRtDataDb.clone();
+                        sxdata.setWeldStatus(0);
+                        final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        //加上1秒
+                        final String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                        sxdata.setWeldTime(weldTime);
+                        sxdata.setRealityWeldEle(BigDecimal.ZERO);
+                        sxdata.setRealityWeldVol(BigDecimal.ZERO);
+                        CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxdata);
                     }
                 }
                 //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
