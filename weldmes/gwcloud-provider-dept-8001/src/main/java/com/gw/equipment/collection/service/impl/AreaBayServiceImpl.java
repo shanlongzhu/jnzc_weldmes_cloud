@@ -5,6 +5,7 @@ import com.gw.equipment.collection.dao.AreaBayDao;
 import com.gw.equipment.collection.service.AreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -33,7 +34,10 @@ public class AreaBayServiceImpl implements AreaBayService {
         //添加区域跨间信息
         for (AreaBayInfo areaBayInfo : areaBayInfos) {
 
-            areaBayDao.insertAreaBayInfo(areaBayInfo);
+            if(!ObjectUtils.isEmpty(areaBayInfo.getAreaId()) && !ObjectUtils.isEmpty(areaBayInfo.getBayId())){
+
+                areaBayDao.insertAreaBayInfo(areaBayInfo);
+            }
         }
     }
 }

@@ -48,12 +48,29 @@ public class DispatchServiceImpl implements DispatchService{
      * @Params
      */
     @Override
-    public List<TaskInfo> queryTaskList(Integer grade,Integer taskStatus) {
+    public List<TaskInfo> queryTaskList(List<Integer> grades,Integer taskStatus) {
 
-        //无条件筛选，直接获取任务列表
-        List<TaskInfo> list = dispatchDao.queryTaskList(grade,taskStatus);
+        List<TaskInfo> taskInfos = new ArrayList<>();
 
-        return list;
+        if(ObjectUtils.isEmpty(grades)){
+
+            Integer grade = null;
+            //无条件筛选，直接获取任务列表
+            List<TaskInfo> list = dispatchDao.queryTaskList(grade,taskStatus);
+
+            return list;
+        }
+
+        for (Integer grade : grades) {
+
+            //无条件筛选，直接获取任务列表
+            List<TaskInfo> list = dispatchDao.queryTaskList(grade,taskStatus);
+
+            taskInfos.addAll(list);
+
+        }
+
+        return taskInfos;
     }
 
     /**
@@ -486,6 +503,52 @@ public class DispatchServiceImpl implements DispatchService{
     }
 
     /**
+     * @Date 2021/8/11 15:50
+     * @Description 查询班组id列表
+     * @Params
+     */
+    @Override
+    public List<Integer> getGradeIds(Integer gradeId) {
+
+        List<SysDept> list = dispatchDao.queryGradeList(gradeId.longValue());
+
+        List<Integer> ids = new ArrayList<>();
+
+        if(list.size() == 0){
+
+            ids.add(gradeId);
+
+            return ids;
+        }
+
+        do{
+            List<SysDept> nextSysDeptInfos = new ArrayList<>();
+
+            for (SysDept sysDeptInfo : list) {
+
+                List<SysDept> sysDeptList = dispatchDao.queryGradeList(sysDeptInfo.getId());
+
+                nextSysDeptInfos.addAll(sysDeptList);
+
+            }
+
+            if (ObjectUtils.isEmpty(nextSysDeptInfos)){
+
+                ids = getSysDeptIds(list);
+
+                return ids;
+            }
+
+            list.clear();
+
+            list = nextSysDeptInfos;
+
+        }while(!ObjectUtils.isEmpty(list));
+
+        return ids;
+    }
+
+    /**
      * @Date 2021/7/13 17:33
      * @Description  将任务信息遍历到Excel单元格中
      * @Params
@@ -732,5 +795,23 @@ public class DispatchServiceImpl implements DispatchService{
             e.printStackTrace();
             HttpResult.error("导入失败！");
         }
+    }
+
+    /**
+     * @Date 2021/8/11 16:18
+     * @Description 获取班组id列表
+     * @Params
+     */
+    public List<Integer> getSysDeptIds(List<SysDept> list){
+
+        List<Integer> gradIds = new ArrayList<>();
+
+        for (SysDept sysDept : list) {
+
+            gradIds.add(sysDept.getId().intValue());
+
+        }
+
+        return gradIds;
     }
 }

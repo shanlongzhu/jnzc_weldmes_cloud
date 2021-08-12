@@ -2,6 +2,7 @@ package com.gw.process.dispatch.service;
 
 import com.gw.common.HttpResult;
 import com.gw.entities.IdListVO;
+import com.gw.entities.SysDept;
 import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ public interface DispatchService {
      * @Description 获取任务列表
      * @Params  grade班组id      taskStatus任务状态id
      */
-    public List<TaskInfo> queryTaskList(Integer grade,Integer taskStatus);
+    public List<TaskInfo> queryTaskList(List<Integer> grade,Integer taskStatus);
 
     /**
      * @Date 2021/5/27 11:25
@@ -136,4 +137,11 @@ public interface DispatchService {
      * @Params
      */
     public List<TaskInfo> getIdAndTaskNoOfTaskInfos();
+
+    /**
+     * @Date 2021/8/11 15:50
+     * @Description 查询班组id列表
+     * @Params
+     */
+    public List<Integer> getGradeIds(Integer gradeId);
 }

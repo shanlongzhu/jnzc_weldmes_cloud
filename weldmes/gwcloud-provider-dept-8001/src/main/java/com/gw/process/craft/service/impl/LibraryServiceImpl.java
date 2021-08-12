@@ -8,7 +8,9 @@ import com.gw.process.craft.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -75,7 +77,12 @@ public class LibraryServiceImpl implements LibraryService {
         List<Long> ids = libraryDao.queryBayIdByAreaId(id);
 
         //通过 字典表区域id 查询 跨间描述 value_name
-        List<SysDictionary> list = libraryDao.queryMachineInfoByDictionaryId(ids);
+        List<SysDictionary> list = new ArrayList<>();
+
+        if(!ObjectUtils.isEmpty(ids)){
+
+            list = libraryDao.queryMachineInfoByDictionaryId(ids);
+        }
 
         return list;
     }

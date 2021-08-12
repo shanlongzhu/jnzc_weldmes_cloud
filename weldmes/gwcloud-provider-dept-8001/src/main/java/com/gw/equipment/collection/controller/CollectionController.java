@@ -50,7 +50,7 @@ public class CollectionController {
     public HttpResult addCollection(@RequestBody MachineGatherInfo machineGatherInfo) {
 
         //判断新增信息的采集编号是否存在
-        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo());
+        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo(),machineGatherInfo.getId());
 
         if(!ObjectUtils.isEmpty(judge)){
 
@@ -59,7 +59,7 @@ public class CollectionController {
 
         collectionService.addCollection(machineGatherInfo);
 
-        return HttpResult.ok("采集信息新增成功");
+        return HttpResult.ok("新增成功");
     }
 
     //删除信息
@@ -68,7 +68,7 @@ public class CollectionController {
 
         collectionService.deleteCollection(id);
 
-        return HttpResult.ok("修改成功！");
+        return HttpResult.ok("删除成功");
 
     }
 
@@ -86,7 +86,7 @@ public class CollectionController {
     public HttpResult updateCollection(@RequestBody MachineGatherInfo machineGatherInfo){
 
         //判断新增信息的采集编号是否存在
-        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo());
+        Integer judge = collectionDao.judgeGatherNoYesOrNo(machineGatherInfo.getGatherNo(),machineGatherInfo.getId());
 
         if(!ObjectUtils.isEmpty(judge)){
 
@@ -95,7 +95,7 @@ public class CollectionController {
 
         collectionService.updateCollection(machineGatherInfo);
 
-        return HttpResult.ok("修改成功！");
+        return HttpResult.ok("修改成功");
     }
 
 

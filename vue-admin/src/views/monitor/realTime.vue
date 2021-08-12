@@ -26,10 +26,10 @@
                     <div>焊机实时状态监测</div>
 
                     <div>
-                        <span>关机:<strong>{{offnum}}</strong></span>
-                        <span style="color:#f00">故障:<strong>{{warnArray}}</strong></span>
-                        <span style="color:rgb(1, 209, 95)">待机:<strong>{{standbyArray}}</strong></span>
-                        <span style="color:green">焊接:<strong>{{workArray}}</strong></span>
+                        <span>关机:<strong>{{offnum||0}}</strong></span>
+                        <span style="color:#f00">故障:<strong>{{warnArray.length||0}}</strong></span>
+                        <span style="color:rgb(1, 209, 95)">待机:<strong>{{standbyArray.length||0}}</strong></span>
+                        <span style="color:green">焊接:<strong>{{workArray.length||0}}</strong></span>
                     </div>
                 </div>
                 <div
@@ -184,6 +184,7 @@ import { getModelFindId } from '_api/productionEquipment/production'
 import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
 import organization from '_c/Organization'
+import data from '../pdf/content'
 export default {
     components: { lineE, LineV, organization },
     name: 'realTime',
@@ -191,16 +192,7 @@ export default {
 
         return {
             //mqtt
-            client: {},
-            options: {
-                timeout: 50,
-                keepAliveInterval: 60,
-                cleanSession: false,
-                useSSL: false,
-                reconnect: true,
-                clientId: "adminTest" + new Date().getTime()
-            },
-            timeout: '',
+            newClientMq: {},
 
             list: [],
             //分页
@@ -219,43 +211,62 @@ export default {
             drawer: false,
             //点击的设备
             selectItem: {},
-            //
-            offnum: 0,
-            workArray: 0,
-            standbyArray: 0,
-            warnArray: 0,
+
+            workArray: [],//焊接
+            standbyArray: [],//待机
+            warnArray: [],//故障
 
 
             //曲线数据
             lineData: [],
 
             mqttLastData: {},
+
+
+
         }
     },
+    computed: {
+        offnum () {
+            return this.list.length - (this.workArray.length + this.standbyArray.length + this.warnArray.length)
+        }
+    },
+
     created () {
         this.searchObj.id = 1;
         this.getList();
+        this.newMqtt();
     },
     methods: {
         //mqtt创建
-        createConnection () {
-            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
-            try {
-                this.client = mqtt.connect(connectUrl, this.options)
-            } catch (error) {
-                console.log('连接失败', error)
-            }
-            this.client.on('connect', () => {
-                // console.log('连接成功')
-                this.doSubscribe();
-
+        newMqtt () {
+            const PahoMQTT = require('paho-mqtt');
+            const name = new Date().getTime() + 'client';
+            this.newClientMq = new PahoMQTT.Client(`${process.env.VUE_APP_MQTT_API}`, Number(8083), name);
+            this.newClientMq.connect({
+                timeout: 50,
+                keepAliveInterval: 60,
+                cleanSession: false,
+                useSSL: false,
+                onFailure: function (e) {
+                    console.log(e);
+                },
+                reconnect: true,
+                onSuccess: (res) => {
+                    this.newClientMq.subscribe('rtcdata', {
+                        qos: 0,
+                        onSuccess: function (e) {
+                            console.log("下发返回主题订阅成功：rtcdata");
+                        },
+                        onFailure: function (e) {
+                            console.log(e);
+                        }
+                    })
+                }
             })
-            this.client.on('error', error => {
-                console.log('连接失败', error)
-            })
-            this.client.on('message', (topic, message) => {
-                if (topic == 'rtcdata') {
-                    var datajson = JSON.parse(`${message}`);
+            this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
+                if (destinationName == 'rtcdata') {
+                    var datajson = JSON.parse(payloadString);
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -266,15 +277,23 @@ export default {
                         }
                     }
                 }
-            })
+            }
         },
+
         //更新列表
         setData (arr) {
+            //统计
+            for (let b of arr) {
+                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+                if (this.searchObj.id!=1) {
+                    if (isThat.length > 0) {
+                        this.totalNum(b);
+                    }
+                } else {
+                    this.totalNum(b);
+                }
+            }
             let v1 = arr.slice(-1)[0];
-            this.offnum = 0;
-            this.warnArray = 0;
-            this.standbyArray = 0;
-            this.workArray = 0;
             this.list.forEach(item => {
                 if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
                     item.voltage = v1.voltage
@@ -283,24 +302,8 @@ export default {
                     item.taskNo = v1.taskNo
                     item.weldStatus = v1.weldStatus;//状态
                 }
-                this.totalNum(item.weldStatus);
             })
         },
-
-        //订阅主题
-        doSubscribe () {
-            this.client.subscribe('rtcdata', 0, (error, res) => {
-                // console.log('订阅rtcdata')
-                if (error) {
-                    this.$message.error("订阅rtcdata超时")
-                    return
-                }
-            })
-        },
-
-
-
-
         search () {
             this.page = 1;
             this.getList();
@@ -326,9 +329,9 @@ export default {
                     objItem.taskNo = '';//任务编号
                     return objItem;
                 });
-                this.offnum = data.total;
+                // this.offnum = data.total;
                 this.total = data.total;
-                this.createConnection();
+                // this.createConnection();
             }
         },
 
@@ -339,6 +342,9 @@ export default {
         },
 
         currentChangeTree (v) {
+            this.workArray = [];//焊接
+            this.standbyArray = [];//待机
+            this.warnArray = [];//故障
             this.searchObj.id = v.id;
             this.search();
         },
@@ -348,7 +354,7 @@ export default {
             this.lineData = [];
             this.drawer = true;
             this.selectItem = v;
-            this.mqttLastData = {};
+            this.mqttLastData = { ...v };
             // this.$refs.lineComEChild.echartsClear();
             // this.$refs.lineComVChild.echartsClear();            
             this.$nextTick(() => {
@@ -422,22 +428,121 @@ export default {
             return str;
         },
         totalNum (v) {
-            switch (v) {
+            switch (v.weldStatus) {
                 case -1:
-                    this.offnum++;
+                    this.setOffNum(v);
                     break;
                 case 0:
-                    this.standbyArray++;
+                    this.setStandbyArray(v);
                     break;
                 case 3: case 5: case 7:
-                    this.workArray++;
+                    this.setWorkArray(v);
                     break;
                 default:
-                    this.warnArray++;
+                    this.setWarnArray(v);
                     break;
             }
-        }
+        },
 
+        //获取数值下标
+        isArrNum (str, arr) {
+            return arr.indexOf(str);
+        },
+
+        //关机状态
+        setOffNum (v) {
+            //判断焊接是否存在
+            let workInNum = this.isArrNum(v.gatherNo, this.workArray);
+            //有则删除
+            if (workInNum !== -1) {
+                this.workArray.splice(workInNum, 1);
+            }
+
+            //判断待机是否存在
+            let standbyInNum = this.isArrNum(v.gatherNo, this.standbyArray);
+            //有则删除
+            if (standbyInNum !== -1) {
+                this.standbyArray.splice(standbyInNum, 1);
+            }
+
+            //判断故障是否存在
+            let warnInNum = this.isArrNum(v.gatherNo, this.warnArray);
+            //有则删除
+            if (warnInNum !== -1) {
+                this.warnArray.splice(warnInNum, 1);
+            }
+        },
+
+        //焊接状态
+        setWorkArray (v) {
+            //判断焊接是否存在
+            let workInNum = this.isArrNum(v.gatherNo, this.workArray);
+            //没有则添加
+            if (workInNum === -1) {
+                this.workArray.push(v.gatherNo);
+            }
+
+            //判断待机是否存在
+            let standbyInNum = this.isArrNum(v.gatherNo, this.standbyArray);
+            //有则删除
+            if (standbyInNum !== -1) {
+                this.standbyArray.splice(standbyInNum, 1);
+            }
+
+            //判断故障是否存在
+            let warnInNum = this.isArrNum(v.gatherNo, this.warnArray);
+            //有则删除
+            if (warnInNum !== -1) {
+                this.warnArray.splice(warnInNum, 1);
+            }
+        },
+        //待机状态
+        setStandbyArray (v) {
+            //判断焊接是否存在
+            let workInNum = this.isArrNum(v.gatherNo, this.workArray);
+            //有则删除
+            if (workInNum !== -1) {
+                this.workArray.splice(workInNum, 1);
+            }
+
+            //判断待机是否存在
+            let standbyInNum = this.isArrNum(v.gatherNo, this.standbyArray);
+            //有则删除
+            if (standbyInNum === -1) {
+                this.standbyArray.push(v.gatherNo);
+            }
+
+            //判断故障是否存在
+            let warnInNum = this.isArrNum(v.gatherNo, this.warnArray);
+            //有则删除
+            if (warnInNum !== -1) {
+                this.warnArray.splice(warnInNum, 1);
+            }
+        },
+
+        //故障状态
+        setWarnArray (v) {
+            //判断焊接是否存在
+            let workInNum = this.isArrNum(v.gatherNo, this.workArray);
+            //有则删除
+            if (workInNum !== -1) {
+                this.workArray.splice(workInNum, 1);
+            }
+
+            //判断待机是否存在
+            let standbyInNum = this.isArrNum(v.gatherNo, this.standbyArray);
+            //有则删除
+            if (standbyInNum !== -1) {
+                this.standbyArray.splice(standbyInNum, 1);
+            }
+
+            //判断故障是否存在
+            let warnInNum = this.isArrNum(v.gatherNo, this.warnArray);
+            //有则删除
+            if (warnInNum === -1) {
+                this.warnArray.push(v.gatherNo);
+            }
+        }
     }
 }
 </script>
@@ -493,7 +598,7 @@ export default {
 .real-con-layer * {
     color: #333;
 }
-.real-con-layer .el-dialog__headerbtn{
+.real-con-layer .el-dialog__headerbtn {
     font-size: 24px;
 }
 

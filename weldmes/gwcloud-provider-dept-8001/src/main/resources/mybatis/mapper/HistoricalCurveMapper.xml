@@ -32,13 +32,13 @@
         left join machine_weld_info weld on weld.id = claim.weld_id
         where claim.claim_time &gt;= #{startTime} and claim.claim_time &lt;= #{endTime}
         <if test="taskId != null and taskId != ''">
-            and task.taskId = #{taskId}
+            and task.id = #{taskId}
         </if>
         <if test="welderId != null and welderId != ''">
-            and welder.welderId = #{welderId}
+            and welder.id = #{welderId}
         </if>
         <if test="weldMachineId != null and weldMachineId != ''">
-            and weld.machineId = #{weldMachineId}
+            and weld.id = #{weldMachineId}
         </if>
         GROUP BY task.id,welder.id,weld.id
     </select>

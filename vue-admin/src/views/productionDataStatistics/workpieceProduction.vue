@@ -9,6 +9,18 @@
                 <el-input v-model="taskNo" placeholder="" class="w150"></el-input>
             </div>
             <div class="con-w">
+                <span>班组：</span>
+                <el-cascader
+                    v-model="deptId"
+                    size="small"
+                    class="w150"
+                    clearable
+                    :options="teamArr"
+                    :props="defalutProps"
+                    :show-all-levels="false"
+                />
+            </div>
+            <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
                     style="width:350px"
@@ -65,10 +77,20 @@
                 <vxe-table-column
                     field="taskNo"
                     title="任务编号"
-                    min-width="150"
+                    min-width="100"
                 >
                     <template #default={row}>
                         {{row.taskInfo.taskNo}}
+                    </template>
+                </vxe-table-column>
+
+                <vxe-table-column
+                    field="name"
+                    title="班组"
+                    min-width="150"
+                >
+                    <template #default={row}>
+                        {{row.sysDept.name}}
                     </template>
                 </vxe-table-column>
 
@@ -150,6 +172,7 @@
 <script>
 import moment from 'moment'
 import { getWorkProDataList, exportWorkProDataList } from '_api/productDataStat/productDataStatApi'
+import { getTeam } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     name: 'workpieceProduction',
@@ -164,6 +187,7 @@ export default {
             //搜索条件
             dateTime: [moment(new Date()).startOf('day'), new Date()],
             taskNo:'',
+            deptId:'',
 
             loading: false,
             headers: {
@@ -178,14 +202,31 @@ export default {
             //未绑定设备明细
             dialogVisible: false,
             layerCon: '',
-            title: '焊接任务'
+            title: '焊接任务',
+
+            //机构数据
+            teamArr: [],
+            // 级联下拉配置
+            defalutProps: {
+                label: 'name',
+                value: 'id',
+                children: 'list'
+            },
         }
     },
 
     created () {
         this.getList();
+        if (this.teamArr.length == 0) {
+            this.getTeamList()
+        }
     },
     methods: {
+        // 获取班组
+        async getTeamList () {
+            const { data, code } = await getTeam()
+            this.teamArr = data.workArea || []
+        },
         search () {
             this.page = 1;
             this.getList();
@@ -196,6 +237,7 @@ export default {
                 taskNo:this.taskNo,
                 time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
             }
             this.loading = true;
             let { data, code } = await getWorkProDataList(req);
@@ -223,6 +265,7 @@ export default {
                 taskNo:this.taskNo,
                 time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
             }
             location.href = exportWorkProDataList(req)
         }, 

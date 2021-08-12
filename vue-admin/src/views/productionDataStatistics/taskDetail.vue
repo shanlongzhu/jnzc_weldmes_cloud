@@ -4,10 +4,10 @@
         class="flex-c"
     >
         <div class="top-con flex-n">
-            <!-- <div class="con-w">
+            <div class="con-w">
                 <span>班组：</span>
                 <el-cascader
-                    v-model="teamId"
+                    v-model="deptId"
                     size="small"
                     class="w150"
                     clearable
@@ -18,12 +18,40 @@
             </div>
             <div class="con-w">
                 <span>焊工编号：</span>
-                <el-input size="mini" v-model="welderNo" class="w120" placeholder=""></el-input>
+                <el-input
+                    size="mini"
+                    v-model="welderNo"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
+            </div>
+            <div class="con-w">
+                <span>焊工姓名：</span>
+                <el-input
+                    size="mini"
+                    v-model="welderName"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
+            </div>
+            <div class="con-w">
+                <span>焊机编号：</span>
+                <el-input
+                    size="mini"
+                    v-model="machineNo"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
             </div>
             <div class="con-w">
                 <span>任务编号：</span>
-                <el-input size="mini" v-model="junctionNo" class="w120" placeholder=""></el-input>
-            </div> -->
+                <el-input
+                    size="mini"
+                    v-model="taskNo"
+                    class="w120"
+                    placeholder=""
+                ></el-input>
+            </div>
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
@@ -75,7 +103,7 @@
                     title="序号"
                     width="50"
                     fixed="left"
-                ></vxe-table-column>                
+                ></vxe-table-column>
                 <vxe-table-column
                     field="welderNo"
                     title="焊工编号"
@@ -90,7 +118,7 @@
                     title="焊工姓名"
                     min-width="150"
                 >
-                <template #default={row}>
+                    <template #default={row}>
                         {{row.welderInfo.welderName}}
                     </template>
                 </vxe-table-column>
@@ -100,7 +128,7 @@
                     title="焊机编号"
                     width="100"
                 >
-                <template #default={row}>
+                    <template #default={row}>
                         {{row.machineWeldInfo.machineNo}}
                     </template>
                 </vxe-table-column>
@@ -112,45 +140,54 @@
                     <template #default={row}>
                         {{row.taskInfo.taskNo}}
                     </template>
-                </vxe-table-column>    
+                </vxe-table-column>
+                <vxe-table-column
+                    field="name"
+                    title="班组"
+                    width="100"
+                >
+                    <template #default={row}>
+                       {{row.sysDept.name}}
+                    </template>
+                </vxe-table-column>
                 <vxe-table-column
                     field="realityStarttime"
                     title="开始时间"
                     min-width="150"
                 >
-                <template #default={row}>
+                    <template #default={row}>
                         {{row.taskInfo.realityStarttime}}
                     </template>
-                </vxe-table-column>        
+                </vxe-table-column>
                 <vxe-table-column
                     field="realityEndtime"
                     title="结束时间"
                     min-width="150"
                 >
-                <template #default={row}>
+                    <template #default={row}>
                         {{row.taskInfo.realityEndtime}}
                     </template>
-                </vxe-table-column>  
+                </vxe-table-column>
                 <vxe-table-column
                     field="eleScope"
                     title="电流范围"
                     min-width="150"
-                ></vxe-table-column> 
+                ></vxe-table-column>
                 <vxe-table-column
                     field="electricity"
                     title="平均电流"
                     min-width="150"
-                ></vxe-table-column>    
+                ></vxe-table-column>
                 <vxe-table-column
                     field="volScope"
                     title="电压范围"
                     min-width="150"
-                ></vxe-table-column> 
+                ></vxe-table-column>
                 <vxe-table-column
                     field="voltage"
                     title="平均电压"
                     min-width="150"
-                ></vxe-table-column>                                        
+                ></vxe-table-column>
             </vxe-table>
         </div>
         <el-pagination
@@ -163,13 +200,13 @@
             :total="total"
             @current-change="handleCurrentChange"
         />
-        
+
     </div>
 </template>
 
 <script>
 import moment from 'moment'
-import { getTeam} from '_api/productionProcess/process'
+import { getTeam } from '_api/productionProcess/process'
 import { getTaskDataList, exportTaskDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
 export default {
@@ -184,9 +221,11 @@ export default {
 
             //搜索条件
             dateTime: [moment(new Date()).startOf('day'), new Date()],
-            teamId:'',
-            welderNo:'',
-            junctionNo:'',
+            deptId: '',
+            welderNo: '',
+            welderName: '',
+            machineNo: '',
+            taskNo: '',
 
             loading: false,
             headers: {
@@ -206,7 +245,7 @@ export default {
                 value: 'id',
                 children: 'list'
             },
-            
+
         }
     },
 
@@ -230,11 +269,13 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
-                teamId:this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
-                welderNo:this.welderNo,
-                junctionNo:this.junctionNo
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId: this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
+                welderNo: this.welderNo,
+                welderName: this.welderName,
+                machineNo: this.machineNo,
+                taskNo: this.taskNo,
             }
             this.loading = true;
             let { data, code } = await getTaskDataList(req);
@@ -259,11 +300,13 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
-                teamId:this.teamId && this.teamId.length > 0 ? this.teamId.slice(-1).join('') : '',
-                welderNo:this.welderNo,
-                junctionNo:this.junctionNo
+                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                deptId: this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
+                welderNo: this.welderNo,
+                welderName: this.welderName,
+                machineNo: this.machineNo,
+                taskNo: this.taskNo,
             }
             location.href = exportTaskDataList(req)
         }

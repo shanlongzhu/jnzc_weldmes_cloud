@@ -99,6 +99,7 @@ export default {
         },
         init () {
             this.getDicFun();
+            this.areaId = '';
             this.machvisable = true;
         },
 
@@ -126,12 +127,12 @@ export default {
                 return this.$message.error("请先选择区域");
             }
             let req = {
-                areaBayInfos:this.selectData.map(item => {
+                areaBayInfos:this.selectData.length>0?this.selectData.map(item => {
                     let obj = {}
                     obj.areaId = this.areaId;
                     obj.bayId = item.id;
                     return obj
-                })
+                }):[{areaId:this.areaId}]
             }
             let {code} = await saveAreaBind(req);
             if(code==200){

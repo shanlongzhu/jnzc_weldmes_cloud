@@ -121,8 +121,8 @@
     </select>
 
     <!--判断焊工编号是否存在-->
-    <select id="judgeWelderNoYesOrNo" parameterType="String" resultType="java.lang.Integer">
-        select (1) from welder_info where welder_no = #{WelderNo}
+    <select id="judgeWelderNoYesOrNo" resultType="java.lang.Integer">
+        select (1) from welder_info where welder_no = #{WelderNo} and id != #{id}
     </select>
 
 </mapper>

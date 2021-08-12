@@ -490,7 +490,8 @@ export default {
             defalutProps: {
                 label: 'name',
                 value: 'id',
-                children: 'list'
+                children: 'list',
+                checkStrictly: true
             },
 
             // 评价
