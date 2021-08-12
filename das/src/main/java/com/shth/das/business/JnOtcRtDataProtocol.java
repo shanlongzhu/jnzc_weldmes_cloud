@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 江南项目数据解析类
@@ -363,6 +362,33 @@ public class JnOtcRtDataProtocol {
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
                         data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
+                        //待机数据不存储，则针对起弧、收弧各存储一条待机数据
+                        if (!DataInitialization.isOtcStandbySave()) {
+                            //起弧（增加一条待机数据）
+                            if (data.getWeldStatus() == 7) {
+                                JNRtDataDB jnRtDataDb = (JNRtDataDB) data.clone();
+                                jnRtDataDb.setWeldStatus(0);
+                                final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                                //减去1秒
+                                final String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                                jnRtDataDb.setWeldTime(weldTime);
+                                jnRtDataDb.setElectricity(BigDecimal.ZERO);
+                                jnRtDataDb.setVoltage(BigDecimal.ZERO);
+                                rtdata.add(jnRtDataDb);
+                            }
+                            //收弧（增加一条待机数据）
+                            else if (data.getWeldStatus() == 5) {
+                                JNRtDataDB jnRtDataDb = (JNRtDataDB) data.clone();
+                                jnRtDataDb.setWeldStatus(0);
+                                final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                                //加上1秒
+                                final String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                                jnRtDataDb.setWeldTime(weldTime);
+                                jnRtDataDb.setElectricity(BigDecimal.ZERO);
+                                jnRtDataDb.setVoltage(BigDecimal.ZERO);
+                                rtdata.add(jnRtDataDb);
+                            }
+                        }
                         rtdata.add(data);
                     }
                     return rtdata;
