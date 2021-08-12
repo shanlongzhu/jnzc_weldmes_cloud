@@ -316,7 +316,7 @@ export default {
     name: 'user-manage',
     data () {
         let validatorPhone = function (rule, value, callback) {
-            if (value === '') {
+            if (value.replace(/\s+/g, "") === '') {
                 callback()
             } else if (!/^1\d{10}$/.test(value)) {
                 callback(new Error('手机号格式错误'))
@@ -367,9 +367,9 @@ export default {
                 password: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                position: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
+                // position: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
                 deptId: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],

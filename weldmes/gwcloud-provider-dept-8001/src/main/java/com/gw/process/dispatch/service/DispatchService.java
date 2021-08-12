@@ -1,10 +1,7 @@
 package com.gw.process.dispatch.service;
 
 import com.gw.common.HttpResult;
-import com.gw.entities.IdListVO;
-import com.gw.entities.SysDept;
-import com.gw.entities.TaskClaim;
-import com.gw.entities.TaskInfo;
+import com.gw.entities.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -93,7 +90,7 @@ public interface DispatchService {
      * @Description 任务状态变更
      * @Params taskInfo 任务信息
      */
-    public void taskStatusChange(TaskInfo taskInfo);
+    public List<GatherAndFirmInfo> taskStatusChange(TaskInfo taskInfo);
 
     /**
      * @Date 2021/5/28 17:38

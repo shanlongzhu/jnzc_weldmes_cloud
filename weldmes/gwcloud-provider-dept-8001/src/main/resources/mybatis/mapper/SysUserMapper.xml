@@ -74,13 +74,13 @@
             <if test="sysUser.name != null and sysUser.name !=''">`name` = #{sysUser.name},</if>
             <if test="sysUser.loginName != null and sysUser.loginName !=''">login_name = #{sysUser.loginName},</if>
             <if test="sysUser.password != null and sysUser.password !=''">password = #{sysUser.password},</if>
-            <if test="sysUser.email != null and sysUser.email !=''">email = #{sysUser.email},</if>
-            <if test="sysUser.mobile != null and sysUser.mobile !=''">mobile = #{sysUser.mobile},</if>
             <if test="sysUser.position != null and sysUser.position !=''">`position` = #{sysUser.position},</if>
-            <if test="sysUser.status != null and sysUser.status !=''">status = #{sysUser.status},</if>
             <if test="sysUser.deptId != null and sysUser.deptId !=''">dept_id = #{sysUser.deptId},</if>
             <if test="sysUser.delFlag != null and sysUser.delFlag !=''">del_flag = #{sysUser.delFlag},</if>
             <if test="sysUser.lastUpdateTime != null and sysUser.lastUpdateTime !=''">last_update_time = #{sysUser.lastUpdateTime},</if>
+            email = #{sysUser.email},
+            status = #{sysUser.status},
+            mobile = #{sysUser.mobile}
         </trim>
         where id = #{sysUser.id}
     </update>

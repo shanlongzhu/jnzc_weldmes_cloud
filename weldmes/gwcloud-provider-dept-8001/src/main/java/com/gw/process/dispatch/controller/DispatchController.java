@@ -247,9 +247,9 @@ public class DispatchController {
     @RequestMapping(value = "task/taskStatusChange")
     public HttpResult taskStatusChangeController(@RequestBody TaskInfo taskInfo){
 
-        dispatchService.taskStatusChange(taskInfo);
+        List<GatherAndFirmInfo> list = dispatchService.taskStatusChange(taskInfo);
 
-        return HttpResult.ok("任务状态变更成功");
+        return HttpResult.ok(list);
 
     }
 

@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Data
 @Accessors(chain=true)
 public class WelderInfo implements Serializable {
-    private long id;
+    private Long id;
     private String welderName;
     private String welderNo;
     private Byte status;

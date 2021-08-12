@@ -1,5 +1,8 @@
 <template>
-  <img width="100%" src="../../assets/home_images/home.jpg" />
+<div>
+<img width="100%" src="../../assets/home_images/home.jpg" />
+</div>
+  
   <!-- <canvas id="cvs" style="width:100%;height:100%">当前浏览器不支持canvas</canvas> -->
 </template>
 

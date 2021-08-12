@@ -7,6 +7,7 @@ import com.gw.common.HttpResult;
 import com.gw.entities.*;
 import com.gw.equipment.welder.dao.WelderDao;
 import com.gw.process.dispatch.dao.DispatchDao;
+import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.DispatchService;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,6 +41,9 @@ public class DispatchServiceImpl implements DispatchService{
 
     @Autowired
     WelderDao welderDao;
+
+    @Autowired
+    TaskClaimDao taskClaimDao;
 
 
     /**
@@ -269,7 +273,9 @@ public class DispatchServiceImpl implements DispatchService{
      * @Params  taskInfo 任务信息实体类  只需传入 任务id 任务当前状态
      */
     @Override
-    public void taskStatusChange(TaskInfo taskInfo) {
+    public List<GatherAndFirmInfo> taskStatusChange(TaskInfo taskInfo) {
+
+        List<GatherAndFirmInfo> firmAndGatherNoInfos = new ArrayList<>();
 
         //任务状态 更改为 已完成
         if(taskInfo.getStatusStr().equals(DictionaryEnum.TASK_STATUS_WORKING.getValueName())){
@@ -287,8 +293,14 @@ public class DispatchServiceImpl implements DispatchService{
             //入库操作  修改任务状态
             dispatchDao.updateTaskInfo(taskInfo);
 
+            //根据任务id拿到焊机id列表
+            firmAndGatherNoInfos = taskClaimDao.selectFirmAndGatherNoInfosByTaskId(taskInfo.getId());
+
+            return firmAndGatherNoInfos;
 
         }
+
+        return firmAndGatherNoInfos;
     }
 
     /**

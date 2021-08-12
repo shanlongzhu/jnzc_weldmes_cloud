@@ -287,7 +287,10 @@
                     label="任务编号"
                     prop="taskNo"
                 >
-                    <el-input v-model="ruleForm.taskNo" style="width:200px" />
+                    <el-input
+                        v-model="ruleForm.taskNo"
+                        style="width:200px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="任务等级"
@@ -343,25 +346,37 @@
                     label="电压上限"
                     prop="volMax"
                 >
-                    <el-input v-model="ruleForm.volMax" style="width:200px" />
+                    <el-input
+                        v-model="ruleForm.volMax"
+                        style="width:200px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="电压下限"
                     prop="volMin"
                 >
-                    <el-input v-model="ruleForm.volMin" style="width:200px" />
+                    <el-input
+                        v-model="ruleForm.volMin"
+                        style="width:200px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="电流上限"
                     prop="eleMax"
                 >
-                    <el-input v-model="ruleForm.eleMax" style="width:200px" />
+                    <el-input
+                        v-model="ruleForm.eleMax"
+                        style="width:200px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="电流下限"
                     prop="eleMin"
                 >
-                    <el-input v-model="ruleForm.eleMin" style="width:200px" />
+                    <el-input
+                        v-model="ruleForm.eleMin"
+                        style="width:200px"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="计划时间"
@@ -435,7 +450,7 @@
 
 <script>
 import { getInfo } from '../../api/user'
-import { getProcessList, editProcess, getlevel, getProcessDetail, delProcess, addProcess, delCheckAllProcess, changeAllStatus, changeStatus, getTeam, setEvaluate, exportExcel, importExcel ,getDictionaries,getWelderPeopleListNoPage} from '_api/productionProcess/process'
+import { getProcessList, editProcess, getlevel, getProcessDetail, delProcess, addProcess, delCheckAllProcess, changeAllStatus, changeStatus, getTeam, setEvaluate, exportExcel, importExcel, getDictionaries, getWelderPeopleListNoPage } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 export default {
     data () {
@@ -449,7 +464,7 @@ export default {
             ruleFormObj: {
             },
             ruleForm: {
-                welderId:'',//焊工id
+                welderId: '',//焊工id
                 taskNo: '',
                 gradeIdToStr: '',
                 grade: '',
@@ -457,10 +472,10 @@ export default {
                 deptId: '',
                 planStarttime: '',
                 planEndtime: '',
-                eleMax:'',
-                eleMin:'',
-                volMax:'',
-                volMin:'',
+                eleMax: '',
+                eleMin: '',
+                volMax: '',
+                volMin: '',
             },
             rules: {
                 grade: [
@@ -515,14 +530,17 @@ export default {
             headers: {
                 'Authorization': getToken()
             },
-            starArr:[],
+            starArr: [],
             loading: true,
-            welderArr:[]
+            welderArr: [],
+
+            //mqtt
+            newClientMq: {},
         }
     },
 
     created () {
-        this.ruleFormObj = {...this.ruleForm};
+        this.ruleFormObj = { ...this.ruleForm };
         this.getList()
         if (this.levelArr.length == 0) {
             this.getLevelFun()
@@ -532,19 +550,45 @@ export default {
             this.getTeamList()
         }
 
-        if(this.starArr.length==0){
-          this.getDicFun();
+        if (this.starArr.length == 0) {
+            this.getDicFun();
         }
-        
+
+        //mqt连接
+        this.newMqtt();
     },
     methods: {
-      //获取数据字典
-      async getDicFun(){
-        let {data,code} = await getDictionaries({"types":["15"]});
-        if(code==200){
-          this.starArr = data['15']||[]
-        }
-      },
+
+        //mqtt创建
+        newMqtt () {
+            const PahoMQTT = require('paho-mqtt');
+            const name = new Date().getTime() + 'client';
+            this.newClientMq = new PahoMQTT.Client(`${process.env.VUE_APP_MQTT_API}`, Number(8083), name);
+            this.newClientMq.connect({
+                timeout: 50,
+                keepAliveInterval: 60,
+                cleanSession: false,
+                useSSL: false,
+                onFailure: function (e) {
+                    console.log(e);
+                },
+                reconnect: true,
+                onSuccess: (res) => {
+                    console.log('连接成功');                    
+                }
+            })
+        },
+
+
+
+
+        //获取数据字典
+        async getDicFun () {
+            let { data, code } = await getDictionaries({ "types": ["15"] });
+            if (code == 200) {
+                this.starArr = data['15'] || []
+            }
+        },
         search () {
             this.page = 1
             this.getList()
@@ -580,7 +624,7 @@ export default {
                 this.ruleForm = { ...data }
                 console.log(this.ruleForm)
                 this.dateTime = [this.ruleForm.planStarttime || '', this.ruleForm.planEndtime || '']
-                if(this.ruleForm.deptId||this.ruleForm.rate){
+                if (this.ruleForm.deptId || this.ruleForm.rate) {
                     this.getWelder();
                 }
             }
@@ -656,11 +700,13 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 const idList = this.selectTableAll.map(item => item.id)
-                const { code } = await changeAllStatus({ idList })
+                const { code,data } = await changeAllStatus({ idList })
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.selectTableAll = []
                     this.getList()
+                    this.doSendMsg(data)
+
                 }
             }).catch(() => { })
         },
@@ -673,12 +719,37 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 const req = { id: id, statusStr: '进行中' }
-                const { code } = await changeStatus(req)
+                const { code, data } = await changeStatus(req)
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.getList()
+                    this.doSendMsg(data);
                 }
             }).catch(() => { })
+        },
+        //发送完成状态
+        doSendMsg (v) {
+            if (v.length > 0) {
+                for (let i = 0; i < v.length; i++) {
+                    setTimeout(() => {
+                        let msg = {}
+                        msg['weldIp'] = "";
+                        msg['gatherNo'] = "";
+                        //1 松下 、0 OTC
+                        if (v[i].firmCode == '1') {
+                            msg['weldType'] = 1;//设备类型
+                            msg['weldIp'] = v[i].ipPath
+                        }else
+                        if (v[i].firmCode == '0') {
+                            msg['weldType'] = 0;//设备类型
+                            msg['gatherNo'] = v[i].gatherNo || "";//设备IP
+                        }
+                        msg['startFlag'] = 1;//开始标记
+                        let msgStr = JSON.stringify(msg);
+                        this.newClientMq.publish('taskClaimIssue',msgStr,1)
+                    }, 200 * i)
+                }
+            }
         },
 
         // 新增/编辑提交
@@ -687,7 +758,7 @@ export default {
                 if (valid) {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await editProcess(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
@@ -696,7 +767,7 @@ export default {
                         }
                     } else {
                         const req = { ...this.ruleForm }
-                        req.deptId = req.deptId&&req.deptId.length>0?req.deptId.slice(-1).join(''):req.deptId
+                        req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { data, code } = await addProcess(req)
                         if (code == 200) {
                             this.$message.success('新增成功')
@@ -720,20 +791,20 @@ export default {
         async evelFun (row) {
             this.evaluate = true
             this.evaluateRuleForm.id = row.id;
-            this.evaluateRuleForm.comments = row.evaluateContent||"";
-            this.evaluateRuleForm.star = !row.evaluateStars?5:this.starArr.filter(item => item.id==row.evaluateStars).map(item => item.value).join('');
+            this.evaluateRuleForm.comments = row.evaluateContent || "";
+            this.evaluateRuleForm.star = !row.evaluateStars ? 5 : this.starArr.filter(item => item.id == row.evaluateStars).map(item => item.value).join('');
         },
         submitEval (formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
-                  let req = {...this.evaluateRuleForm};
-                  req.start = this.starArr.filter(item => item.value==req.star).map(item => item.id).join('');
-                  
+                    let req = { ...this.evaluateRuleForm };
+                    req.start = this.starArr.filter(item => item.value == req.star).map(item => item.id).join('');
+
                     const { data, code } = await setEvaluate(req);
-                    if(code==200){
-                      this.evaluate = false;
-                      this.$message.success("评价成功");
-                      this.getList();
+                    if (code == 200) {
+                        this.evaluate = false;
+                        this.$message.success("评价成功");
+                        this.getList();
                     }
                 } else {
                     console.log('error submit!!')
@@ -766,18 +837,18 @@ export default {
 
         },
         //获取焊工
-        changeSelectGetWelder(){
+        changeSelectGetWelder () {
             this.ruleForm.welderId = "";
             this.getWelder();
         },
-        async getWelder(){            
+        async getWelder () {
             let req = {
-                grade: this.ruleForm.deptId&&this.ruleForm.deptId.length>0?this.ruleForm.deptId.slice(-1).join(''):this.ruleForm.deptId,
-                rate:this.ruleForm.grade
+                grade: this.ruleForm.deptId && this.ruleForm.deptId.length > 0 ? this.ruleForm.deptId.slice(-1).join('') : this.ruleForm.deptId,
+                rate: this.ruleForm.grade
             }
-            let {data,code} = await getWelderPeopleListNoPage(req);
-            if(code==200){
-                this.welderArr = data||[];
+            let { data, code } = await getWelderPeopleListNoPage(req);
+            if (code == 200) {
+                this.welderArr = data || [];
             }
         }
 
