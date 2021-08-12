@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Map;
 
 @Mapper
-public interface RtDataMapper extends BaseMapper<JNRtDataDB> {
+public interface OtcRtDataMapper extends BaseMapper<JNRtDataDB> {
 
     /**
      * 创建OTC实时数据表

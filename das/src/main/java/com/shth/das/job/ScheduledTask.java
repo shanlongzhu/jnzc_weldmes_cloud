@@ -6,7 +6,7 @@ import com.shth.das.common.CommonMap;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
-import com.shth.das.sys.rtdata.service.RtDataService;
+import com.shth.das.sys.rtdata.service.OtcRtDataService;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.*;
 import com.shth.das.util.CommonUtils;
@@ -37,7 +37,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ScheduledTask {
 
     @Autowired
-    RtDataService rtDataService;
+    OtcRtDataService otcRtDataService;
     @Autowired
     MachineGatherService gatherService;
     @Autowired
@@ -60,7 +60,7 @@ public class ScheduledTask {
     public void scheduled1() {
         //OTC获取第二天的实时数据表名
         String otcTableName = "rtdata" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
-        int otcCreateResult = rtDataService.createNewTable(otcTableName);
+        int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
         log.info("otcCreateResult:--->>>>{}", otcCreateResult);
         //松下获取第二天的实时数据表名
         String sxTableName = "sxrtd" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
@@ -224,7 +224,7 @@ public class ScheduledTask {
             while (!otcLinkedBlockingQueue.isEmpty()) {
                 List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
                 Queues.drain(otcLinkedBlockingQueue, jnRtDataDbList, 2000, Duration.ofMillis(0));
-                rtDataService.insertRtDataList(jnRtDataDbList);
+                otcRtDataService.insertRtDataList(jnRtDataDbList);
             }
         } catch (Exception e) {
             e.printStackTrace();

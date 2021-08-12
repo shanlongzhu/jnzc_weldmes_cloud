@@ -1,8 +1,8 @@
 package com.shth.das.sys.rtdata.service.impl;
 
 import com.shth.das.pojo.jnotc.JNRtDataDB;
-import com.shth.das.sys.rtdata.mapper.RtDataMapper;
-import com.shth.das.sys.rtdata.service.RtDataService;
+import com.shth.das.sys.rtdata.mapper.OtcRtDataMapper;
+import com.shth.das.sys.rtdata.service.OtcRtDataService;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +15,14 @@ import java.util.Map;
 
 @Service
 @Transactional(value = "ds2TransactionManager", rollbackFor = Exception.class)
-public class RtDataServiceImpl implements RtDataService {
+public class OtcRtDataServiceImpl implements OtcRtDataService {
 
     @Autowired
-    RtDataMapper rtDataMapper;
+    OtcRtDataMapper otcRtDataMapper;
 
     @Override
     public int createNewTable(String tableName) {
-        return rtDataMapper.createNewTable(tableName);
+        return otcRtDataMapper.createNewTable(tableName);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class RtDataServiceImpl implements RtDataService {
             String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
             map.put("tableName", tableName);
             map.put("list", list);
-            rtDataMapper.insertRtDataList(map);
+            otcRtDataMapper.insertRtDataList(map);
         }
     }
 }

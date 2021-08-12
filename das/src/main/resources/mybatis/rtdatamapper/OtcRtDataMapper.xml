@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shth.das.sys.rtdata.mapper.RtDataMapper">
+<mapper namespace="com.shth.das.sys.rtdata.mapper.OtcRtDataMapper">
 
     <!-- 创建实时数据表结构 -->
     <update id="createNewTable" parameterType="java.lang.String">

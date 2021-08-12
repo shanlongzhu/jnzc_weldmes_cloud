@@ -13,6 +13,10 @@ import java.io.Serializable;
 public class SxProcessDeleteReturn implements Serializable {
 
     /**
+     * 设备CID
+     */
+    private String weldCid;
+    /**
      * IP地址
      */
     private String weldIp;

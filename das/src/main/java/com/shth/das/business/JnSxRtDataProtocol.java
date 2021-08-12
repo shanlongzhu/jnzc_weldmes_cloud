@@ -89,10 +89,15 @@ public class JnSxRtDataProtocol {
     public void jnSxGl5StatusManage(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {
                 SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
                 if (null != sxStatusDataUi) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)){
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxStatusDataUi.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
@@ -110,10 +115,15 @@ public class JnSxRtDataProtocol {
     public void jnSxGl5ProcessWeldSet(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下工艺索取返回(无数据)
             if (map.containsKey("SxProcessClaimReturn")) {
                 SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
                 if (null != sxProcessClaimReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxProcessClaimReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessClaimReturn);
                     //通过mqtt发送到服务端
@@ -124,6 +134,10 @@ public class JnSxRtDataProtocol {
             if (map.containsKey("SxProcessReturn")) {
                 SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get("SxProcessReturn");
                 if (null != sxProcessReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxProcessReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessReturn);
                     //通过mqtt发送到服务端
@@ -134,6 +148,10 @@ public class JnSxRtDataProtocol {
             if (map.containsKey("SxProcessDeleteReturn")) {
                 SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
                 if (null != sxProcessDeleteReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxProcessDeleteReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessDeleteReturn);
                     //通过mqtt发送到服务端
@@ -144,6 +162,10 @@ public class JnSxRtDataProtocol {
             if (map.containsKey("SxWeldChannelSetReturn")) {
                 SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get("SxWeldChannelSetReturn");
                 if (null != sxWeldChannelSetReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxWeldChannelSetReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxWeldChannelSetReturn);
                     //通过mqtt发送到服务端
@@ -161,10 +183,15 @@ public class JnSxRtDataProtocol {
     public void jnSxCo2ProcessClaimReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下CO2工艺索取返回
             if (map.containsKey("SxCO2ProcessClaimReturn")) {
                 SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
                 if (null != sxCO2ProcessClaimReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxCO2ProcessClaimReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
                     //通过mqtt发送到服务端
@@ -182,10 +209,15 @@ public class JnSxRtDataProtocol {
     public void jnSxTigProcessClaimReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下TIG工艺索取返回
             if (map.containsKey("SxTIGProcessClaimReturn")) {
                 SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
                 if (null != sxTIGProcessClaimReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxTIGProcessClaimReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxTIGProcessClaimReturn);
                     //通过mqtt发送到服务端
@@ -225,10 +257,15 @@ public class JnSxRtDataProtocol {
     public void jnSxFr2StatusUiManage(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
-            //松下焊机GL5状态信息发送到mq
+            final ChannelHandlerContext ctx = param.getCtx();
+            //松下焊机FR2状态信息发送到mq
             if (map.containsKey("SxStatusDataUI")) {
                 SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
                 if (null != sxStatusDataUi) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxStatusDataUi.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
@@ -246,10 +283,15 @@ public class JnSxRtDataProtocol {
     public void jnSxChannelParamReply(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下FR2通道参数查询回复（无参数）、下载回复、删除回复
             if (map.containsKey("SxChannelParamReply")) {
                 SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
                 if (null != sxChannelParamReply) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        sxChannelParamReply.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxChannelParamReply);
                     //通过mqtt发送到服务端
@@ -288,10 +330,15 @@ public class JnSxRtDataProtocol {
     public void jnSxAt3ParamQueryReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下AT3系列查询回复（有参数）
             if (map.containsKey("At3ParamQueryReturn")) {
                 At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
                 if (null != at3ParamQueryReturn) {
+                    if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        at3ParamQueryReturn.setWeldCid(weldCid);
+                    }
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(at3ParamQueryReturn);
                     //通过mqtt发送到服务端
@@ -334,6 +381,19 @@ public class JnSxRtDataProtocol {
                 if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                     final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                     sxRtDataDb.setWeldCid(weldCid);
+                    //刷卡领取任务后进行数据绑定
+                    Map<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
+                    if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(weldCid)) {
+                        final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(weldCid);
+                        if (null != taskClaimIssue) {
+                            sxRtDataDb.setWelderId(taskClaimIssue.getWelderId());
+                            sxRtDataDb.setWelderName(taskClaimIssue.getWelderName());
+                            sxRtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                            sxRtDataDb.setTaskId(taskClaimIssue.getTaskId());
+                            sxRtDataDb.setTaskName(taskClaimIssue.getTaskName());
+                            sxRtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
+                        }
+                    }
                 }
                 if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
                     final SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
@@ -475,19 +535,6 @@ public class JnSxRtDataProtocol {
                     sxRtDataDb.setAlarmsCode(Integer.valueOf(str.substring(140, 144), 16).toString());
                     sxRtDataDb.setCreateTime(DateTimeUtils.getNowDateTime());
                     sxRtDataDb.setWeldFlag(0);
-                    //刷卡领取任务后进行数据绑定
-                    ConcurrentHashMap<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
-                    if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(clientIp)) {
-                        final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(clientIp);
-                        if (null != taskClaimIssue) {
-                            sxRtDataDb.setWelderId(taskClaimIssue.getWelderId());
-                            sxRtDataDb.setWelderName(taskClaimIssue.getWelderName());
-                            sxRtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                            sxRtDataDb.setTaskId(taskClaimIssue.getTaskId());
-                            sxRtDataDb.setTaskName(taskClaimIssue.getTaskName());
-                            sxRtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
-                        }
-                    }
                     return sxRtDataDb;
                 } catch (Exception e) {
                     log.error("松下GL5实时数据解析异常：{}", e.getMessage());
@@ -915,19 +962,6 @@ public class JnSxRtDataProtocol {
             rtDataDb.setAlarmsCode(Integer.valueOf(str.substring(108, 112), 16).toString());
             rtDataDb.setRunFlag(Integer.valueOf(str.substring(118, 120), 16));
             rtDataDb.setWeldFlag(1);
-            //刷卡领取任务后进行数据绑定
-            ConcurrentHashMap<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
-            if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(clientIp)) {
-                final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(clientIp);
-                if (null != taskClaimIssue) {
-                    rtDataDb.setWelderId(taskClaimIssue.getWelderId());
-                    rtDataDb.setWelderName(taskClaimIssue.getWelderName());
-                    rtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                    rtDataDb.setTaskId(taskClaimIssue.getTaskId());
-                    rtDataDb.setTaskName(taskClaimIssue.getTaskName());
-                    rtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
-                }
-            }
             return rtDataDb;
         }
         return null;
@@ -1012,19 +1046,6 @@ public class JnSxRtDataProtocol {
             rtDataDb.setRealityWeldVol(BigDecimal.valueOf(Long.valueOf(str.substring(110, 114), 16)));
             rtDataDb.setAlarmsCode(Integer.valueOf(str.substring(114, 118), 16).toString());
             rtDataDb.setWeldFlag(2);
-            //刷卡领取任务后进行数据绑定
-            ConcurrentHashMap<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
-            if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(clientIp)) {
-                final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(clientIp);
-                if (null != taskClaimIssue) {
-                    rtDataDb.setWelderId(taskClaimIssue.getWelderId());
-                    rtDataDb.setWelderName(taskClaimIssue.getWelderName());
-                    rtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                    rtDataDb.setTaskId(taskClaimIssue.getTaskId());
-                    rtDataDb.setTaskName(taskClaimIssue.getTaskName());
-                    rtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
-                }
-            }
             return rtDataDb;
         }
         return null;

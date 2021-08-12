@@ -14,6 +14,10 @@ import java.math.BigDecimal;
 public class SxTIGProcessClaimReturn implements Serializable {
 
     /**
+     * 设备CID（设备唯一标识）
+     */
+    private String weldCid;
+    /**
      * 下发的焊机IP
      */
     private String weldIp;

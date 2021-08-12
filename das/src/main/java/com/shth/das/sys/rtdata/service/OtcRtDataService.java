@@ -4,7 +4,7 @@ import com.shth.das.pojo.jnotc.JNRtDataDB;
 
 import java.util.List;
 
-public interface RtDataService {
+public interface OtcRtDataService {
 
     /**
      * 创建OTC实时数据表结构

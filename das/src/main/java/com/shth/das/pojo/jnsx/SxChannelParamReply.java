@@ -13,6 +13,10 @@ import java.io.Serializable;
 public class SxChannelParamReply implements Serializable {
 
     /**
+     * 设备CID
+     */
+    private String weldCid;
+    /**
      * 焊机IP
      */
     private String weldIp;

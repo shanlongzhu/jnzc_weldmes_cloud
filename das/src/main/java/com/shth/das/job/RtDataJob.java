@@ -6,7 +6,7 @@ import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.WeldOnOffTime;
-import com.shth.das.sys.rtdata.service.RtDataService;
+import com.shth.das.sys.rtdata.service.OtcRtDataService;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import com.shth.das.sys.weldmesdb.service.SxWeldService;
@@ -23,7 +23,7 @@ import java.math.BigInteger;
 public class RtDataJob {
 
     @Autowired
-    RtDataService rtDataService;
+    OtcRtDataService otcRtDataService;
     @Autowired
     SxRtDataService sxRtDataService;
     @Autowired
@@ -40,7 +40,7 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
             String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-            int newTable = rtDataService.createNewTable(tableName);
+            int newTable = otcRtDataService.createNewTable(tableName);
             log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, newTable);
         });
     }

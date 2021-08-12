@@ -171,7 +171,7 @@ public class JnOtcRtDataProtocol {
                 if ("7E".equals(str.substring(0, 2)) && "22".equals(str.substring(10, 12)) && "7D".equals(str.substring(280, 282))) {
                     List<JNRtDataUI> rtData = new ArrayList<>();
                     JNRtDataUI data = new JNRtDataUI();
-                    ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
+                    Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
                     //采集模块编号
                     data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
                     if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
@@ -256,7 +256,7 @@ public class JnOtcRtDataProtocol {
                     //采集模块信息查询并绑定
                     List<GatherModel> gatherList = CommonDbData.getGatherList();
                     //刷卡领取任务后进行数据绑定
-                    ConcurrentHashMap<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
+                    Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
                     for (int a = 0; a < 239; a += 80) {
                         //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
                         if (!DataInitialization.isOtcStandbySave()) {

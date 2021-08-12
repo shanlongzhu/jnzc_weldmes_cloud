@@ -19,6 +19,11 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class SxStatusDataUI implements Serializable {
 
+    /**
+     * 设备CID（设备唯一标识）
+     */
+    private String weldCid;
+
     //共有
     private String weldIp;              //焊机IP
     private String weldTime;            //焊接时间

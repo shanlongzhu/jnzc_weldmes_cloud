@@ -13,6 +13,11 @@ import java.io.Serializable;
 public class SxWeldChannelSetReturn implements Serializable {
 
     /**
+     * 设备CID（设备唯一标识）
+     */
+    private String weldCid;
+
+    /**
      * 焊机IP
      * 共有
      */
