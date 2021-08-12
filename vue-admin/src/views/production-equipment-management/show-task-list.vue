@@ -574,7 +574,7 @@ export default {
                 },
                 reconnect: true,
                 onSuccess: (res) => {
-                    console.log('连接成功');
+                    console.log('连接成功');                    
                 }
             })
         },
@@ -736,18 +736,17 @@ export default {
                         msg['weldIp'] = "";
                         msg['gatherNo'] = "";
                         //1 松下 、0 OTC
-                        if (v.firmCode == '1') {
+                        if (v[i].firmCode == '1') {
                             msg['weldType'] = 1;//设备类型
                             msg['weldIp'] = v[i].ipPath
                         }else
-                        if (v.firmCode == '0') {
+                        if (v[i].firmCode == '0') {
                             msg['weldType'] = 0;//设备类型
                             msg['gatherNo'] = v[i].gatherNo || "";//设备IP
                         }
                         msg['startFlag'] = 1;//开始标记
                         let msgStr = JSON.stringify(msg);
-                        console.log(msgStr)
-                        this.newClientMq.publish('toAppTopic',msgStr , 1)
+                        this.newClientMq.publish('taskClaimIssue',msgStr,1)
                     }, 200 * i)
                 }
             }
