@@ -72,7 +72,7 @@ public class SoldererController {
 
         soldererService.addSolderer(welderInfo);
 
-        return HttpResult.ok("新增成功！");
+        return HttpResult.ok("新增成功");
     }
 
     //修改前先查询
