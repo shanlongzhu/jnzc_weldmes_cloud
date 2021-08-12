@@ -76,11 +76,11 @@
         <trim prefix="set" suffixOverrides=",">
             <if test="welderNo != null and welderNo !=''">welder_no=#{welderNo},</if>
             <if test="welderName != null and welderName !=''">welder_name=#{welderName},</if>
-            <if test="cellphone != null and cellphone !=''">cellphone=#{cellphone},</if>
             <if test="rank != null and rank !=''">rank=#{rank},</if>
             <if test="certification != null and certification !=''">certification=#{certification},</if>
             <if test="deptId != null and deptId !=''">dept_id=#{deptId},</if>
-            <if test="remarks != null and remarks !=''">remarks=#{remarks},</if>
+            cellphone=#{cellphone},
+            remarks=#{remarks}
         </trim>
         where id=#{id}
     </update>

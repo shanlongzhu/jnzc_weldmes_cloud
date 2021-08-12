@@ -157,10 +157,10 @@
             <if test="taskInfo.realityEndtime != null and taskInfo.realityEndtime !=''">reality_endtime = #{taskInfo.realityEndtime},</if>
             <if test="taskInfo.status != null and taskInfo.status !=''">status = #{taskInfo.status},</if>
             <if test="taskInfo.welderId != null and taskInfo.welderId !=''">welder_id = #{taskInfo.welderId},</if>
-            <if test="taskInfo.eleMax != null and taskInfo.eleMax !=''">eleMax = #{taskInfo.eleMax},</if>
-            <if test="taskInfo.eleMin != null and taskInfo.eleMin !=''">eleMin = #{taskInfo.eleMin},</if>
-            <if test="taskInfo.volMax != null and taskInfo.volMax !=''">volMax = #{taskInfo.volMax},</if>
-            <if test="taskInfo.volMin != null and taskInfo.volMin !=''">volMin = #{taskInfo.volMin},</if>
+            eleMax = #{taskInfo.eleMax},
+            eleMin = #{taskInfo.eleMin},
+            volMax = #{taskInfo.volMax},
+            volMin = #{taskInfo.volMin},
         </trim>
         where id=#{taskInfo.id}
     </update>

@@ -173,6 +173,7 @@
             <if test="machineWeldInfo.createTime != null and machineWeldInfo.createTime !=''">create_time=#{machineWeldInfo.createTime},</if>
             <if test="machineWeldInfo.area != null and machineWeldInfo.area !=''">area=#{machineWeldInfo.area},</if>
             <if test="machineWeldInfo.bay != null and machineWeldInfo.bay !=''">bay=#{machineWeldInfo.bay},</if>
+            ip_path = #{machineWeldInfo.ipPath}
         </trim>
         where id=#{machineWeldInfo.id}
     </update>

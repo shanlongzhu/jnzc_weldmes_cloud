@@ -1,5 +1,6 @@
 package com.gw.process.dispatch.dao;
 
+import com.gw.entities.GatherAndFirmInfo;
 import com.gw.entities.TaskClaim;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WeldClaimTaskInfo;
@@ -50,5 +51,14 @@ public interface TaskClaimDao {
      * @Params deptId 焊工部门id
      */
     public List<TaskInfo> selectTaskInfoByStatus(@Param("deptId")Long deptId);
+
+    /**
+     * @Date 2021/7/23 19:34
+     * @Description  根据任务状态查询任务信息
+     * @Params deptId 焊工部门id
+     */
+    public List<GatherAndFirmInfo> selectFirmAndGatherNoInfosByTaskId(@Param("taskId")Long taskId);
+
+
 
 }

@@ -79,7 +79,7 @@
 		LEFT JOIN weld_statistics_data s ON d.id=s.machineDeptId AND m.id=s.machineId AND s.startTime &gt;= #{time1} and s.endTime &lt;= #{time2}
 		LEFT JOIN weld_statistics_data s1 ON s.id=s1.id  AND s1.weldStatus IN (3,5,7,99)
 		LEFT JOIN weld_statistics_data s3 ON s1.id=s3.id  AND s1.weldStatus=99
-		LEFT JOIN weld_statistics_data s2 ON s1.id=s2.id AND s2.taskId=0
+		LEFT JOIN weld_statistics_data s2 ON s1.id=s2.id AND s2.taskId is NULL
 		where d.id in
 		<foreach collection="ids" item="id" open="(" separator="," close=")">
 			#{id}

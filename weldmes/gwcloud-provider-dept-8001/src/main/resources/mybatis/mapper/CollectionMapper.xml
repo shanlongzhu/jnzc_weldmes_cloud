@@ -85,9 +85,9 @@
             <if test="machineGatherInfo.deptId != null and machineGatherInfo.deptId !=''">dept_id=#{machineGatherInfo.deptId},</if>
             <if test="machineGatherInfo.status != null and machineGatherInfo.status !=''">status=#{machineGatherInfo.status},</if>
             <if test="machineGatherInfo.protocol != null and machineGatherInfo.protocol !=''">protocol=#{machineGatherInfo.protocol},</if>
-            <if test="machineGatherInfo.ipPath != null and machineGatherInfo.ipPath !=''">ip_path=#{machineGatherInfo.ipPath},</if>
-            <if test="machineGatherInfo.macPath != null and machineGatherInfo.macPath !=''">mac_path=#{machineGatherInfo.macPath},</if>
             <if test="machineGatherInfo.createTime != null and machineGatherInfo.createTime !=''">create_time=#{machineGatherInfo.createTime},</if>
+            ip_path=#{machineGatherInfo.ipPath},
+            mac_path=#{machineGatherInfo.macPath},
         </trim>
         where id=#{machineGatherInfo.id}
     </update>

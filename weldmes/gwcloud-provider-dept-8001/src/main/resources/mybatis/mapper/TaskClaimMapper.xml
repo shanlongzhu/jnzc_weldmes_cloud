@@ -60,6 +60,15 @@
         select task.task_no taskNo,dictionary.value_name statusStr,task.id,task.task_name taskName,task.dept_id deptId
         from task_info task
         left join sys_dictionary dictionary on dictionary.id = task.status
-        where task.status !=41 and task.dept_id = #{deptId}
+        where task.status != 41 and task.dept_id = #{deptId} and task.welder_id is null
+    </select>
+
+    <!--根据任务id查询焊机厂家和采集编号列表-->
+    <select id="selectFirmAndGatherNoInfosByTaskId" parameterType="Long" resultType="com.gw.entities.GatherAndFirmInfo">
+        select dictionary.value firmCode,gather.gather_no gatherNo
+        from machine_weld_info machine
+        left join machine_gather_info gather on machine.g_id = gather.id
+        left join sys_dictionary dictionary on dictionary.id = machine.firm
+        where machine.id in (select weld_id from task_claim where task_id = #{taskId})
     </select>
 </mapper>
