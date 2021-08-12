@@ -538,7 +538,7 @@ export default {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { msg, code } = await editWelderPeople(req)
-                        if (code == 200&& msg == "修改成功！") {
+                        if (code == 200&& msg == "修改成功") {
                             this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
@@ -549,7 +549,7 @@ export default {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         const { msg, code } = await addWelderPeople(req);
-                        if (code == 200 && msg == "新增成功！") {
+                        if (code == 200 && msg == "新增成功") {
                             this.$message.success(msg)
                             this.visable1 = false
                             this.getList()

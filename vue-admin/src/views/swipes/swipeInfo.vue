@@ -100,7 +100,7 @@
                         :loading="taskLoading"
                         highlight-current-row
                         auto-resize
-                       @current-change="handleCurrentChange"
+                        @current-change="handleCurrentChange"
                     >
                         <vxe-table-column
                             type="seq"
@@ -127,7 +127,10 @@
             </div>
         </section>
         <section class="tc p10">
-            <el-button @click="bindTask" :loading="butLoading">确定</el-button>
+            <el-button
+                @click="bindTask"
+                :loading="butLoading"
+            >确定</el-button>
             <el-button @click="backPage">返回</el-button>
         </section>
     </div>
@@ -140,7 +143,7 @@ import { showLoading, hideLoading } from '@/utils/utilsCom'
 import { login } from '_api/user.js'
 import { setPublicToken, getPublicToken, removePublicToken, getToken } from '@/utils/auth'
 import { getDictionaries } from '_api/productionProcess/process'
-import { findByIdArea, getWelderListNoPage, getTaskInfoByWelderId, getWeldClaimTaskInfoById,addTaskClaimInfo } from '_api/productionEquipment/production'
+import { findByIdArea, getWelderListNoPage, getTaskInfoByWelderId, getWeldClaimTaskInfoById, addTaskClaimInfo } from '_api/productionEquipment/production'
 import './swipe.scss'
 export default {
     components: {},
@@ -181,7 +184,7 @@ export default {
             //焊工信息
             welderInfo: sessionStorage.getItem('welderInfo') ? JSON.parse(sessionStorage.getItem('welderInfo')) : {},
             //选中的任务
-            selectTask:{},
+            selectTask: {},
             //任务列表
             taskList: [],
             taskLoading: false,
@@ -189,7 +192,7 @@ export default {
             taskInfo: {},
             infoLoading: false,
             //确定按钮loading
-            butLoading:false,
+            butLoading: false,
 
             //
             offnum: 0,
@@ -338,7 +341,7 @@ export default {
                     objItem.taskNo = '';//任务编号
                     return objItem;
                 });
-                 this.createConnection2();
+                this.createConnection2();
 
             }
         },
@@ -384,8 +387,8 @@ export default {
             }
         },
 
-        handleCurrentChange({row}){
-            this.selectTask = row||{};
+        handleCurrentChange ({ row }) {
+            this.selectTask = row || {};
         },
 
         //mqtt创建
@@ -428,13 +431,13 @@ export default {
 
         //任务绑定
         bindTask () {
-            if(!this.curModel.hasOwnProperty('id')){
+            if (!this.curModel.hasOwnProperty('id')) {
                 return this.$message.error('请选择焊机');
             }
-            if(!this.curModel.machineGatherInfo.gatherNo){
-               return this.$message.error('选择的焊机采集序号位空！！！！！');
+            if (!this.curModel.machineGatherInfo.gatherNo) {
+                return this.$message.error('选择的焊机采集序号位空！！！！！');
             }
-            if(!this.selectTask.hasOwnProperty("id")){
+            if (!this.selectTask.hasOwnProperty("id")) {
                 return this.$message.error('请选择任务');
             }
             this.createConnection();
@@ -456,13 +459,13 @@ export default {
 
                 msg['weldIp'] = "";
                 msg['gatherNo'] = "";
-                if(this.curModel.sysDictionary.valueNamess=='OTC'){
+                if (this.curModel.sysDictionary.valueNamess == 'OTC') {
                     msg['weldType'] = 0;//设备类型
                     msg['gatherNo'] = this.curModel.machineGatherInfo.gatherNo;//采集编号
                 }
-                if(this.curModel.sysDictionary.valueNamess=='松下'){
+                if (this.curModel.sysDictionary.valueNamess == '松下') {
                     msg['weldType'] = 1;//设备类型
-                    msg['weldIp'] = this.curModel.ipPath||"";//设备IP
+                    msg['weldIp'] = this.curModel.ipPath || "";//设备IP
                 }
                 msg['startFlag'] = 0;//开始标记
 
@@ -472,7 +475,20 @@ export default {
                 this.butLoading = true;
                 //记时触发下发失败
                 this.issueTimeOut();
-                this.$message.success('已发送');
+                this.$message({
+                    message: '已发送',
+                    type: 'success',
+                    duration:'1000'
+                });
+
+                if (this.timeout) {
+                    clearTimeout(this.timeout);
+                }
+                setTimeout(() => {
+                    this.client.end();
+                    this.$router.replace({ path: '/swipeCard' })
+                }, 1000)
+
             }, 500);
         },
         //下发超时
@@ -482,10 +498,10 @@ export default {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
-                    }                    
+                    }
                     setTimeout(() => {
                         this.client.end();
-                        this.$router.replace({path:'/swipeCard'})
+                        this.$router.replace({ path: '/swipeCard' })
                     }, 1000)
                 });
 
@@ -495,21 +511,21 @@ export default {
                 clearTimeout(this.timeout)
             }, 5000)
         },
-        backPage(){
+        backPage () {
             this.$router.go(-1);
         },
-      //绑定任务
-      async addTaskClaimInfo(data){
-          let req = {
-            welderId:data.welderId,
-            taskId:data.taskId,
-            weldId:data.machineId
-          }
-          let {code} = await addTaskClaimInfo(req);
-          if(code==200){
+        //绑定任务
+        async addTaskClaimInfo (data) {
+            let req = {
+                welderId: data.welderId,
+                taskId: data.taskId,
+                weldId: data.machineId
+            }
+            let { code } = await addTaskClaimInfo(req);
+            if (code == 200) {
 
-          }
-      }
+            }
+        }
 
     },
     created () {
@@ -582,15 +598,13 @@ export default {
             .bind-tip {
                 background: #f00;
             }
-
         }
-        &:hover
-         {
+        &:hover {
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
             transform: scale(1.02);
         }
-        &.current{
-            border:1px solid #aadef7;
+        &.current {
+            border: 1px solid #aadef7;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
             transform: scale(1.02);
             span {
