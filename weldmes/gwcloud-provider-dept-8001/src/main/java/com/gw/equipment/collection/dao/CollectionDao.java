@@ -41,6 +41,6 @@ public interface CollectionDao {
      * @Description 判断采集编号是否存在
      * @Params
      */
-    public Integer judgeGatherNoYesOrNo(@Param("GatherNo") String GatherNo);
+    public Integer judgeGatherNoYesOrNo(@Param("GatherNo") String GatherNo,@Param("id") Long id);
 
 }

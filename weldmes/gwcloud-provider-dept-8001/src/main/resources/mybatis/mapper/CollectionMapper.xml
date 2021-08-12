@@ -130,7 +130,7 @@
     </select>
 
     <!--判断采集编号是否存在-->
-    <select id="judgeGatherNoYesOrNo" parameterType="String" resultType="java.lang.Integer">
-        select (1) from machine_gather_info where gather_no = #{GatherNo}
+    <select id="judgeGatherNoYesOrNo" resultType="java.lang.Integer">
+        select (1) from machine_gather_info where gather_no = #{GatherNo} and id != #{id}
     </select>
 </mapper>
