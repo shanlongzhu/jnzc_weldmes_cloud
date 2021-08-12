@@ -9,8 +9,8 @@
     </select>
 
     <!-- 根据采集编号查询最新的开机时间 -->
-    <select id="selectWeldByWeldIp" resultType="com.shth.das.pojo.db.WeldOnOffTime">
-        SELECT * FROM weld_on_off_time WHERE weldsx_ip = #{weldsxIp}  ORDER BY start_time DESC LIMIT 1
+    <select id="selectWeldByWeldCid" resultType="com.shth.das.pojo.db.WeldOnOffTime">
+        SELECT * FROM weld_on_off_time WHERE weld_cid = #{weldCid}  ORDER BY start_time DESC LIMIT 1
     </select>
 
 </mapper>

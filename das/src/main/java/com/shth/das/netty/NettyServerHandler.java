@@ -101,6 +101,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             return;
         }
         if (param instanceof HandlerParam) {
+            //通道赋值
+            param.setCtx(ctx);
             //端口为otcPort，则为江南版OTC通讯协议
             if (serverPort == DataInitialization.getOtcPort()) {
                 if (this.otcHandlerMapping.containsKey(param.getKey())) {
@@ -180,7 +182,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
                 log.info("OTC终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             }
-            this.jnOtcRtDataProtocol.jnWeldOffDataManage(clientIp, clientPort);
+            this.jnOtcRtDataProtocol.jnWeldOffDataManage(ctx, clientIp);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == DataInitialization.getSxPort()) {
@@ -190,7 +192,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
                 log.info("SX终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
             }
-            this.jnSxRtDataProtocol.sxWeldOffDataManage(clientIp);
+            this.jnSxRtDataProtocol.sxWeldOffDataManage(ctx, clientIp);
         }
         ctx.flush();
         ctx.channel().close();

@@ -40,13 +40,13 @@ public class CommonQueue {
 
     /**
      * 松下开机设备阻塞队列
-     * String:焊机IP
+     * <E>(String):设备CID
      */
     public static final LinkedBlockingQueue<String> SX_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
     /**
      * 松下关机设备阻塞队列
-     * String:焊机IP
+     * <E>(String):设备CID
      */
     public static final LinkedBlockingQueue<String> SX_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 

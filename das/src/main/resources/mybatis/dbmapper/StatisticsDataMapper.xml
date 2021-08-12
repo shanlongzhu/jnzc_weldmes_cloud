@@ -21,11 +21,11 @@
     <!-- 统计SX实时数据到报表中 -->
     <insert id="insertSxWeldStatisticsData" parameterType="java.lang.String">
         <if test="tableName != null and tableName != '' and startTime != null and startTime != '' and endTime != null and endTime != ''">
-            INSERT INTO weldmesdb.weldsx_statistics_data(weldSuration,weldCode,weldIp,weldModel,weldType,weldStatus,
+            INSERT INTO weldmesdb.weldsx_statistics_data(weldSuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
             startTime,endTime,createTime,weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
             initialEle,initialVol,initialWireSpeed,weldEle,weldVol,weldWireSpeed,
             arcEle,arcVol,arcWireSpeed,realityWeldEle,realityWeldVol,realityWireSpeed,wireSpeed)
-            SELECT COUNT(id) weldDuration,weldCode,weldIp,weldModel,weldType,weldStatus,
+            SELECT COUNT(id) weldDuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
             '${startTime}','${endTime}',SYSDATE(),weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
             AVG(initialEle),AVG(initialVol),AVG(initialWireSpeed),AVG(weldEle),AVG(weldVol),AVG(weldWireSpeed),
             AVG(arcEle),AVG(arcVol),AVG(arcWireSpeed),AVG(realityWeldEle),AVG(realityWeldVol),AVG(realityWireSpeed),AVG(wireSpeed)

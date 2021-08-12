@@ -8,6 +8,7 @@ import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -21,25 +22,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JnSxRtDataProtocol {
 
     /**
-     * 松下设备信息绑定到IP地址
+     * 松下设备信息绑定到通道（设备开机）
      *
      * @param sxWeldModel 焊机信息实体类
      */
-    private void sxWeldDataBinding(SxWeldModel sxWeldModel) {
+    private void sxWeldDataBinding(ChannelHandlerContext ctx, SxWeldModel sxWeldModel) {
         if (null != sxWeldModel) {
-            String weldIp = sxWeldModel.getWeldIp();
-            final int clientPort = sxWeldModel.getWeldPort();
-            if (CommonUtils.isNotEmpty(weldIp)) {
-                String clientAddress = weldIp + ":" + clientPort;
-                if (!CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientAddress)) {
-                    CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.put(clientAddress, sxWeldModel);
+            if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                sxWeldModel.setWeldCid(weldCid);
+            }
+            if (!CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
+                CommonMap.SX_CTX_WELD_INFO_MAP.put(ctx, sxWeldModel);
+            }
+            //设备存储到松下开机阻塞队列
+            try {
+                if (CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
+                    CommonQueue.SX_ON_MACHINE_QUEUES.put(sxWeldModel.getWeldCid());
                 }
-                //设备存储到松下开机阻塞队列
-                try {
-                    CommonQueue.SX_ON_MACHINE_QUEUES.put(weldIp);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             //添加到松下设备阻塞队列，存储到数据库
             try {
@@ -58,11 +60,12 @@ public class JnSxRtDataProtocol {
     public void jnSxSoftHardParam(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey("SxWeldModel")) {
                 SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
                 //松下参数绑定
-                sxWeldDataBinding(sxWeldModel);
+                sxWeldDataBinding(ctx, sxWeldModel);
             }
         }
     }
@@ -74,8 +77,7 @@ public class JnSxRtDataProtocol {
      */
     public void jnSxGl5RtDataManage(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            jnSxRtdManage(map);
+            jnSxRtdManage(param);
         }
     }
 
@@ -200,8 +202,7 @@ public class JnSxRtDataProtocol {
      */
     public void jnSxFr2Co2RtDataDbManage(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            jnSxRtdManage(map);
+            jnSxRtdManage(param);
         }
     }
 
@@ -212,8 +213,7 @@ public class JnSxRtDataProtocol {
      */
     public void jnSxFr2TigRtDataDbManage(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            jnSxRtdManage(map);
+            jnSxRtdManage(param);
         }
     }
 
@@ -301,15 +301,19 @@ public class JnSxRtDataProtocol {
         }
     }
 
-    private void jnSxRtdManage(Map<String, Object> map) {
+    private void jnSxRtdManage(HandlerParam param) {
+        final Map<String, Object> map = param.getValue();
+        final ChannelHandlerContext ctx = param.getCtx();
         //松下焊机实时数据发送到mq
         if (map.containsKey("SxRtDataUi")) {
             SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
             if (null != sxRtDataUi) {
-                //焊机IP地址
-                String clientIp = sxRtDataUi.getWeldIp();
-                if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                    SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                    final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                    sxRtDataUi.setWeldCid(weldCid);
+                }
+                if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
+                    final SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
                     if (null != sxWeldModel) {
                         //设备编码
                         sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
@@ -327,12 +331,16 @@ public class JnSxRtDataProtocol {
         if (map.containsKey("SxRtDataDb")) {
             SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
             if (null != sxRtDataDb) {
-                //焊机IP地址
-                String clientIp = sxRtDataDb.getWeldIp();
-                if (CommonUtils.isNotEmpty(clientIp) && CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-                    SxWeldModel sxWeldModel = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
+                if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                    final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                    sxRtDataDb.setWeldCid(weldCid);
+                }
+                if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
+                    final SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
                     if (null != sxWeldModel) {
+                        //设备编码
                         sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
+                        //设备机型
                         sxRtDataDb.setWeldModel(sxWeldModel.getWeldModel());
                     }
                 }
@@ -345,12 +353,11 @@ public class JnSxRtDataProtocol {
     /**
      * 松下GL5软硬件参数解析
      */
-    public SxWeldModel sxWeldAnalysis(String clientIp, int clientPort, String str) {
+    public SxWeldModel sxWeldAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
                 SxWeldModel sxWeldModel = new SxWeldModel();
                 sxWeldModel.setWeldIp(clientIp);//客户端IP地址
-                sxWeldModel.setWeldPort(clientPort);
                 sxWeldModel.setWeldModel(CommonUtils.convertHexToString(str.substring(44, 62))); //设备机型
                 sxWeldModel.setPowerSupply(Integer.valueOf(str.substring(62, 64), 16));//电源类型
                 sxWeldModel.setWireFeederModel(Integer.valueOf(str.substring(64, 66), 16));//送丝机类型
@@ -1258,31 +1265,36 @@ public class JnSxRtDataProtocol {
      *
      * @param clientIp 设备IP
      */
-    public void sxWeldOffDataManage(String clientIp) {
-        if (CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.containsKey(clientIp)) {
-            SxWeldModel sxWeld = CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.get(clientIp);
-            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
-                SxRtDataUi sxRtDataUi = new SxRtDataUi();
-                if (null != sxWeld) {
-                    sxRtDataUi.setWeldCode(sxWeld.getWeldCode());
-                    sxRtDataUi.setWeldModel(sxWeld.getWeldModel());
-                }
-                sxRtDataUi.setWeldIp(clientIp);
-                //-1 为关机
-                sxRtDataUi.setWeldStatus(-1);
-                //实体类转JSON字符串
-                String message = JSON.toJSONString(sxRtDataUi);
-                //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
-            });
-            //log.info("SX关机：" + "：{}", UpTopicEnum.sxrtdata.name() + ":" + message);
-            CommonMap.SX_CLIENT_IP_BIND_WELD_INFO.remove(clientIp);
+    public void sxWeldOffDataManage(ChannelHandlerContext ctx, String clientIp) {
+        SxRtDataUi sxRtDataUi = new SxRtDataUi();
+        if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
+            final SxWeldModel sxWeld = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
+            if (null != sxWeld) {
+                sxRtDataUi.setWeldCode(sxWeld.getWeldCode());
+                sxRtDataUi.setWeldModel(sxWeld.getWeldModel());
+            }
+            CommonMap.SX_CTX_WELD_INFO_MAP.remove(ctx);
+        }
+        if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+            final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+            sxRtDataUi.setWeldCid(weldCid);
+            CommonMap.SX_CTX_WELD_CID_MAP.remove(ctx);
+            CommonMap.SX_WELD_CID_CTX_MAP.remove(weldCid);
             try {
-                CommonQueue.SX_OFF_MACHINE_QUEUES.put(clientIp);
+                CommonQueue.SX_OFF_MACHINE_QUEUES.put(weldCid);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        sxRtDataUi.setWeldIp(clientIp);
+        //-1 为关机
+        sxRtDataUi.setWeldStatus(-1);
+        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+            //实体类转JSON字符串
+            String message = JSON.toJSONString(sxRtDataUi);
+            //通过mqtt发送到服务端
+            EmqMqttClient.publishMessage(UpTopicEnum.sxrtdata.name(), message, 0);
+        });
     }
 
     /**

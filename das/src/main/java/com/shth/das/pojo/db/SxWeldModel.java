@@ -27,6 +27,7 @@ public class SxWeldModel implements Serializable {
     @TableId(type = IdType.AUTO)
     private BigInteger id;          //ID
     private String weldNo;          //设备序号/编号
+    private String weldCid;         //设备CID（设备唯一标识）
     private String weldCode;        //设备编码（名称）
     private String weldIp;          //IP地址
     private String weldModel;       //设备机型
@@ -47,8 +48,5 @@ public class SxWeldModel implements Serializable {
     private Integer weldFirm;       //设备厂商（字典OTC、松下）
     private BigInteger deptId;      //组织机构ID
     private String createTime;      //创建时间
-
-    @TableField(exist = false)
-    private int weldPort;           //设备端口（暂存）
 
 }

@@ -47,11 +47,6 @@ public class JNRtDataUI implements Serializable,Cloneable {
     private String weldIp;
 
     /**
-     * 焊机端口
-     */
-    private int weldPort;
-
-    /**
      * 焊接时间
      */
     private String weldTime;

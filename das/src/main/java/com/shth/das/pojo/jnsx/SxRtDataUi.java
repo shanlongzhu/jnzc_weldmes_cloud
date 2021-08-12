@@ -20,6 +20,11 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class SxRtDataUi implements Serializable {
 
+    /**
+     * 设备CID（设备唯一标识）
+     */
+    private String weldCid;
+
     private String weldCode;        //设备编码（名称）
     private String weldIp;          //IP地址
     private String weldModel;       //设备机型

@@ -74,8 +74,8 @@ public class TaskClaimIssue implements Serializable {
      */
     private String gatherNo;
     /**
-     * 松下设备必须传设备IP
+     * 松下设备必须传设备CID
      */
-    private String weldIp;
+    private String weldCid;
 
 }

@@ -19,6 +19,6 @@ public interface WeldOnOffTimeMapper extends BaseMapper<WeldOnOffTime> {
      * @param weldOnOffTime 入参实体类
      * @return 返回实体类
      */
-    WeldOnOffTime selectWeldByWeldIp(WeldOnOffTime weldOnOffTime);
+    WeldOnOffTime selectWeldByWeldCid(WeldOnOffTime weldOnOffTime);
 
 }

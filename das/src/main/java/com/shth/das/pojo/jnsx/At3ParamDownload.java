@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 public class At3ParamDownload implements Serializable {
 
     /**
-     * 焊机IP
+     * 设备CID
      */
-    private String weldIp;
+    private String weldCid;
 
     /**
      * 控制（1.查询，2.下载，3.删除）

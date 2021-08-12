@@ -20,8 +20,9 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class SxCO2ProcessIssue {
 
+    private String weldCid;         //设备CID
     private String channelNo;       //通道编号
-    private String weldIp;          //下发的焊机IP
+    private String weldIp;          //焊机IP
 
     /*
     预置参数

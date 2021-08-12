@@ -13,10 +13,9 @@ import java.io.Serializable;
 public class SxWeldChannelSetting implements Serializable {
 
     /**
-     * 焊机IP
-     * 共有
+     * 设备CID
      */
-    private String weldIp;
+    private String weldCid;
 
     /**
      * 读写标志（0：主动上传；1：读取；2：设置；3：删除）

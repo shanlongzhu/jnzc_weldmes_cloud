@@ -21,8 +21,8 @@ public class SxWeldServiceImpl implements SxWeldService {
         int result = 0;
         try {
             QueryWrapper<SxWeldModel> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("weld_ip", sxWeldModel.getWeldIp());
-            //根据焊机IP查询个数
+            queryWrapper.eq("weld_cid", sxWeldModel.getWeldCid());
+            //根据设备CID查询个数
             Integer count = sxWeldMapper.selectCount(queryWrapper);
             //如果已经存在，则直接返回，不再增加
             if (null != count && count > 0) {
@@ -35,6 +35,7 @@ public class SxWeldServiceImpl implements SxWeldService {
             if (null != sxWeld) {
                 int weldNo = Integer.parseInt(sxWeld.getWeldNo());
                 weldNo++;
+                //实现设备序号自增，如果没有，默认：0001
                 sxWeldModel.setWeldNo(CommonUtils.stringLengthJoint(String.valueOf(weldNo), 4));
             }
             result = sxWeldMapper.insert(sxWeldModel);
@@ -46,10 +47,10 @@ public class SxWeldServiceImpl implements SxWeldService {
     }
 
     @Override
-    public SxWeldModel getSxWeldByWeldIp(String weldIp) {
-        if (CommonUtils.isNotEmpty(weldIp)) {
+    public SxWeldModel getSxWeldByWeldCid(String weldCid) {
+        if (CommonUtils.isNotEmpty(weldCid)) {
             QueryWrapper<SxWeldModel> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("weld_ip", weldIp);
+            queryWrapper.eq("weld_cid", weldCid);
             return sxWeldMapper.selectOne(queryWrapper);
         }
         return null;

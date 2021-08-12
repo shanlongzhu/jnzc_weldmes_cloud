@@ -50,12 +50,12 @@ public class DataInitialization {
 
 
     @Value("${otcNettyServer.port}")
-    public void setOtcPort(int port) {
+    private void setOtcPort(int port) {
         otcPort = port;
     }
 
     @Value("${sxNettyServer.port}")
-    public void setSxPort(int port) {
+    private void setSxPort(int port) {
         sxPort = port;
     }
 

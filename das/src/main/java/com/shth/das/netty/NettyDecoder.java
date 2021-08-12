@@ -52,6 +52,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
         if (byteBuf.readableBytes() == 0) {
+            ctx.flush();
             return;
         }
         ByteBuf message;
@@ -60,6 +61,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
         } else {
             //wrappedBuffer()方法：将两个ByteBuf进行包装，实现零拷贝
             message = Unpooled.wrappedBuffer(this.tempMsg, byteBuf);
+            //清空
             this.tempMsg.clear();
         }
         //数据可读长度大于0才进行读取
@@ -75,10 +77,14 @@ public class NettyDecoder extends ByteToMessageDecoder {
             if (serverPort == DataInitialization.getSxPort()) {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
+            //读写指针清空
+            message.clear();
+            //内容清零（清空缓冲区）
+            message.setZero(0, message.capacity());
         }
         //读写指针清空
         byteBuf.clear();
-        //内容清零
+        //内容清零（清空缓冲区）
         byteBuf.setZero(0, byteBuf.capacity());
         ctx.flush();
     }
@@ -148,6 +154,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
         }
         //判断可读字节数小于5，直接存储，下次读取
         if (bufNum <= 5) {
+            //将message拷贝到tempMsg中暂存
             this.tempMsg.writeBytes(message);
         } else {
             //查看前4个字节

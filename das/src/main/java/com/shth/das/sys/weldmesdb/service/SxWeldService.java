@@ -12,9 +12,9 @@ public interface SxWeldService {
     int insertSxWeld(SxWeldModel sxWeldModel);
 
     /**
-     * 根据设备IP查询设备信息表
-     * @param weldIp 设备IP
+     * 根据设备CID查询设备信息表
+     * @param weldCid 设备CID
      * @return 松下焊机实体类
      */
-    SxWeldModel getSxWeldByWeldIp(String weldIp);
+    SxWeldModel getSxWeldByWeldCid(String weldCid);
 }

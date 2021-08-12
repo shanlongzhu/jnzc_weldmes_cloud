@@ -14,6 +14,11 @@ import java.math.BigDecimal;
 public class SxChannelParamReplyHave implements Serializable {
 
     /**
+     * 设备CID
+     */
+    private String weldCid;
+
+    /**
      * 焊机IP
      */
     private String weldIp;

@@ -28,18 +28,38 @@ public class CommonMap {
     public static volatile ConcurrentHashMap<String, ChannelHandlerContext> SX_CHANNEL_MAP = new ConcurrentHashMap<>();
 
     /**
-     * key:（IP+端口）IP:port
-     * value：采集编号
-     * 采集盒的IP地址和采集编号对应关系(用来向前端发送关机数据)
+     * KEY：采集编号（10进制数字）
+     * VALUE: 设备通道（ctx）
+     * 每个采集编号都有一个通道
      */
-    public static volatile ConcurrentHashMap<String, String> CLIENT_IP_GATHER_NO_MAP = new ConcurrentHashMap<>();
+    public static volatile ConcurrentHashMap<String, ChannelHandlerContext> OTC_GATHER_NO_CTX_MAP = new ConcurrentHashMap<>();
 
     /**
-     * key:（IP+端口）IP:port
+     * KEY：设备通道（ctx）
+     * VALUE: 采集编号（10进制数字）
+     */
+    public static volatile ConcurrentHashMap<ChannelHandlerContext, String> OTC_CTX_GATHER_NO_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * KEY：设备CID
+     * VALUE: 设备通道（ctx）
+     * 每个设备CID都有一个通道
+     */
+    public static volatile ConcurrentHashMap<String, ChannelHandlerContext> SX_WELD_CID_CTX_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * KEY：设备通道（ctx）
+     * VALUE: 设备CID
+     * 通道和设备CID进行对应绑定
+     */
+    public static volatile ConcurrentHashMap<ChannelHandlerContext, String> SX_CTX_WELD_CID_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * key: 设备通道（ctx）
      * value：松下设备信息
      * 松下焊机设备数据暂存
      */
-    public static volatile ConcurrentHashMap<String, SxWeldModel> SX_CLIENT_IP_BIND_WELD_INFO = new ConcurrentHashMap<>();
+    public static volatile ConcurrentHashMap<ChannelHandlerContext, SxWeldModel> SX_CTX_WELD_INFO_MAP = new ConcurrentHashMap<>();
 
     /**
      * OTC设备领任务存储
@@ -50,7 +70,7 @@ public class CommonMap {
 
     /**
      * 松下设备领任务存储
-     * key:设备IP
+     * key:设备CID
      * value：任务信息
      */
     public static volatile ConcurrentHashMap<String, TaskClaimIssue> SX_TASK_CLAIM_MAP = new ConcurrentHashMap<>();

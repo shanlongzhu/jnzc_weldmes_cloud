@@ -12,12 +12,16 @@ import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,11 +33,10 @@ public class JnOtcRtDataProtocol {
     /**
      * 采集盒IP地址盒采集编号绑定
      */
-    private void gatherNoIpBinding(String clientIp, int weldPort, String gatherNo) {
-        String clientAddress = clientIp + ":" + weldPort;
+    private void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
         //判断map集合是否有，没有则新增
-        if (!CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientAddress)) {
-            CommonMap.CLIENT_IP_GATHER_NO_MAP.put(clientAddress, gatherNo);
+        if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
+            CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
             try {
                 OtcMachineQueue otcMachineSaveQueue = new OtcMachineQueue();
                 otcMachineSaveQueue.setWeldTime(DateTimeUtils.getNowDateTime());
@@ -44,6 +47,9 @@ public class JnOtcRtDataProtocol {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        if (!CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
+            CommonMap.OTC_CTX_GATHER_NO_MAP.put(ctx, gatherNo);
         }
     }
 
@@ -62,9 +68,9 @@ public class JnOtcRtDataProtocol {
                 if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
-                    int weldPort = jnRtDataUis.get(0).getWeldPort();
+                    final ChannelHandlerContext ctx = handlerParam.getCtx();
                     //采集盒IP地址盒采集编号绑定
-                    this.gatherNoIpBinding(clientIp, weldPort, gatherNo);
+                    this.gatherNoIpBinding(clientIp, ctx, gatherNo);
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                     //通过mqtt发送到服务端
@@ -597,16 +603,14 @@ public class JnOtcRtDataProtocol {
     /**
      * 江南OTC设备关机数据处理
      */
-    public void jnWeldOffDataManage(String clientIp, int clientPort) {
-        String clientAddress = clientIp + ":" + clientPort;
+    public void jnWeldOffDataManage(ChannelHandlerContext ctx, String clientIp) {
         //有客户端终止连接则发送关机数据到mq，刷新实时界面
-        if (CommonMap.CLIENT_IP_GATHER_NO_MAP.containsKey(clientAddress)) {
+        if (CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
             //采集编号
-            String gatherNo = CommonMap.CLIENT_IP_GATHER_NO_MAP.get(clientAddress);
+            String gatherNo = CommonMap.OTC_CTX_GATHER_NO_MAP.get(ctx);
             //OTC设备关机数据添加到阻塞队列
             try {
                 OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
-                otcOnMachineQueue.setWeldIp(clientIp);
                 otcOnMachineQueue.setGatherNo(gatherNo);
                 CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
             } catch (InterruptedException e) {
@@ -622,34 +626,15 @@ public class JnOtcRtDataProtocol {
                 jnRtDataUi.setElectricity(BigDecimal.ZERO);
                 jnRtDataUi.setVoltage(BigDecimal.ZERO);
                 jnRtDataUi.setWeldIp(clientIp);
-                jnRtDataUi.setWeldPort(clientPort);
                 jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
                 dataList.add(jnRtDataUi);
                 String dataArray = JSONArray.toJSONString(dataList);
                 EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
             });
             //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
-            CommonMap.CLIENT_IP_GATHER_NO_MAP.remove(clientAddress);
+            CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
+            CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
         }
-    }
-
-    /**
-     * 根据采集编号查找采集盒IP+port
-     *
-     * @param gatherNo 采集编号
-     * @return 返回采集盒地址（IP+port）
-     */
-    public static String getClientAddressByGatherNo(String gatherNo) {
-        if (CommonUtils.isNotEmpty(gatherNo)) {
-            Iterator<Map.Entry<String, String>> entries = CommonMap.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry<String, String> entry = entries.next();
-                if (Integer.valueOf(gatherNo).toString().equals(Integer.valueOf(entry.getValue()).toString())) {
-                    return entry.getKey();
-                }
-            }
-        }
-        return null;
     }
 
 }

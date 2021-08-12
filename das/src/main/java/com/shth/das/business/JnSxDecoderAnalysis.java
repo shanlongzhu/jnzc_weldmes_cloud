@@ -1,9 +1,6 @@
 package com.shth.das.business;
 
-import com.shth.das.common.BaseAbstractDecoder;
-import com.shth.das.common.HandlerParam;
-import com.shth.das.common.JnSxDecoderParam;
-import com.shth.das.common.SxVerificationCode;
+import com.shth.das.common.*;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.jnsx.*;
 import io.netty.channel.ChannelHandlerContext;
@@ -109,6 +106,11 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                 //松下焊机GL5/FR2/AT第二次验证（下行）
                 if (str.length() == 128 && "4C4A5348".equals(str.substring(0, 8))) {
+                    //设备CID（8个字节：字符长度则为：16）
+                    String weldCid = str.substring(12, 28);
+                    //保存设备CID和通道对应关系
+                    CommonMap.SX_WELD_CID_CTX_MAP.put(weldCid, ctx);
+                    CommonMap.SX_CTX_WELD_CID_MAP.put(ctx, weldCid);
                     ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION).sync();
                 }
             } catch (Exception e) {
@@ -130,12 +132,11 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 final String str = jnSxDecoderParam.getStr();
                 final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                 final String clientIp = jnSxDecoderParam.getClientIp();
-                int clientPort = ((InetSocketAddress) ctx.channel().remoteAddress()).getPort();
                 //松下焊机GL5软硬件参数
                 if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
                     Map<String, Object> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
-                    SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.sxWeldAnalysis(clientIp, clientPort, str);
+                    SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
                     if (null != sxWeldModel) {
                         map.put("SxWeldModel", sxWeldModel);
                         ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();

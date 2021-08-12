@@ -12,6 +12,7 @@ import com.shth.das.sys.weldmesdb.service.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -23,7 +24,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -193,25 +193,17 @@ public class ScheduledTask {
             String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
             String head = "007E1001010145";
             String foot = "007D";
-            if (CommonMap.CLIENT_IP_GATHER_NO_MAP.size() > 0 && CommonMap.OTC_CHANNEL_MAP.size() > 0) {
-                Iterator<Map.Entry<String, String>> entries = CommonMap.CLIENT_IP_GATHER_NO_MAP.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, String> next = entries.next();
-                    //采集盒IP地址
-                    String clientAddress = next.getKey();
+            if (!CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
+                for (Map.Entry<String, ChannelHandlerContext> entry : CommonMap.OTC_GATHER_NO_CTX_MAP.entrySet()) {
                     //采集编号
-                    String gatherNo = next.getValue();
-                    gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
-                    if (CommonUtils.isNotEmpty(clientAddress) && CommonUtils.isNotEmpty(gatherNo)) {
-                        if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
-                            Channel channel = CommonMap.OTC_CHANNEL_MAP.get(clientAddress).channel();
-                            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                                String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
-                                timeString = timeString.toUpperCase();
-                                channel.writeAndFlush(timeString).sync();
-                                //log.info("时间校准：{}", year + month + day + hour + minute + second);
-                            }
-                        }
+                    String gatherNo = entry.getKey();
+                    //设备通道
+                    Channel channel = entry.getValue().channel();
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
+                        timeString = timeString.toUpperCase();
+                        channel.writeAndFlush(timeString).sync();
+                        //log.info("时间校准：{}", year + month + day + hour + minute + second);
                     }
                 }
             }

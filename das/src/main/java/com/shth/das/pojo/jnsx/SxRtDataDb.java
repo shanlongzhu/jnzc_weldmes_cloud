@@ -25,6 +25,7 @@ public class SxRtDataDb implements Serializable {
     //松下设备共有的字段
     @TableId(type = IdType.AUTO)
     private BigInteger id;              //ID
+    private String weldCid;             //设备CID（设备唯一标识）
     private String weldIp;              //IP地址
     private Integer weldStatus;         //焊接状态
     private String weldTime;            //焊机时间

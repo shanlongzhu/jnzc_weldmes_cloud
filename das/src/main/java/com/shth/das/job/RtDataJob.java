@@ -120,6 +120,7 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
+                    //take()：如果队列为空，进行阻塞，直到有值，防止无限空轮询
                     SxWeldModel sxWeldModel = CommonQueue.SX_ADD_MACHINE_QUEUES.take();
                     //调用接口，数据存入数据库
                     sxWeldService.insertSxWeld(sxWeldModel);
@@ -138,9 +139,9 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
-                    String weldIp = CommonQueue.SX_ON_MACHINE_QUEUES.take();
+                    String weldCid = CommonQueue.SX_ON_MACHINE_QUEUES.take();
                     //根据IP地址查询松下焊机信息
-                    SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldIp(weldIp);
+                    SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldCid(weldCid);
                     //新增设备关机时间
                     WeldOnOffTime onOffTime = new WeldOnOffTime();
                     onOffTime.setStartTime(DateTimeUtils.getNowDateTime());
@@ -150,7 +151,8 @@ public class RtDataJob {
                         onOffTime.setMachineId(BigInteger.ZERO);
                     }
                     onOffTime.setMachineType(1);
-                    onOffTime.setWeldsxIp(weldIp);
+                    onOffTime.setWeldCid(weldCid);
+                    //开机新增一条
                     weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -167,9 +169,9 @@ public class RtDataJob {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
-                    String weldIp = CommonQueue.SX_OFF_MACHINE_QUEUES.take();
+                    String weldCid = CommonQueue.SX_OFF_MACHINE_QUEUES.take();
                     //根据IP地址查询松下焊机信息
-                    SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldIp(weldIp);
+                    SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldCid(weldCid);
                     //新增设备关机时间
                     WeldOnOffTime onOffTime = new WeldOnOffTime();
                     onOffTime.setEndTime(DateTimeUtils.getNowDateTime());
@@ -179,8 +181,9 @@ public class RtDataJob {
                         onOffTime.setMachineId(BigInteger.ZERO);
                     }
                     onOffTime.setMachineType(1);
-                    onOffTime.setWeldsxIp(weldIp);
-                    weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
+                    onOffTime.setWeldCid(weldCid);
+                    //关机修改最近一条
+                    weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -43,7 +43,13 @@ public class WeldOnOffTime implements Serializable {
     /**设备类型(默认0:OTC,1:松下)*/
     @TableField("machine_type")
     private int machineType;
-    /**设备IP地址(只存松下)*/
-    @TableField("weldsx_ip")
-    private String weldsxIp;
+    /**设备CID（设备唯一标识）*/
+    @TableField("weld_cid")
+    private String weldCid;
+    /**
+     * 开机时长（单位：s）
+     */
+    @TableField("weld_on_duration")
+    private BigInteger weldOnDuration;
+
 }
