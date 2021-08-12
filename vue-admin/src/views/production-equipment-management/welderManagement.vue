@@ -352,7 +352,7 @@ export default {
     name: 'welderManagement',
     data () {
         let validatorPhone = function (rule, value, callback) {
-            if (value === '') {
+            if (value.replace(/\s+/g, "") === '') {
                 callback()
             } else if (!/^1\d{10}$/.test(value)) {
                 callback(new Error('手机号格式错误'))
