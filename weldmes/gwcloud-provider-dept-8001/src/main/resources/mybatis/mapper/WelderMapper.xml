@@ -19,6 +19,7 @@
         <result property="bayStr" column="bayStr"></result>
         <result property="area" column="area"></result>
         <result property="bay" column="bay"></result>
+        <result property="taskFlag" column="taskFlag"></result>
         <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
             <id property="id" column="id"></id>
             <result property="type" column="type"></result>
@@ -244,7 +245,11 @@
         left join sys_dictionary d5 on m.bay = d5.id
         left join sys_dept s on m.dept_id = s.id
         left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
-        left join task_claim claim on m.id=claim.weld_id
+        left join task_claim claim on m.id=claim.weld_id AND m.id IN (
+             SELECT tem.weld_id FROM (
+                 SELECT weld_id,task_id from task_claim group BY weld_id,task_id order by claim_time desc
+                 ) tem  GROUP BY weld_id
+             )
         left join task_info ti on claim.task_id=ti.id and ti.`status`=51
         group by m.machine_no
     </select>
