@@ -251,6 +251,41 @@
                  ) tem  GROUP BY weld_id
              )
         left join task_info ti on claim.task_id=ti.id and ti.`status`=51
+        <where>
+            <if test="machineNo != null and machineNo != ''">
+                and  m.machine_no = #{machineNo}
+            </if>
+            <if test="type != null and type != ''">
+                and  d.id = #{type}
+            </if>
+            <if test="grade != null and grade != ''">
+                and  s.id = #{grade}
+            </if>
+            <if test="status != null and status != ''">
+                and  d1.id = #{status}
+            </if>
+            <if test="firm != null and firm != ''">
+                and  d2.id = #{firm}
+            </if>
+            <if test="isNetwork != null">
+                and  m.is_network = #{isNetwork}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and  g.gather_no = #{gatherNo}
+            </if>
+            <if test="ipPath != null and ipPath != ''">
+                and  m.ip_path = #{ipPath}
+            </if>
+            <if test="model != null and model != ''">
+                and  model = #{model}
+            </if>
+            <if test="area != null and area != ''">
+                and  area = #{area}
+            </if>
+            <if test="bay != null and bay != ''">
+                and  bay = #{bay}
+            </if>
+        </where>
         group by m.machine_no
     </select>
 </mapper>
