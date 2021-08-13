@@ -69,7 +69,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (this.decoderMapping.containsKey(str.length())) {
             return this.decoderMapping.get(str.length()).apply(jnSxDecoderParam);
         }
-        return new HandlerParam();
+        return null;
     }
 
     /**
@@ -82,8 +82,8 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (null != jnSxDecoderParam) {
             try {
                 final String str = jnSxDecoderParam.getStr();
-                final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                 if (str.length() == 42 && "4E455430".equals(str.substring(0, 8))) {
+                    final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION).sync();
                 }
             } catch (Exception e) {
@@ -103,9 +103,9 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (null != jnSxDecoderParam) {
             try {
                 final String str = jnSxDecoderParam.getStr();
-                final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                 //松下焊机GL5/FR2/AT第二次验证（下行）
                 if (str.length() == 128 && "4C4A5348".equals(str.substring(0, 8))) {
+                    final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     //设备CID（8个字节：字符长度则为：16）
                     String weldCid = str.substring(12, 28);
                     //保存设备CID和通道对应关系
@@ -130,10 +130,10 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (null != jnSxDecoderParam) {
             try {
                 final String str = jnSxDecoderParam.getStr();
-                final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
-                final String clientIp = jnSxDecoderParam.getClientIp();
                 //松下焊机GL5软硬件参数
                 if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
+                    final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
+                    final String clientIp = jnSxDecoderParam.getClientIp();
                     Map<String, Object> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
                     SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
@@ -161,9 +161,9 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     private HandlerParam jnSxGl5RtDataAnalysis(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
-            final String clientIp = jnSxDecoderParam.getClientIp();
             //松下焊机GL5实时数据
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
+                final String clientIp = jnSxDecoderParam.getClientIp();
                 Map<String, Object> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
                 SxRtDataUi sxRtDataUi = this.jnSxRtDataProtocol.sxRtDataUiAnalysis(clientIp, str);
@@ -191,18 +191,18 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     private HandlerParam jnSxGl5StatusAnalysis(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
-            final String clientIp = jnSxDecoderParam.getClientIp();
             //松下焊机GL5系列CO2状态信息
             if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
+                final String clientIp = jnSxDecoderParam.getClientIp();
                 SxStatusDataUI sxStatusDataUi = this.jnSxRtDataProtocol.sxStatusDataUiAnalysis(clientIp, str);
                 if (null != sxStatusDataUi) {
+                    HandlerParam handlerParam = new HandlerParam();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("SxStatusDataUI", sxStatusDataUi);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;
@@ -270,18 +270,18 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     private HandlerParam jnSxCo2ProcessClaimReturn(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
-            final String clientIp = jnSxDecoderParam.getClientIp();
             //松下GL5系列CO2工艺索取返回
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
+                final String clientIp = jnSxDecoderParam.getClientIp();
                 SxCO2ProcessClaimReturn claimReturn = this.jnSxRtDataProtocol.sxCO2ProcessClaimReturnAnalysis(clientIp, str);
                 if (null != claimReturn) {
+                    HandlerParam handlerParam = new HandlerParam();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("SxCO2ProcessClaimReturn", claimReturn);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;
@@ -299,15 +299,15 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下GL5系列TIG工艺索取返回
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
                 SxTIGProcessClaimReturn sxTigProcessClaimReturn = this.jnSxRtDataProtocol.sxTIGProcessClaimReturnAnalysis(clientIp, str);
                 if (null != sxTigProcessClaimReturn) {
+                    HandlerParam handlerParam = new HandlerParam();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("SxTIGProcessClaimReturn", sxTigProcessClaimReturn);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;
@@ -421,15 +421,15 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列通道参数查询（无参数）、下载、删除回复
             if (str.length() == 52 && "FE5AA5001A".equals(str.substring(0, 10))) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
                 SxChannelParamReply sxChannelParamReply = this.jnSxRtDataProtocol.sxChannelParamReplyAnalysis(clientIp, str);
                 if (null != sxChannelParamReply) {
+                    HandlerParam handlerParam = new HandlerParam();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("SxChannelParamReply", sxChannelParamReply);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;
@@ -447,15 +447,15 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列通道参数查询（有参数）
             if (str.length() == 218 && "FE5AA5006E".equals(str.substring(0, 10))) {
-                Map<String, Object> map = new HashMap<>();
-                HandlerParam handlerParam = new HandlerParam();
                 SxChannelParamReplyHave sxChannelParamReplyHave = this.jnSxRtDataProtocol.sxChannelParamReplyHaveAnalysis(clientIp, str);
                 if (null != sxChannelParamReplyHave) {
+                    Map<String, Object> map = new HashMap<>();
+                    HandlerParam handlerParam = new HandlerParam();
                     map.put("SxChannelParamReplyHave", sxChannelParamReplyHave);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;
@@ -473,15 +473,15 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下AT3系列查询回复（有参数）
             if (str.length() == 92 && "FE5AA5002E".equals(str.substring(0, 10))) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
                 At3ParamQueryReturn at3ParamQueryReturn = this.jnSxRtDataProtocol.at3ParamQueryReturnAnalysis(clientIp, str);
                 if (null != at3ParamQueryReturn) {
+                    HandlerParam handlerParam = new HandlerParam();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("At3ParamQueryReturn", at3ParamQueryReturn);
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
                 }
-                handlerParam.setKey(jnSxDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
             }
         }
         return null;

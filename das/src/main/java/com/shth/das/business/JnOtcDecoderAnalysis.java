@@ -47,7 +47,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
         if (this.decoderMapping.containsKey(str.length())) {
             return this.decoderMapping.get(str.length()).apply(jnOtcDecoderParam);
         }
-        return new HandlerParam();
+        return null;
     }
 
     /**
@@ -57,8 +57,8 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * @return 返回MAP
      */
     private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
-        HandlerParam handlerParam = new HandlerParam();
         if (null != jnOtcDecoderParam) {
+            HandlerParam handlerParam = new HandlerParam();
             Map<String, Object> map = new HashMap<>();
             //存数据库
             List<JNRtDataDB> jnRtDataDbs = this.jnOtcRtDataProtocol.jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
@@ -72,8 +72,9 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
+            return handlerParam;
         }
-        return handlerParam;
+        return null;
     }
 
     /**
@@ -83,17 +84,18 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * @return 返回MAP
      */
     private HandlerParam otcIssueReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
-        HandlerParam handlerParam = new HandlerParam();
         if (null != jnOtcDecoderParam) {
-            Map<String, Object> map = new HashMap<>();
             JNProcessIssueReturn issueReturn = this.jnOtcRtDataProtocol.jnIssueReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != issueReturn) {
+                HandlerParam handlerParam = new HandlerParam();
+                Map<String, Object> map = new HashMap<>();
                 map.put("JNProcessIssueReturn", issueReturn);
+                handlerParam.setKey(jnOtcDecoderParam.getStr().length());
+                handlerParam.setValue(map);
+                return handlerParam;
             }
-            handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-            handlerParam.setValue(map);
         }
-        return handlerParam;
+        return null;
     }
 
     /**
@@ -103,17 +105,18 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * @return 返回MAP
      */
     private HandlerParam otcClaimReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
-        HandlerParam handlerParam = new HandlerParam();
         if (null != jnOtcDecoderParam) {
-            Map<String, Object> map = new HashMap<>();
             JNProcessClaimReturn claimReturn = this.jnOtcRtDataProtocol.jnClaimReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != claimReturn) {
+                HandlerParam handlerParam = new HandlerParam();
+                Map<String, Object> map = new HashMap<>();
                 map.put("JNProcessClaimReturn", claimReturn);
+                handlerParam.setKey(jnOtcDecoderParam.getStr().length());
+                handlerParam.setValue(map);
+                return handlerParam;
             }
-            handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-            handlerParam.setValue(map);
         }
-        return handlerParam;
+        return null;
     }
 
     /**
@@ -123,8 +126,8 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * @return 返回MAP
      */
     private HandlerParam otcPwdCmdReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
-        HandlerParam handlerParam = new HandlerParam();
         if (null != jnOtcDecoderParam) {
+            HandlerParam handlerParam = new HandlerParam();
             Map<String, Object> map = new HashMap<>();
             String str = jnOtcDecoderParam.getStr();
             //密码返回
@@ -143,8 +146,9 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
+            return handlerParam;
         }
-        return handlerParam;
+        return null;
     }
 
 }
