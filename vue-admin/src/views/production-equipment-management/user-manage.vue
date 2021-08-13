@@ -8,14 +8,16 @@
             style="flex:1;"
         >
             <div
+                v-show="isMenuShow"
                 class="user-l"
-                style='height:100%;width:300px;border:1px solid #ddd;margin-right:10px'
+                style='height:100%;width:300px;border:1px solid #ddd;'
             >
                 <div class="organizational-tit">组织机构菜单</div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
                     <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
+            <div style="width:10px" class="flex-c btn-show-hide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" @click="changeMenuShowHide"></span></div>
             <div
                 class="user-r flex-c"
                 style='height:100%;flex:1; width:0px'
@@ -390,7 +392,9 @@ export default {
 
             
             //角色下拉数据
-            rolesArr: []
+            rolesArr: [],
+
+            isMenuShow:true
         }
     },
 
@@ -515,6 +519,10 @@ export default {
             this.searchObj.deptId = v.id;
             this.search();
         },
+
+        changeMenuShowHide(){
+            this.isMenuShow = !this.isMenuShow;
+        }
 
     }
 }

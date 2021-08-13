@@ -8,8 +8,9 @@
             style="flex:1; height:0px"
         >
             <div
+            v-show="isMenuShow"
                 class="user-l"
-                style='height:100%;width:300px;border:1px solid #ddd;margin-right:10px'
+                style='height:100%;width:300px;border:1px solid #ddd;'
             >
                 <div class="organizational-tit">
                     组织机构菜单
@@ -18,6 +19,7 @@
                     <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
+            <div style="width:10px" class="flex-c btn-show-hide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" @click="changeMenuShowHide"></span></div>
             <div
                 class="user-r flex-c real-tit"
                 style='height:100%;flex:1; width:0px'
@@ -221,6 +223,8 @@ export default {
             lineData: [],
 
             mqttLastData: {},
+
+            isMenuShow:true
 
 
 
@@ -542,6 +546,9 @@ export default {
             if (warnInNum === -1) {
                 this.warnArray.push(v.gatherNo);
             }
+        },
+        changeMenuShowHide(){
+            this.isMenuShow = !this.isMenuShow;
         }
     }
 }
