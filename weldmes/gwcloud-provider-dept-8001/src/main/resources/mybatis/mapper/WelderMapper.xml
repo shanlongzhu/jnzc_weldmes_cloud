@@ -42,30 +42,10 @@
     </resultMap>
 
     <select id="getList" resultMap="welder">
-        SELECT
-        m.id,
-        m.machine_no,
-        m.create_time,
-        m.type,
-        m.dept_id,
-        m.g_id,
-        m.`status`,
-        m.model,
-        m.firm,
-        m.is_network,
-        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
-        d.value_name,
-        d1.value_name value_names,
-        d2.value_name value_namess,
-        d3.value_name value_namesss,
-        s.`name`,
-        m.ip_path,
-        m.area,
-        m.bay,
-        d4.value_name areaStr,
-        d5.value_name bayStr
-        from
-        machine_weld_info m
+        SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,m.is_network,
+        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,d.value_name,d1.value_name value_names,d2.value_name value_namess,
+        d3.value_name value_namesss,s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        from machine_weld_info m
         left join sys_dictionary d on m.type = d.id
         left join sys_dictionary d1 on m.`status` = d1.id
         left join sys_dictionary d2 on m.firm = d2.id
@@ -109,8 +89,7 @@
                 and  bay = #{bay}
             </if>
         </where>
-        group by
-        m.machine_no
+        group by m.machine_no
     </select>
 
     <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
@@ -248,5 +227,25 @@
         </foreach>
 		group by
         m.machine_no
+    </select>
+
+    <!--查询焊机列表(是否绑定了任务)-->
+    <select id="selectMachineWeldInfosNoPage" resultMap="welder">
+        select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,
+        m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name,
+        d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,s.`name`,m.ip_path,
+        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        from machine_weld_info m
+        left join sys_dictionary d on m.type = d.id
+        left join sys_dictionary d1 on m.`status` = d1.id
+        left join sys_dictionary d2 on m.firm = d2.id
+        left join sys_dictionary d3 on m.model = d3.id
+        left join sys_dictionary d4 on m.area = d4.id
+        left join sys_dictionary d5 on m.bay = d5.id
+        left join sys_dept s on m.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
+        left join task_claim claim on m.id=claim.weld_id
+        left join task_info ti on claim.task_id=ti.id and ti.`status`=51
+        group by m.machine_no
     </select>
 </mapper>

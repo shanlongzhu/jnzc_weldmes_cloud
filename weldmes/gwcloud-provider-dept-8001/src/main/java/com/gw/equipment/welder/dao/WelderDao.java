@@ -58,4 +58,15 @@ public interface WelderDao {
      */
     public List<MachineWeldInfo> selectMachineWeldInfosByDeptIds(@Param("deptIds")List<Long> deptIds);
 
+    /**
+     * @Date 2021/8/12 18:22
+     * @Description 查询焊机列表(是否绑定了任务)
+     * @Params
+     */
+    public List<MachineWeldInfo> selectMachineWeldInfosNoPage(@Param("machineNo")String machineNo,@Param("type")Integer type,
+                                                              @Param("grade")Integer grade,@Param("status")Integer status,
+                                                              @Param("firm")Integer firm,@Param("isNetwork")Long isNetwork,
+                                                              @Param("gatherNo")String gatherNo,@Param("ipPath")String ipPath,
+                                                              @Param("model")Integer model,@Param("area")Integer area,@Param("bay")Integer bay);
+
 }
