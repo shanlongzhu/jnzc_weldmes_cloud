@@ -100,12 +100,12 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         if(ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
 
             taskInfo.setRealityStarttime(taskClaim.getClaimTime());
-
-            taskInfo.setStatus(DictionaryEnum.TASK_STATUS_WORKING.getId());
-
-            taskInfo.setWelderId(taskClaim.getWelderId());
-
-            dispatchDao.updateTaskInfo(taskInfo);
         }
+
+        taskInfo.setStatus(DictionaryEnum.TASK_STATUS_WORKING.getId());
+
+        taskInfo.setWelderId(taskClaim.getWelderId());
+
+        dispatchDao.updateTaskInfo(taskInfo);
     }
 }
