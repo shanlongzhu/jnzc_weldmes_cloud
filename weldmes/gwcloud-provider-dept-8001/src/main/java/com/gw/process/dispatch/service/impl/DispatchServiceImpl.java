@@ -275,30 +275,21 @@ public class DispatchServiceImpl implements DispatchService{
     @Override
     public List<GatherAndFirmInfo> taskStatusChange(TaskInfo taskInfo) {
 
-        List<GatherAndFirmInfo> firmAndGatherNoInfos = new ArrayList<>();
+        //获取到 已完成 的任务主键
+        int status = DictionaryEnum.TASK_STATUS_FINISH.getId();
 
-        //任务状态 更改为 已完成
-        if(taskInfo.getStatusStr().equals(DictionaryEnum.TASK_STATUS_WORKING.getValueName())){
+        //获取当前时间
+        String time = DateTimeUtil.getCurrentTime();
 
-            //获取到 已完成 的任务主键
-            int status = DictionaryEnum.TASK_STATUS_FINISH.getId();
+        taskInfo.setStatus(status);
 
-            //获取当前时间
-            String time = DateTimeUtil.getCurrentTime();
+        taskInfo.setRealityEndtime(time);
 
-            taskInfo.setStatus(status);
+        //入库操作  修改任务状态
+        dispatchDao.updateTaskInfo(taskInfo);
 
-            taskInfo.setRealityEndtime(time);
-
-            //入库操作  修改任务状态
-            dispatchDao.updateTaskInfo(taskInfo);
-
-            //根据任务id拿到焊机id列表
-            firmAndGatherNoInfos = taskClaimDao.selectFirmAndGatherNoInfosByTaskId(taskInfo.getId());
-
-            return firmAndGatherNoInfos;
-
-        }
+        //根据任务id拿到焊机id列表
+        List<GatherAndFirmInfo> firmAndGatherNoInfos = taskClaimDao.selectFirmAndGatherNoInfosByTaskId(taskInfo.getId());
 
         return firmAndGatherNoInfos;
     }

@@ -103,6 +103,8 @@ public class TaskClaimServiceImpl implements TaskClaimService {
 
             taskInfo.setStatus(DictionaryEnum.TASK_STATUS_WORKING.getId());
 
+            taskInfo.setWelderId(taskClaim.getWelderId());
+
             dispatchDao.updateTaskInfo(taskInfo);
         }
     }

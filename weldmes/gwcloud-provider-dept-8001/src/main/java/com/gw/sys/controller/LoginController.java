@@ -45,7 +45,7 @@ public class LoginController {
 
     //登录身份认证
     @RequestMapping("/sysUser/login")
-    public HttpResult login(@RequestParam String username, @RequestParam String password) {
+    public HttpResult login(@RequestParam String username, @RequestParam String password) throws Exception {
 
         //获取到当前用户
         Subject currentUser = SecurityUtils.getSubject();
@@ -59,7 +59,7 @@ public class LoginController {
                 subject.getUserName().equals(username) &&
                 subject.getPassWord().equals(newPwdMD5)){
 
-            return HttpResult.ok("当前用户已登录,请更换用户重新登录");
+            throw new Exception("当前用户已登录,请更换用户重新登录");
         }
 
         //当前用户 未登录 时 进行登录认证
