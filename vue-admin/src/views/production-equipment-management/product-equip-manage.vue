@@ -217,7 +217,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>固定资产编号</span><span class="red-star">*</span>
                     </template>
@@ -230,7 +229,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>设备类型</span><span class="red-star">*</span>
                     </template>
@@ -253,7 +251,6 @@
                 >
                  <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>所属项目</span><span class="red-star">*</span>
                     </template>
@@ -279,7 +276,6 @@
                 >
                  <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>厂家</span><span class="red-star">*</span>
                     </template>
@@ -306,7 +302,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>采集序号</span><span class="red-star">*</span>
                     </template>
@@ -322,7 +317,6 @@
                 >
                      <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>区域</span><span class="red-star">*</span>
                     </template>
@@ -335,7 +329,6 @@
                 >
                  <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>跨间</span><span class="red-star">*</span>
                     </template>
@@ -356,7 +349,6 @@
                 >
                      <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>设备型号</span><span class="red-star">*</span>
                     </template>

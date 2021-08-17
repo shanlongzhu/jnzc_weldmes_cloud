@@ -69,7 +69,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>工艺名称</span><span class="red-star">*</span>
                     </template>
@@ -83,7 +82,6 @@
                     </template>
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>焊机型号</span><span class="red-star">*</span>
                     </template>

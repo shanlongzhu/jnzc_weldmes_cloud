@@ -122,7 +122,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>任务编号</span><span class="red-star">*</span>
                     </template>
@@ -136,7 +135,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>任务等级</span><span class="red-star">*</span>
                     </template>
@@ -149,7 +147,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>所属班组</span><span class="red-star">*</span>
                     </template>

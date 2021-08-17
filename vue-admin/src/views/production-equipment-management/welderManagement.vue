@@ -136,7 +136,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>姓名</span><span class="red-star">*</span>
                     </template>
@@ -149,7 +148,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>编号</span><span class="red-star">*</span>
                     </template>
@@ -190,7 +188,6 @@
                 >
                 <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>部门</span><span class="red-star">*</span>
                     </template>

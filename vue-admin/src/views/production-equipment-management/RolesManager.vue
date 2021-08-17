@@ -46,7 +46,6 @@
                     >
                         <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>角色名</span><span class="red-star">*</span>
                     </template>

@@ -101,7 +101,6 @@
                         >
                             <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>用户名</span><span class="red-star">*</span>
                     </template>
@@ -113,7 +112,6 @@
                         >
                             <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>登录名</span><span class="red-star">*</span>
                     </template>
@@ -141,7 +139,6 @@
                         >
                             <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>部门名称</span><span class="red-star">*</span>
                     </template>

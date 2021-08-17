@@ -97,7 +97,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>编号</span><span class="red-star">*</span>
                     </template>
@@ -110,7 +109,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>所属项目</span><span class="red-star">*</span>
                     </template>
@@ -126,7 +124,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>状态</span><span class="red-star">*</span>
                     </template>
@@ -142,7 +139,6 @@
                 >
                     <template
                         slot="header"
-                        slot-scope="scope"
                     >
                         <span>通讯协议</span><span class="red-star">*</span>
                     </template>
