@@ -40,4 +40,27 @@ public class AreaBayServiceImpl implements AreaBayService {
             }
         }
     }
+
+    /**
+     * @Date 2021/8/17 11:17
+     * @Description  查询区域跨间树状图
+     * @Params
+     */
+    @Override
+    public List<AreaBayInfo> getAreaBayTreeInfo() {
+
+        //获取区域信息列表
+        List<AreaBayInfo> areaInfos = areaBayDao.selectAreaInfos();
+
+        for (AreaBayInfo areaInfo : areaInfos) {
+
+            //根据区域id拿到跨间信息
+            List<AreaBayInfo> list = areaBayDao.selectBayInfos(areaInfo.getId());
+
+            areaInfo.setList(list);
+
+        }
+
+        return areaInfos;
+    }
 }

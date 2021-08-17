@@ -17,4 +17,12 @@ public interface AreaBayService {
      * @Params areaBayInfo 区域跨间实体类
      */
     public void addAreaBayInfo(List<AreaBayInfo> areaBayInfos);
+
+    /**
+     * @Date 2021/8/17 11:17
+     * @Description  查询区域跨间树状图
+     * @Params
+     */
+    public List<AreaBayInfo> getAreaBayTreeInfo();
+
 }

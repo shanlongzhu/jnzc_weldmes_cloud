@@ -4,6 +4,8 @@ import com.gw.entities.AreaBayInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:28
@@ -25,4 +27,19 @@ public interface AreaBayDao {
      * @Params
      */
     public void deleteAreaBayInfoById(@Param("areaId") Long areaId);
+
+    /**
+     * @Date 2021/8/17 14:36
+     * @Description 查询字典表中所有的区域信息
+     * @Params
+     */
+    public List<AreaBayInfo> selectAreaInfos();
+
+    /**
+     * @Date 2021/8/17 15:12
+     * @Description 根据areaId查询跨甲id列表
+     * @Params
+     */
+    public List<AreaBayInfo> selectBayInfos(@Param("id") Long id);
+
 }

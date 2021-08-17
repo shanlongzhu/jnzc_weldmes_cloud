@@ -9,6 +9,7 @@
         <result property="areaId" column="area_id"></result>
         <result property="bayId" column="bay_id"></result>
         <result property="remarks" column="remarks"></result>
+        <result property="areaBayName" column="value_name"></result>
     </resultMap>
 
     <!--插入区域跨间信息-->
@@ -20,4 +21,16 @@
     <delete id="deleteAreaBayInfoById" parameterType="Long">
         delete from area_bay where area_id = #{areaId}
     </delete>
+
+    <!--查询区域信息-->
+    <select id="selectAreaInfos" resultType="com.gw.entities.AreaBayInfo">
+        select id,value_name areaBayName from sys_dictionary where `type` = '16'
+    </select>
+
+    <!--根据区域id查询跨间信息-->
+    <select id="selectBayInfos" parameterType="Long" resultType="com.gw.entities.AreaBayInfo">
+        select id,value_name areaBayName
+        from sys_dictionary
+        where id in (select bay_id from area_bay where area_id = #{id})
+    </select>
 </mapper>
