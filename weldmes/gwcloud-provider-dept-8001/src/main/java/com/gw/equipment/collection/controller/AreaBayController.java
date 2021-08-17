@@ -1,10 +1,13 @@
 package com.gw.equipment.collection.controller;
 
 import com.gw.common.HttpResult;
+import com.gw.entities.AreaBayInfo;
 import com.gw.entities.IdListVO;
 import com.gw.equipment.collection.service.AreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author zhanghan
@@ -29,5 +32,18 @@ public class AreaBayController {
         areaBayService.addAreaBayInfo(areaBays.getAreaBayInfos());
 
         return HttpResult.ok("成功绑定区域跨间");
+    }
+
+    /**
+     * @Date 2021/8/17 11:17
+     * @Description  查询区域跨间树状图
+     * @Params
+     */
+    @RequestMapping(value = "areaBay/getAreaBayTreeInfo",method = RequestMethod.POST)
+    public HttpResult getAreaBayTreeInfo(){
+
+        List<AreaBayInfo> list = areaBayService.getAreaBayTreeInfo();
+
+        return HttpResult.ok(list);
     }
 }
