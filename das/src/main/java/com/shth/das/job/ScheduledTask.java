@@ -196,19 +196,22 @@ public class ScheduledTask {
             if (!CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
                 for (Map.Entry<String, ChannelHandlerContext> entry : CommonMap.OTC_GATHER_NO_CTX_MAP.entrySet()) {
                     //采集编号
-                    String gatherNo = entry.getKey();
+                    String gatherNo = CommonUtils.lengthJoint(entry.getKey(), 4);
                     //设备通道
                     Channel channel = entry.getValue().channel();
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        String timeString = head + gatherNo + "20" + year + month + day + hour + minute + second + foot;
-                        timeString = timeString.toUpperCase();
-                        channel.writeAndFlush(timeString).sync();
-                        //log.info("时间校准：{}", year + month + day + hour + minute + second);
+                        //字符总长度：36
+                        String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
+                        if (timeString.length() == 36) {
+                            channel.writeAndFlush(timeString).sync();
+                            //log.info("时间校准：{}", year + month + day + hour + minute + second);
+                        }
                     }
                 }
             }
         } catch (Exception e) {
             log.error("时间校准异常：{}", e.getMessage());
+            e.printStackTrace();
         }
     }
 
