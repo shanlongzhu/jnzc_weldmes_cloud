@@ -2,6 +2,8 @@ package com.gw.entities;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/7/15 16:23
@@ -29,4 +31,14 @@ public class AreaBayInfo {
      * 备注
      */
     private String remarks;
+
+    /**
+     * 区域跨间名称
+     */
+    private String areaBayName;
+
+    /**
+     * 列表
+     */
+    private List<AreaBayInfo> list;
 }
