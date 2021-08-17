@@ -1,5 +1,6 @@
 package com.shth.das.netty;
 
+import com.alibaba.druid.util.StringUtils;
 import com.shth.das.common.DataInitialization;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,10 +30,12 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
         if (serverPort == DataInitialization.getSxPort()) {
             Thread.sleep(200);
         }
-        //16进制字符串转byte数组
-        byte[] bytes = Hex.decodeHex(str.toCharArray());
-        byteBuf.writeBytes(bytes);
-        //byteBuf.release();
+        //数据不为空时，写入通道
+        if (!StringUtils.isEmpty(str)) {
+            //16进制字符串转byte数组
+            byte[] bytes = Hex.decodeHex(str.toCharArray());
+            byteBuf.writeBytes(bytes);
+        }
         ctx.flush();
     }
 }
