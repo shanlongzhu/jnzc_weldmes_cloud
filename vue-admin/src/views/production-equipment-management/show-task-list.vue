@@ -119,20 +119,41 @@
                     align="left"
                     min-width="100"
                     fixed="left"
-                />
+                >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>任务编号</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="gradeIdToStr"
                     label="任务等级"
                     align="left"
                     width="130"
                     show-overflow-tooltip
-                />
+                >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>任务等级</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="deptName"
                     label="所属班组"
                     align="left"
                     width="130"
-                />
+                >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>所属班组</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="welderName"
                     label="焊工姓名"

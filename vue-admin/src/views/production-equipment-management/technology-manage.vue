@@ -66,13 +66,26 @@
                 <vxe-table-column
                     field="wpsName"
                     title="工艺名称"
-                ></vxe-table-column>
+                >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>工艺名称</span><span class="red-star">*</span>
+                    </template>
+                </vxe-table-column>
                 <vxe-table-column
                     field="weldModel"
                     title="焊机型号"
                 >
                     <template #default={row}>
                         {{row.sysDictionary.valueName}}
+                    </template>
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>焊机型号</span><span class="red-star">*</span>
                     </template>
                 </vxe-table-column>
                 <vxe-table-column

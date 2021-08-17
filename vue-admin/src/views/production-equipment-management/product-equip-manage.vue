@@ -214,13 +214,26 @@
                     align="left"
                     min-width="100"
                     fixed="left"
-                />
+                >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>固定资产编号</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="deptName"
                     label="设备类型"
                     align="left"
                     min-width="80"
                 >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>设备类型</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueName}}
                     </template>
@@ -238,6 +251,12 @@
                     align="left"
                     min-width="120"
                 >
+                 <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>所属项目</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDept.name}}
                     </template>
@@ -258,6 +277,12 @@
                     align="left"
                     min-width="100"
                 >
+                 <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>厂家</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueNamess}}
                     </template>
@@ -279,6 +304,12 @@
                     min-width="150"
                     show-overflow-tooltip
                 >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>采集序号</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.machineGatherInfo.gatherNo}}
                     </template>
@@ -288,13 +319,27 @@
                     label="区域"
                     align="left"
                     min-width="100"
-                />
+                >
+                     <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>区域</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="bayStr"
                     label="跨间"
                     align="left"
                     min-width="100"
-                />
+                >
+                 <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>跨间</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="ipPath"
                     label="IP地址"
@@ -309,6 +354,12 @@
                     align="left"
                     min-width="120"
                 >
+                     <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>设备型号</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueNamesss}}
                     </template>

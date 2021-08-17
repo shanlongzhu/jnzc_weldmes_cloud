@@ -133,13 +133,26 @@
                     align="left"
                     min-width="100"
                     fixed="left"
-                />
+                >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>姓名</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="welderNo"
                     label="编号"
                     align="left"
                     min-width="120"
                 >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>编号</span><span class="red-star">*</span>
+                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="cellphone"
@@ -175,6 +188,12 @@
                     align="left"
                     min-width="170"
                 >
+                <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>部门</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDept.name}}
                     </template>

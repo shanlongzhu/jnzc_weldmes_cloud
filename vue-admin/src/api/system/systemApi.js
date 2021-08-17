@@ -324,3 +324,12 @@ export function delLog(params={}) {
   });
 }
 
+
+// ***************获取区域胯间树形数据***************/
+//获取区域胯间tree数据
+export function getAreaG() {
+  return request({
+    url: "/areaBay/getAreaBayTreeInfo",
+    method: "get"
+  });
+}

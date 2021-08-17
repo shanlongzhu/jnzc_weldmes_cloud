@@ -69,9 +69,7 @@
             class="roles-r flex-c"
             style="height:100%; flex:1;width:0px"
         >
-            <div
-                class="p10"
-            >
+            <div class="p10">
                 <el-button
                     size="mini"
                     plain
@@ -102,42 +100,56 @@
                         field="valueName"
                         title="名称"
                         min-width="120"
-                    ></vxe-table-column>
+                    >
+                        <template
+                            slot="header"
+                            slot-scope="scope"
+                        >
+                            <span>名称</span><span class="red-star">*</span>
+                        </template>
+                    </vxe-table-column>
                     <vxe-table-column
                         field="value"
                         title="值"
                         width="100"
-                    ></vxe-table-column>
+                    >
+                        <template
+                            slot="header"
+                            slot-scope="scope"
+                        >
+                            <span>值</span><span class="red-star">*</span>
+                        </template>
+                    </vxe-table-column>
                     <vxe-table-column
                         field="typeName"
                         title="类型"
                         width="100"
                     ></vxe-table-column>
                     <vxe-table-column
-                            field="createTime"
-                            title="操作"
-                            width="150px"
-                            fixed="right"
-                        >
-                            <template #default="{row}">
-                                <el-button
-                                    size="mini"
-                                    type="primary"
-                                    plain
-                                    @click="editFun(row.id)"
-                                >
-                                    修改
-                                </el-button>
-                                <el-button
-                                    size="mini"
-                                    type="danger"
-                                    plain
-                                    @click="delFun(row.id)"
-                                >
-                                    删除
-                                </el-button>
-                            </template>
-                        </vxe-table-column>
+                        field="createTime"
+                        title="操作"
+                        width="150px"
+                        fixed="right"
+                    >
+                        <template #default="{row}">
+                            <el-button
+                                size="mini"
+                                type="primary"
+                                plain
+                                @click="editFun(row.id)"
+                            >
+                                修改
+                            </el-button>
+                            <el-button
+                                size="mini"
+                                type="danger"
+                                plain
+                                @click="delFun(row.id)"
+                            >
+                                删除
+                            </el-button>
+                        </template>
+                    </vxe-table-column>
                 </vxe-table>
             </div>
             <!-- <el-pagination
@@ -217,7 +229,7 @@
 
 <script>
 
-import { findTypeList, getRoleUserList, getDicType,addDic,findDicIdInfo,delDic,editDic } from '_api/system/systemApi'
+import { findTypeList, getRoleUserList, getDicType, addDic, findDicIdInfo, delDic, editDic } from '_api/system/systemApi'
 export default {
     name: 'dictionaries',
     data () {
@@ -226,8 +238,8 @@ export default {
                 children: 'menus'
             },
             //字典类型
-            typeList:[],
-            selectType:{},
+            typeList: [],
+            selectType: {},
 
             //角色列表
             list: [],
@@ -243,14 +255,14 @@ export default {
             //树形新增点击数据
             hanldObj: {},
             //model资源编辑层
-            sourceVisible: false, 
+            sourceVisible: false,
             //form
             objRuleForm: {
 
             },
             ruleForm: {
-                value:'',
-                valueName:'',
+                value: '',
+                valueName: '',
                 typeName: '',//角色名
                 type: ''//描述
             },
@@ -305,10 +317,10 @@ export default {
 
         //新增字典
         addRolsFun () {
-            if(JSON.stringify(this.selectType)=='{}'){
+            if (JSON.stringify(this.selectType) == '{}') {
                 return this.$message.error("请先选择字典类型");
             }
-            this.title = '新增字典';            
+            this.title = '新增字典';
             this.sourceVisible = true;
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
@@ -327,7 +339,7 @@ export default {
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data || {};
-                })  
+                })
             }
         },
         //删除字典数据
@@ -345,9 +357,9 @@ export default {
             }).catch(() => { })
         },
 
-        
 
-        
+
+
 
 
         submitForm (formName) {
@@ -388,7 +400,7 @@ export default {
             this.page = p;
             this.getList();
         },
-        
+
     }
 }
 </script>

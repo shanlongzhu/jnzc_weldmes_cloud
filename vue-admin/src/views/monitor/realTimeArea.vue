@@ -16,7 +16,7 @@
                     组织机构菜单
                 </div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
-                    <organization @currentChangeTree="currentChangeTree"></organization>
+                    <organizationarea @currentChangeTree="currentChangeTree"></organizationarea>
                 </div>
             </div>
             <div style="width:10px" class="flex-c btn-show-hide" @click="changeMenuShowHide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" ></span></div>
@@ -185,11 +185,11 @@ import mqtt from 'mqtt'
 import { getModelFindId } from '_api/productionEquipment/production'
 import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
-import organization from '_c/Organization'
+import organizationarea from '_c/OrganizationArea'
 import data from '../pdf/content'
 export default {
-    components: { lineE, LineV, organization },
-    name: 'realTime',
+    components: { lineE, LineV, organizationarea },
+    name: 'realTimeArea',
     data () {
 
         return {

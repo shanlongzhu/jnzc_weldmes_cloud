@@ -14,9 +14,9 @@
             >添加顶级菜单</el-button>
         </div>
         <div class="flex tree-top-wrap">
-            <span style="padding-left:30px">菜单名称</span>
+            <span style="padding-left:30px">菜单名称<span class="red-star">*</span></span>
             <span class="flex">
-                <span style="width:200px">标识</span>
+                <span style="width:200px">标识<span class="red-star">*</span></span>
                 <span style="padding-right:30px">操作</span>
             </span>
         </div>

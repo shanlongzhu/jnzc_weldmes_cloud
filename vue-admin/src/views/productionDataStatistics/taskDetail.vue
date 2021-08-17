@@ -55,18 +55,26 @@
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
-                    style="width:350px"
-                    size="small"
-                    :clearable="false"
-                    v-model="dateTime"
-                    type="datetimerange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']"
-                    :picker-options="disabledDate"
-                >
-                </el-date-picker>
+                        style="width:200px"
+                        size="small"
+                        v-model="startTime"
+                        :clearable="false"
+                        type="datetime"
+                        placeholder="开始时间"
+                        :picker-options="disabledDate"
+                    >
+                    </el-date-picker>
+                    <span>&nbsp;-&nbsp;</span>
+                    <el-date-picker
+                        style="width:190px"
+                        size="small"
+                        v-model="endTime"
+                        :clearable="false"
+                        type="datetime"
+                        placeholder="结束时间"
+                        :picker-options="disabledDate2"
+                    >
+                    </el-date-picker>
             </div>
             <div class="con-w">
                 <el-button
@@ -220,7 +228,8 @@ export default {
             total: 0,
 
             //搜索条件
-            dateTime: [moment(new Date()).startOf('day'), new Date()],
+            startTime: moment(new Date()).startOf('day'),//时间
+            endTime: moment(new Date()).endOf('day'),//时间
             deptId: '',
             welderNo: '',
             welderName: '',
@@ -231,10 +240,15 @@ export default {
             headers: {
                 'Authorization': getToken()
             },
-            disabledDate: {
-                disabledDate (time) {
-                    return time.getTime() > Date.now() + 3600 * 1000 * 24
-                }
+            disabledDate:{
+              disabledDate:(time)=>{
+                return time.getTime() > moment(this.endTime).toDate().getTime();
+              }
+            },
+            disabledDate2:{
+              disabledDate:(time)=>{
+                return time.getTime() < moment(this.startTime).toDate().getTime();
+              }
             },
 
             //机构数据
@@ -269,8 +283,8 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 deptId: this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
                 welderNo: this.welderNo,
                 welderName: this.welderName,
@@ -300,8 +314,8 @@ export default {
                 duration: 1000
             });
             let req = {
-                time1: this.dateTime && this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                time2: this.dateTime && this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+                time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 deptId: this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
                 welderNo: this.welderNo,
                 welderName: this.welderName,

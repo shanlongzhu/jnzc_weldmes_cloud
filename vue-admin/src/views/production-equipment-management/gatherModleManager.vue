@@ -91,17 +91,29 @@
                 />
                 <el-table-column
                     prop="gatherNo"
-                    label="编号"
                     align="left"
                     min-width="70"
                     fixed="left"
-                />
+                >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>编号</span><span class="red-star">*</span>
+                    </template>
+                </el-table-column>
                 <el-table-column
                     prop="deptName"
                     label="所属项目"
                     align="left"
                     min-width="100"
                 >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>所属项目</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDept.name}}
                     </template>
@@ -112,6 +124,12 @@
                     align="left"
                     min-width="100"
                 >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>状态</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueName}}
                     </template>
@@ -122,6 +140,12 @@
                     align="left"
                     min-width="100"
                 >
+                    <template
+                        slot="header"
+                        slot-scope="scope"
+                    >
+                        <span>通讯协议</span><span class="red-star">*</span>
+                    </template>
                     <template slot-scope="scope">
                         {{scope.row.sysDictionary.valueNames}}
                     </template>
@@ -489,13 +513,13 @@ export default {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        
+
                         const { msg, code } = await editEqu(req)
-                        if (code == 200&& msg == "修改成功") {
+                        if (code == 200 && msg == "修改成功") {
                             this.$message.success(msg)
                             this.visable1 = false
                             this.getList()
-                        }else{
+                        } else {
                             this.$message.error(msg);
                         }
                     } else {
@@ -514,7 +538,7 @@ export default {
                             }).then(() => {
                                 this.addItem(req);
                             }).catch(() => { })
-                            
+
                         }
                     }
                 } else {

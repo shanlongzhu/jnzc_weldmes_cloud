@@ -59,15 +59,24 @@
                 <div class="con-w">
                     <span>时间：</span>
                     <el-date-picker
-                        style="width:350px"
+                        style="width:200px"
                         size="small"
-                        v-model="dateTime"
-                        type="datetimerange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
+                        v-model="startTime"
+                        :clearable="false"
+                        type="datetime"
+                        placeholder="开始时间"
                         :picker-options="disabledDate"
-                        :default-time="['00:00:00', '23:59:59']"
+                    >
+                    </el-date-picker>
+                    <span>&nbsp;-&nbsp;</span>
+                    <el-date-picker
+                        style="width:190px"
+                        size="small"
+                        :clearable="false"
+                        v-model="endTime"
+                        type="datetime"
+                        placeholder="结束时间"
+                        :picker-options="disabledDate2"
                     >
                     </el-date-picker>
                 </div>
@@ -182,11 +191,12 @@ export default {
     data () {
         return {
             list: [],
-            dateTime: [moment(new Date()).startOf('day'),new Date()],//时间
+            startTime: moment(new Date()).startOf('day'),//时间
+            endTime: moment(new Date()).endOf('day'),//时间
             searchObj: {
-                taskId: '',
-                welderId: '',
-                weldMachineId: ''
+                taskId: '',//任务编号
+                welderId: '',//焊工ID
+                weldMachineId: ''//焊机编号
             },
             //分页
             page: 1,
@@ -218,12 +228,16 @@ export default {
             //记录剩余表明
             surplusTable: [],
             surIndex: 0,
-            disabledDate:{
-              disabledDate(time){
-                return time.getTime() > Date.now()+3600*1000*24
-              }
+            disabledDate: {
+                disabledDate: (time) => {
+                    return time.getTime() > moment(this.endTime).toDate().getTime();
+                }
+            },
+            disabledDate2: {
+                disabledDate: (time) => {
+                    return time.getTime() < moment(this.startTime).toDate().getTime();
+                }
             }
-
         }
     },
 
@@ -244,28 +258,52 @@ export default {
         },
 
         search () {
-            this.page = 1;
-            this.getList();
+            if (this.startTime && this.endTime) {
+                this.page = 1;
+                this.getList();
+                this.voltageData = [];
+                this.electricityData = [];
+                this.timeData = [];                
+            } else {
+                return this.$message.error("请选择查询时间")
+            }
+
         },
 
         //获取任务列表
         async getList () {
-            if (this.dateTime.length == 0) {
-                return this.$message.error("请选择搜索时间");
-            }
             let req = {
                 pn: this.page,
-                startTime: this.dateTime&&this.dateTime[0] ? moment(this.dateTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
-                endTime: this.dateTime&&this.dateTime[1] ? moment(this.dateTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+                startTime: this.startTime ? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+                endTime: this.endTime ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 ...this.searchObj
             }
-            this.loading = true;
-            let { code, data } = await getHistoryList(req);
-            this.loading = false;
-            if (code == 200) {
-                this.list = data.list
-                this.total = data.total
+
+            if (!req.taskId && !req.welderId && req.weldMachineId) {
+                this.$nextTick(() => {
+                    let rowObj = {
+                        taskId: req.taskId,
+                        welderId: req.welderId,
+                        machineId: req.weldMachineId,
+                        taskRealityStartTime: req.startTime,
+                        taskRealityEndTime: req.endTime
+                    }
+                    this.currentChangeEvent({ row: rowObj });
+                });
+            } else {
+                this.loading = true;
+                let { code, data } = await getHistoryList(req);
+                this.loading = false;
+                if (code == 200) {
+                    this.list = data.list
+                    this.total = data.total
+                }
+                this.$nextTick(() => {
+                    this.$refs.lineCom2.init(this.voltageData, this.timeData);
+                    this.$refs.lineComE.init(this.electricityData, this.timeData);
+                })
             }
+
         },
         //分页切换
         handleCurrentChange (p) {
@@ -312,7 +350,6 @@ export default {
             }
             let { data, code } = await getHistoryTimeData(req);
             if (code == 200) {
-                console.log(data)
                 this.surplusTable = data.tableNames || [];
                 this.timeData = (data.list || []).filter(item => item.weldTime).map(item => item.weldTime);
                 this.voltageData = (data.list || []).filter(item => item.voltage || item.voltage === 0).map((item, index) => {

@@ -257,26 +257,7 @@
                     style="border:1px solid #aaa"
                     class="pt10 pb10 mt10"
                 >
-                    <el-row>
-                        <el-col :span="8">
-                            <el-form-item
-                                label="初期电流"
-                                prop="initialEle"
-                                label-width="130px"
-                            >
-                                <el-input-number
-                                    :disabled="initialEleDisabled"
-                                    :controls="false"
-                                    :precision="0"
-                                    size="mini"
-                                    style="width:100px"
-                                    :min="30"
-                                    :max="550"
-                                    v-model="ruleForm2.initialEle"
-                                ></el-input-number>
-                                <span> (A)</span>
-                            </el-form-item>
-                        </el-col>
+                    <el-row>                        
                         <el-col :span="8">
                             <el-form-item
                                 label="焊接电流"
@@ -314,27 +295,27 @@
                                 <span> (A)</span>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-                    <el-row v-if="ruleForm2.unitarySeveral==1">
                         <el-col :span="8">
                             <el-form-item
-                                label="初期电压"
-                                prop="initialVol"
+                                label="初期电流"
+                                prop="initialEle"
                                 label-width="130px"
                             >
                                 <el-input-number
                                     :disabled="initialEleDisabled"
                                     :controls="false"
-                                    :precision="1"
+                                    :precision="0"
                                     size="mini"
                                     style="width:100px"
-                                    :min="12"
-                                    :max="50"
-                                    v-model="ruleForm2.initialVol"
+                                    :min="30"
+                                    :max="550"
+                                    v-model="ruleForm2.initialEle"
                                 ></el-input-number>
-                                <span> (V)</span>
+                                <span> (A)</span>
                             </el-form-item>
                         </el-col>
+                    </el-row>
+                    <el-row v-if="ruleForm2.unitarySeveral==1">                        
                         <el-col :span="8">
                             <el-form-item
                                 label="焊接电压"
@@ -368,6 +349,25 @@
                                     :min="12"
                                     :max="50"
                                     v-model="ruleForm2.arcVol"
+                                ></el-input-number>
+                                <span> (V)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="初期电压"
+                                prop="initialVol"
+                                label-width="130px"
+                            >
+                                <el-input-number
+                                    :disabled="initialEleDisabled"
+                                    :controls="false"
+                                    :precision="1"
+                                    size="mini"
+                                    style="width:100px"
+                                    :min="12"
+                                    :max="50"
+                                    v-model="ruleForm2.initialVol"
                                 ></el-input-number>
                                 <span> (V)</span>
                             </el-form-item>
@@ -469,6 +469,24 @@
                                 <span> (A)</span>
                             </el-form-item>
                         </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="电流补偿值"
+                                prop="eleCompensate"
+                                label-width="130px"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="0"
+                                    size="mini"
+                                    style="width:100px"
+                                    :min="0"
+                                    :max="50"
+                                    v-model="ruleForm2.eleCompensate"
+                                ></el-input-number>
+                                <span> (A)</span>
+                            </el-form-item>
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="8">
@@ -534,7 +552,6 @@
                             >
                                 <el-input-number
                                     :controls="false"
-                                    :disabled="arcDisabled"
                                     :precision="0"
                                     size="mini"
                                     style="width:100px"
@@ -543,6 +560,24 @@
                                     v-model="ruleForm2.arcVolAdjust"
                                 ></el-input-number>
                                 <span> (%)</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item
+                                label="电压补偿值"
+                                prop="volCompensate"
+                                label-width="130px"
+                            >
+                                <el-input-number
+                                    :controls="false"
+                                    :precision="1"
+                                    size="mini"
+                                    style="width:100px"
+                                    :min="0"
+                                    :max="5"
+                                    v-model="ruleForm2.volCompensate"
+                                ></el-input-number>
+                                <span> (V)</span>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -820,6 +855,9 @@ export default {
                 alarmsEleMin: 0,//报警电流下限
                 alarmsVolMax: 0,//报警电压上限
                 alarmsVolMin: 0,//报警电压下限
+
+                eleCompensate: 0,//电流补偿值
+                volCompensate: 0,//电压补偿值
             },
             rules2: {
                 channelNo:[
@@ -1250,7 +1288,9 @@ export default {
         submitForm2 (formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
-                    const req = { ...this.ruleForm2 }
+                    const req = { ...this.ruleForm2 };
+                    req.weldingEle += req.eleCompensate;
+                    req.weldingVol += req.volCompensate;
                     this.submitLibary(req)
                 } else {
                     console.log('error submit!!')
