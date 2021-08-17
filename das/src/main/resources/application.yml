@@ -40,25 +40,8 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       #合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
-#  redis:
-#    database: 0
-#    host: 127.0.0.1
-#    port: 6379
-#    # 配置连接池
-#    jedis:
-#      pool:
-#        # 连接池最大连接数（使用负值表示没有限制）
-#        max-active: 8
-#        # 连接池最大阻塞等待时间（使用负值表示没有限制）
-#        max-wait: -1
-#        # 连接池中的最大空闲连接
-#        max-idle: 500
-#        # 连接池中的最小空闲连接
-#        min-idle: 0
-#    # 连接超时时间（毫秒）
-#    timeout: 2000
-#    lettuce:
-#      shutdown-timeout: 0
+
+# mqtt客户端配置
 mqtt:
   host: localhost
   port: 1883
