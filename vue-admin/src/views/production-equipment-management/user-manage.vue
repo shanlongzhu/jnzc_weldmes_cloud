@@ -5,7 +5,7 @@
     >
         <div
             class="table-con flex"
-            style="flex:1;"
+            style="flex:1; height:0px"
         >
             <div
                 v-show="isMenuShow"
@@ -17,7 +17,7 @@
                     <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
-            <div style="width:10px" class="flex-c btn-show-hide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" @click="changeMenuShowHide"></span></div>
+            <div style="width:10px" class="flex-c btn-show-hide" @click="changeMenuShowHide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"></span></div>
             <div
                 class="user-r flex-c"
                 style='height:100%;flex:1; width:0px'
@@ -98,12 +98,24 @@
                             field="name"
                             title="用户名"
                             width="100"
-                        ></vxe-table-column>
+                        >
+                            <template
+                        slot="header"
+                    >
+                        <span>用户名</span><span class="red-star">*</span>
+                    </template>
+                        </vxe-table-column>
                         <vxe-table-column
                             field="loginName"
                             title="登录名"
                             width="120"
-                        ></vxe-table-column>
+                        >
+                            <template
+                        slot="header"
+                    >
+                        <span>登录名</span><span class="red-star">*</span>
+                    </template>
+                        </vxe-table-column>
                         <vxe-table-column
                             field="mobile"
                             title="手机号"
@@ -124,7 +136,13 @@
                             field="deptName"
                             title="部门名称"
                             width="120"
-                        ></vxe-table-column>
+                        >
+                            <template
+                        slot="header"
+                    >
+                        <span>部门名称</span><span class="red-star">*</span>
+                    </template>
+                        </vxe-table-column>
                         <vxe-table-column
                             field="status"
                             title="状态"

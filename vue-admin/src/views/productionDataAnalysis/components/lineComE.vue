@@ -1,6 +1,33 @@
 <template>
-    <div ref="electricity" style="height:100%;flex:1;">
+    <div style="height:100%;flex:1;position:relative">
+        <div class="input-box tc">
+            <el-input-number
+                size="mini"
+                style="width:60px"
+                v-model="min"
+                :min="0"
+                :max="max"
+                placeholder=""
+                :controls="false"
+            ></el-input-number>
+            <span style="padding:0 10px">-</span>
+            <el-input-number
+                size="mini"
+                style="width:60px;margin-right:10px"
+                v-model="max"
+                :min="min"
+                :max="700"
+                placeholder=""
+                :controls="false"
+            ></el-input-number>
+            <el-button size="mini" @click="setMaxMin">调整</el-button>
         </div>
+        <div
+            ref="electricity"
+            style="height:100%;flex:1;"
+        >
+        </div>
+    </div>
 </template>
 
 <script>
@@ -15,6 +42,8 @@ export default {
         return {
             myChart: {},
             option: {},
+            min: 30,
+            max: 550,
         }
     },
     watch: {
@@ -22,13 +51,13 @@ export default {
     },
     computed: {},
     methods: {
-        addData(elc, t){
+        addData (elc, t) {
             this.option.series[0].data = this.option.series[0].data.concat(elc)
             this.option.xAxis.data = this.option.xAxis.data.concat(t)
             this.myChart.setOption(this.option);
-            
+
         },
-        init (elc, t) {            
+        init (elc, t) {
             this.myChart.clear()
             this.option.series[0].data = elc;
             this.option.xAxis.data = t;
@@ -50,6 +79,20 @@ export default {
         },
         echartsLoading () {
             this.myChart.showLoading();
+        },
+        setMaxMin(){
+            console.log(this.option)
+            this.myChart.clear()
+            this.option.series[0].markLine.data[0].yAxis = this.max;
+            this.option.series[0].markLine.data[0].label.formatter = `${this.max}(A)`;
+            this.option.series[0].markLine.data[1].yAxis = this.min;
+            this.option.series[0].markLine.data[1].label.formatter = `${this.min}(A)`;
+            this.option.visualMap.pieces[0].lte = this.min;
+            this.option.visualMap.pieces[1].gt = this.min;
+            this.option.visualMap.pieces[1].lte = this.max;
+            this.option.visualMap.pieces[2].gt = this.max;
+            this.myChart.setOption(this.option);
+            
         }
     },
     created () {
@@ -64,7 +107,7 @@ export default {
             grid: {
                 top: '40',
                 right: '50',
-                left:'40',
+                left: '40',
                 bottom: '70'
             },
             tooltip: {
@@ -118,17 +161,17 @@ export default {
                 orient: 'horizontal',
                 left: 'center',
                 pieces: [{
-                    lte: 30,
+                    lte: this.min,
                     color: '#f00',
                     // areaStyle: 'rgba(82,209,176,.2)'
                 }, {
-                    gt: 30,
-                    lte: 550,
+                    gt: this.min,
+                    lte: this.max,
                     color: '#42b983',
                     // areaStyle: 'rgba(231,177,48,.2)'
                 },
                 {
-                    gt: 550,
+                    gt: this.max,
                     color: '#f00'
                 }
                 ],
@@ -149,11 +192,11 @@ export default {
                     symbol: "none",
                     data: [
                         {
-                            yAxis: 550,
+                            yAxis: this.max,
                             label: {
                                 show: 'true',
                                 position: 'end',
-                                formatter: '550(A)'
+                                formatter:`${this.max}(A)`
                             },
                             lineStyle: {
                                 normal: {
@@ -165,7 +208,7 @@ export default {
 
                         },
                         {
-                            yAxis: 30,
+                            yAxis: this.min,
                             lineStyle: {
                                 normal: {
                                     color: "#fe460d",
@@ -176,7 +219,7 @@ export default {
                             label: {
                                 show: 'true',
                                 position: 'end',
-                                formatter: '30(A)'
+                                formatter: `${this.min}(A)`
                             },
                         }
                     ]
@@ -193,4 +236,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+    .input-box{
+        position: absolute;
+        width: 100%;
+        z-index: 20;
+    }
 </style>

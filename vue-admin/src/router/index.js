@@ -456,6 +456,14 @@ export const asyncRoutes = [
         meta: {
           mark:'901',
           title: '实时监测' }
+      },
+      {
+        path: 'real-time-area',
+        component: () => import('@/views/monitor/realTimeArea'),
+        name: 'realTimeArea',
+        meta: {
+          mark:'902',
+          title: '实时监测2' }
       }      
     ]
   },

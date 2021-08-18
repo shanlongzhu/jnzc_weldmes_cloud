@@ -5,7 +5,7 @@
     >
         <div
             class="table-con flex"
-            style="flex:1;"
+            style="flex:1;height:0px"
         >
             <div
                 v-show="isMenuShow"
@@ -14,10 +14,19 @@
             >
                 <div class="organizational-tit">组织机构菜单</div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
-                    <organization @currentChangeTree="currentChangeTree" ref="treeDom"></organization>
+                    <organization
+                        @currentChangeTree="currentChangeTree"
+                        ref="treeDom"
+                    ></organization>
                 </div>
             </div>
-            <div style="width:10px" class="flex-c btn-show-hide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" @click="changeMenuShowHide"></span></div>
+            <div
+                style="width:10px"
+                class="flex-c btn-show-hide"
+                @click="changeMenuShowHide"
+            ><span
+                    :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"                    
+                ></span></div>
             <div
                 class="user-r flex-c"
                 style='height:100%;flex:1; width:0px'
@@ -30,7 +39,7 @@
                             class="w150"
                             v-model="searchObj.name"
                         ></el-input>
-                    </div>                    
+                    </div>
                     <div class="con-w">
                         <el-button
                             size="small"
@@ -67,7 +76,13 @@
                             title="名称"
                             min-width="100"
                         >
-                            <template #default = {row}>
+                            <template
+                                slot="header"
+                                slot-scope="scope"
+                            >
+                                <span>名称</span><span class="red-star">*</span>
+                            </template>
+                            <template #default={row}>
                                 {{row.childrenName||row.name}}
                             </template>
                         </vxe-table-column>
@@ -76,7 +91,13 @@
                             title="上级项目"
                             min-width="140"
                         >
-                        <template #default = {row}>
+                            <template
+                                slot="header"
+                                slot-scope="scope"
+                            >
+                                <span>上级项目</span><span class="red-star">*</span>
+                            </template>
+                            <template #default={row}>
                                 {{row.childrenName?row.name:row.parentName}}
                             </template>
                         </vxe-table-column>
@@ -143,7 +164,7 @@
                         style="width:250px"
                     ></el-input>
                 </el-form-item>
-                             
+
                 <el-form-item
                     label="上级部门"
                     prop="parentId"
@@ -156,8 +177,8 @@
                         :props="defalutProps"
                         :show-all-levels="false"
                     />
-                </el-form-item>              
-                
+                </el-form-item>
+
                 <el-form-item>
                     <el-button
                         type="primary"
@@ -172,13 +193,13 @@
 
 <script>
 import { getTeam } from '_api/productionProcess/process'
-import { getUserTree,getTreeDeptInfo,addDept,findIdDeptInfo,editDept,delDept } from '_api/system/systemApi'
+import { getUserTree, getTreeDeptInfo, addDept, findIdDeptInfo, editDept, delDept } from '_api/system/systemApi'
 import organization from '_c/Organization'
 export default {
     components: { organization },
     name: 'organizational',
     data () {
-        
+
         return {
             list: [],
             //分页
@@ -187,7 +208,7 @@ export default {
 
             //搜索条件
             searchObj: {
-                id:'',
+                id: '',
                 name: '',//机构名称
             },
 
@@ -205,7 +226,7 @@ export default {
                 ],
                 parentId: [
                     { required: true, message: '不能为空', trigger: 'blur' }
-                ],                
+                ],
             },
             title: '新建机构',
 
@@ -221,11 +242,11 @@ export default {
             },
             loading: false,
 
-            
+
             //角色下拉数据
             rolesArr: [],
-            
-            isMenuShow:true
+
+            isMenuShow: true
         }
     },
 
@@ -239,7 +260,7 @@ export default {
             this.page = 1;
             this.getList();
         },
-        
+
 
         //根据部门id获取机构列表
         async getList (id) {
@@ -344,7 +365,7 @@ export default {
             this.search();
         },
 
-        changeMenuShowHide(){
+        changeMenuShowHide () {
             this.isMenuShow = !this.isMenuShow;
         }
 
@@ -364,6 +385,4 @@ export default {
     font-weight: bold;
     border-bottom: 1px solid #ddd;
 }
-
-
 </style>

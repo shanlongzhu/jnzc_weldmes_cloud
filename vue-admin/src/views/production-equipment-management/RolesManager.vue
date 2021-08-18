@@ -43,7 +43,13 @@
                         field="name"
                         title="角色名"
                         min-width="120"
-                    ></vxe-table-column>
+                    >
+                        <template
+                        slot="header"
+                    >
+                        <span>角色名</span><span class="red-star">*</span>
+                    </template>
+                    </vxe-table-column>
                     <vxe-table-column
                         field="remark"
                         title="描述"
