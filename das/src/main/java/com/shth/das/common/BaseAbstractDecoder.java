@@ -1,6 +1,5 @@
 package com.shth.das.common;
 
-import com.shth.das.common.HandlerParam;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -11,9 +10,11 @@ import io.netty.channel.ChannelHandlerContext;
 public abstract class BaseAbstractDecoder {
 
     /**
-     * 抽象方法
+     * 抽象方法,由子类实现
      *
-     * @return Map
+     * @param ctx 通道
+     * @param str 16进制字符串
+     * @return 对pojo对象封装
      */
     public abstract HandlerParam baseProtocolAnalysis(ChannelHandlerContext ctx, String str);
 

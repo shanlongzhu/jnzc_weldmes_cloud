@@ -19,7 +19,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
 
     /**
      * 保存字符串长度和方法映射关系
-     * Function<K,V>,k:传入参数，V：返回参数
+     * Function<T,R>,T:传入参数，R：返回参数
      */
     private final Map<Integer, Function<JnSxDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
     private final JnSxRtDataProtocol jnSxRtDataProtocol = new JnSxRtDataProtocol();
@@ -61,12 +61,12 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
 
     @Override
     public HandlerParam baseProtocolAnalysis(ChannelHandlerContext ctx, String str) {
-        String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        JnSxDecoderParam jnSxDecoderParam = new JnSxDecoderParam();
-        jnSxDecoderParam.setStr(str);
-        jnSxDecoderParam.setClientIp(clientIp);
-        jnSxDecoderParam.setCtx(ctx);
         if (this.decoderMapping.containsKey(str.length())) {
+            String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+            JnSxDecoderParam jnSxDecoderParam = new JnSxDecoderParam();
+            jnSxDecoderParam.setStr(str);
+            jnSxDecoderParam.setClientIp(clientIp);
+            jnSxDecoderParam.setCtx(ctx);
             return this.decoderMapping.get(str.length()).apply(jnSxDecoderParam);
         }
         return null;

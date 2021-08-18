@@ -1,6 +1,7 @@
 package com.shth.das.common;
 
 import com.shth.das.pojo.db.OtcMachineQueue;
+import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
@@ -18,6 +19,7 @@ public class CommonQueue {
      * 阻塞队列存储实时数据，并定时同步到MySQL数据库
      */
     public static final LinkedBlockingQueue<JNRtDataDB> OTC_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);
+
     /**
      * 阻塞队列存储实时数据，并定时同步到MySQL数据库
      */
@@ -25,11 +27,13 @@ public class CommonQueue {
 
     /**
      * OTC开机设备阻塞队列
+     * <E>:OtcMachineQueue OTC设备存储实体类
      */
     public static final LinkedBlockingQueue<OtcMachineQueue> OTC_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
     /**
      * OTC关机设备阻塞队列
+     * <E>:OtcMachineQueue OTC设备存储实体类
      */
     public static final LinkedBlockingQueue<OtcMachineQueue> OTC_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
@@ -40,14 +44,14 @@ public class CommonQueue {
 
     /**
      * 松下开机设备阻塞队列
-     * <E>(String):设备CID
+     * <E>:SxMachineQueue 松下设备存储实体类
      */
-    public static final LinkedBlockingQueue<String> SX_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
+    public static final LinkedBlockingQueue<SxMachineQueue> SX_ON_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
     /**
      * 松下关机设备阻塞队列
-     * <E>(String):设备CID
+     * <E>:SxMachineQueue 松下设备存储实体类
      */
-    public static final LinkedBlockingQueue<String> SX_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
+    public static final LinkedBlockingQueue<SxMachineQueue> SX_OFF_MACHINE_QUEUES = new LinkedBlockingQueue<>(10000);
 
 }

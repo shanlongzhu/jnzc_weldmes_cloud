@@ -334,7 +334,7 @@ public class JnOtcRtDataProtocol {
                                 data.setWeldTime(nowDateTime);
                             }
                         } catch (Exception e) {
-                            log.error("[jnRtDataAnalysis]:" + e.getMessage());
+                            log.error("[jnRtDataDbAnalysis]:" + e.getMessage());
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
@@ -638,6 +638,8 @@ public class JnOtcRtDataProtocol {
             try {
                 OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
                 otcOnMachineQueue.setGatherNo(gatherNo);
+                otcOnMachineQueue.setWeldIp(clientIp);
+                otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
             } catch (InterruptedException e) {
                 e.printStackTrace();

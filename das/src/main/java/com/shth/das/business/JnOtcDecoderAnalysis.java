@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * @description: OTC1.0协议解析
+ * @description: OTC协议解析
  * @author: Shan Long
  * @create: 2021-08-08
  */
@@ -22,7 +22,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
 
     /**
      * 保存字符串长度和方法映射关系
-     * Function<K,V>,k:传入参数，V：返回参数
+     * Function<T,R>,T:传入参数，R：返回参数
      */
     private final Map<Integer, Function<JnOtcDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
     private final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
@@ -40,11 +40,11 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
 
     @Override
     public HandlerParam baseProtocolAnalysis(ChannelHandlerContext ctx, String str) {
-        String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-        JnOtcDecoderParam jnOtcDecoderParam = new JnOtcDecoderParam();
-        jnOtcDecoderParam.setStr(str);
-        jnOtcDecoderParam.setClientIp(clientIp);
         if (this.decoderMapping.containsKey(str.length())) {
+            String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+            JnOtcDecoderParam jnOtcDecoderParam = new JnOtcDecoderParam();
+            jnOtcDecoderParam.setStr(str);
+            jnOtcDecoderParam.setClientIp(clientIp);
             return this.decoderMapping.get(str.length()).apply(jnOtcDecoderParam);
         }
         return null;

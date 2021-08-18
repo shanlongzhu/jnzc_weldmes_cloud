@@ -12,6 +12,7 @@ public interface SxRtDataMapper extends BaseMapper<SxRtDataDb> {
 
     /**
      * 创建松下设备实时数据表
+     *
      * @param tableName 表名
      * @return 创建结果
      */
@@ -19,8 +20,10 @@ public interface SxRtDataMapper extends BaseMapper<SxRtDataDb> {
 
     /**
      * 批量存入松下实时数据
-     * @param map 数据
+     *
+     * @param map 将数据封装到map
+     * @return 返回新增结果
      */
-    int insertSxRtDataList(Map<String,Object> map);
+    int insertSxRtDataList(Map<String, Object> map);
 
 }

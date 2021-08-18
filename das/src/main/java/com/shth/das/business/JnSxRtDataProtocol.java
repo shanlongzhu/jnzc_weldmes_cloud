@@ -3,6 +3,7 @@ package com.shth.das.business;
 import com.alibaba.fastjson.JSON;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
+import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
@@ -37,7 +38,11 @@ public class JnSxRtDataProtocol {
             //设备存储到松下开机阻塞队列
             try {
                 if (CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
-                    CommonQueue.SX_ON_MACHINE_QUEUES.put(sxWeldModel.getWeldCid());
+                    SxMachineQueue sxMachineQueue = new SxMachineQueue();
+                    sxMachineQueue.setWeldCid(sxWeldModel.getWeldCid());
+                    sxMachineQueue.setWeldIp(sxWeldModel.getWeldIp());
+                    sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
+                    CommonQueue.SX_ON_MACHINE_QUEUES.put(sxMachineQueue);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1328,7 +1333,11 @@ public class JnSxRtDataProtocol {
             CommonMap.SX_CTX_WELD_CID_MAP.remove(ctx);
             CommonMap.SX_WELD_CID_CTX_MAP.remove(weldCid);
             try {
-                CommonQueue.SX_OFF_MACHINE_QUEUES.put(weldCid);
+                SxMachineQueue sxMachineQueue = new SxMachineQueue();
+                sxMachineQueue.setWeldCid(weldCid);
+                sxMachineQueue.setWeldIp(clientIp);
+                sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
+                CommonQueue.SX_OFF_MACHINE_QUEUES.put(sxMachineQueue);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -12,6 +12,7 @@ public interface OtcRtDataMapper extends BaseMapper<JNRtDataDB> {
 
     /**
      * 创建OTC实时数据表
+     *
      * @param tableName 表名
      * @return 创建结果
      */
@@ -19,8 +20,10 @@ public interface OtcRtDataMapper extends BaseMapper<JNRtDataDB> {
 
     /**
      * 批量存入OTC实时数据
-     * @param map 数据
+     *
+     * @param map 将数据封装到map
+     * @return 返回新增结果
      */
-    int insertRtDataList(Map<String,Object> map);
+    int insertRtDataList(Map<String, Object> map);
 
 }

@@ -53,20 +53,8 @@ public class DasApplication implements CommandLineRunner {
             //松下服务端启动
             nettyServer.start(DataInitialization.getSxPort());
         }
-        //创建OTC实时数据表
-        rtDataJob.startJnOtcJob();
-        //创建松下实时数据表
-        rtDataJob.startSxJob();
-        //启动OTC阻塞队列消费者
-        rtDataJob.startOtcOnQueueConsumer();
-        //启动OTC阻塞队列消费者
-        rtDataJob.startOtcOffQueueConsumer();
-        //启动松下新增设备的阻塞队列消费者
-        rtDataJob.startSxAddMachineQueue();
-        //启动松下开机设备的阻塞队列消费者
-        rtDataJob.startSxOnMachineQueue();
-        //启动松下关机设备的阻塞队列消费者
-        rtDataJob.startSxOffMachineQueue();
+        //启动所有任务
+        rtDataJob.startAllJob();
     }
 
     public static void main(String[] args) {

@@ -9,6 +9,7 @@ public interface SxRtDataService {
 
     /**
      * 创建松下实时数据表结构
+     *
      * @param tableName 表名
      * @return 创建结果
      */
@@ -16,6 +17,7 @@ public interface SxRtDataService {
 
     /**
      * 松下实时数据批量存入数据库
+     *
      * @param list 集合
      */
     void insertSxRtDataList(List<SxRtDataDb> list);

@@ -5,17 +5,17 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: OTC设备存储队列的实体类
+ * @description: 松下设备队列的实体类
  * @author: Shan Long
- * @create: 2021-08-02
+ * @create: 2021-08-18
  */
 @Data
-public class OtcMachineQueue implements Serializable {
+public class SxMachineQueue implements Serializable {
 
     /**
-     * 采集编号
+     * 设备CID（设备唯一标识）
      */
-    private String gatherNo;
+    private String weldCid;
     /**
      * 采集盒IP地址
      */

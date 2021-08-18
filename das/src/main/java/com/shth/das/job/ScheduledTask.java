@@ -204,7 +204,6 @@ public class ScheduledTask {
                         String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
                         if (timeString.length() == 36) {
                             channel.writeAndFlush(timeString).sync();
-                            //log.info("时间校准：{}", year + month + day + hour + minute + second);
                         }
                     }
                 }
