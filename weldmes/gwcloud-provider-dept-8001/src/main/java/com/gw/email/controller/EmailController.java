@@ -55,20 +55,31 @@ public class EmailController {
                 //创建邮件的正文
                 MimeBodyPart texts = new MimeBodyPart();
                 // setContent(“ 邮件的正文内容 ”,” 设置邮件内容的编码方式 ”)
-                texts.setContent(text + "<img src='cid:a'>", "text/html;charset=gb2312");
+                texts.setContent(text, "text/html;charset=gb2312");
                 mm.addBodyPart(texts);
                 if(picture==null&&file==null){
                     message.setContent(mm);
                     message.saveChanges();
                     Transport.send(message);
                 }else if(picture!=null&&file==null) {
-                    MimeBodyPart img = new MimeBodyPart();
-                    DataHandler dh = new DataHandler(new FileDataSource(picture));
-                    img.setDataHandler(dh);
-                    // 创建图片的一个表示用于显示在邮件中显示
-                    img.setContentID("a");
-                    mm.addBodyPart(img);
-                    mm.setSubType("related");
+                    String[] pictures = picture.split(",");
+                    List<String> list2 = new ArrayList<>();
+                    for (int j = 0; j < pictures.length; j++) {
+                        String image = String.valueOf(pictures[j]);
+                        list2.add(image);
+                    }
+                    for (int k = 0; k <list2.size() ; k++) {
+                        MimeBodyPart text2 = new MimeBodyPart();
+                        MimeBodyPart img = new MimeBodyPart();
+                        DataHandler dh = new DataHandler(new FileDataSource(list2.get(k)));
+                        img.setDataHandler(dh);
+                        text2.setContent( "<img src='cid:" + list2.get(k) + "'>", "text/html;charset=gb2312");
+                        mm.addBodyPart(text2);
+                        img.setContentID(list2.get(k));
+                        mm.addBodyPart(img);
+                        mm.setSubType("related");
+                    }
+                    // 图片与正文的 body
                     MimeBodyPart all = new MimeBodyPart();
                     all.setContent(mm);
                     mm2.addBodyPart(all);
@@ -76,43 +87,78 @@ public class EmailController {
                     message.saveChanges();
                     Transport.send(message);
                 } else if (picture==null&&file!=null) {
-                    // 创建附件
-                    MimeBodyPart attch = new MimeBodyPart();
-                    DataHandler dh1 = new DataHandler(new FileDataSource(file));
-                    attch.setDataHandler(dh1);
-                    String filename1 = dh1.getName();
-                    //防止中文乱码问题
-                    attch.setFileName(MimeUtility.encodeText(filename1));
-                    mm2.addBodyPart(attch);
-                    mm2.setSubType("mixed");
-                    message.setContent(mm2);
-                    message.saveChanges();
-                    Transport.send(message);
-                }else if(picture!=null&&file!=null){
-                    MimeBodyPart img = new MimeBodyPart();
-                    DataHandler dh = new DataHandler(new FileDataSource(picture));
-                    img.setDataHandler(dh);
-                    img.setContentID("a");
-                    mm.addBodyPart(img);
-                    mm.setSubType("related");
+                    String [] files=file.split(",");
+                    List<String> list3=new ArrayList<>();
+                    for (int j = 0; j <files.length ; j++) {
+                        String a = String.valueOf(files[j]);
+                        list3.add(a);
+                    }
+                    // 附件与正文的 body
                     MimeBodyPart all = new MimeBodyPart();
                     all.setContent(mm);
                     mm2.addBodyPart(all);
-                    MimeBodyPart attch = new MimeBodyPart();
-                    DataHandler dh1 = new DataHandler(new FileDataSource(file));
-                    attch.setDataHandler(dh1);
-                    String filename1 = dh1.getName();
-                    attch.setFileName(MimeUtility.encodeText(filename1));
-                    mm2.addBodyPart(attch);
-                    mm2.setSubType("mixed");
+                    for (int k = 0; k < list3.size(); k++) {
+                        // 创建附件
+                        MimeBodyPart attch = new MimeBodyPart();
+                        DataHandler dh1 = new DataHandler(new FileDataSource(list3.get(k)));
+                        attch.setDataHandler(dh1);
+                        String filename1 = dh1.getName();
+                        //防止中文乱码问题
+                        attch.setFileName(MimeUtility.encodeText(filename1));
+                        mm2.addBodyPart(attch);
+                        mm2.setSubType("mixed");
+                        message.setContent(mm2);
+                    }
+                    message.saveChanges();
+                    Transport.send(message);
+                }else if(picture!=null&&file!=null){
+                    String[] pictures = picture.split(",");
+                    List<String> list2 = new ArrayList<>();
+                    for (int j = 0; j < pictures.length; j++) {
+                        String image = String.valueOf(pictures[j]);
+                        list2.add(image);
+                    }
+                    for (int k = 0; k <list2.size() ; k++) {
+                        MimeBodyPart text2 = new MimeBodyPart();
+                        MimeBodyPart img = new MimeBodyPart();
+                        DataHandler dh = new DataHandler(new FileDataSource(list2.get(k)));
+                        img.setDataHandler(dh);
+                        text2.setContent( "<img src='cid:" + list2.get(k) + "'>", "text/html;charset=gb2312");
+                        mm.addBodyPart(text2);
+                        img.setContentID(list2.get(k));
+                        mm.addBodyPart(img);
+                        mm.setSubType("related");
+                    }
+                    // 图片与正文的 body
+                    MimeBodyPart all = new MimeBodyPart();
+                    all.setContent(mm);
+                    mm2.addBodyPart(all);
                     message.setContent(mm2);
+                    String [] files=file.split(",");
+                    List<String> list3=new ArrayList<>();
+                    for (int j = 0; j <files.length ; j++) {
+                        String a = String.valueOf(files[j]);
+                        list3.add(a);
+                    }
+                    for (int k = 0; k < list3.size(); k++) {
+                        // 创建附件
+                        MimeBodyPart attch = new MimeBodyPart();
+                        DataHandler dh1 = new DataHandler(new FileDataSource(list3.get(k)));
+                        attch.setDataHandler(dh1);
+                        String filename1 = dh1.getName();
+                        //防止中文乱码问题
+                        attch.setFileName(MimeUtility.encodeText(filename1));
+                        mm2.addBodyPart(attch);
+                        mm2.setSubType("mixed");
+                        message.setContent(mm2);
+                    }
                     message.saveChanges();
                     Transport.send(message);
                 }
             }
-            return HttpResult.ok();
+            return HttpResult.ok("发送成功！");
         } catch (Exception e) {
-            return HttpResult.error();
+            return HttpResult.error("发送失败！");
         }
     }
 }
