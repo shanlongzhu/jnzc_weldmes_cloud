@@ -55,7 +55,7 @@ public class AreaBayServiceImpl implements AreaBayService {
         for (AreaBayInfo areaInfo : areaInfos) {
 
             //根据区域id拿到跨间信息
-            List<AreaBayInfo> list = areaBayDao.selectBayInfos(areaInfo.getId());
+            List<AreaBayInfo> list = areaBayDao.selectBayInfos(areaInfo.getAreaId());
 
             areaInfo.setList(list);
 
