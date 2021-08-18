@@ -24,13 +24,17 @@
 
     <!--查询区域信息-->
     <select id="selectAreaInfos" resultType="com.gw.entities.AreaBayInfo">
-        select id areaId,value_name areaBayName from sys_dictionary where `type` = '16'
+        select dic.id areaId,dic.value_name areaBayName,area_bay.id id
+        from sys_dictionary dic
+        left join area_bay on dic.id = area_bay.area_id
+        where dic.`type` = '16'
     </select>
 
     <!--根据区域id查询跨间信息-->
     <select id="selectBayInfos" parameterType="Long" resultType="com.gw.entities.AreaBayInfo">
-        select id bayId,value_name areaBayName
-        from sys_dictionary
-        where id in (select bay_id from area_bay where area_id = #{id})
+        select dic.id bayId,dic.value_name areaBayName,area_bay.id id
+        from sys_dictionary dic
+        left join area_bay on dic.id = area_bay.bay_id
+        where dic.id in (select bay_id from area_bay where area_id = #{id})
     </select>
 </mapper>
