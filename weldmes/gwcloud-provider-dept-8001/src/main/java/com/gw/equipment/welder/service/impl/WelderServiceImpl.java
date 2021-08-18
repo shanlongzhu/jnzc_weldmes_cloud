@@ -93,11 +93,16 @@ public class WelderServiceImpl implements WelderService {
         return welderDao.getModelId(model);
     }
 
+    /**
+     * @Date 2021/8/18 17:43
+     * @Description 批量插入数据
+     * @Params
+     */
     @Override
     public void importExcel(List<MachineWeldInfo> machineWeldInfoArrayList) {
-        for (MachineWeldInfo machineWeldInfo : machineWeldInfoArrayList) {
-            welderDao.save(machineWeldInfo);
-        }
+
+        welderDao.insertMachineWeldInfoByGroup(machineWeldInfoArrayList);
+
     }
 
     /**

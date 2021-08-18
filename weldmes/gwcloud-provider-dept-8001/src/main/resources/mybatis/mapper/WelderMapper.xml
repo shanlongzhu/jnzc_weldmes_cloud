@@ -167,7 +167,7 @@
         <where>
             value_name=#{type}
             <if test="dictionaryType != null and dictionaryType !=''">
-                `type` = #{dictionaryType}
+                and `type` = #{dictionaryType}
             </if>
         </where>
     </select>
@@ -192,9 +192,9 @@
         select id from sys_dictionary where value_name=#{model}
     </select>
 
-    <insert id="save">
-        insert into machine_weld_info(machine_no,type,dept_id,status ,firm,is_netWork,g_id,model,create_time)
-        values(#{machineNo},#{type},#{deptId},#{status},#{firm},#{isNetwork},#{gId},#{model},#{createTime})
+    <insert id="save" parameterType="com.gw.entities.MachineWeldInfo">
+        insert into machine_weld_info(machine_no,type,dept_id,status ,firm,is_netWork,g_id,model,create_time,area,bay)
+        values(#{machineNo},#{type},#{deptId},#{status},#{firm},#{isNetwork},#{gId},#{model},#{createTime},#{machineWeldInfo.area},#{machineWeldInfo.bay})
     </insert>
 
     <select id="getDeptIdByWelderId" parameterType="java.lang.Long" resultType="java.lang.Long">
@@ -288,4 +288,13 @@
         </where>
         group by m.machine_no
     </select>
+
+    <!--批量插入-->
+    <insert id="insertMachineWeldInfoByGroup">
+        insert into machine_weld_info(machine_no,`type`,dept_id,status,firm,is_netWork,g_id,model,create_time,area,bay)
+        values
+        <foreach collection="machineWeldInfos" item="item" index="index" separator=",">
+            (#{item.machineNo},#{item.type},#{item.deptId},#{item.status},#{item.firm},#{item.isNetwork},#{item.gId},#{item.model},#{item.createTime},#{item.area},#{item.bay})
+        </foreach>
+    </insert>
 </mapper>

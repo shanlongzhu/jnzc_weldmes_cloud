@@ -8,6 +8,7 @@ import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.welder.service.WelderService;
+import com.gw.sys.dao.SysDictionaryDao;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -228,66 +229,143 @@ public class WelderController {
         try {
             //workbook excel
             Workbook workbook=new XSSFWorkbook(file.getInputStream());
+
             //获取excel的第一个sheet
             Sheet sheet=workbook.getSheetAt(0);
+
             int firstRowNum = sheet.getFirstRowNum();
+
             int lastRowNum=sheet.getLastRowNum();
+
             Row firstRow = sheet.getRow(firstRowNum);
+
             int lastCellNums = firstRow.getLastCellNum();
+
             List<MachineWeldInfo> machineWeldInfoArrayList=new ArrayList<>();
+
             for (int i = 1; i <=lastRowNum ; i++) {
+
                 //获取第i行
                 Row row=sheet.getRow(i);
 
                 Object[] obs=new Object[lastCellNums];
+
                 for (int j = 0; j <lastCellNums ; j++) {
+
                     //获取第i行的 第j个 单元格
                     Cell cell=row.getCell(j);
+
                     if(row.getCell(j)==null){
                         continue;
                     }
+
                     //拿到单元格的 value值
                     Object value= ExcelUtils.getValue(cell);
+
                     obs[j]=value;
                 }
                 //把从excel中拿出来的数据封装到 对象中
                 MachineWeldInfo machineWeldInfo=new MachineWeldInfo();
-                machineWeldInfo.setMachineNo((String) obs[0]);
+
+                String str = obs[0].toString();
+
+                str = str.substring(0,str.indexOf("."));
+
+                machineWeldInfo.setMachineNo(str);
+
                 String type=(String) obs[1];
-                Byte id=welderService.getTypeId(type,ConstantInfo.DICTIONARY_WELD_TYPE_FLAG);
+
+                Byte id = welderService.getTypeId(type,ConstantInfo.DICTIONARY_WELD_TYPE_FLAG);
+
                 machineWeldInfo.setType(id);
+
                 machineWeldInfo.setCreateTime((String) obs[2]);
+
                 String deptName=(String) obs[3];
+
                 Long deptId=welderService.getDeptId(deptName);
+
                 machineWeldInfo.setDeptId(deptId);
+
                 String status=(String) obs[4];
-                Byte statusId=welderService.getStatusId(status);
+
+                Byte statusId= welderService.getStatusId(status);
+
                 machineWeldInfo.setStatus(statusId);
+
                 String firm=(String) obs[5];
+
                 Byte firmId=welderService.getFirmId(firm);
+
                 machineWeldInfo.setFirm(firmId);
+
                 String isNetWork=(String) obs[6];
+
                 if(isNetWork.equals("是")){
+
                     machineWeldInfo.setIsNetwork(0);
                 }else {
+
                     machineWeldInfo.setIsNetwork(1);
                 }
-                String machineNo=(String) obs[7];
-                String [] machineNos=machineNo.split(",");
-                List<String>list=new ArrayList<>();
-                for (int j = 0; j <machineNos.length ; j++) {
-                    String a = String.valueOf(welderService.getGid(machineNos[j]));
+
+                String machineNo = obs[7].toString();
+
+                //将采集序号转成字符串数组
+                String [] machineNos = machineNo.split(",");
+
+                List<String> list = new ArrayList<>();
+
+                for (int j = 0; j < machineNos.length ; j++) {
+
+                    str = machineNos[j].substring(0,machineNos[j].indexOf("."));
+
+                    String a = String.valueOf(welderService.getGid(str));
+
                     list.add(a);
                 }
+
                 StringBuffer sb = new StringBuffer();
+
                 for(int k = 0; k < list.size(); k++){
+
                     sb. append(list.get(k)).append(",");
                 }
                String s = sb.toString().substring(0,sb.length()-1);
+
                 machineWeldInfo.setGId(s);
+
                 String model=(String) obs[10];
+
                 Byte modelId=welderService.getModelId(model);
+
                 machineWeldInfo.setModel(modelId);
+
+                String area = (String) obs[11];
+
+                if(!ObjectUtils.isEmpty(area)){
+
+                    Long areaId = welderService.getTypeId(area,ConstantInfo.AREA_FLAG).longValue();
+
+                    if (!ObjectUtils.isEmpty(areaId)){
+
+                        machineWeldInfo.setArea(areaId);
+                    }
+
+                }
+
+                String bay = (String) obs[12];
+
+                if (!ObjectUtils.isEmpty(bay)){
+
+                    Long bayId = welderService.getTypeId(bay,ConstantInfo.BAY_FLAG).longValue();
+
+                    if (!ObjectUtils.isEmpty(bayId)){
+
+                        machineWeldInfo.setBay(bayId);
+                    }
+                }
+
                 //把对象放到list
                 machineWeldInfoArrayList.add(machineWeldInfo);
             }

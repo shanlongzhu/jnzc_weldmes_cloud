@@ -69,4 +69,11 @@ public interface WelderDao {
                                                               @Param("gatherNo")String gatherNo,@Param("ipPath")String ipPath,
                                                               @Param("model")Integer model,@Param("area")Integer area,@Param("bay")Integer bay);
 
+    /**
+     * @Date 2021/8/18 17:36
+     * @Description 批量插入
+     * @Params
+     */
+    public void insertMachineWeldInfoByGroup(@Param("machineWeldInfos")List<MachineWeldInfo> machineWeldInfos);
+
 }
