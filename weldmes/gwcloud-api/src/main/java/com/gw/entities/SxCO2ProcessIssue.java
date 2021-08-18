@@ -160,17 +160,17 @@ public class SxCO2ProcessIssue {
     private Integer wireFeed;
 
     /**
-     * id列表
+     * 检气状态
      */
     private Integer checkGasStatus;
 
     /**
-     * id列表
+     * 切换状态
      */
     private Integer cutStatus;
 
     /**
-     * 切换状态
+     * 锁定状态
      */
     private Integer lockStatus;
 
@@ -222,17 +222,17 @@ public class SxCO2ProcessIssue {
     /**
      * 滞后停气时间
      */
-    private BigDecimal afterStopGasTime;    //滞后停气时间
+    private BigDecimal afterStopGasTime;
 
     /**
      * 一元/分别
      */
-    private Integer unitaryDifference;      //一元/分别
+    private Integer unitaryDifference;
 
     /**
      * 当前通道
      */
-    private int nowChannel;                 //当前通道
+    private int nowChannel;
 
     //动态限流参数
     /**
