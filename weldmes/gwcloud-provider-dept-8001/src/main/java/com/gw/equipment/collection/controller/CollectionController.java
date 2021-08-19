@@ -218,7 +218,7 @@ public class CollectionController {
 
                 //把从excel中拿出来的数据封装到对象中
                 MachineGatherInfo machineGatherInfo = new MachineGatherInfo();
-                machineGatherInfo.setGatherNo((String) obs[0]);
+                machineGatherInfo.setGatherNo(obs[0].toString());
                 String name = (String) obs[1];
                 Long id = collectionService.getDeptId(name);
                 machineGatherInfo.setDeptId(id);

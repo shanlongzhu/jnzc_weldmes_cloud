@@ -34,4 +34,16 @@ public class ConstantInfo {
      * 字典表焊机设备类型标识
      */
     public static final String DICTIONARY_WELD_TYPE_FLAG = "3";
+
+    /**
+     * 字典表区域标识
+     */
+    public static final String AREA_FLAG = "16";
+
+    /**
+     * 字典表跨间标识
+     */
+    public static final String BAY_FLAG = "17";
+
+
 }
