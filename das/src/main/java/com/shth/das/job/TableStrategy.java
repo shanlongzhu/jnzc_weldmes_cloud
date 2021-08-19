@@ -35,11 +35,11 @@ public class TableStrategy {
     /**
      * OTC表名前缀
      */
-    private static final String OTC_TABLE_PREFIX = "otcRtd";
+    private static final String OTC_TABLE_PREFIX = "otcrtd";
     /**
      * 松下表名前缀
      */
-    private static final String SX_TABLE_PREFIX = "sxRtd";
+    private static final String SX_TABLE_PREFIX = "sxrtd";
 
     /**
      * Map<K,Function<T,R>>
@@ -59,22 +59,22 @@ public class TableStrategy {
      */
     private static final Map<String, Function<String, String>> TIMING_NEXT_TABLE_MAP = new HashMap<>();
 
-    TableStrategy() {
+    static {
         //时间点的当前表
-        TIMING_TABLE_MAP.put("year", this::getTableNameByYear);
-        TIMING_TABLE_MAP.put("month", this::getTableNameByMonth);
-        TIMING_TABLE_MAP.put("week", this::getTableNameByWeek);
-        TIMING_TABLE_MAP.put("day", this::getTableNameByDay);
+        TIMING_TABLE_MAP.put("year", TableStrategy::getTableNameByYear);
+        TIMING_TABLE_MAP.put("month", TableStrategy::getTableNameByMonth);
+        TIMING_TABLE_MAP.put("week", TableStrategy::getTableNameByWeek);
+        TIMING_TABLE_MAP.put("day", TableStrategy::getTableNameByDay);
         //时间段的所有表集合
-        TIME_BUCKET_MAP.put("year", this::getTableNameByYear);
-        TIME_BUCKET_MAP.put("month", this::getTableNameByMonth);
-        TIME_BUCKET_MAP.put("week", this::getTableNameByWeek);
-        TIME_BUCKET_MAP.put("day", this::getTableNameByDay);
+        TIME_BUCKET_MAP.put("year", TableStrategy::getTableNameByYear);
+        TIME_BUCKET_MAP.put("month", TableStrategy::getTableNameByMonth);
+        TIME_BUCKET_MAP.put("week", TableStrategy::getTableNameByWeek);
+        TIME_BUCKET_MAP.put("day", TableStrategy::getTableNameByDay);
         //时间点的下一个表
-        TIMING_NEXT_TABLE_MAP.put("year", this::getNextTableNameByYear);
-        TIMING_NEXT_TABLE_MAP.put("month", this::getNextTableNameByMonth);
-        TIMING_NEXT_TABLE_MAP.put("week", this::getNextTableNameByWeek);
-        TIMING_NEXT_TABLE_MAP.put("day", this::getNextTableNameByDay);
+        TIMING_NEXT_TABLE_MAP.put("year", TableStrategy::getNextTableNameByYear);
+        TIMING_NEXT_TABLE_MAP.put("month", TableStrategy::getNextTableNameByMonth);
+        TIMING_NEXT_TABLE_MAP.put("week", TableStrategy::getNextTableNameByWeek);
+        TIMING_NEXT_TABLE_MAP.put("day", TableStrategy::getNextTableNameByDay);
     }
 
     /**
@@ -183,7 +183,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 年（yyyy）
      */
-    private String getTableNameByYear(String dateTime) {
+    private static String getTableNameByYear(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_YEAR);
         }
@@ -196,7 +196,7 @@ public class TableStrategy {
      * @param map 时间段map
      * @return 年份集合
      */
-    private List<String> getTableNameByYear(Map<String, String> map) {
+    private static List<String> getTableNameByYear(Map<String, String> map) {
         if (!map.isEmpty()) {
             try {
                 if (map.containsKey("startTime") && map.containsKey("endTime")) {
@@ -225,7 +225,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 月（yyyyMM）
      */
-    private String getTableNameByMonth(String dateTime) {
+    private static String getTableNameByMonth(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_MONTH);
         }
@@ -238,7 +238,7 @@ public class TableStrategy {
      * @param map 时间段map
      * @return 年月份集合
      */
-    private List<String> getTableNameByMonth(Map<String, String> map) {
+    private static List<String> getTableNameByMonth(Map<String, String> map) {
         if (!map.isEmpty()) {
             try {
                 if (map.containsKey("startTime") && map.containsKey("endTime")) {
@@ -270,7 +270,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 周一（yyyyMMdd）
      */
-    private String getTableNameByWeek(String dateTime) {
+    private static String getTableNameByWeek(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             try {
                 final LocalDate parse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
@@ -289,7 +289,7 @@ public class TableStrategy {
      * @param map 时间段map
      * @return 时间周集合
      */
-    private List<String> getTableNameByWeek(Map<String, String> map) {
+    private static List<String> getTableNameByWeek(Map<String, String> map) {
         if (!map.isEmpty()) {
             try {
                 if (map.containsKey("startTime") && map.containsKey("endTime")) {
@@ -321,7 +321,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 当天（yyyyMMdd）
      */
-    private String getTableNameByDay(String dateTime) {
+    private static String getTableNameByDay(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             return LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_DATE);
         }
@@ -334,7 +334,7 @@ public class TableStrategy {
      * @param map 时间段map
      * @return 天数集合
      */
-    private List<String> getTableNameByDay(Map<String, String> map) {
+    private static List<String> getTableNameByDay(Map<String, String> map) {
         if (!map.isEmpty()) {
             try {
                 if (map.containsKey("startTime") && map.containsKey("endTime")) {
@@ -362,7 +362,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    private String getNextTableNameByYear(String dateTime) {
+    private static String getNextTableNameByYear(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusYears(1).format(DateTimeUtils.CUSTOM_YEAR);
@@ -376,7 +376,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    private String getNextTableNameByMonth(String dateTime) {
+    private static String getNextTableNameByMonth(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusMonths(1).format(DateTimeUtils.CUSTOM_MONTH);
@@ -390,7 +390,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    private String getNextTableNameByWeek(String dateTime) {
+    private static String getNextTableNameByWeek(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             final LocalDate startParse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             final LocalDateTime startMonday = LocalDateTime.of(startParse, LocalTime.MIN).with(DayOfWeek.MONDAY);
@@ -405,7 +405,7 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    private String getNextTableNameByDay(String dateTime) {
+    private static String getNextTableNameByDay(String dateTime) {
         if (!StringUtils.isEmpty(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusDays(1).format(DateTimeUtils.CUSTOM_DATE);
