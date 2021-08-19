@@ -335,7 +335,11 @@ public class WelderController {
 
                 machineWeldInfo.setGId(s);
 
-                String model=(String) obs[10];
+                String ip = (String) obs[9];
+
+                machineWeldInfo.setIpPath(ip);
+
+                String model = (String) obs[10];
 
                 Byte modelId=welderService.getModelId(model);
 
