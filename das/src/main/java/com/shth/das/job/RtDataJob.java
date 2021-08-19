@@ -1,5 +1,6 @@
 package com.shth.das.job;
 
+import com.alibaba.druid.util.StringUtils;
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonQueue;
@@ -60,9 +61,11 @@ public class RtDataJob {
     public void startJnOtcJob() {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
-            String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-            int newTable = otcRtDataService.createNewTable(tableName);
-            log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, newTable);
+            String tableName = TableStrategy.getOtcTableByDateTime(DateTimeUtils.getNowDateTime());
+            if (!StringUtils.isEmpty(tableName)) {
+                int newTable = otcRtDataService.createNewTable(tableName);
+                log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, newTable);
+            }
         });
     }
 
@@ -72,9 +75,11 @@ public class RtDataJob {
     public void startSxJob() {
         CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
-            String tableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-            int newTable = sxRtDataService.createNewTable(tableName);
-            log.info("系统启动创建当天SX实时数据表:{} >>> {}", tableName, newTable);
+            String tableName = TableStrategy.getSxTableByDateTime(DateTimeUtils.getNowDateTime());
+            if (!StringUtils.isEmpty(tableName)) {
+                int newTable = sxRtDataService.createNewTable(tableName);
+                log.info("系统启动创建当天SX实时数据表:{} >>> {}", tableName, newTable);
+            }
         });
     }
 

@@ -1,5 +1,7 @@
 package com.shth.das.sys.rtdata.service.impl;
 
+import com.alibaba.druid.util.StringUtils;
+import com.shth.das.job.TableStrategy;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.sys.rtdata.mapper.SxRtDataMapper;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
@@ -29,11 +31,14 @@ public class SxRtDataServiceImpl implements SxRtDataService {
     public void insertSxRtDataList(List<SxRtDataDb> list) {
         if (CommonUtils.isNotEmpty(list)) {
             try {
-                Map<String, Object> map = new HashMap<>(6);
-                String tableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-                map.put("tableName", tableName);
-                map.put("list", list);
-                sxRtDataMapper.insertSxRtDataList(map);
+                final String nowDateTime = DateTimeUtils.getNowDateTime();
+                String tableName = TableStrategy.getSxTableByDateTime(nowDateTime);
+                if (!StringUtils.isEmpty(tableName)) {
+                    Map<String, Object> map = new HashMap<>(6);
+                    map.put("tableName", tableName);
+                    map.put("list", list);
+                    sxRtDataMapper.insertSxRtDataList(map);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException();

@@ -1,5 +1,6 @@
 package com.shth.das.sys.weldmesdb.service.impl;
 
+import com.alibaba.druid.util.StringUtils;
 import com.shth.das.sys.weldmesdb.mapper.StatisticsDataMapper;
 import com.shth.das.sys.weldmesdb.service.StatisticsDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
     @Override
     public void insertWeldStatisticsData(String startTime, String endTime, String tableName) {
         try {
-            statisticsDataMapper.insertWeldStatisticsData(startTime, endTime, tableName);
+            if (!StringUtils.isEmpty(tableName)) {
+                statisticsDataMapper.insertWeldStatisticsData(startTime, endTime, tableName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
@@ -26,7 +29,9 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
     @Override
     public void insertSxWeldStatisticsData(String startTime, String endTime, String tableName) {
         try {
-            statisticsDataMapper.insertSxWeldStatisticsData(startTime, endTime, tableName);
+            if (!StringUtils.isEmpty(tableName)) {
+                statisticsDataMapper.insertSxWeldStatisticsData(startTime, endTime, tableName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();

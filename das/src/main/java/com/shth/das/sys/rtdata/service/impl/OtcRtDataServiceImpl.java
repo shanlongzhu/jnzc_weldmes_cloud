@@ -1,5 +1,7 @@
 package com.shth.das.sys.rtdata.service.impl;
 
+import com.alibaba.druid.util.StringUtils;
+import com.shth.das.job.TableStrategy;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.sys.rtdata.mapper.OtcRtDataMapper;
 import com.shth.das.sys.rtdata.service.OtcRtDataService;
@@ -28,11 +30,19 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
     @Override
     public void insertRtDataList(List<JNRtDataDB> list) {
         if (CommonUtils.isNotEmpty(list)) {
-            Map<String, Object> map = new HashMap<>(6);
-            String tableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
-            map.put("tableName", tableName);
-            map.put("list", list);
-            otcRtDataMapper.insertRtDataList(map);
+            try {
+                final String nowDateTime = DateTimeUtils.getNowDateTime();
+                String tableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
+                if (!StringUtils.isEmpty(tableName)) {
+                    Map<String, Object> map = new HashMap<>(6);
+                    map.put("tableName", tableName);
+                    map.put("list", list);
+                    otcRtDataMapper.insertRtDataList(map);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
         }
     }
 }

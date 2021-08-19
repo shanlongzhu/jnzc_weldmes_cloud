@@ -1,5 +1,6 @@
 package com.shth.das.job;
 
+import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Queues;
 import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonMap;
@@ -55,17 +56,22 @@ public class ScheduledTask {
      * 每天晚上23点执行
      * 任务：创建实时数据表结构
      */
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = TableStrategy.EXECUTE_TIME)
     @Async
     public void scheduled1() {
-        //OTC获取第二天的实时数据表名
-        String otcTableName = "rtdata" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
-        int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
-        log.info("otcCreateResult:--->>>>{}", otcCreateResult);
-        //松下获取第二天的实时数据表名
-        String sxTableName = "sxrtd" + DateTimeUtils.getNowSecondDate(DateTimeUtils.CUSTOM_DATE);
-        int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
-        log.info("sxCreateResult:--->>>>{}", sxCreateResult);
+        final String nowDateTime = DateTimeUtils.getNowDateTime();
+        //OTC获取当前时间的实时数据表名
+        String otcTableName = TableStrategy.getNextOtcTableByDateTime(nowDateTime);
+        if (!StringUtils.isEmpty(otcTableName)) {
+            int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
+            log.info("otcCreateResult:--->>>>{}", otcCreateResult);
+        }
+        //松下获取当前时间的实时数据表名
+        String sxTableName = TableStrategy.getNextSxTableByDateTime(nowDateTime);
+        if (!StringUtils.isEmpty(sxTableName)) {
+            int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
+            log.info("sxCreateResult:--->>>>{}", sxCreateResult);
+        }
     }
 
     /**
@@ -93,8 +99,9 @@ public class ScheduledTask {
         try {
             //延迟1分钟
             Thread.sleep(1000 * 60);
-            //获取今天的表名
-            String otcTableName = "rtdata" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+            final String nowDateTime = DateTimeUtils.getNowDateTime();
+            //获取当前时间对应的表名
+            String otcTableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
             //系统时间整点作为结束时间点
             String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
             //查询出上一次统计的时间
@@ -141,9 +148,10 @@ public class ScheduledTask {
         try {
             //延迟1分钟
             Thread.sleep(1000 * 60);
+            final String nowDateTime = DateTimeUtils.getNowDateTime();
             //系统时间整点作为结束时间点
             String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
-            String sxTableName = "sxrtd" + DateTimeUtils.getNowDate(DateTimeUtils.CUSTOM_DATE);
+            String sxTableName = TableStrategy.getSxTableByDateTime(nowDateTime);
             String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
             String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
             if (CommonUtils.isNotEmpty(sxMaxEndTime)) {

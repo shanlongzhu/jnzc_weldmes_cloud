@@ -16,6 +16,8 @@ public class DateTimeUtils {
     public static final DateTimeFormatter TODAY_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final DateTimeFormatter YEAR_DATETIME = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter HOUR_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00:00");
+    public static final DateTimeFormatter CUSTOM_YEAR = DateTimeFormatter.ofPattern("yyyy");
+    public static final DateTimeFormatter CUSTOM_MONTH = DateTimeFormatter.ofPattern("yyyyMM");
     public static final DateTimeFormatter CUSTOM_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     /**
