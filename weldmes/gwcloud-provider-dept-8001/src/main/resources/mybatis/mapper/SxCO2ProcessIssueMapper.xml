@@ -88,4 +88,99 @@
                oa_arc_ale_max,oa_arc_ele_min,oa_arc_vol_max,oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time
         from sx_co2_process_issue
     </select>
+
+    <!--添加松下CO2工艺信息-->
+    <insert id="insertSxCO2ProcessIssueInfo" parameterType="com.gw.entities.SxCO2ProcessIssue">
+        insert into sx_co2_process_issue(weld_cid,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+               initial_wire_speed_max,initial_wire_speed_min,weld_ele_max,weld_ele_min,weld_vol_max,weld_vol_min,weld_wire_speed_max,
+               weld_wire_speed_min,arc_ele_max,arc_ele_min,arc_vol_max,arc_vol_min,arc_wire_speed_max,arc_wire_speed_min,mode_select,
+               welding_control,welding_manner,texture,wire_diameter,gases,wire_feed,check_gas_status,cut_status,lock_status,
+               ele_show_select,rev,board_thickness,spot_welding_time,vol_show_select,arc_length,arc_character,penetration_control,
+               before_aspirated_time,after_stop_gas_time,unitary_difference,now_channel,dcl_initial_ele_max,dcl_initial_ele_min,
+               dcl_weld_ele_max,dcl_weld_ele_min,dcl_arc_ele_max,dcl_arc_ele_min,start_delay_time,cl_amend_period,oa_initial_ele_max,
+               oa_initial_ele_min,oa_initial_vol_max,oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,
+               oa_arc_ale_max,oa_arc_ele_min,oa_arc_vol_max,oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time)
+        values(#{sxCO2ProcessIssue.weldCid},#{sxCO2ProcessIssue.channelNo},#{sxCO2ProcessIssue.weldIp},#{sxCO2ProcessIssue.initialEleMax},
+               #{sxCO2ProcessIssue.initialEleMin},#{sxCO2ProcessIssue.initialVolMax},#{sxCO2ProcessIssue.initialVolMin},
+               #{sxCO2ProcessIssue.initialWireSpeedMax},#{sxCO2ProcessIssue.initialWireSpeedMin},#{sxCO2ProcessIssue.weldEleMax},
+               #{sxCO2ProcessIssue.weldEleMin},#{sxCO2ProcessIssue.weldVolMax},#{sxCO2ProcessIssue.weldVolMin},
+               #{sxCO2ProcessIssue.weldWireSpeedMax},#{sxCO2ProcessIssue.weldWireSpeedMin},#{sxCO2ProcessIssue.arcEleMax},
+               #{sxCO2ProcessIssue.arcEleMin},#{sxCO2ProcessIssue.arcVolMax},#{sxCO2ProcessIssue.arcVolMin},
+               #{sxCO2ProcessIssue.arcWireSpeedMax},#{sxCO2ProcessIssue.arcWireSpeedMin},#{sxCO2ProcessIssue.modeSelect},
+               #{sxCO2ProcessIssue.weldingControl},#{sxCO2ProcessIssue.weldingManner},#{sxCO2ProcessIssue.texture},
+               #{sxCO2ProcessIssue.wireDiameter},#{sxCO2ProcessIssue.gases},#{sxCO2ProcessIssue.wireFeed},
+               #{sxCO2ProcessIssue.checkGasStatus},#{sxCO2ProcessIssue.cutStatus},#{sxCO2ProcessIssue.lockStatus},
+               #{sxCO2ProcessIssue.eleShowSelect},#{sxCO2ProcessIssue.rev},#{sxCO2ProcessIssue.boardThickness},
+               #{sxCO2ProcessIssue.spotWeldingTime},#{sxCO2ProcessIssue.volShowSelect},#{sxCO2ProcessIssue.arcLength},
+               #{sxCO2ProcessIssue.arcCharacter},#{sxCO2ProcessIssue.penetrationControl},#{sxCO2ProcessIssue.beforeAspiratedTime},
+               #{sxCO2ProcessIssue.afterStopGasTime},#{sxCO2ProcessIssue.unitaryDifference},
+               #{sxCO2ProcessIssue.nowChannel},#{sxCO2ProcessIssue.dclInitialEleMax},#{sxCO2ProcessIssue.dclInitialEleMin},
+               #{sxCO2ProcessIssue.dclWeldEleMax},#{sxCO2ProcessIssue.dclWeldEleMin},#{sxCO2ProcessIssue.dclArcEleMax},
+               #{sxCO2ProcessIssue.dclArcEleMin},#{sxCO2ProcessIssue.startDelayTime},#{sxCO2ProcessIssue.clAmendPeriod},
+               #{sxCO2ProcessIssue.oaInitialEleMax},#{sxCO2ProcessIssue.oaInitialEleMin},#{sxCO2ProcessIssue.oaInitialVolMax},
+               #{sxCO2ProcessIssue.oaInitialVolMin},#{sxCO2ProcessIssue.oaWeldEleMax},#{sxCO2ProcessIssue.oaWeldEleMin},
+               #{sxCO2ProcessIssue.oaWeldVolMax},#{sxCO2ProcessIssue.oaWeldVolMin},#{sxCO2ProcessIssue.oaArcEleMax},
+               #{sxCO2ProcessIssue.oaArcEleMin},#{sxCO2ProcessIssue.oaArcVolMax},#{sxCO2ProcessIssue.oaArcVolMin},
+               #{sxCO2ProcessIssue.arcDelayTime},#{sxCO2ProcessIssue.alarmDelayTime},#{sxCO2ProcessIssue.haltDelayTime},
+               #{sxCO2ProcessIssue.haltFreezeTime})
+    </insert>
+
+    <!--根据id查询 松下CO2工艺信息-->
+    <select id="selectSxCO2ProcessIssueInfoById" parameterType="Long" resultMap="sxCO2Map">
+        select id,weld_cid,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+               initial_wire_speed_max,initial_wire_speed_min,weld_ele_max,weld_ele_min,weld_vol_max,weld_vol_min,weld_wire_speed_max,
+               weld_wire_speed_min,arc_ele_max,arc_ele_min,arc_vol_max,arc_vol_min,arc_wire_speed_max,arc_wire_speed_min,mode_select,
+               welding_control,welding_manner,texture,wire_diameter,gases,wire_feed,check_gas_status,cut_status,lock_status,
+               ele_show_select,rev,board_thickness,spot_welding_time,vol_show_select,arc_length,arc_character,penetration_control,
+               before_aspirated_time,after_stop_gas_time,unitary_difference,now_channel,dcl_initial_ele_max,dcl_initial_ele_min,
+               dcl_weld_ele_max,dcl_weld_ele_min,dcl_arc_ele_max,dcl_arc_ele_min,start_delay_time,cl_amend_period,oa_initial_ele_max,
+               oa_initial_ele_min,oa_initial_vol_max,oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,
+               oa_arc_ale_max,oa_arc_ele_min,oa_arc_vol_max,oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time
+        from sx_co2_process_issue
+        where id = #{id}
+    </select>
+
+    <!--根据id 修改 松下CO2工艺信息-->
+    <update id="updateSxCO2ProcessIssueInfo">
+        update sx_co2_process_issue set weld_cid = #{sxCO2ProcessIssue.weldCid},channel_no = #{sxCO2ProcessIssue.channelNo},
+               weld_ip = #{sxCO2ProcessIssue.weldIp},initial_ele_max = #{sxCO2ProcessIssue.initialEleMax},
+               initial_ele_min = #{sxCO2ProcessIssue.initialEleMin},initial_vol_max = #{sxCO2ProcessIssue.initialVolMax},
+               initial_vol_min = #{sxCO2ProcessIssue.initialVolMin},initial_wire_speed_max = #{sxCO2ProcessIssue.initialWireSpeedMax},
+               initial_wire_speed_min = #{sxCO2ProcessIssue.initialWireSpeedMin},weld_ele_max = #{sxCO2ProcessIssue.weldEleMax},
+               weld_ele_min = #{sxCO2ProcessIssue.weldEleMin},weld_vol_max = #{sxCO2ProcessIssue.weldVolMax},
+               weld_vol_min = #{sxCO2ProcessIssue.weldVolMin},weld_wire_speed_max = #{sxCO2ProcessIssue.weldWireSpeedMax},
+               weld_wire_speed_min = #{sxCO2ProcessIssue.weldWireSpeedMin},arc_ele_max = #{sxCO2ProcessIssue.arcEleMax},
+               arc_ele_min = #{sxCO2ProcessIssue.arcEleMin},arc_vol_max = #{sxCO2ProcessIssue.arcVolMax},
+               arc_vol_min = #{sxCO2ProcessIssue.arcVolMin},arc_wire_speed_max = #{sxCO2ProcessIssue.arcWireSpeedMax},
+               arc_wire_speed_min = #{sxCO2ProcessIssue.arcWireSpeedMin},mode_select = #{sxCO2ProcessIssue.modeSelect},
+               welding_control = #{sxCO2ProcessIssue.weldingControl},welding_manner = #{sxCO2ProcessIssue.weldingManner},
+               texture = #{sxCO2ProcessIssue.texture},wire_diameter = #{sxCO2ProcessIssue.wireDiameter},
+               gases = #{sxCO2ProcessIssue.gases},wire_feed = #{sxCO2ProcessIssue.wireFeed},
+               check_gas_status = #{sxCO2ProcessIssue.checkGasStatus},cut_status = #{sxCO2ProcessIssue.cutStatus},
+               lock_status = #{sxCO2ProcessIssue.lockStatus},ele_show_select = #{sxCO2ProcessIssue.eleShowSelect},
+               rev = #{sxCO2ProcessIssue.rev},board_thickness = #{sxCO2ProcessIssue.boardThickness},
+               spot_welding_time = #{sxCO2ProcessIssue.spotWeldingTime},vol_show_select = #{sxCO2ProcessIssue.volShowSelect},
+               arc_length = #{sxCO2ProcessIssue.arcLength},arc_character = #{sxCO2ProcessIssue.arcCharacter},
+               penetration_control = #{sxCO2ProcessIssue.penetrationControl},before_aspirated_time = #{sxCO2ProcessIssue.beforeAspiratedTime},
+               after_stop_gas_time = #{sxCO2ProcessIssue.afterStopGasTime},unitary_difference = #{sxCO2ProcessIssue.unitaryDifference},
+               now_channel = #{sxCO2ProcessIssue.nowChannel},dcl_initial_ele_max = #{sxCO2ProcessIssue.dclInitialEleMax},
+               dcl_initial_ele_min = #{sxCO2ProcessIssue.dclInitialEleMin},dcl_weld_ele_max = #{sxCO2ProcessIssue.dclWeldEleMax},
+               dcl_weld_ele_min = #{sxCO2ProcessIssue.dclWeldEleMin},dcl_arc_ele_max = #{sxCO2ProcessIssue.dclArcEleMax},
+               dcl_arc_ele_min = #{sxCO2ProcessIssue.dclArcEleMin},start_delay_time = #{sxCO2ProcessIssue.startDelayTime},
+               cl_amend_period = #{sxCO2ProcessIssue.clAmendPeriod},oa_initial_ele_max = #{sxCO2ProcessIssue.oaInitialEleMax},
+               oa_initial_ele_min = #{sxCO2ProcessIssue.oaInitialEleMin},oa_initial_vol_max = #{sxCO2ProcessIssue.oaInitialVolMax},
+               oa_initial_vol_min = #{sxCO2ProcessIssue.oaInitialVolMin},oa_weld_ele_max = #{sxCO2ProcessIssue.oaWeldEleMax},
+               oa_weld_ele_min = #{sxCO2ProcessIssue.oaWeldEleMin},oa_weld_vol_max = #{sxCO2ProcessIssue.oaWeldVolMax},
+               oa_weld_vol_min = #{sxCO2ProcessIssue.oaWeldVolMin},oa_arc_ale_max = #{sxCO2ProcessIssue.oaArcEleMax},
+               oa_arc_ele_min = #{sxCO2ProcessIssue.oaArcEleMin},oa_arc_vol_max = #{sxCO2ProcessIssue.oaArcVolMax},
+               oa_arc_vol_min = #{sxCO2ProcessIssue.oaArcVolMin},arc_delay_time = #{sxCO2ProcessIssue.arcDelayTime},
+               alarm_delay_time = #{sxCO2ProcessIssue.alarmDelayTime},halt_delay_time = #{sxCO2ProcessIssue.haltDelayTime},
+               halt_freeze_time = #{sxCO2ProcessIssue.haltFreezeTime}
+        where id = #{sxCO2ProcessIssue.id}
+    </update>
+
+    <!--根据id删除 松下CO2工艺信息-->
+    <delete id="deleteSxCO2ProcessIssueInfoById">
+        delete from sx_co2_process_issue where id = #{id}
+    </delete>
 </mapper>

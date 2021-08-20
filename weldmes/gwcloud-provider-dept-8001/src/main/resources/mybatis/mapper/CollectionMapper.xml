@@ -95,7 +95,8 @@
     <!--采集信息excel导入数据库  采集编号不存在-新增 存在-更新 -->
     <insert id="save">
        insert into machine_gather_info(gather_no,dept_id,status,protocol,ip_path,mac_path,create_time)
-       values (#{gatherNo},#{deptId},#{status},#{protocol},#{ipPath},#{macPath},#{createTime})
+       values (#{machineGatherInfo.gatherNo},#{machineGatherInfo.deptId},#{machineGatherInfo.status},
+       #{machineGatherInfo.protocol},#{machineGatherInfo.ipPath},#{machineGatherInfo.macPath},#{machineGatherInfo.createTime})
        ON DUPLICATE KEY UPDATE
         gather_no = #{machineGatherInfo.gatherNo},
         dept_id = #{machineGatherInfo.deptId},

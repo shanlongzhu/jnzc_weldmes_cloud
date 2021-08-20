@@ -21,7 +21,7 @@ public interface CollectionDao {
 
     int updateCollection(@Param("machineGatherInfo")MachineGatherInfo machineGatherInfo);
 
-    void save(MachineGatherInfo machineGatherInfo);
+    void save(@Param("machineGatherInfo")MachineGatherInfo machineGatherInfo);
 
     Long getDeptId(String name);
 

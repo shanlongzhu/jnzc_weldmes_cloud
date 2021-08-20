@@ -190,58 +190,94 @@ public class CollectionController {
     //导入
     @PostMapping(value = "importExcel", produces = "application/json;charset=UTF-8")
     public HttpResult importExcel(@RequestParam("file") MultipartFile file) {
-        HttpResult result = new HttpResult();
+
         try {
+
             //workbook excel
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
             //获取excel的第一个sheet
             Sheet sheet = workbook.getSheetAt(0);
             int firstRowNum = sheet.getFirstRowNum();
+
             int lastRowNum = sheet.getLastRowNum();
             Row firstRow = sheet.getRow(firstRowNum);
+
             int lastCellNums = firstRow.getLastCellNum();
             List<MachineGatherInfo> machineGatherInfoList = new ArrayList<>();
+
             for (int i = 1; i <= lastRowNum; i++) {
+
                 //获取第i行
                 Row row = sheet.getRow(i);
+
                 Object[] obs = new Object[lastCellNums];
+
                 for (int j = 0; j < lastCellNums; j++) {
+
                     //获取第i行的 第j个单元格
                     Cell cell = row.getCell(j);
+
                     if (row.getCell(j) == null) {
+
                         continue;
                     }
+
                     //拿到单元格的 value值
                     Object value = ExcelUtils.getValue(cell);
+
                     obs[j] = value;
                 }
 
                 //把从excel中拿出来的数据封装到对象中
                 MachineGatherInfo machineGatherInfo = new MachineGatherInfo();
-                machineGatherInfo.setGatherNo(obs[0].toString());
+
+                String str = obs[0].toString();
+
+                if(str.indexOf(".") > 0){
+
+                    str = str.substring(0,str.indexOf("."));
+
+                    machineGatherInfo.setGatherNo(str);
+                }
+
+                machineGatherInfo.setGatherNo(str);
+
                 String name = (String) obs[1];
+
                 Long id = collectionService.getDeptId(name);
+
                 machineGatherInfo.setDeptId(id);
                 String valueName = (String) obs[2];
+
                 Integer status = collectionService.getStatus(valueName);
                 machineGatherInfo.setStatus(status);
+
                 String valueNames = (String) obs[3];
                 Integer protocol = collectionService.getProtocol(valueNames);
+
                 machineGatherInfo.setProtocol(protocol);
                 machineGatherInfo.setIpPath((String) obs[4]);
+
                 machineGatherInfo.setMacPath((String) obs[5]);
+
                 machineGatherInfo.setCreateTime((String) obs[6]);
+
                 //把对象放到list
                 machineGatherInfoList.add(machineGatherInfo);
+
             }
             //保存
             collectionService.importExcel(machineGatherInfoList);
-            result.setMsg("导入成功！");
+
+            return HttpResult.ok("导入成功！");
+
         } catch (Exception e) {
+
             e.printStackTrace();
-            result.setMsg("导入失败！");
+
+            return HttpResult.error("导入失败！");
         }
-        return result;
     }
 
     /**
