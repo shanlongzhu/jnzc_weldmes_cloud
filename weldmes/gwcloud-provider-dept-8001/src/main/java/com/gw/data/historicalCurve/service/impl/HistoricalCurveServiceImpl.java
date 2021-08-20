@@ -72,7 +72,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
 
             TableInfo tableInfo = new TableInfo();
 
-            String tableName = "rtdata" + new SimpleDateFormat("yyyyMMdd").format(date);
+            String tableName = "otcrtd" + new SimpleDateFormat("yyyyMMdd").format(date);
 
             Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
 
