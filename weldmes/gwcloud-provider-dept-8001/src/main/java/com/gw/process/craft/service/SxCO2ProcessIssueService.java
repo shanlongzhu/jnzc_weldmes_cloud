@@ -17,4 +17,32 @@ public interface SxCO2ProcessIssueService {
      * @Params
      */
     public List<SxCO2ProcessIssue> getSxCO2ProcessIssueInfos();
+
+    /**
+     * @Date 2021/8/19 16:33
+     * @Description 添加松下CO2工艺信息
+     * @Params
+     */
+    public void addSxCO2ProcessIssueInfo(SxCO2ProcessIssue sxCO2ProcessIssue);
+
+    /**
+     * @Date 2021/8/19 15:41
+     * @Description 根据id查询 松下CO2工艺信息
+     * @Params
+     */
+    public SxCO2ProcessIssue getSxCO2ProcessIssueInfoById(Long id);
+
+    /**
+     * @Date 2021/8/19 15:49
+     * @Description 根据id 修改 松下CO2工艺信息
+     * @Params
+     */
+    public void updateSxCO2ProcessIssueInfo(SxCO2ProcessIssue sxCO2ProcessIssue);
+
+    /**
+     * @Date 2021/8/19 16:26
+     * @Description 根据id删除 松下CO2工艺信息
+     * @Params
+     */
+    public void deleteSxCO2ProcessIssueInfoById(Long id);
 }

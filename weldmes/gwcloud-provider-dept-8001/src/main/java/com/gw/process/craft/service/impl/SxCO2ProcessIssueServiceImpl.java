@@ -31,4 +31,54 @@ public class SxCO2ProcessIssueServiceImpl implements SxCO2ProcessIssueService {
 
         return list;
     }
+
+    /**
+     * @Date 2021/8/19 16:33
+     * @Description 添加松下CO2工艺信息
+     * @Params
+     */
+    @Override
+    public void addSxCO2ProcessIssueInfo(SxCO2ProcessIssue sxCO2ProcessIssue) {
+
+        sxCO2ProcessIssueDao.insertSxCO2ProcessIssueInfo(sxCO2ProcessIssue);
+
+    }
+
+    /**
+     * @Date 2021/8/19 15:42
+     * @Description 根据id查询 松下CO2工艺信息
+     * @Params
+     */
+    @Override
+    public SxCO2ProcessIssue getSxCO2ProcessIssueInfoById(Long id) {
+
+        SxCO2ProcessIssue sxCO2ProcessIssue = sxCO2ProcessIssueDao.selectSxCO2ProcessIssueInfoById(id);
+
+        return sxCO2ProcessIssue;
+    }
+
+    /**
+     * @Date 2021/8/19 15:49
+     * @Description 根据id 修改 松下CO2工艺信息
+     * @Params
+     */
+    @Override
+    public void updateSxCO2ProcessIssueInfo(SxCO2ProcessIssue sxCO2ProcessIssue) {
+
+        sxCO2ProcessIssueDao.updateSxCO2ProcessIssueInfo(sxCO2ProcessIssue);
+
+    }
+
+    /**
+     * @Date 2021/8/19 16:27
+     * @Description 根据id删除 松下CO2工艺信息
+     * @Params
+     */
+    @Override
+    public void deleteSxCO2ProcessIssueInfoById(Long id) {
+
+        sxCO2ProcessIssueDao.deleteSxCO2ProcessIssueInfoById(id);
+
+    }
+
 }

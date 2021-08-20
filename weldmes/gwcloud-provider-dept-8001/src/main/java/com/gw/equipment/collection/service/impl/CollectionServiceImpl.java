@@ -56,7 +56,6 @@ public class CollectionServiceImpl implements CollectionService {
         collectionDao.updateCollection(machineGatherInfo);
     }
 
-    @Transactional
     @Override
     public void importExcel(List<MachineGatherInfo> machineGatherInfoList) {
         for (MachineGatherInfo machineGatherInfo : machineGatherInfoList) {
