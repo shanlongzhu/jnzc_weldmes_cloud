@@ -58,15 +58,19 @@
                 class="swipe-bottom-b"
                 v-loading="loading"
             >
+
                 <ul class="swipe-pro flex-n">
                     <li
                         v-for="item in list"
                         :key="item.id"
+                        :class="{'taskCur':item.taskFlag}"
                     >
+                        <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
                         <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
-                        <span>{{item.machineNo}}</span>
+                        <span>{{item.machineNo}}--{{item.machineGatherInfo.gatherNo}}</span>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>
@@ -307,14 +311,14 @@ export default {
 
             this.getList();
         },
-        searchInput(v){
+        searchInput (v) {
             this.getWelderInfo(v)
         },
         //获取焊工信息
         async getWelderInfo (welderNo) {
             console.log(welderNo)
-            if(!welderNo||welderNo==""){
-              return this.$message.error("焊工编号不能为空！");
+            if (!welderNo || welderNo == "") {
+                return this.$message.error("焊工编号不能为空！");
             }
             this.carNo = welderNo;
             if (!getToken() && !getPublicToken()) {
@@ -399,17 +403,52 @@ export default {
     }
 }
 .swipe-pro {
+    padding-left: 10px;
     li {
-        width: 100px;
-        margin: 0 10px 10px;
+        width: 122px;
+        margin: 0 10px 10px 0px;
         cursor: pointer;
         border: 1px solid #ddd;
-        span {
-            display: block;
-            text-align: center;
+        text-align: center;
+        padding-top: 6px;
+        transition: all 0.3s ease 0s;
+        position: relative;
+        .bind-tip {
+            position: absolute;
+            top: 0px;
+            right: 0px;
             font-size: 12px;
-            padding-top: 6px;
-            line-height: 18px;
+            color: #fff;
+            background: rgb(1, 199, 83);
+            padding: 1px 2px;
+        }
+        span {
+            margin-top: 6px;
+            display: block;
+            font-size: 12px;
+            line-height: 22px;
+            background: #f8f8f8;
+            padding-top: 0px;
+            border-top: 1px solid #ddd;
+            width: 100%;
+            color: #333;
+        }
+        &.taskCur {
+            .bind-tip {
+                background: #f00;
+            }
+        }
+        &:hover {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
+            transform: scale(1.02);
+        }
+        &.current {
+            border: 1px solid #aadef7;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
+            transform: scale(1.02);
+            span {
+                background: #aadef7;
+            }
         }
     }
 }

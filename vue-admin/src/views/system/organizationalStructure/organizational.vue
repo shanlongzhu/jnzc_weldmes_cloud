@@ -78,7 +78,6 @@
                         >
                             <template
                                 slot="header"
-                                slot-scope="scope"
                             >
                                 <span>名称</span><span class="red-star">*</span>
                             </template>
@@ -93,7 +92,6 @@
                         >
                             <template
                                 slot="header"
-                                slot-scope="scope"
                             >
                                 <span>上级项目</span><span class="red-star">*</span>
                             </template>
@@ -280,6 +278,7 @@ export default {
         addFun () {
             this.title = "新建机构"
             this.visable1 = true;
+            this.getTeamList();
             this.$nextTick(() => {
                 this.$refs.ruleForm.resetFields();
                 this.ruleForm = { ...this.ruleFormObj };
@@ -290,6 +289,7 @@ export default {
         //修改
         async editFun (id) {
             this.title = "编辑机构"
+            this.getTeamList();
             this.ruleForm = { ...this.ruleFormObj };
             let { data, code } = await findIdDeptInfo({ id });
             if (code == 200) {

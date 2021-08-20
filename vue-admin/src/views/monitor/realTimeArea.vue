@@ -8,18 +8,22 @@
             style="flex:1; height:0px"
         >
             <div
-            v-show="isMenuShow"
+                v-show="isMenuShow"
                 class="user-l"
                 style='height:100%;width:300px;border:1px solid #ddd;'
             >
                 <div class="organizational-tit">
-                    组织机构菜单
+                    区域跨间
                 </div>
                 <div style="height:calc(100% - 34px);overflow-y:auto">
                     <organizationarea @currentChangeTree="currentChangeTree"></organizationarea>
                 </div>
             </div>
-            <div style="width:10px" class="flex-c btn-show-hide" @click="changeMenuShowHide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" ></span></div>
+            <div
+                style="width:10px"
+                class="flex-c btn-show-hide"
+                @click="changeMenuShowHide"
+            ><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"></span></div>
             <div
                 class="user-r flex-c real-tit"
                 style='height:100%;flex:1; width:0px'
@@ -183,6 +187,7 @@
 <script>
 import mqtt from 'mqtt'
 import { getModelFindId } from '_api/productionEquipment/production'
+import { getWelderListNoPage } from '_api/productionEquipment/production'
 import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
 import organizationarea from '_c/OrganizationArea'
@@ -203,7 +208,8 @@ export default {
 
             //搜索条件
             searchObj: {
-                id: ''
+                area: '',
+                bay: ''
             },
 
             loading: false,
@@ -224,7 +230,7 @@ export default {
 
             mqttLastData: {},
 
-            isMenuShow:true
+            isMenuShow: true
 
 
 
@@ -237,7 +243,6 @@ export default {
     },
 
     created () {
-        this.searchObj.id = 1;
         this.getList();
         this.newMqtt();
     },
@@ -289,11 +294,7 @@ export default {
             //统计
             for (let b of arr) {
                 let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
-                if (this.searchObj.id!=1) {
-                    if (isThat.length > 0) {
-                        this.totalNum(b);
-                    }
-                } else {
+                if (isThat.length > 0) {
                     this.totalNum(b);
                 }
             }
@@ -316,14 +317,13 @@ export default {
         //根据部门id获取设备列表
         async getList (id) {
             let req = {
-                pn: this.page,
                 ...this.searchObj
             }
             this.loading = true;
-            let { code, data } = await getModelFindId(req);
+            let { code, data } = await getWelderListNoPage(req);
             this.loading = false;
             if (code == 200) {
-                this.list = (data.list || []).map(item => {
+                this.list = (data || []).map(item => {
                     let objItem = { ...item };
                     objItem.electricity = '';//电流
                     objItem.voltage = '';//电压
@@ -349,7 +349,8 @@ export default {
             this.workArray = [];//焊接
             this.standbyArray = [];//待机
             this.warnArray = [];//故障
-            this.searchObj.id = v.id;
+            this.searchObj.area = v.areaId || "";
+            this.searchObj.bay = v.bayId || "";
             this.search();
         },
 
@@ -547,7 +548,7 @@ export default {
                 this.warnArray.push(v.gatherNo);
             }
         },
-        changeMenuShowHide(){
+        changeMenuShowHide () {
             this.isMenuShow = !this.isMenuShow;
         }
     }

@@ -103,7 +103,6 @@
                     >
                         <template
                             slot="header"
-                            slot-scope="scope"
                         >
                             <span>名称</span><span class="red-star">*</span>
                         </template>
@@ -115,7 +114,6 @@
                     >
                         <template
                             slot="header"
-                            slot-scope="scope"
                         >
                             <span>值</span><span class="red-star">*</span>
                         </template>

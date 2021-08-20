@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-31 14:26:52
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-17 18:18:18
+ * @LastEditTime: 2021-08-18 14:51:32
 -->
 <template>
     <el-tree
@@ -22,6 +22,7 @@
 
 <script>
 import { getAreaG } from '_api/system/systemApi'
+
 export default {
     components: {},
     props: {},
@@ -32,9 +33,10 @@ export default {
             treeData: [],
             defaultProps: {
                 children: 'list',
-                label: 'name'
+                label: 'areaBayName'
             },
-            once:1,
+            once: 1,
+            index_d: 1
         }
     },
     watch: {},
@@ -46,25 +48,39 @@ export default {
             let { data, code } = await getAreaG();
             this.treeLoading = false;
             if (code == 200) {
-                this.treeData = [data] || [];
+                this.treeData = this.repentData(data || []);
                 this.$nextTick(() => {
-                    this.$refs.treeDom.setCurrentKey(id||this.treeData[0].id);
+                    this.$refs.treeDom.setCurrentKey(id || this.treeData[0].id);
                     //只加载第一次
-                    if(this.once===1){
+                    if (this.once === 1) {
                         this.once++;
-                        this.$emit('currentChangeTree',this.treeData[0]);
+                        this.currentChangeTree(this.treeData[0])
                     }
                 })
             }
-            
         },
-        currentChangeTree(v){
-            this.$emit('currentChangeTree',v);
+
+        repentData (arr) {            
+            let newArr = arr.map(item => {
+                this.index_d++;
+                let objItem = { ...item }
+                objItem.id = this.index_d;
+                if (item.list && item.list.length > 0) {
+                    objItem.list = this.repentData(item.list)
+                } 
+                return objItem                
+            });
+            return newArr;
+        },
+
+
+        currentChangeTree (v) {
+            this.$emit('currentChangeTree', v);
         }
     },
     created () {
         this.getUserTreeFun();
-     },
+    },
     mounted () { }
 }
 </script>

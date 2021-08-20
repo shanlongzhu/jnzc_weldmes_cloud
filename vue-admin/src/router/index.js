@@ -127,7 +127,8 @@ export const asyncRoutes = [
         name: 'PagePermission',
         meta: {
           title: '采集模块管理',
-          mark:'101'
+          mark:'101',
+          noCache:true
         }
       },
       {
@@ -200,8 +201,7 @@ export const asyncRoutes = [
         name: 'welderManagement',
         meta: {
           title: '焊工管理',
-          mark:'301',
-          noCache: true
+          mark:'301'
         }
       },
       {
@@ -210,8 +210,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '任务工单管理',
-          mark:'302',
-          noCache: true }
+          mark:'302'}
       }
     ]
   },
@@ -464,6 +463,18 @@ export const asyncRoutes = [
         meta: {
           mark:'902',
           title: '实时监测2' }
+      } ,
+      {
+        path: 'real-time-area-detail',
+        component: () => import('@/views/monitor/realTimeArea2'),
+        name: 'realTimeAreaDetail',
+        hidden: true,
+        meta: {
+          mark:'903',
+          title: '实时监测3',
+          activeMenu: '/example/list' ,
+          noCache:true
+        }
       }      
     ]
   },

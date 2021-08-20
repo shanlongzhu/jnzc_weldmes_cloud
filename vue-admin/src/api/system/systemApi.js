@@ -330,6 +330,6 @@ export function delLog(params={}) {
 export function getAreaG() {
   return request({
     url: "/areaBay/getAreaBayTreeInfo",
-    method: "get"
+    method: "post"
   });
 }
