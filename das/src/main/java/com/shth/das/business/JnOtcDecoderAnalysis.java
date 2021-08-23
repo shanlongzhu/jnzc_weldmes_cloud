@@ -30,11 +30,11 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
     public JnOtcDecoderAnalysis() {
         //OTC1.0实时数据解析
         this.decoderMapping.put(282, this::jnOtcRtDataAnalysis);
-        //工艺下发返回解析
+        //OTC1.0工艺下发返回解析
         this.decoderMapping.put(24, this::otcIssueReturnAnalysis);
-        //索取返回协议解析
+        //OTC1.0索取返回协议解析
         this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
-        //密码返回和控制命令返回
+        //OTC1.0密码返回和控制命令返回
         this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
     }
 
@@ -54,7 +54,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * OTC1.0实时数据解析
      *
      * @param jnOtcDecoderParam 入参
-     * @return 返回MAP
+     * @return 返回HandlerParam
      */
     private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
@@ -81,7 +81,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * 工艺下发返回解析
      *
      * @param jnOtcDecoderParam 入参
-     * @return 返回MAP
+     * @return 返回HandlerParam
      */
     private HandlerParam otcIssueReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
@@ -102,7 +102,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * 索取返回协议解析
      *
      * @param jnOtcDecoderParam 入参
-     * @return 返回MAP
+     * @return 返回HandlerParam
      */
     private HandlerParam otcClaimReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
@@ -123,7 +123,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * 密码返回和控制命令返回
      *
      * @param jnOtcDecoderParam 入参
-     * @return 返回MAP
+     * @return 返回HandlerParam
      */
     private HandlerParam otcPwdCmdReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {

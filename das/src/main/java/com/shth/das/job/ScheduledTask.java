@@ -264,4 +264,17 @@ public class ScheduledTask {
         }
     }
 
+    /**
+     * 每天早晨7点执行
+     * 任务：清除前一天任务绑定信息
+     */
+    @Scheduled(cron = "${clearTaskBindingByTime}")
+    @Async
+    public void scheduled8() {
+        //清空OTC设备的任务
+        CommonMap.OTC_TASK_CLAIM_MAP.clear();
+        //清空松下设备的任务
+        CommonMap.SX_TASK_CLAIM_MAP.clear();
+    }
+
 }

@@ -252,8 +252,10 @@ public class JnOtcRtDataProtocol {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
                     List<JNRtDataDB> rtdata = new ArrayList<>();
-                    //采集模块信息查询并绑定
+                    //采集模块信息
                     List<GatherModel> gatherList = CommonDbData.getGatherList();
+                    //焊机设备信息
+                    List<WeldModel> weldList = CommonDbData.getWeldList();
                     //刷卡领取任务后进行数据绑定
                     Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
                     for (int a = 0; a < 239; a += 80) {
@@ -278,6 +280,7 @@ public class JnOtcRtDataProtocol {
                         String nowDateTime = DateTimeUtils.getNowDateTime();
                         //创建时间
                         data.setCreateTime(nowDateTime);
+                        //采集模块信息判断并赋值
                         if (CommonUtils.isNotEmpty(gatherList)) {
                             for (GatherModel gather : gatherList) {
                                 if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
@@ -287,6 +290,7 @@ public class JnOtcRtDataProtocol {
                                 }
                             }
                         }
+                        //焊工、任务、焊机等信息判断并赋值
                         if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                             TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                             if (null != taskClaimIssue) {
@@ -303,7 +307,6 @@ public class JnOtcRtDataProtocol {
                             }
                         } else {
                             //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
-                            List<WeldModel> weldList = CommonDbData.getWeldList();
                             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                                 for (WeldModel weld : weldList) {
                                     //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {

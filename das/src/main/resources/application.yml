@@ -87,3 +87,6 @@ mybatis-plus:
     refresh: true
     db-config:
       db-type: mysql
+
+# 清除任务绑定信息（每天7点执行）
+clearTaskBindingByTime: '0 0 7 * * ?'
