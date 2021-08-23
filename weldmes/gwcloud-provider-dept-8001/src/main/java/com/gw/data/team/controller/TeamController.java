@@ -44,23 +44,32 @@ public class TeamController {
     //导出excel
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String time1,String time2,String deptId) throws ParseException {
-        HttpResult result=new HttpResult();
+
         List<WeldStatisticsData> list = teamService.getList(time1,time2,deptId);
+
         Workbook workbook=new XSSFWorkbook();
+
         Sheet sheet=workbook.createSheet("班组生产数据");
-        String[] titles={"班组","设备总数","开机设备数","实焊设备数","未绑定设备数","设备利用率","焊接任务数","焊接时间","工作时间","焊接效率"};
+        String[] titles={"班组","设备总数","开机设备数","实焊设备数","未绑定设备数","设备利用率","焊接任务数","焊接时间","工作时间","正常焊接时间",
+                "焊接效率","超规范时间","规范符合率","焊材消耗","电能消耗"};
+
         Row row=sheet.createRow(0);
+
+        //标题行内容信息填入
         for (int i = 0; i <titles.length ; i++) {
             Cell cell=row.createCell(i);
             cell.setCellValue(titles[i]);
         }
+
+        //数据填入
         for (int i = 0; i <list.size() ; i++) {
 
-            row=sheet.createRow(i+1);
+            row = sheet.createRow(i+1);
 
-            WeldStatisticsData weldStatistics= list.get(i);
+            WeldStatisticsData weldStatistics = list.get(i);
 
-            Cell getNameCell=row.createCell(0);
+            //班组
+            Cell getNameCell = row.createCell(0);
 
             if(ObjectUtils.isEmpty(weldStatistics.getDeptName())){
 
@@ -69,6 +78,7 @@ public class TeamController {
                 getNameCell.setCellValue(weldStatistics.getDeptName());
             }
 
+            //设备总数
             Cell WelderCountCell=row.createCell(1);
 
             if(ObjectUtils.isEmpty(weldStatistics.getAllCount())){
@@ -78,6 +88,7 @@ public class TeamController {
                 WelderCountCell.setCellValue(weldStatistics.getAllCount());
             }
 
+            //开机设备数
             Cell cellCount2Cell=row.createCell(2);
 
             if(ObjectUtils.isEmpty(weldStatistics.getOnOffCount())){
@@ -87,6 +98,7 @@ public class TeamController {
                 cellCount2Cell.setCellValue(weldStatistics.getOnOffCount());
             }
 
+            //实焊设备数
             Cell count3Cell=row.createCell(3);
 
             if(ObjectUtils.isEmpty(weldStatistics.getRealWeldOnline())){
@@ -96,6 +108,7 @@ public class TeamController {
                 count3Cell.setCellValue(weldStatistics.getRealWeldOnline());
             }
 
+            //未绑定设备数
             Cell count4Cell=row.createCell(4);
 
             if(ObjectUtils.isEmpty(weldStatistics.getNoTaskCount())){
@@ -105,6 +118,7 @@ public class TeamController {
                 count4Cell.setCellValue(weldStatistics.getNoTaskCount());
             }
 
+            //设备利用率
             Cell getUtilizationCell=row.createCell(5);
 
             if(ObjectUtils.isEmpty(weldStatistics.getEquipUtilization())){
@@ -118,6 +132,7 @@ public class TeamController {
             cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
             getUtilizationCell.setCellStyle(cellStyle);
 
+            //焊接任务数
             Cell getCount5Cell=row.createCell(6);
 
             if(ObjectUtils.isEmpty(weldStatistics.getTaskCount())){
@@ -129,6 +144,7 @@ public class TeamController {
 
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
+            //焊接时间
             Cell getTimeCell=row.createCell(7);
 
             if(ObjectUtils.isEmpty(weldStatistics.getRealWeldTime())){
@@ -138,6 +154,7 @@ public class TeamController {
                 getTimeCell.setCellValue(sdf.parse(weldStatistics.getRealWeldTime()));
             }
 
+            //工作时间
             Cell getTime2Cell=row.createCell(8);
 
             if(ObjectUtils.isEmpty(weldStatistics.getOnOffTime())){
@@ -147,51 +164,86 @@ public class TeamController {
                 getTime2Cell.setCellValue(sdf.parse(weldStatistics.getOnOffTime()));
             }
 
-            Cell getTime3Cell=row.createCell(9);
+            //正常焊接时间
+            Cell normalTimeCell = row.createCell(9);
 
             if(ObjectUtils.isEmpty(weldStatistics.getSupergageTime())){
 
-                getTime3Cell.setCellValue("");
+                normalTimeCell.setCellValue("");
             }else{
-                getTime3Cell.setCellValue(sdf.parse(weldStatistics.getSupergageTime()));
+                normalTimeCell.setCellValue(sdf.parse(weldStatistics.getNormalTime()));
             }
 
-            Cell getStandardPercentageCell=row.createCell(10);
+            //焊接效率
+            Cell weldingEfficiencyCell = row.createCell(10);
+
+            if(ObjectUtils.isEmpty(weldStatistics.getWeldingEfficiency())){
+
+                weldingEfficiencyCell.setCellValue("");
+            }else{
+                weldingEfficiencyCell.setCellValue(weldStatistics.getWeldingEfficiency());
+            }
+
+            //超规范时间
+            Cell supergageTimeCell = row.createCell(11);
+
+            if(ObjectUtils.isEmpty(weldStatistics.getSupergageTime())){
+
+                supergageTimeCell.setCellValue("");
+            }else{
+                supergageTimeCell.setCellValue(sdf.parse(weldStatistics.getSupergageTime()));
+            }
+
+            //规范符合率
+            Cell standardPercentageCell = row.createCell(12);
 
             if(ObjectUtils.isEmpty(weldStatistics.getStandardPercentage())){
 
-                getStandardPercentageCell.setCellValue("");
+                standardPercentageCell.setCellValue("");
             }else{
-                getStandardPercentageCell.setCellValue(weldStatistics.getStandardPercentage());
+                standardPercentageCell.setCellValue(weldStatistics.getStandardPercentage());
             }
 
-            Cell getMaterialsConsumptionCell=row.createCell(11);
+            //焊材消耗
+            Cell materialsConsumptionCell = row.createCell(13);
 
             if(ObjectUtils.isEmpty(weldStatistics.getMaterialsConsumption())){
 
-                getMaterialsConsumptionCell.setCellValue("");
+                materialsConsumptionCell.setCellValue("");
             }else{
-                getMaterialsConsumptionCell.setCellValue(weldStatistics.getMaterialsConsumption());
+                materialsConsumptionCell.setCellValue(weldStatistics.getMaterialsConsumption());
             }
 
-            Cell getPowerConsumptionCell=row.createCell(12);
+            //电能消耗
+            Cell powerConsumptionCell = row.createCell(14);
 
             if(ObjectUtils.isEmpty(weldStatistics.getPowerConsumption())){
 
-                getPowerConsumptionCell.setCellValue("");
+                powerConsumptionCell.setCellValue("");
             }else{
-                getPowerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
+                powerConsumptionCell.setCellValue(weldStatistics.getPowerConsumption());
             }
+
         }
+
         try { String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
+
             String fileName= URLEncoder.encode("班组生产数据"+time+".xlsx","UTF-8");
+
             response.setContentType("application/octet-stream");
+
             response.setHeader("content-disposition","attachment;filename="+fileName);
+
             response.setHeader("filename",fileName);
+
             workbook.write(response.getOutputStream());
+
         } catch (Exception e) {
+
             e.printStackTrace();
+            return HttpResult.error("导出失败");
         }
-        return result;
+
+        return HttpResult.ok("导出成功");
     }
 }
