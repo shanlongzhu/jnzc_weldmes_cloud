@@ -9,6 +9,7 @@ import com.gw.process.dispatch.service.TaskClaimService;
 import com.gw.process.solderer.dao.SoldererDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.HashSet;
@@ -83,6 +84,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
      * @Description 插入焊机任务绑定信息
      * @Params taskClaim 焊机任务绑定信息
      */
+    @Transactional
     @Override
     public void addTaskClaimInfo(TaskClaim taskClaim) {
 

@@ -14,7 +14,7 @@
         <result property="initialVolMax" column="initial_vol_max"></result>
         <result property="initialVolMin" column="initial_vol_min"></result>
         <result property="initialWireSpeedMax" column="initial_wire_speed_max"></result>
-        <result property="initialWireSpeedMin" column="initialWireSpeedMin"></result>
+        <result property="initialWireSpeedMin" column="initial_wire_speed_min"></result>
         <result property="weldEleMax" column="weld_ele_max"></result>
         <result property="weldEleMin" column="weld_ele_min"></result>
         <result property="weldVolMax" column="weld_vol_max"></result>
