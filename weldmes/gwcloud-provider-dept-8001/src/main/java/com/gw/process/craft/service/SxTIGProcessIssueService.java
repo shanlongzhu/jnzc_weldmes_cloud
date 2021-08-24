@@ -17,4 +17,32 @@ public interface SxTIGProcessIssueService {
      * @Params
      */
     public List<SxTIGProcessIssue> getSxTIGProcessIssueInfos();
+
+    /**
+     * @Date 2021/8/23 15:38
+     * @Description 松下TIG工艺信息新增
+     * @Params
+     */
+    public void addSxTIGProcessIssueInfo(SxTIGProcessIssue sxTIGProcessIssue);
+
+    /**
+     * @Date 2021/8/23 16:11
+     * @Description 根据 id 查询 松下TIG工艺信息
+     * @Params
+     */
+    public SxTIGProcessIssue getSxTIGProcessIssueInfoById(Long id);
+
+    /**
+     * @Date 2021/8/23 16:23
+     * @Description 修改 松下TIG工艺信息
+     * @Params
+     */
+    public void updateSxTIGProcessIssueInfo(SxTIGProcessIssue sxTIGProcessIssue);
+
+    /**
+     * @Date 2021/8/23 16:52
+     * @Description 删除 松下TIG工艺信息
+     * @Params
+     */
+    public void deleteSxTIGProcessIssueInfo(Long id);
 }

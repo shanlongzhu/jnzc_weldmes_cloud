@@ -31,4 +31,54 @@ public class SxTIGProcessIssueServiceImpl implements SxTIGProcessIssueService {
 
         return list;
     }
+
+    /**
+     * @Date 2021/8/23 15:38
+     * @Description 松下TIG工艺信息新增
+     * @Params
+     */
+    @Override
+    public void addSxTIGProcessIssueInfo(SxTIGProcessIssue sxTIGProcessIssue) {
+
+        sxTIGProcessIssueDao.insertSxTIGProcessIssueInfo(sxTIGProcessIssue);
+
+    }
+
+    /**
+     * @Date 2021/8/23 16:12
+     * @Description 根据 id 查询 松下TIG工艺信息
+     * @Params
+     */
+    @Override
+    public SxTIGProcessIssue getSxTIGProcessIssueInfoById(Long id) {
+
+        SxTIGProcessIssue sxTIGProcessIssue = sxTIGProcessIssueDao.selectSxTIGProcessIssueInfoById(id);
+
+        return sxTIGProcessIssue;
+    }
+
+    /**
+     * @Date 2021/8/23 16:24
+     * @Description 修改 松下TIG工艺信息
+     * @Params
+     */
+    @Override
+    public void updateSxTIGProcessIssueInfo(SxTIGProcessIssue sxTIGProcessIssue) {
+
+        sxTIGProcessIssueDao.updateSxTIGProcessIssueInfo(sxTIGProcessIssue);
+
+    }
+
+    /**
+     * @Date 2021/8/23 16:54
+     * @Description 删除 松下TIG工艺信息
+     * @Params
+     */
+    @Override
+    public void deleteSxTIGProcessIssueInfo(Long id) {
+
+        sxTIGProcessIssueDao.deleteSxTIGProcessIssueInfo(id);
+
+    }
+
 }

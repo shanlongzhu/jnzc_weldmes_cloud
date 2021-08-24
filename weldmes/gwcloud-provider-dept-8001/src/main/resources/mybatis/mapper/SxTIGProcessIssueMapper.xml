@@ -109,5 +109,124 @@
         from sx_tig_process_issue
     </select>
 
+    <!--松下TIG工艺信息新增-->
+    <insert id="insertSxTIGProcessIssueInfo" parameterType="com.gw.entities.SxTIGProcessIssue">
+        insert into sx_tig_process_issue(weld_cid,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+               first_weld_ele_max,first_weld_ele_min,first_weld_vol_max,first_weld_vol_min,second_weld_ele_max,
+               second_weld_ele_min,second_weld_vol_max,second_weld_vol_min,arc_ele_max,arc_ele_min,arc_vol_max,
+               arc_vol_min,peak_weld_ele_max,peak_weld_ele_min,peak_weld_vol_max,peak_weld_vol_min,weld_method,
+               arc_have_not,pulse_have_not,ac_waveform,pulse_rate,pulse_frequency,clean_width,ac_frequency,mix_frequency,
+               mix_ac_rate,pulse_radian,arc_stiffness,hand_weld_thrust,before_aspirated_time,after_stop_gas_time,
+               main_weld_rise_time,main_weld_decline_time,main_weld_rise_radian,main_weld_decline_radian,spot_welding_time,
+               spot_weld_interval_time,spot_weld_rise_time,spot_weld_decline_time,spot_weld_rise_radian,spot_weld_decline_radian,
+               max_channel,now_channel,hand_weld_weld_ele,hand_weld_arc_ele,dcl_initial_ele_max,dcl_initial_ele_min,
+               dcl_weld_ele_max,dcl_weld_ele_min,dcl_second_weld_ele_max,dcl_second_weld_ele_min,dcl_arc_ele_max,
+               dcl_arc_ele_min,start_delay_time,cl_amend_period,oa_initial_ele_max,oa_initial_ele_min,oa_initial_vol_max,
+               oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,oa_second_weld_ele_max,
+               oa_second_weld_ele_min,oa_second_weld_vol_max,oa_second_weld_vol_min,oa_arc_ele_max,oa_arc_ele_min,oa_arc_vol_max,
+               oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time)
+        values(#{sxTIGProcessIssue.weldCid},#{sxTIGProcessIssue.channelNo},#{sxTIGProcessIssue.weldIp},
+            #{sxTIGProcessIssue.initialEleMax},#{sxTIGProcessIssue.initialEleMin},#{sxTIGProcessIssue.initialVolMax},
+            #{sxTIGProcessIssue.initialVolMin},#{sxTIGProcessIssue.firstWeldEleMax},#{sxTIGProcessIssue.firstWeldEleMin},
+            #{sxTIGProcessIssue.firstWeldVolMax},#{sxTIGProcessIssue.firstWeldVolMin},#{sxTIGProcessIssue.secondWeldEleMax},
+            #{sxTIGProcessIssue.secondWeldEleMin},#{sxTIGProcessIssue.secondWeldVolMax},#{sxTIGProcessIssue.secondWeldVolMin},
+            #{sxTIGProcessIssue.arcEleMax},#{sxTIGProcessIssue.arcEleMin},#{sxTIGProcessIssue.arcVolMax},#{sxTIGProcessIssue.arcVolMin},
+            #{sxTIGProcessIssue.peakWeldEleMax},#{sxTIGProcessIssue.peakWeldEleMin},#{sxTIGProcessIssue.peakWeldVolMax},
+            #{sxTIGProcessIssue.peakWeldVolMin},#{sxTIGProcessIssue.weldMethod},
+            #{sxTIGProcessIssue.arcHaveNot},#{sxTIGProcessIssue.pulseHaveNot},#{sxTIGProcessIssue.acWaveform},#{sxTIGProcessIssue.pulseRate},
+            #{sxTIGProcessIssue.pulseFrequency},#{sxTIGProcessIssue.cleanWidth},
+            #{sxTIGProcessIssue.acFrequency},#{sxTIGProcessIssue.mixFrequency},#{sxTIGProcessIssue.mixAcRate},
+            #{sxTIGProcessIssue.pulseRadian},#{sxTIGProcessIssue.arcStiffness},#{sxTIGProcessIssue.handWeldThrust},
+            #{sxTIGProcessIssue.beforeAspiratedTime},#{sxTIGProcessIssue.afterStopGasTime},#{sxTIGProcessIssue.mainWeldRiseTime},
+            #{sxTIGProcessIssue.mainWeldDeclineTime},#{sxTIGProcessIssue.mainWeldRiseRadian},#{sxTIGProcessIssue.mainWeldDeclineRadian},
+            #{sxTIGProcessIssue.spotWeldingTime},#{sxTIGProcessIssue.spotWeldIntervalTime},#{sxTIGProcessIssue.spotWeldRiseTime},
+            #{sxTIGProcessIssue.spotWeldDeclineTime},#{sxTIGProcessIssue.spotWeldRiseRadian},#{sxTIGProcessIssue.spotWeldDeclineRadian},
+            #{sxTIGProcessIssue.maxChannel},#{sxTIGProcessIssue.nowChannel},#{sxTIGProcessIssue.handWeldWeldEle},#{sxTIGProcessIssue.handWeldArcEle},
+            #{sxTIGProcessIssue.dclInitialEleMax},#{sxTIGProcessIssue.dclInitialEleMin},
+            #{sxTIGProcessIssue.dclWeldEleMax},#{sxTIGProcessIssue.dclWeldEleMin},#{sxTIGProcessIssue.dclSecondWeldEleMax},
+            #{sxTIGProcessIssue.dclSecondWeldEleMin},#{sxTIGProcessIssue.dclArcEleMax},#{sxTIGProcessIssue.dclArcEleMin},
+            #{sxTIGProcessIssue.startDelayTime},#{sxTIGProcessIssue.clAmendPeriod},#{sxTIGProcessIssue.oaInitialEleMax},#{sxTIGProcessIssue.oaInitialEleMin},
+            #{sxTIGProcessIssue.oaInitialVolMax},#{sxTIGProcessIssue.oaInitialVolMin},
+            #{sxTIGProcessIssue.oaWeldEleMax},#{sxTIGProcessIssue.oaWeldEleMin},#{sxTIGProcessIssue.oaWeldVolMax},#{sxTIGProcessIssue.oaWeldVolMin},
+            #{sxTIGProcessIssue.oaSecondWeldEleMax},#{sxTIGProcessIssue.oaSecondWeldEleMin},
+            #{sxTIGProcessIssue.oaSecondWeldVolMax},#{sxTIGProcessIssue.oaSecondWeldVolMin},#{sxTIGProcessIssue.oaArcEleMax},
+            #{sxTIGProcessIssue.oaArcEleMin},#{sxTIGProcessIssue.oaArcVolMax},#{sxTIGProcessIssue.oaArcVolMin},
+            #{sxTIGProcessIssue.arcDelayTime},#{sxTIGProcessIssue.alarmDelayTime},#{sxTIGProcessIssue.haltDelayTime},#{sxTIGProcessIssue.haltFreezeTime})
+    </insert>
+
+    <!--根据 id 查询 松下TIG工艺信息-->
+    <select id="selectSxTIGProcessIssueInfoById" parameterType="Long" resultMap="sxTIGMap">
+        select id,weld_cid,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+               first_weld_ele_max,first_weld_ele_min,first_weld_vol_max,first_weld_vol_min,second_weld_ele_max,
+               second_weld_ele_min,second_weld_vol_max,second_weld_vol_min,arc_ele_max,arc_ele_min,arc_vol_max,
+               arc_vol_min,peak_weld_ele_max,peak_weld_ele_min,peak_weld_vol_max,peak_weld_vol_min,weld_method,
+               arc_have_not,pulse_have_not,ac_waveform,pulse_rate,pulse_frequency,clean_width,ac_frequency,mix_frequency,
+               mix_ac_rate,pulse_radian,arc_stiffness,hand_weld_thrust,before_aspirated_time,after_stop_gas_time,
+               main_weld_rise_time,main_weld_decline_time,main_weld_rise_radian,main_weld_decline_radian,spot_welding_time,
+               spot_weld_interval_time,spot_weld_rise_time,spot_weld_decline_time,spot_weld_rise_radian,spot_weld_decline_radian,
+               max_channel,now_channel,hand_weld_weld_ele,hand_weld_arc_ele,dcl_initial_ele_max,dcl_initial_ele_min,
+               dcl_weld_ele_max,dcl_weld_ele_min,dcl_second_weld_ele_max,dcl_second_weld_ele_min,dcl_arc_ele_max,
+               dcl_arc_ele_min,start_delay_time,cl_amend_period,oa_initial_ele_max,oa_initial_ele_min,oa_initial_vol_max,
+               oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,oa_second_weld_ele_max,
+               oa_second_weld_ele_min,oa_second_weld_vol_max,oa_second_weld_vol_min,oa_arc_ele_max,oa_arc_ele_min,oa_arc_vol_max,
+               oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time
+        from sx_tig_process_issue
+        where id = #{id}
+    </select>
+
+    <!--修改 松下TIG工艺信息-->
+    <update id="updateSxTIGProcessIssueInfo" parameterType="com.gw.entities.SxTIGProcessIssue">
+        update sx_tig_process_issue set weld_cid = #{sxTIGProcessIssue.weldCid},channel_no = #{sxTIGProcessIssue.channelNo},
+               weld_ip = #{sxTIGProcessIssue.weldIp},initial_ele_max = #{sxTIGProcessIssue.initialEleMax},
+               initial_ele_min = #{sxTIGProcessIssue.initialEleMin},initial_vol_max = #{sxTIGProcessIssue.initialVolMax},
+               initial_vol_min = #{sxTIGProcessIssue.initialVolMin},first_weld_ele_max = #{sxTIGProcessIssue.firstWeldEleMax},
+               first_weld_ele_min = #{sxTIGProcessIssue.firstWeldEleMin},first_weld_vol_max = #{sxTIGProcessIssue.firstWeldVolMax},
+               first_weld_vol_min = #{sxTIGProcessIssue.firstWeldVolMin},second_weld_ele_max = #{sxTIGProcessIssue.secondWeldEleMax},
+               second_weld_ele_min = #{sxTIGProcessIssue.secondWeldEleMin},
+               second_weld_vol_max = #{sxTIGProcessIssue.secondWeldVolMax},second_weld_vol_min =#{sxTIGProcessIssue.secondWeldVolMin},
+               arc_ele_max = #{sxTIGProcessIssue.arcEleMax},
+               arc_ele_min = #{sxTIGProcessIssue.arcEleMin},arc_vol_max = #{sxTIGProcessIssue.arcVolMax},
+               arc_vol_min = #{sxTIGProcessIssue.arcVolMin},peak_weld_ele_max = #{sxTIGProcessIssue.peakWeldEleMax},
+               peak_weld_ele_min = #{sxTIGProcessIssue.peakWeldEleMin},peak_weld_vol_max = #{sxTIGProcessIssue.peakWeldVolMax},
+               peak_weld_vol_min = #{sxTIGProcessIssue.peakWeldVolMin},weld_method = #{sxTIGProcessIssue.weldMethod},
+               arc_have_not = #{sxTIGProcessIssue.arcHaveNot},pulse_have_not = #{sxTIGProcessIssue.pulseHaveNot},ac_waveform = #{sxTIGProcessIssue.acWaveform},
+               pulse_rate = #{sxTIGProcessIssue.pulseRate},pulse_frequency = #{sxTIGProcessIssue.pulseFrequency},
+               clean_width = #{sxTIGProcessIssue.cleanWidth},ac_frequency = #{sxTIGProcessIssue.acFrequency},mix_frequency = #{sxTIGProcessIssue.mixFrequency},
+               mix_ac_rate = #{sxTIGProcessIssue.mixAcRate},pulse_radian = #{sxTIGProcessIssue.pulseRadian},arc_stiffness = #{sxTIGProcessIssue.arcStiffness},
+               hand_weld_thrust = #{sxTIGProcessIssue.handWeldThrust},before_aspirated_time = #{sxTIGProcessIssue.beforeAspiratedTime},
+               after_stop_gas_time = #{sxTIGProcessIssue.afterStopGasTime},
+               main_weld_rise_time = #{sxTIGProcessIssue.mainWeldRiseTime},main_weld_decline_time = #{sxTIGProcessIssue.mainWeldDeclineTime},
+               main_weld_rise_radian = #{sxTIGProcessIssue.mainWeldRiseRadian},main_weld_decline_radian = #{sxTIGProcessIssue.mainWeldDeclineRadian},
+               spot_welding_time = #{sxTIGProcessIssue.spotWeldingTime},
+               spot_weld_interval_time = #{sxTIGProcessIssue.spotWeldIntervalTime},spot_weld_rise_time = #{sxTIGProcessIssue.spotWeldRiseTime},
+               spot_weld_decline_time = #{sxTIGProcessIssue.spotWeldDeclineTime},spot_weld_rise_radian = #{sxTIGProcessIssue.spotWeldRiseRadian},
+               spot_weld_decline_radian = #{sxTIGProcessIssue.spotWeldDeclineRadian},
+               max_channel = #{sxTIGProcessIssue.maxChannel},now_channel = #{sxTIGProcessIssue.nowChannel},
+               hand_weld_weld_ele = #{sxTIGProcessIssue.handWeldWeldEle},
+               hand_weld_arc_ele = #{sxTIGProcessIssue.handWeldArcEle},dcl_initial_ele_max = #{sxTIGProcessIssue.dclInitialEleMax},
+               dcl_initial_ele_min = #{sxTIGProcessIssue.dclInitialEleMin},
+               dcl_weld_ele_max = #{sxTIGProcessIssue.dclWeldEleMax},dcl_weld_ele_min = #{sxTIGProcessIssue.dclWeldEleMin},
+               dcl_second_weld_ele_max = #{sxTIGProcessIssue.dclSecondWeldEleMax},dcl_second_weld_ele_min = #{sxTIGProcessIssue.dclSecondWeldEleMin},
+               dcl_arc_ele_max = #{sxTIGProcessIssue.dclArcEleMax},
+               dcl_arc_ele_min = #{sxTIGProcessIssue.dclArcEleMin},start_delay_time = #{sxTIGProcessIssue.startDelayTime},
+               cl_amend_period = #{sxTIGProcessIssue.clAmendPeriod},oa_initial_ele_max = #{sxTIGProcessIssue.oaInitialEleMax},
+               oa_initial_ele_min = #{sxTIGProcessIssue.oaInitialEleMin},oa_initial_vol_max = #{sxTIGProcessIssue.oaInitialVolMax},
+               oa_initial_vol_min = #{sxTIGProcessIssue.oaInitialVolMin},oa_weld_ele_max = #{sxTIGProcessIssue.oaWeldEleMax},
+               oa_weld_ele_min = #{sxTIGProcessIssue.oaWeldEleMin},oa_weld_vol_max = #{sxTIGProcessIssue.oaWeldVolMax},
+               oa_weld_vol_min = #{sxTIGProcessIssue.oaWeldVolMin},oa_second_weld_ele_max = #{sxTIGProcessIssue.oaSecondWeldEleMax},
+               oa_second_weld_ele_min = #{sxTIGProcessIssue.oaSecondWeldEleMin},oa_second_weld_vol_max = #{sxTIGProcessIssue.oaSecondWeldVolMax},
+               oa_second_weld_vol_min = #{sxTIGProcessIssue.oaSecondWeldVolMin},
+               oa_arc_ele_max = #{sxTIGProcessIssue.oaArcEleMax},oa_arc_ele_min = #{sxTIGProcessIssue.oaArcEleMin},
+               oa_arc_vol_max = #{sxTIGProcessIssue.oaArcVolMax},
+               oa_arc_vol_min = #{sxTIGProcessIssue.oaArcVolMin},arc_delay_time = #{sxTIGProcessIssue.arcDelayTime},
+               alarm_delay_time = #{sxTIGProcessIssue.alarmDelayTime},halt_delay_time = #{sxTIGProcessIssue.haltDelayTime},
+               halt_freeze_time = #{sxTIGProcessIssue.haltFreezeTime}
+        where id = #{sxTIGProcessIssue.id}
+    </update>
+
+    <!--删除 松下TIG工艺信息-->
+    <delete id="deleteSxTIGProcessIssueInfo" parameterType="Long">
+        delete from sx_tig_process_issue where id = #{id}
+    </delete>
 
 </mapper>
