@@ -23,19 +23,9 @@ public class SxTIGProcessIssue {
     private Long wpsLibraryId;
 
     /**
-     * 设备CID
-     */
-    private String weldCid;
-
-    /**
      * 通道编号
      */
     private String channelNo;
-
-    /**
-     * 焊机IP
-     */
-    private String weldIp;
 
     //预置参数
     /**
