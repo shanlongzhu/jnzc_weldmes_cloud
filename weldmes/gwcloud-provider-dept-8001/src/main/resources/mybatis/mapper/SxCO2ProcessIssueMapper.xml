@@ -7,9 +7,7 @@
     <resultMap id="sxCO2Map" type="com.gw.entities.SxCO2ProcessIssue">
         <id property="id" column="id"></id>
         <result property="wpsLibraryId" column="wps_library_id"></result>
-        <result property="weldCid" column="weld_cid"></result>
         <result property="channelNo" column="channel_no"></result>
-        <result property="weldIp" column="weld_ip"></result>
         <result property="initialEleMax" column="initial_ele_max"></result>
         <result property="initialEleMin" column="initial_ele_min"></result>
         <result property="initialVolMax" column="initial_vol_max"></result>
@@ -78,7 +76,7 @@
 
     <!--松下co2列表查询-->
     <select id="selectSxCO2ProcessIssueInfos" resultMap="sxCO2Map">
-        select id,weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        select id,wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                initial_wire_speed_max,initial_wire_speed_min,weld_ele_max,weld_ele_min,weld_vol_max,weld_vol_min,weld_wire_speed_max,
                weld_wire_speed_min,arc_ele_max,arc_ele_min,arc_vol_max,arc_vol_min,arc_wire_speed_max,arc_wire_speed_min,mode_select,
                welding_control,welding_manner,texture,wire_diameter,gases,wire_feed,check_gas_status,cut_status,lock_status,
@@ -92,7 +90,7 @@
 
     <!--添加松下CO2工艺信息-->
     <insert id="insertSxCO2ProcessIssueInfo" parameterType="com.gw.entities.SxCO2ProcessIssue">
-        insert into sx_co2_process_issue(weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        insert into sx_co2_process_issue(wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                initial_wire_speed_max,initial_wire_speed_min,weld_ele_max,weld_ele_min,weld_vol_max,weld_vol_min,weld_wire_speed_max,
                weld_wire_speed_min,arc_ele_max,arc_ele_min,arc_vol_max,arc_vol_min,arc_wire_speed_max,arc_wire_speed_min,mode_select,
                welding_control,welding_manner,texture,wire_diameter,gases,wire_feed,check_gas_status,cut_status,lock_status,
@@ -101,7 +99,7 @@
                dcl_weld_ele_max,dcl_weld_ele_min,dcl_arc_ele_max,dcl_arc_ele_min,start_delay_time,cl_amend_period,oa_initial_ele_max,
                oa_initial_ele_min,oa_initial_vol_max,oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,
                oa_arc_ale_max,oa_arc_ele_min,oa_arc_vol_max,oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time)
-        values(#{sxCO2ProcessIssue.weldCid},#{sxCO2ProcessIssue.wpsLibraryId},#{sxCO2ProcessIssue.channelNo},#{sxCO2ProcessIssue.weldIp},#{sxCO2ProcessIssue.initialEleMax},
+        values(#{sxCO2ProcessIssue.wpsLibraryId},#{sxCO2ProcessIssue.channelNo},#{sxCO2ProcessIssue.initialEleMax},
                #{sxCO2ProcessIssue.initialEleMin},#{sxCO2ProcessIssue.initialVolMax},#{sxCO2ProcessIssue.initialVolMin},
                #{sxCO2ProcessIssue.initialWireSpeedMax},#{sxCO2ProcessIssue.initialWireSpeedMin},#{sxCO2ProcessIssue.weldEleMax},
                #{sxCO2ProcessIssue.weldEleMin},#{sxCO2ProcessIssue.weldVolMax},#{sxCO2ProcessIssue.weldVolMin},
@@ -128,7 +126,7 @@
 
     <!--根据id查询 松下CO2工艺信息-->
     <select id="selectSxCO2ProcessIssueInfoById" parameterType="Long" resultMap="sxCO2Map">
-        select id,weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        select id,wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                initial_wire_speed_max,initial_wire_speed_min,weld_ele_max,weld_ele_min,weld_vol_max,weld_vol_min,weld_wire_speed_max,
                weld_wire_speed_min,arc_ele_max,arc_ele_min,arc_vol_max,arc_vol_min,arc_wire_speed_max,arc_wire_speed_min,mode_select,
                welding_control,welding_manner,texture,wire_diameter,gases,wire_feed,check_gas_status,cut_status,lock_status,
@@ -143,9 +141,8 @@
 
     <!--根据id 修改 松下CO2工艺信息-->
     <update id="updateSxCO2ProcessIssueInfo">
-        update sx_co2_process_issue set weld_cid = #{sxCO2ProcessIssue.weldCid},wps_library_id = #{sxCO2ProcessIssue.wpsLibraryId}
-               channel_no = #{sxCO2ProcessIssue.channelNo},
-               weld_ip = #{sxCO2ProcessIssue.weldIp},initial_ele_max = #{sxCO2ProcessIssue.initialEleMax},
+        update sx_co2_process_issue set wps_library_id = #{sxCO2ProcessIssue.wpsLibraryId}
+               channel_no = #{sxCO2ProcessIssue.channelNo},initial_ele_max = #{sxCO2ProcessIssue.initialEleMax},
                initial_ele_min = #{sxCO2ProcessIssue.initialEleMin},initial_vol_max = #{sxCO2ProcessIssue.initialVolMax},
                initial_vol_min = #{sxCO2ProcessIssue.initialVolMin},initial_wire_speed_max = #{sxCO2ProcessIssue.initialWireSpeedMax},
                initial_wire_speed_min = #{sxCO2ProcessIssue.initialWireSpeedMin},weld_ele_max = #{sxCO2ProcessIssue.weldEleMax},
