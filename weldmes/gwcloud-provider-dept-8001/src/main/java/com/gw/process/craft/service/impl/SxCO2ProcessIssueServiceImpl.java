@@ -25,9 +25,9 @@ public class SxCO2ProcessIssueServiceImpl implements SxCO2ProcessIssueService {
      * @Params
      */
     @Override
-    public List<SxCO2ProcessIssue> getSxCO2ProcessIssueInfos() {
+    public List<SxCO2ProcessIssue> getSxCO2ProcessIssueInfos(Long wpsLibraryId) {
 
-        List<SxCO2ProcessIssue> list = sxCO2ProcessIssueDao.selectSxCO2ProcessIssueInfos();
+        List<SxCO2ProcessIssue> list = sxCO2ProcessIssueDao.selectSxCO2ProcessIssueInfos(wpsLibraryId);
 
         return list;
     }

@@ -28,11 +28,11 @@ public class SxCO2ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxCO2/getSxCO2ProcessIssueInfos", method = RequestMethod.GET)
-    public HttpResult getSxCO2ProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+    public HttpResult getSxCO2ProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long wpsLibraryId){
 
         PageHelper.startPage(pn,10);
 
-        List<SxCO2ProcessIssue> list = sxCO2ProcessIssueService.getSxCO2ProcessIssueInfos();
+        List<SxCO2ProcessIssue> list = sxCO2ProcessIssueService.getSxCO2ProcessIssueInfos(wpsLibraryId);
 
         PageInfo page=new PageInfo(list,5);
 

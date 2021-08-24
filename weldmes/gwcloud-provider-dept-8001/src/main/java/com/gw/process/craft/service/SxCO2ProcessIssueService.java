@@ -16,7 +16,7 @@ public interface SxCO2ProcessIssueService {
      * @Description 查询列表信息
      * @Params
      */
-    public List<SxCO2ProcessIssue> getSxCO2ProcessIssueInfos();
+    public List<SxCO2ProcessIssue> getSxCO2ProcessIssueInfos(Long wpsLibraryId);
 
     /**
      * @Date 2021/8/19 16:33

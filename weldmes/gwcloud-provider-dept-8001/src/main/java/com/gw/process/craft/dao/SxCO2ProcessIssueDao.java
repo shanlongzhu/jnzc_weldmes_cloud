@@ -19,7 +19,7 @@ public interface SxCO2ProcessIssueDao {
      * @Description 松下co2列表查询
      * @Params
      */
-    public List<SxCO2ProcessIssue> selectSxCO2ProcessIssueInfos();
+    public List<SxCO2ProcessIssue> selectSxCO2ProcessIssueInfos(@Param("wpsLibraryId")Long wpsLibraryId);
 
     /**
      * @Date 2021/8/19 16:34

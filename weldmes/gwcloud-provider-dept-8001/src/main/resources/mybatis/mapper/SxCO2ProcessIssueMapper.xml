@@ -86,6 +86,7 @@
                oa_initial_ele_min,oa_initial_vol_max,oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,
                oa_arc_ale_max,oa_arc_ele_min,oa_arc_vol_max,oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time
         from sx_co2_process_issue
+        where wps_library_id = #{wpsLibraryId}
     </select>
 
     <!--添加松下CO2工艺信息-->
