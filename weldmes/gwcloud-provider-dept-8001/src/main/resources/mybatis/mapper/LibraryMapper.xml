@@ -11,22 +11,15 @@
         <result property="createTime" column="create_time"></result>
         <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
             <id property="id" column="id"></id>
-                <result property="valueName" column="value_name"></result>
+            <result property="valueName" column="value_name"></result>
+            <result property="value" column="value"></result>
         </association>
     </resultMap>
 
     <select id="getList" resultMap="library">
-    select
-    w.id,
-	w.wps_name,
-	w.weld_model,
-	s.value_name,
-	w.create_time
-    from
-	wps_library w,
-	sys_dictionary s
-    where
-	w.weld_model = s.id
+    select w.id,w.wps_name,w.weld_model,s.value_name,w.create_time,s.value
+    from wps_library w,sys_dictionary s
+    where w.weld_model = s.id
     </select>
 
     <insert id="addLibrary" parameterType="com.gw.entities.WpsLibrary">
