@@ -90,3 +90,6 @@ mybatis-plus:
 
 # 清除任务绑定信息（每天7点执行）
 clearTaskBindingByTime: '0 0 7 * * ?'
+
+# 刷卡启用设备功能（默认：true 开启）
+slotCardEnableDevice: true

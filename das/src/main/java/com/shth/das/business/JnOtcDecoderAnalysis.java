@@ -144,6 +144,20 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
                     map.put("JNCommandReturn", commandReturn);
                 }
             }
+            //锁焊机指令返回
+            if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+                final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                if (null != jnLockMachineReturn) {
+                    map.put("JnLockMachineReturn", jnLockMachineReturn);
+                }
+            }
+            //解锁焊机指令返回
+            else if ("7E".equals(str.substring(0, 2)) && "19".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+                final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                if (null != jnLockMachineReturn) {
+                    map.put("JnLockMachineReturn", jnLockMachineReturn);
+                }
+            }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
             return handlerParam;

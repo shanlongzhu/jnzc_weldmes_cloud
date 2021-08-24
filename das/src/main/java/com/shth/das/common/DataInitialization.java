@@ -48,6 +48,10 @@ public class DataInitialization {
      */
     private static int sxNumber = 100;
 
+    /**
+     * 刷卡启用设备功能（默认：true开启）
+     */
+    private static boolean slotCardEnableDevice = true;
 
     @Value("${otcNettyServer.port}")
     private void setOtcPort(int port) {
@@ -127,5 +131,14 @@ public class DataInitialization {
     @Value("${sxStandbySave}")
     private void setSxStandbySave(boolean sxStandbySave) {
         DataInitialization.sxStandbySave = sxStandbySave;
+    }
+
+    public static boolean isSlotCardEnableDevice() {
+        return slotCardEnableDevice;
+    }
+
+    @Value("${slotCardEnableDevice}")
+    private void setSlotCardEnableDevice(boolean slotCardEnableDevice) {
+        DataInitialization.slotCardEnableDevice = slotCardEnableDevice;
     }
 }

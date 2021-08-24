@@ -4,6 +4,7 @@ import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -74,4 +75,11 @@ public class CommonMap {
      * value：任务信息
      */
     public static volatile ConcurrentHashMap<String, TaskClaimIssue> SX_TASK_CLAIM_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * OTC设备锁或解锁焊机失败重试次数保存
+     * String: 采集编号
+     * Map<K,V>:k:控制命令，V：重试次数
+     */
+    public static volatile ConcurrentHashMap<String, Map<Integer, Integer>> OTC_LOCK_FAIL_RETRY_MAP = new ConcurrentHashMap<>();
 }

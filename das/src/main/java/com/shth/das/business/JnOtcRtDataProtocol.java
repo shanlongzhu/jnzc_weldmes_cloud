@@ -12,16 +12,14 @@ import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 江南项目数据解析类
@@ -30,12 +28,59 @@ import java.util.Map;
 public class JnOtcRtDataProtocol {
 
     /**
+     * OTC设备刷卡启用设备功能
+     */
+    private void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
+        //进制转换，长度拼接
+        final String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
+        final Channel channel = ctx.channel();
+        //是否开启（true：开启）
+        if (DataInitialization.isSlotCardEnableDevice()) {
+            try {
+                //判断当前焊机是否已经刷卡（true：刷过卡），刷卡后解锁焊机
+                if (!CommonMap.OTC_TASK_CLAIM_MAP.isEmpty() && CommonMap.OTC_TASK_CLAIM_MAP.containsKey(gatherNo)) {
+                    //总长度：24（解锁焊机指令）
+                    final String str = "007E0A01010119" + gatherno + "00007D";
+                    //判断该焊机通道是否打开、是否活跃、是否可写
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        channel.writeAndFlush(str).sync();
+                    }
+                }
+                //没有刷卡，锁定焊机
+                else {
+                    //总长度：24（锁焊机指令）
+                    final String str = "007E0A01010118" + gatherno + "00007D";
+                    //判断该焊机通道是否打开、是否活跃、是否可写
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        channel.writeAndFlush(str).sync();
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                //总长度：24（解锁焊机指令）
+                final String str = "007E0A01010119" + gatherno + "00007D";
+                //判断该焊机通道是否打开、是否活跃、是否可写
+                if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(str).sync();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * 采集盒IP地址盒采集编号绑定
      */
     private void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
         //判断map集合是否有，没有则新增
         if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
             CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
+            //刷卡领任务功能判断
+            this.slotCardEnableDevice(ctx, gatherNo);
             try {
                 OtcMachineQueue otcMachineSaveQueue = new OtcMachineQueue();
                 otcMachineSaveQueue.setWeldTime(DateTimeUtils.getNowDateTime());
@@ -67,9 +112,8 @@ public class JnOtcRtDataProtocol {
                 if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
-                    final ChannelHandlerContext ctx = handlerParam.getCtx();
                     //采集盒IP地址盒采集编号绑定
-                    this.gatherNoIpBinding(clientIp, ctx, gatherNo);
+                    this.gatherNoIpBinding(clientIp, handlerParam.getCtx(), gatherNo);
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                     //通过mqtt发送到服务端
@@ -131,11 +175,12 @@ public class JnOtcRtDataProtocol {
     /**
      * 密码返回和控制命令返回
      *
-     * @param handlerParam
+     * @param handlerParam 入参
      */
     public void otcPwdCmdReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
-            Map<String, Object> map = handlerParam.getValue();
+            final Map<String, Object> map = handlerParam.getValue();
+            final ChannelHandlerContext ctx = handlerParam.getCtx();
             //密码返回
             if (map.containsKey("JNPasswordReturn")) {
                 JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
@@ -154,6 +199,69 @@ public class JnOtcRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.commandReturn.name(), message, 0);
                 }
             }
+            //锁焊机或者解锁焊机返回
+            if (map.containsKey("JnLockMachineReturn")) {
+                final JnLockMachineReturn jnLockMachineReturn = (JnLockMachineReturn) map.get("JnLockMachineReturn");
+                if (null != jnLockMachineReturn) {
+                    //采集编号
+                    final String gatherNo = jnLockMachineReturn.getGatherNo();
+                    //控制命令：（18：锁焊机，19：解锁焊机）
+                    final int command = jnLockMachineReturn.getCommand();
+                    //接收结果:1 失败（失败进行重试）
+                    if (jnLockMachineReturn.getResult() == 1) {
+                        //判断是否有当前设备（true：增加重试次数）
+                        if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
+                            final Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
+                            if (otcLockMap.containsKey(command)) {
+                                //得到重试次数
+                                Integer numOfRetries = otcLockMap.get(command);
+                                if (numOfRetries < 3) {
+                                    numOfRetries++;
+                                    otcLockMap.put(command, numOfRetries);
+                                    //锁焊机或解锁焊机再次下行
+                                    otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
+                                }
+                            }
+                            //没有直接新增一个
+                            else {
+                                otcLockMap.put(command, 1);
+                                CommonMap.OTC_LOCK_FAIL_RETRY_MAP.put(gatherNo, otcLockMap);
+                                //锁焊机或解锁焊机再次下行
+                                otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
+                            }
+                        }
+                        //没有直接新增一个
+                        else {
+                            Map<Integer, Integer> otcLockMap = new HashMap<>();
+                            otcLockMap.put(command, 1);
+                            CommonMap.OTC_LOCK_FAIL_RETRY_MAP.put(gatherNo, otcLockMap);
+                            //锁焊机或解锁焊机再次下行
+                            otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 锁焊机或者解锁焊机重试
+     *
+     * @param gatherNo 采集编号(10进制)
+     * @param command  控制命令
+     * @param channel  通道
+     */
+    private void otcLockMachineRetries(String gatherNo, String command, Channel channel) {
+        try {
+            gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
+            //总长度：24（解锁焊机指令）
+            final String str = "007E0A010101" + command + gatherNo + "00007D";
+            //判断该焊机通道是否打开、是否活跃、是否可写
+            if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                channel.writeAndFlush(str).sync();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -604,6 +712,28 @@ public class JnOtcRtDataProtocol {
             commandReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
             commandReturn.setFlag(Integer.valueOf(str.substring(16, 18)));
             return commandReturn;
+        }
+        return null;
+    }
+
+    /**
+     * 锁焊机和解锁焊机指令返回协议解析
+     *
+     * @param str 16进制字符串
+     * @return 锁焊机和解锁焊机指令返回
+     */
+    public JnLockMachineReturn jnLockMachineReturnAnalysis(String str) {
+        if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
+            try {
+                JnLockMachineReturn jnLockMachineReturn = new JnLockMachineReturn();
+                jnLockMachineReturn.setCommand(Integer.parseInt(str.substring(10, 12)));
+                jnLockMachineReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
+                jnLockMachineReturn.setResult(Integer.valueOf(str.substring(16, 18), 16));
+                return jnLockMachineReturn;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
         return null;
     }
