@@ -207,8 +207,14 @@ public class JnOtcRtDataProtocol {
                     final String gatherNo = jnLockMachineReturn.getGatherNo();
                     //控制命令：（18：锁焊机，19：解锁焊机）
                     final int command = jnLockMachineReturn.getCommand();
+                    //接收结果:0 成功（如果成功，删除重试次数）
+                    if (jnLockMachineReturn.getResult() == 0) {
+                        if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
+                            CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo).remove(command);
+                        }
+                    }
                     //接收结果:1 失败（失败进行重试）
-                    if (jnLockMachineReturn.getResult() == 1) {
+                    else if (jnLockMachineReturn.getResult() == 1) {
                         //判断是否有当前设备（true：增加重试次数）
                         if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
                             final Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
