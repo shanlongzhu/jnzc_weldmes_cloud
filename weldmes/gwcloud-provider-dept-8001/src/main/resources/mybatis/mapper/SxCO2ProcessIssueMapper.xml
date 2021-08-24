@@ -141,7 +141,7 @@
 
     <!--根据id 修改 松下CO2工艺信息-->
     <update id="updateSxCO2ProcessIssueInfo">
-        update sx_co2_process_issue set wps_library_id = #{sxCO2ProcessIssue.wpsLibraryId}
+        update sx_co2_process_issue set wps_library_id = #{sxCO2ProcessIssue.wpsLibraryId},
                channel_no = #{sxCO2ProcessIssue.channelNo},initial_ele_max = #{sxCO2ProcessIssue.initialEleMax},
                initial_ele_min = #{sxCO2ProcessIssue.initialEleMin},initial_vol_max = #{sxCO2ProcessIssue.initialVolMax},
                initial_vol_min = #{sxCO2ProcessIssue.initialVolMin},initial_wire_speed_max = #{sxCO2ProcessIssue.initialWireSpeedMax},
