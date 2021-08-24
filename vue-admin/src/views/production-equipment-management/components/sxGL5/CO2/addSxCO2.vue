@@ -1227,11 +1227,11 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getTeam, getDictionaries, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
+import { getTeam, getDictionaries, getProcesLibraryChildDetail, getChannNos, addProcesLibraryChild, editProcesLibraryChild,addSxCo2Tech,getSxCo2TechDetail,editSxCo2TechDetail} from '_api/productionProcess/process'
 
 import { getWelderList } from '_api/productionEquipment/production'
 export default {
-    name: 'SxCO2',
+    name: 'addSxCO2',
     props: {},
     data () {
         return {
@@ -1255,7 +1255,8 @@ export default {
             ruleForm2: {
                 //松下co2工艺
                 channelNo: '',//通道编号
-                weldIp: '',//下发的焊机IP
+                // weldIp: '',//下发的焊机IP
+                // weldCid: "2",
 
                 //*** 预置参数 */
                 initialEleMax: 0,//初期电流上限
@@ -1653,48 +1654,49 @@ export default {
                 },   
             ],
             //通道号下拉            
-            channelNoArr: [
+            channelNoSourceArr: [
                 {
-                    id: 0,
+                    id: '0',
                     valueName: '通道1'
                 },
                 {
-                    id: 1,
+                    id: '1',
                     valueName: '通道2'
                 },
                 {
-                    id: 2,
+                    id: '2',
                     valueName: '通道3'
                 },
                 {
-                    id: 3,
+                    id: '3',
                     valueName: '通道4'
                 },
                 {
-                    id: 4,
+                    id: '4',
                     valueName: '通道5'
                 },
                 {
-                    id: 5,
+                    id: '5',
                     valueName: '通道6'
                 },
                 {
-                    id: 6,
+                    id: '6',
                     valueName: '通道7'
                 },
                 {
-                    id: 7,
+                    id: '7',
                     valueName: '通道8'
                 },
                 {
-                    id: 8,
+                    id: '8',
                     valueName: '通道9'
                 },
                 {
-                    id: 9,
+                    id: '9',
                     valueName: '通道10'
                 },
             ],
+            channelNoArr:[],
 
 
             
@@ -1839,15 +1841,12 @@ export default {
             this.ruleForm2 = { ...this.ruleFormObj2 };
             //获取已使用的通道
             let res = await getChannNos({ id: obj.parentId });
-            let { data, code } = await getProcesLibraryChildDetail(obj.id);
+            let { data, code } = await getSxCo2TechDetail({id:obj.id});
             if (code == 200) {
                 this.visable2 = true;
                 this.$nextTick(() => {
                     this.$refs.ruleForm2.resetFields();
-                    this.ruleForm2 = data[0] || {};
-                    this.ruleForm2.initialCondition = this.ruleForm2.initialCondition ? true : false;
-                    this.ruleForm2.fusionControl = this.ruleForm2.fusionControl ? true : false;
-                    this.ruleForm2.softArcSchema = this.ruleForm2.softArcSchema ? true : false;
+                    this.ruleForm2 = data || {};
                     this.channelNoArr = this.channelNoSourceArr.filter(item => !res.data.includes(item.id) || item.id == this.ruleForm2.channelNo);
                 })
             }
@@ -1888,11 +1887,8 @@ export default {
         // 新增/编辑提交工艺
         async submitLibary (vData) {
             const req = { ...vData }
-            req.initialCondition = req.initialCondition ? 1 : 0;
-            req.fusionControl = req.fusionControl ? 1 : 0;
-            req.softArcSchema = req.softArcSchema ? 1 : 0;
             if (req.hasOwnProperty('id')) {
-                const { data, code } = await editProcesLibraryChild(req)
+                const { data, code } = await editSxCo2TechDetail(req)
                 if (code == 200) {
                     this.$message.success('修改成功')
                     console.log(this.$refs.addTech)
@@ -1900,7 +1896,7 @@ export default {
                     this.$parent.getList()
                 }
             } else {
-                const { data, code } = await addProcesLibraryChild(req);
+                const { data, code } = await addSxCo2Tech(req);
                 if (code == 200) {
                     this.$message.success('新增成功')
                     this.visable2 = false

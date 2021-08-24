@@ -296,3 +296,101 @@ export function delProcesLibraryChild(params) {
     params
   });
 }
+
+
+
+//获取松下CO2工艺列表
+export function getSxCo2TechList(params){
+  return request({
+    url: `/sxCO2/getSxCO2ProcessIssueInfos`,
+    method: "get",
+    params
+  });
+}
+
+//新增松下CO2工艺
+export function addSxCo2Tech(data){
+  return request({
+    url: `/sxCO2/addSxCO2ProcessIssueInfo`,
+    method: "post",
+    data
+  });
+}
+
+
+//获取松下CO2工艺详情
+export function getSxCo2TechDetail(params){
+  return request({
+    url: `/sxCO2/getSxCO2ProcessIssueInfoById`,
+    method: "get",
+    params
+  });
+}
+
+//修改松下CO2工艺详情
+export function editSxCo2TechDetail(data){
+  return request({
+    url: `/sxCO2/updateSxCO2ProcessIssueInfo`,
+    method: "put",
+    data
+  });
+}
+
+
+//删除松下CO2工艺
+export function delSxCo2TechDetail(params){
+  return request({
+    url: `/sxCO2/deleteSxCO2ProcessIssueInfoById`,
+    method: "delete",
+    params
+  });
+}
+
+
+
+//获取松下TIG工艺列表
+export function getSxTIGTechList(params){
+  return request({
+    url: `/sxTIG/getSxTIGProcessIssueInfos`,
+    method: "get",
+    params
+  });
+}
+
+//新增松下TIG工艺
+export function addSxTIGTech(data){
+  return request({
+    url: `/sxTIG/addSxTIGProcessIssueInfo`,
+    method: "post",
+    data
+  });
+}
+
+
+//获取松下TIG工艺详情
+export function getSxTIGTechDetail(params){
+  return request({
+    url: `/sxTIG/getSxTIGProcessIssueInfoById`,
+    method: "get",
+    params
+  });
+}
+
+//修改松下TIG工艺详情
+export function editSxTIGTechDetail(data){
+  return request({
+    url: `/sxTIG/updateSxTIGProcessIssueInfo`,
+    method: "put",
+    data
+  });
+}
+
+
+//删除松下TIG工艺
+export function delSxTIGTechDetail(params){
+  return request({
+    url: `/sxTIG/deleteSxTIGProcessIssueInfo`,
+    method: "delete",
+    params
+  });
+}

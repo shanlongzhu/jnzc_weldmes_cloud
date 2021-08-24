@@ -56,8 +56,24 @@
                     width="60"
                 >
                     <template #content="{ row }">
-                        <expand-table
+                        <expandTableCo2
+                            v-if="row.sysDictionary.value==5"
                             :id="row.id"
+                            :modelType="row.sysDictionary.value"
+                            @editDetail="editDetailFunCo2"
+                            @reload="getList"
+                        ></expandTableCo2>
+                        <expandTableTIG
+                            v-else-if="row.sysDictionary.value==4"
+                            :id="row.id"
+                            :modelType="row.sysDictionary.value"
+                            @editDetail="editDetailFunTIG"
+                            @reload="getList"
+                        ></expandTableTIG>
+                        <expand-table
+                            v-else
+                            :id="row.id"
+                            :modelType="row.sysDictionary.value"
                             @editDetail="editDetailFun"
                             @reload="getList"
                         ></expand-table>
@@ -67,9 +83,7 @@
                     field="wpsName"
                     title="工艺名称"
                 >
-                    <template
-                        slot="header"
-                    >
+                    <template slot="header">
                         <span>工艺名称</span><span class="red-star">*</span>
                     </template>
                 </vxe-table-column>
@@ -80,9 +94,7 @@
                     <template #default={row}>
                         {{row.sysDictionary.valueName}}
                     </template>
-                    <template
-                        slot="header"
-                    >
+                    <template slot="header">
                         <span>焊机型号</span><span class="red-star">*</span>
                     </template>
                 </vxe-table-column>
@@ -216,11 +228,15 @@
         </el-dialog>
         <!-- 工艺明细 -->
         <add-tech ref="addTech"></add-tech>
+        <!-- 松下 co2工艺新增 -->
+        <addSxCO2 ref="SxCO2"></addSxCO2>
+        <addSxTIG ref="SxTIG"></addSxTIG>
+
         <!-- 工艺库下发 -->
         <issue-orders ref="issueOrdersRef"></issue-orders>
-        <!-- 松下 co2工艺 -->
-        <sxco2 ref="SxCO2"></sxco2>
-        <sxTIG ref="SxTIG"></sxTIG>
+        <issueOrdersCo2 ref="issueOrdersCo2"></issueOrdersCo2>
+        <issueOrdersTIG ref="issueOrdersTIG"></issueOrdersTIG>
+        
     </div>
 </template>
 
@@ -228,14 +244,23 @@
 import { getDictionaries, getProcesLibraryList, getProcesLibraryDetail, delProcesLibrary, editProcesLibrary, addProcesLibrary, addProcesLibraryChild, editProcesLibraryChild } from '_api/productionProcess/process'
 import { getWeldingModel } from '_api/productionEquipment/production'
 import expandTable from './components/expandTable.vue';
-// otc500工艺
+//GL5-Co2展开表格
+import expandTableCo2 from './components/sxGL5/CO2/expandTableCo2'
+//GL5-TIG展开表格
+import expandTableTIG from './components/sxGL5/TIG/expandTableTIG'
+
+//新增工艺
 import AddTech from './components/addTech.vue';
+import addSxTIG from './components/sxGL5/TIG/addSxTIG'
+import addSxCO2 from './components/sxGL5/CO2/addSxCO2'
+
+//工艺下发
 import IssueOrders from './components/issueOrders.vue';
-import sxco2 from './components/SxCO2.vue';
-import sxTIG from './components/sxTIG.vue';
+import issueOrdersCo2 from './components/sxGL5/CO2/issueOrdersCo2';
+import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG'
 
 export default {
-    components: { expandTable, AddTech, IssueOrders, sxco2, sxTIG },
+    components: { expandTable, AddTech, IssueOrders, addSxCO2, addSxTIG, expandTableCo2, expandTableTIG,issueOrdersCo2,issueOrdersTIG },
     data () {
         return {
             visable1: false,
@@ -282,7 +307,21 @@ export default {
     },
     methods: {
         async issueOrders (row) {
-            this.$refs.issueOrdersRef.init(row);
+            
+            switch (row.sysDictionary.value) {
+                case '5':
+                    this.$refs.issueOrdersCo2.init(row);
+                    break;
+                case '4':
+                    this.$refs.issueOrdersTIG.init(row);
+                    break;
+                default:
+                    this.$refs.issueOrdersRef.init(row);
+                    break;
+            }
+
+
+            
         },
 
         //获取数据字典
@@ -406,11 +445,11 @@ export default {
         //新增工艺
         addLibraryFun (row) {
             console.log(row)
-            switch (row.sysDictionary.valueName) {
-                case 'SxCO2':
+            switch (row.sysDictionary.value) {
+                case '5':
                     this.$refs.SxCO2.addLibraryFun(row.id);
                     break;
-                case 'SxTIG':
+                case '4':
                     this.$refs.SxTIG.addLibraryFun(row.id);
                     break;
                 default:
@@ -424,6 +463,13 @@ export default {
         async editDetailFun (obj) {
             this.$refs.addTech.editDetailFun(obj);
         },
+        async editDetailFunCo2 (obj) {
+            this.$refs.SxCO2.editDetailFun(obj);
+        },
+        async editDetailFunTIG (obj) {
+            this.$refs.SxTIG.editDetailFun(obj);
+        },
+
     }
 }
 </script>
