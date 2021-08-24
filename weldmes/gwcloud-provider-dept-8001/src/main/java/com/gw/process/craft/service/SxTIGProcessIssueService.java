@@ -16,7 +16,7 @@ public interface SxTIGProcessIssueService {
      * @Description 查询松下TIG列表信息
      * @Params
      */
-    public List<SxTIGProcessIssue> getSxTIGProcessIssueInfos();
+    public List<SxTIGProcessIssue> getSxTIGProcessIssueInfos(Long wpsLibraryId);
 
     /**
      * @Date 2021/8/23 15:38

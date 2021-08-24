@@ -19,7 +19,7 @@ public interface SxTIGProcessIssueDao {
      * @Description 查询松下TIG列表信息
      * @Params
      */
-    public List<SxTIGProcessIssue> selectSxTIGProcessIssueInfos();
+    public List<SxTIGProcessIssue> selectSxTIGProcessIssueInfos(@Param("wpsLibraryId")Long wpsLibraryId);
 
     /**
      * @Date 2021/8/23 15:39

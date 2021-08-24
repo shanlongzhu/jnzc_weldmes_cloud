@@ -28,11 +28,11 @@ public class SxTIGProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxTIG/getSxTIGProcessIssueInfos",method = RequestMethod.GET)
-    public HttpResult getSxTIGProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+    public HttpResult getSxTIGProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long wpsLibraryId){
 
         PageHelper.startPage(pn,10);
 
-        List<SxTIGProcessIssue> list = sxTIGProcessIssueService.getSxTIGProcessIssueInfos();
+        List<SxTIGProcessIssue> list = sxTIGProcessIssueService.getSxTIGProcessIssueInfos(wpsLibraryId);
 
         PageInfo page=new PageInfo(list,5);
 

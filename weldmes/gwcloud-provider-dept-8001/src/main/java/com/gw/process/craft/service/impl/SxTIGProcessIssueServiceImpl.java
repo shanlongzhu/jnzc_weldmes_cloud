@@ -25,9 +25,9 @@ public class SxTIGProcessIssueServiceImpl implements SxTIGProcessIssueService {
      * @Params
      */
     @Override
-    public List<SxTIGProcessIssue> getSxTIGProcessIssueInfos() {
+    public List<SxTIGProcessIssue> getSxTIGProcessIssueInfos(Long wpsLibraryId) {
 
-        List<SxTIGProcessIssue> list = sxTIGProcessIssueDao.selectSxTIGProcessIssueInfos();
+        List<SxTIGProcessIssue> list = sxTIGProcessIssueDao.selectSxTIGProcessIssueInfos(wpsLibraryId);
 
         return list;
     }

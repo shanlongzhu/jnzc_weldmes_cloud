@@ -106,6 +106,7 @@
                oa_second_weld_ele_min,oa_second_weld_vol_max,oa_second_weld_vol_min,oa_arc_ele_max,oa_arc_ele_min,oa_arc_vol_max,
                oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time
         from sx_tig_process_issue
+        where wps_library_id = #{wpsLibraryId}
     </select>
 
     <!--松下TIG工艺信息新增-->
