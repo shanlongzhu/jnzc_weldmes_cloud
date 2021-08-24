@@ -15,6 +15,7 @@ import java.util.List;
  * @Date 2021/8/18 10:09
  * @Description 松下CO2工艺控制器
  */
+@CrossOrigin
 @RestController
 public class SxCO2ProcessIssueController {
 

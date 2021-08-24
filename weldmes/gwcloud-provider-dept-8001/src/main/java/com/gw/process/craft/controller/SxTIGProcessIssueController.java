@@ -15,6 +15,7 @@ import java.util.List;
  * @Date 2021/8/19 11:00
  * @Description 松下TIG工艺控制器
  */
+@CrossOrigin
 @RestController
 public class SxTIGProcessIssueController {
 
