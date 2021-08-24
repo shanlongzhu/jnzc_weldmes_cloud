@@ -7,9 +7,7 @@
     <resultMap id="sxTIGMap" type="com.gw.entities.SxTIGProcessIssue">
         <id property="id" column="id"></id>
         <result property="wpsLibraryId" column="wps_library_id"></result>
-        <result property="weldCid" column="weld_cid"></result>
         <result property="channelNo" column="channel_no"></result>
-        <result property="weldIp" column="weld_ip"></result>
         <result property="initialEleMax" column="initial_ele_max"></result>
         <result property="initialEleMin" column="initial_ele_min"></result>
         <result property="initialVolMax" column="initial_vol_max"></result>
@@ -93,7 +91,7 @@
 
     <!--查询松下TIG列表信息-->
     <select id="selectSxTIGProcessIssueInfos" resultMap="sxTIGMap">
-        select id,weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        select id,wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                first_weld_ele_max,first_weld_ele_min,first_weld_vol_max,first_weld_vol_min,second_weld_ele_max,
                second_weld_ele_min,second_weld_vol_max,second_weld_vol_min,arc_ele_max,arc_ele_min,arc_vol_max,
                arc_vol_min,peak_weld_ele_max,peak_weld_ele_min,peak_weld_vol_max,peak_weld_vol_min,weld_method,
@@ -112,7 +110,7 @@
 
     <!--松下TIG工艺信息新增-->
     <insert id="insertSxTIGProcessIssueInfo" parameterType="com.gw.entities.SxTIGProcessIssue">
-        insert into sx_tig_process_issue(weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        insert into sx_tig_process_issue(wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                first_weld_ele_max,first_weld_ele_min,first_weld_vol_max,first_weld_vol_min,second_weld_ele_max,
                second_weld_ele_min,second_weld_vol_max,second_weld_vol_min,arc_ele_max,arc_ele_min,arc_vol_max,
                arc_vol_min,peak_weld_ele_max,peak_weld_ele_min,peak_weld_vol_max,peak_weld_vol_min,weld_method,
@@ -126,7 +124,7 @@
                oa_initial_vol_min,oa_weld_ele_max,oa_weld_ele_min,oa_weld_vol_max,oa_weld_vol_min,oa_second_weld_ele_max,
                oa_second_weld_ele_min,oa_second_weld_vol_max,oa_second_weld_vol_min,oa_arc_ele_max,oa_arc_ele_min,oa_arc_vol_max,
                oa_arc_vol_min,arc_delay_time,alarm_delay_time,halt_delay_time,halt_freeze_time)
-        values(#{sxTIGProcessIssue.weldCid},#{sxTIGProcessIssue.wpsLibraryId},#{sxTIGProcessIssue.channelNo},#{sxTIGProcessIssue.weldIp},
+        values(#{sxTIGProcessIssue.wpsLibraryId},#{sxTIGProcessIssue.channelNo},
             #{sxTIGProcessIssue.initialEleMax},#{sxTIGProcessIssue.initialEleMin},#{sxTIGProcessIssue.initialVolMax},
             #{sxTIGProcessIssue.initialVolMin},#{sxTIGProcessIssue.firstWeldEleMax},#{sxTIGProcessIssue.firstWeldEleMin},
             #{sxTIGProcessIssue.firstWeldVolMax},#{sxTIGProcessIssue.firstWeldVolMin},#{sxTIGProcessIssue.secondWeldEleMax},
@@ -157,7 +155,7 @@
 
     <!--根据 id 查询 松下TIG工艺信息-->
     <select id="selectSxTIGProcessIssueInfoById" parameterType="Long" resultMap="sxTIGMap">
-        select id,weld_cid,wps_library_id,channel_no,weld_ip,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
+        select id,wps_library_id,channel_no,initial_ele_max,initial_ele_min,initial_vol_max,initial_vol_min,
                first_weld_ele_max,first_weld_ele_min,first_weld_vol_max,first_weld_vol_min,second_weld_ele_max,
                second_weld_ele_min,second_weld_vol_max,second_weld_vol_min,arc_ele_max,arc_ele_min,arc_vol_max,
                arc_vol_min,peak_weld_ele_max,peak_weld_ele_min,peak_weld_vol_max,peak_weld_vol_min,weld_method,
@@ -177,9 +175,8 @@
 
     <!--修改 松下TIG工艺信息-->
     <update id="updateSxTIGProcessIssueInfo" parameterType="com.gw.entities.SxTIGProcessIssue">
-        update sx_tig_process_issue set weld_cid = #{sxTIGProcessIssue.weldCid},wps_library_id = #{sxTIGProcessIssue.wpsLibraryId}
-               channel_no = #{sxTIGProcessIssue.channelNo},
-               weld_ip = #{sxTIGProcessIssue.weldIp},initial_ele_max = #{sxTIGProcessIssue.initialEleMax},
+        update sx_tig_process_issue set wps_library_id = #{sxTIGProcessIssue.wpsLibraryId},
+               channel_no = #{sxTIGProcessIssue.channelNo},initial_ele_max = #{sxTIGProcessIssue.initialEleMax},
                initial_ele_min = #{sxTIGProcessIssue.initialEleMin},initial_vol_max = #{sxTIGProcessIssue.initialVolMax},
                initial_vol_min = #{sxTIGProcessIssue.initialVolMin},first_weld_ele_max = #{sxTIGProcessIssue.firstWeldEleMax},
                first_weld_ele_min = #{sxTIGProcessIssue.firstWeldEleMin},first_weld_vol_max = #{sxTIGProcessIssue.firstWeldVolMax},
