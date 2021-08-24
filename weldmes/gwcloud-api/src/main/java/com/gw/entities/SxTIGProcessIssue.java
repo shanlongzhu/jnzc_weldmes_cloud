@@ -18,6 +18,11 @@ public class SxTIGProcessIssue {
     private Long id;
 
     /**
+     * 工艺库id
+     */
+    private Long wpsLibraryId;
+
+    /**
      * 设备CID
      */
     private String weldCid;
