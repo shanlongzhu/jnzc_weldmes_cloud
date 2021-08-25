@@ -11,6 +11,7 @@ import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +38,25 @@ public class JnSxRtDataProtocol {
             if (!CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
                 CommonMap.SX_CTX_WELD_INFO_MAP.put(ctx, sxWeldModel);
             }
+            //判断新连接的松下设备是否已经刷卡领任务（true：已经刷过卡则解锁）
+            if (CommonFunction.isSlotCardEnableDevice() && CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
+                //true:已经刷过卡的设备（解锁该焊机）
+                if (CommonMap.SX_TASK_CLAIM_MAP.containsKey(sxWeldModel.getWeldCid())) {
+                    //0:解锁
+                    sxChannelSetLock(sxWeldModel.getWeldCid(), 0);
+                }
+                //没有刷卡，则锁定该焊机
+                else {
+                    //1:锁定
+                    sxChannelSetLock(sxWeldModel.getWeldCid(), 1);
+                }
+            }
+            //添加到松下设备阻塞队列，存储到数据库
+            try {
+                CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             //设备存储到松下开机阻塞队列
             try {
                 if (CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
@@ -49,12 +69,34 @@ public class JnSxRtDataProtocol {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //添加到松下设备阻塞队列，存储到数据库
-            try {
-                CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
-            } catch (Exception e) {
-                e.printStackTrace();
+        }
+    }
+
+    /**
+     * 松下焊接通道设定（锁定或解锁）
+     *
+     * @param weldCid  设备CID
+     * @param function 0：解锁，1：锁定
+     */
+    private void sxChannelSetLock(String weldCid, int function) {
+        try {
+            final SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
+            sxWeldChannelSetting.setWeldCid(weldCid);
+            sxWeldChannelSetting.setFunction(function);
+            sxWeldChannelSetting.setReadWriteFlag(2);
+            sxWeldChannelSetting.setChannelSelect(0);
+            final String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+            if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
+                if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
+                    final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
+                    //判断该焊机通道是否打开、是否活跃、是否可写
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        channel.writeAndFlush(str).sync();
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

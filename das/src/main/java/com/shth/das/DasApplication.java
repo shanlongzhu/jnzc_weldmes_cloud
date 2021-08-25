@@ -33,6 +33,8 @@ public class DasApplication implements CommandLineRunner {
     public void run(String... args) {
         //emq客户端启动，连接服务端
         emqMqttClient.start();
+        //启动所有任务
+        powerBootJob.startAllJob();
         //判断OTC的ip和松下ip是否相同（true：同一个服务器启动）
         if (CommonFunction.getOtcIp().equals(CommonFunction.getSxIp())) {
             //true:同一个端口启动一次
@@ -53,8 +55,6 @@ public class DasApplication implements CommandLineRunner {
             //松下服务端启动
             nettyServer.start(CommonFunction.getSxPort());
         }
-        //启动所有任务
-        powerBootJob.startAllJob();
     }
 
     public static void main(String[] args) {
