@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-24 18:27:55
+ * @LastEditTime: 2021-08-25 13:56:45
 -->
 
 <template>
@@ -35,214 +35,109 @@
                         width="60"
                     ></vxe-table-column>
                     <vxe-table-column
+                        type="seq"
+                        width="70"
+                        title="序号TIG"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
                         field="channelNo"
                         title="通道号"
                         min-width="60"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="initialCondition"
-                        title="初期条件"
-                        min-width="70"
-                    >
-                        <template #default="{row}">
-                            {{row.initialCondition?'是':'否'}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="fusionControl"
-                        title="熔深控制"
-                        min-width="70"
-                    >
-                        <template #default="{row}">
-                            {{row.fusionControl?'是':'否'}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="unitarySeveral"
-                        title="一元/个别"
-                        min-width="80"
-                    >
-                        <template #default="{row}">
-                            {{row.unitarySeveral?'个别':'一元'}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="controlArc"
-                        title="收弧"
-                        min-width="70"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueName}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="arcCharacter"
-                        title="电弧特性"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="softArcSchema"
-                        title="柔软电弧模式"
-                        min-width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.softArcSchema?'是':'否'}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="weldingStickTexture"
-                        title="焊丝材质"
-                        min-width="90"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNames}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="gases"
-                        title="气体"
-                        min-width="60"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamess}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="weldingStickDiameter"
-                        title="焊丝直径"
-                        min-width="70"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamesss}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="weldingProcess"
-                        title="焊接过程"
-                        min-width="70"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamessss}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="spotWeldingTime"
-                        title="点焊时间"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="inAdvanceAspirated"
-                        title="提前送气"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="hysteresisAspirated"
-                        title="滞后送气"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="initialEle"
-                        title="初期电流"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="initialVol"
-                        title="初期电压"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="initialVolUnitary"
-                        title="初期电压一元"
+                        field="initialEleMax"
+                        title="初期电流上限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="weldingEle"
-                        title="焊接电流"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="weldingVol"
-                        title="焊接电压"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="weldingVolUnitary"
-                        title="焊接电压一元"
+                        field="initialEleMin"
+                        title="初期电流下限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="arcEle"
-                        title="收弧电流"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="arcVol"
-                        title="收弧电压"
-                        min-width="70"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="arcVolUnitary"
-                        title="收弧电压一元"
+                        field="initialVolMax"
+                        title="初期电压上限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="weldingEleAdjust"
-                        title="焊接电流微调"
+                        field="initialVolMin"
+                        title="初期电压下限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="weldingVolAdjust"
-                        title="焊接电压微调"
+                        field="firstWeldEleMax"
+                        title="第一焊接电流上限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="firstWeldEleMin"
+                        title="第一焊接电流下限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="firstWeldVolMax"
+                        title="第一焊接电压上限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="firstWeldVolMin"
+                        title="第一焊接电压下限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="secondWeldEleMax"
+                        title="第二焊接电流上限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="secondWeldEleMin"
+                        title="第二焊接电流下限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="secondWeldVolMax"
+                        title="第二焊接电压上限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="secondWeldVolMin"
+                        title="第二焊接电压下限"
+                        min-width="120"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="arcEleMax"
+                        title="收弧电流上限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="arcEleAdjust"
-                        title="收弧电流微调"
+                        field="arcEleMin"
+                        title="收弧电流下限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="arcVolAdjust"
-                        title="收弧电压微调"
+                        field="arcVolMax"
+                        title="收弧电压上限"
                         min-width="100"
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="alarmsEleMax"
-                        title="报警电流上限"
-                        min-width="100"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="alarmsEleMin"
-                        title="报警电流下限"
-                        min-width="100"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="alarmsVolMax"
-                        title="报警电压上限"
-                        min-width="100"
-                    >
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="alarmsVolMin"
-                        title="报警电压下限"
+                        field="arcVolMin"
+                        title="收弧电压下限"
                         min-width="100"
                     >
                     </vxe-table-column>
@@ -458,7 +353,7 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getProcesLibraryChild, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
+import { getSxTIGTechList, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
 import { getWelderList } from '_api/productionEquipment/production'
 export default {
     components: {},
@@ -588,9 +483,9 @@ export default {
             let req = {
                 pn: 1,
                 pageSize: 100,
-                id: id
+                wpsLibraryId: id
             }
-            let { data, code } = await getProcesLibraryChild(req);
+            let { data, code } = await getSxTIGTechList(req);
             this.loading = false;
             if (code == 200) {
                 this.tableData = (data.list || []).sort((a, b) => {
@@ -648,35 +543,35 @@ export default {
         //组合工艺数据
         formatTechnoloay (arr) {
             let dataArray = (arr || []).map(item => {
-                let obj = {};
-                obj['gatherNo'] = "";//采集模块编号
-                obj['channelNo'] = item.channelNo;//通道号
-                obj['spotWeldTime'] = item.spotWeldingTime * 10;//点焊时间
-                obj['preflowTime'] = item.inAdvanceAspirated * 10;//提前送气
-                obj['initialEle'] = item.initialEle;//初期电流
-                obj['initialVol'] = item.initialVol * 10;//初期电压
-                obj['initialVolUnitary'] = item.initialVolUnitary;//初期电压一元
-                obj['weldElectricity'] = item.weldingEle;//焊接电流
-                obj['weldVoltage'] = item.weldingVol * 10;//焊接电压
-                obj['weldVoltageUnitary'] = item.weldingVolUnitary;//焊接电压一元
-                obj['extinguishArcEle'] = item.arcEle;//收弧电流
-                obj['extinguishArcVol'] = item.arcVol * 10;//收弧电压
-                obj['extinguishArcVolUnitary'] = item.arcVolUnitary;//收弧电压一元
-                obj['hysteresisAspirated'] = item.hysteresisAspirated * 10;//滞后送气
-                obj['arcPeculiarity'] = item.arcCharacter;//电弧特性
-                obj['gases'] = item.gases;//气体
-                obj['wireDiameter'] = item.weldingStickDiameter;//直径
-                obj['wireMaterials'] = item.weldingStickTexture;//材质
-                obj['weldProcess'] = item.weldingProcess;//焊接过程
-                obj['controlInfo'] = this.issueOrdersStr(item);//控制信息
-                obj['weldEleAdjust'] = item.weldingEleAdjust;//焊接电流微调
-                obj['weldVolAdjust'] = item.weldingVolAdjust * 10;//焊接电压微调
-                obj['extinguishArcEleAdjust'] = item.arcEleAdjust;//收弧电流微调
-                obj['extinguishArcVolAdjust'] = item.arcVolAdjust * 10;//收弧电压微调
-                obj['alarmsElectricityMax'] = item.alarmsEleMax;//报警电流上限
-                obj['alarmsElectricityMin'] = item.alarmsEleMin;//报警电流下限
-                obj['alarmsVoltageMax'] = item.alarmsVolMax;//报警电压上限
-                obj['alarmsVoltageMin'] = item.alarmsVolMin;//报警电压下限
+                let obj = { ...item };
+                // obj['gatherNo'] = "";//采集模块编号
+                // obj['channelNo'] = item.channelNo;//通道号
+                // obj['spotWeldTime'] = item.spotWeldingTime * 10;//点焊时间
+                // obj['preflowTime'] = item.inAdvanceAspirated * 10;//提前送气
+                // obj['initialEle'] = item.initialEle;//初期电流
+                // obj['initialVol'] = item.initialVol * 10;//初期电压
+                // obj['initialVolUnitary'] = item.initialVolUnitary;//初期电压一元
+                // obj['weldElectricity'] = item.weldingEle;//焊接电流
+                // obj['weldVoltage'] = item.weldingVol * 10;//焊接电压
+                // obj['weldVoltageUnitary'] = item.weldingVolUnitary;//焊接电压一元
+                // obj['extinguishArcEle'] = item.arcEle;//收弧电流
+                // obj['extinguishArcVol'] = item.arcVol * 10;//收弧电压
+                // obj['extinguishArcVolUnitary'] = item.arcVolUnitary;//收弧电压一元
+                // obj['hysteresisAspirated'] = item.hysteresisAspirated * 10;//滞后送气
+                // obj['arcPeculiarity'] = item.arcCharacter;//电弧特性
+                // obj['gases'] = item.gases;//气体
+                // obj['wireDiameter'] = item.weldingStickDiameter;//直径
+                // obj['wireMaterials'] = item.weldingStickTexture;//材质
+                // obj['weldProcess'] = item.weldingProcess;//焊接过程
+                // obj['controlInfo'] = this.issueOrdersStr(item);//控制信息
+                // obj['weldEleAdjust'] = item.weldingEleAdjust;//焊接电流微调
+                // obj['weldVolAdjust'] = item.weldingVolAdjust * 10;//焊接电压微调
+                // obj['extinguishArcEleAdjust'] = item.arcEleAdjust;//收弧电流微调
+                // obj['extinguishArcVolAdjust'] = item.arcVolAdjust * 10;//收弧电压微调
+                // obj['alarmsElectricityMax'] = item.alarmsEleMax;//报警电流上限
+                // obj['alarmsElectricityMin'] = item.alarmsEleMin;//报警电流下限
+                // obj['alarmsVoltageMax'] = item.alarmsVolMax;//报警电压上限
+                // obj['alarmsVoltageMin'] = item.alarmsVolMin;//报警电压下限
                 return obj;
             })
             return dataArray;

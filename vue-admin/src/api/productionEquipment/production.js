@@ -3,7 +3,6 @@
 import request from "@/utils/request";
 import qs from "qs";
 
-
 // *********采集模块**************
 
 // 获取列表
@@ -66,20 +65,29 @@ export function exportExcel(params = {}) {
   )}`;
 }
 
-
 // ********生产设备***********
-
 
 // 获取焊机设备列表
 export function getWelderList(params = {}) {
-    return request({
-      url: "/welder",
-      method: "get",
-      params
-    });
-  }
+  return request({
+    url: "/welder",
+    method: "get",
+    params
+  });
+}
 
-  // 删除焊机设备列表
+// 获取松下焊机设备列表
+export function getSxWelderList(params = {}) {
+  return request({
+    url: "/sx/getSxProcessIssueInfos",
+    method: "get",
+    params
+  });
+}
+
+
+
+// 删除焊机设备列表
 export function delWelder(params = {}) {
   return request({
     url: "/welder",
@@ -103,7 +111,6 @@ export function getWelderDetail(id) {
     method: "get"
   });
 }
-
 
 // 新增焊机设备
 export function addWelder(data = {}) {
@@ -141,7 +148,6 @@ export function findByIdArea(params = {}) {
   });
 }
 
-
 //跨间绑定保存
 export function saveAreaBind(data = {}) {
   return request({
@@ -159,8 +165,6 @@ export function saveModelBind(data = {}) {
     data
   });
 }
-
-
 
 // 获取焊机设备列表无分页
 export function getWelderListNoPage(params = {}) {
@@ -189,7 +193,6 @@ export function getWeldClaimTaskInfoById(params = {}) {
   });
 }
 
-
 // 焊机任务绑定
 export function addTaskClaimInfo(data = {}) {
   return request({
@@ -208,12 +211,7 @@ export function getModelFindId(params = {}) {
   });
 }
 
-
-
-
-  //导出
-  export function exportWelderExcel(params = {}) {
-    return `${process.env.VUE_APP_BASE_API}/welder/excel?${qs.stringify(
-      params
-    )}`;
-  }
+//导出
+export function exportWelderExcel(params = {}) {
+  return `${process.env.VUE_APP_BASE_API}/welder/excel?${qs.stringify(params)}`;
+}

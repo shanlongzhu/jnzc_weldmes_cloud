@@ -1933,52 +1933,100 @@ export default {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
-                    this.ruleForm2.spotWeldingTime = datajson['spotWeldTime'] / 10;//点焊时间
-                    this.ruleForm2.inAdvanceAspirated = datajson['preflowTime'] / 10;//提前送气
-                    this.ruleForm2.initialEle = datajson['initialEle'];//初期电流
-                    this.ruleForm2.initialVol = datajson['initialVol'] / 10;//初期电压
-                    this.ruleForm2.initialVolUnitary = datajson['initialVolUnitary'];//初期电压一元
-                    this.ruleForm2.weldingEle = datajson['weldElectricity'];//焊接电流
-                    this.ruleForm2.weldingVol = datajson['weldVoltage'] / 10;//焊接电压
-                    this.ruleForm2.weldingVolUnitary = datajson['weldVoltageUnitary'];//焊接电压一元
-                    this.ruleForm2.arcEle = datajson['extinguishArcEle'];//收弧电流
-                    this.ruleForm2.arcVol = datajson['extinguishArcVol'] / 10;//收弧电压
-                    this.ruleForm2.arcVolUnitary = datajson['extinguishArcVolUnitary'];//收弧电压一元
-                    this.ruleForm2.hysteresisAspirated = datajson['hysteresisAspirated'] / 10;//滞后送气
-                    this.ruleForm2.arcCharacter = datajson['arcPeculiarity'];//电弧特性
-                    this.ruleForm2.gases = datajson['gases'];//气体
-                    this.ruleForm2.weldingStickDiameter = datajson['wireDiameter'];//直径
-                    this.ruleForm2.weldingStickTexture = datajson['wireMaterials'];//材质
-                    this.ruleForm2.weldingProcess = datajson['weldProcess'];//焊接过程
-                    this.ruleForm2.weldingEleAdjust = datajson['weldEleAdjust'];//焊接电流微调
-                    this.ruleForm2.weldingVolAdjust = datajson['weldVolAdjust'] / 10;//焊接电压微调
-                    this.ruleForm2.arcEleAdjust = datajson['extinguishArcEleAdjust'];//收弧电流微调
-                    this.ruleForm2.arcVolAdjust = datajson['extinguishArcVolAdjust'] / 10;//收弧电压微调
-                    this.ruleForm2.alarmsEleMax = datajson['alarmsElectricityMax'];//报警电流上限
-                    this.ruleForm2.alarmsEleMin = datajson['alarmsElectricityMin'];//报警电流下限
-                    this.ruleForm2.alarmsVolMax = datajson['alarmsVoltageMax'];//报警电压上限
-                    this.ruleForm2.alarmsVolMin = datajson['alarmsVoltageMin'];//报警电压下限
-                    this.deconstruction(datajson['controlInfo']);
+
+                    //*** 预置参数 */
+                    this.ruleForm2.initialEleMax = datajson['initialEleMax'];//初期电流上限
+                    this.ruleForm2.initialEleMin = datajson['initialEleMin'];//初期电流下限
+                    this.ruleForm2.initialVolMax = datajson['initialVolMax'];//初期电压上限
+                    this.ruleForm2.initialVolMin = datajson['initialVolMin'];//初期电压下限
+                    this.ruleForm2.firstWeldEleMax = datajson['firstWeldEleMax'];//第一焊接电流上限
+                    this.ruleForm2.firstWeldEleMin = datajson['firstWeldEleMin'];//第一焊接电流下限
+                    this.ruleForm2.firstWeldVolMax = datajson['firstWeldVolMax'];//第一焊接电压上限
+                    this.ruleForm2.firstWeldVolMin = datajson['firstWeldVolMin'];//第一焊接电压下限
+                    this.ruleForm2.secondWeldEleMax = datajson['secondWeldEleMax'];//第二焊接电流上限
+                    this.ruleForm2.secondWeldEleMin = datajson['secondWeldEleMin'];//第二焊接电流下限
+                    this.ruleForm2.secondWeldVolMax = datajson['secondWeldVolMax'];//第二焊接电压上限
+                    this.ruleForm2.secondWeldVolMin = datajson['secondWeldVolMin'];//第二焊接电压下限
+                    this.ruleForm2.arcEleMax = datajson['arcEleMax'];//收弧电流上限
+                    this.ruleForm2.arcEleMin = datajson['arcEleMin'];//收弧电流下限
+                    this.ruleForm2.arcVolMax = datajson['arcVolMax'];//收弧电压上限
+                    this.ruleForm2.arcVolMin = datajson['arcVolMin'];//收弧电压下限
+                    this.ruleForm2.peakWeldEleMax = datajson['peakWeldEleMax'];//峰值焊接电流上限
+                    this.ruleForm2.peakWeldEleMin = datajson['peakWeldEleMin'];//峰值焊接电流下限
+                    this.ruleForm2.peakWeldVolMax = datajson['peakWeldVolMax'];//峰值焊接电压上限
+                    this.ruleForm2.peakWeldVolMin = datajson['peakWeldVolMin'];//峰值焊接电压下限
+
+                    //*** 焊接条件 */
+                    this.ruleForm2.weldMethod = datajson['weldMethod'];//焊接方法
+                    this.ruleForm2.arcHaveNot = datajson['arcHaveNot'];//收弧有无
+                    this.ruleForm2.pulseHaveNot = datajson['pulseHaveNot'];//脉冲有无
+                    this.ruleForm2.acWaveform = datajson['acWaveform'];//交流波形
+                    this.ruleForm2.pulseRate = datajson['pulseRate'];//脉冲比率
+
+                    this.ruleForm2.pulseFrequency = datajson['pulseFrequency'];//脉冲频率
+                    this.ruleForm2.cleanWidth = datajson['cleanWidth'];//清洁宽度
+                    this.ruleForm2.acFrequency = datajson['acFrequency'];//AC频率
+                    this.ruleForm2.mixFrequency = datajson['mixFrequency'];//MIX频率
+                    this.ruleForm2.mixAcRate = datajson['mixAcRate'];//MIX（AC）比率
+                    this.ruleForm2.pulseRadian = datajson['pulseRadian'];//脉冲弧度
+                    this.ruleForm2.arcStiffness = datajson['arcStiffness'];//电弧挺度
+                    this.ruleForm2.handWeldThrust = datajson['handWeldThrust'];//手工焊推力
+                    this.ruleForm2.beforeAspiratedTime = datajson['beforeAspiratedTime'];//提前送气时间
+                    this.ruleForm2.afterStopGasTime = datajson['afterStopGasTime'];//滞后停气时间
+                    this.ruleForm2.mainWeldRiseTime = datajson['mainWeldRiseTime'];//主焊上升时间
+                    this.ruleForm2.mainWeldDeclineTime = datajson['mainWeldDeclineTime'];//主焊下降时间
+                    this.ruleForm2.mainWeldRiseRadian = datajson['mainWeldRiseRadian'];//主焊上升弧度
+                    this.ruleForm2.mainWeldDeclineRadian = datajson['mainWeldDeclineRadian'];//主焊下降弧度
+                    this.ruleForm2.spotWeldingTime = datajson['spotWeldingTime'];//点焊时间
+                    this.ruleForm2.spotWeldIntervalTime = datajson['spotWeldIntervalTime'];//点焊间隔时间
+                    this.ruleForm2.spotWeldRiseTime = datajson['spotWeldRiseTime'];//点焊上升时间
+                    this.ruleForm2.spotWeldDeclineTime = datajson['spotWeldDeclineTime'];//点焊下降时间
+                    this.ruleForm2.spotWeldRiseRadian = datajson['spotWeldRiseRadian'];//点焊上升弧度
+                    this.ruleForm2.spotWeldDeclineRadian = datajson['spotWeldDeclineRadian'];//点焊下降弧度
+                    this.ruleForm2.maxChannel = datajson['maxChannel'];//最大通道
+                    this.ruleForm2.nowChannel = datajson['nowChannel'];//当前通道
+                    this.ruleForm2.handWeldWeldEle = datajson['handWeldWeldEle'];//手工焊焊接电流
+                    this.ruleForm2.handWeldArcEle = datajson['handWeldArcEle'];//手工焊引弧电流
+
+                    //*** 动态限流参数 */
+                    this.ruleForm2.dclInitialEleMax = datajson['dclInitialEleMax'];//初期电流上限
+                    this.ruleForm2.dclInitialEleMin = datajson['dclInitialEleMin'];//初期电流下限
+                    this.ruleForm2.dclWeldEleMax = datajson['dclWeldEleMax'];//焊接电流上限
+                    this.ruleForm2.dclWeldEleMin = datajson['dclWeldEleMin'];//焊接电流下限
+                    this.ruleForm2.dclSecondWeldEleMax = datajson['dclSecondWeldEleMax'];//第二焊接电流上限
+                    this.ruleForm2.dclSecondWeldEleMin = datajson['dclSecondWeldEleMin'];//第二焊接电流下限
+                    this.ruleForm2.dclArcEleMax = datajson['dclArcEleMax'];//收弧电流上限
+                    this.ruleForm2.dclArcEleMin = datajson['dclArcEleMin'];//收弧电流下限
+                    this.ruleForm2.startDelayTime = datajson['startDelayTime'];//启动延时时间
+                    this.ruleForm2.clAmendPeriod = datajson['clAmendPeriod'];//限流修正周期
+
+                    //*** 超限报警参数 */
+                    this.ruleForm2.oaInitialEleMax = datajson['oaInitialEleMax'];//初期电流上限
+                    this.ruleForm2.oaInitialEleMin = datajson['oaInitialEleMin'];//初期电流下限
+                    this.ruleForm2.oaInitialVolMax = datajson['oaInitialVolMax'];//初期电压上限
+                    this.ruleForm2.oaInitialVolMin = datajson['oaInitialVolMin'];//初期电压下限
+                    this.ruleForm2.oaWeldEleMax = datajson['oaWeldEleMax'];//焊接电流上限
+                    this.ruleForm2.oaWeldEleMin = datajson['oaWeldEleMin'];//焊接电流下限
+                    this.ruleForm2.oaWeldVolMax = datajson['oaWeldVolMax'];//焊接电压上限
+                    this.ruleForm2.oaWeldVolMin = datajson['oaWeldVolMin'];//焊接电压下限
+                    this.ruleForm2.oaSecondWeldEleMax = datajson['oaSecondWeldEleMax'];//第二焊接电流上限
+                    this.ruleForm2.oaSecondWeldEleMin = datajson['oaSecondWeldEleMin'];//第二焊接电流下限
+                    this.ruleForm2.oaSecondWeldVolMax = datajson['oaSecondWeldVolMax'];//第二焊接电压上限
+                    this.ruleForm2.oaSecondWeldVolMin = datajson['oaSecondWeldVolMin'];//第二焊接电压下限
+                    this.ruleForm2.oaArcEleMax = datajson['oaArcEleMax'];//收弧电流上限
+                    this.ruleForm2.oaArcEleMin = datajson['oaArcEleMin'];//收弧电流下限
+                    this.ruleForm2.oaArcVolMax = datajson['oaArcVolMax'];//收弧电压上限
+                    this.ruleForm2.oaArcVolMin = datajson['oaArcVolMin'];//收弧电压下限
+                    this.ruleForm2.arcDelayTime = datajson['arcDelayTime'];//起弧延时时间
+                    this.ruleForm2.alarmDelayTime = datajson['alarmDelayTime'];//报警延时时间
+                    this.ruleForm2.haltDelayTime = datajson['haltDelayTime'];//停机延时时间
+                    this.ruleForm2.haltFreezeTime = datajson['haltFreezeTime'];//停机冻结时间
+
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
                     this.issueTimeOut();
                 }
             })
-        },
-
-        deconstruction (str) {
-            const binaryStr = parseFloat(str).toString(2);
-            let arrStr = binaryStr.split('');
-            while (arrStr.length < 8) {
-                arrStr.unshift('0')
-            }
-            this.ruleForm2.initialCondition = arrStr[7] ? false : true;//初期条件
-            this.ruleForm2.controlArc = arrStr[6] + arrStr[5] + arrStr[4];//收弧
-
-            this.ruleForm2.unitarySeveral = parseInt(arrStr[2]);//一元/个别
-            this.ruleForm2.fusionControl = arrStr[1] ? false : true;//熔深控制
-            this.ruleForm2.softArcSchema = arrStr[0] ? false : true;//柔软电弧模式
-            console.log(this.ruleForm2)
         },
 
         //订阅主题
