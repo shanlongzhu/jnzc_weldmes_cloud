@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.craft.dao.MachineWeldsxDao">
+
+    <resultMap id="MachineWeldsxMap" type="com.gw.entities.MachineWeldsxInfo">
+        <id property="id" column="id"></id>
+        <result property="weldNo" column="weld_no"></result>
+        <result property="weldCid" column="weld_cid"></result>
+        <result property="weldCode" column="weld_code"></result>
+        <result property="weldIp" column="weld_ip"></result>
+        <result property="weldModel" column="weld_model"></result>
+        <result property="powerSupply" column="power_supply"></result>
+        <result property="wireFeederModel" column="wire_feeder_model"></result>
+        <result property="weldKind" column="weld_kind"></result>
+        <result property="weldCpuNum" column="weld_cpu_num"></result>
+        <result property="cpu1No" column="cpu1_no"></result>
+        <result property="cpu1Model" column="cpu1_model"></result>
+        <result property="cpu1Version" column="cpu1_version"></result>
+        <result property="cpu2No" column="cpu2_no"></result>
+        <result property="cpu2Model" column="cpu2_model"></result>
+        <result property="cpu2Version" column="cpu2_version"></result>
+        <result property="cpu3No" column="cpu3_no"></result>
+        <result property="cpu3Model" column="cpu3_model"></result>
+        <result property="cpu3Version" column="cpu3_version"></result>
+        <result property="weldStatus" column="weld_status"></result>
+        <result property="weldFirm" column="weld_firm"></result>
+        <result property="deptId" column="dept_id"></result>
+        <result property="createTime" column="create_time"></result>
+    </resultMap>
+
+    <!--松下工艺库列表查询-->
+    <select id="selectMachineWeldsxInfos" resultMap="MachineWeldsxMap">
+        select sx.id,sx.weld_no,sx.weld_cid,sx.weld_code,sx.weld_ip,sx.weld_model,power_supply,
+        dic.value_name powerSupplyStr,wire_feeder_model,dic1.value_name wireFeederModelStr,
+        weld_kind,dic2.value_name weldKindStr,sx.weld_cpu_num,sx.cpu1_no,cpu1_model,dic3.value_name cpu1ModelStr,
+        sx.cpu1_version,sx.cpu2_no,cpu2_model,dic4.value_name cpu2ModelStr,
+        sx.cpu2_version,sx.cpu3_no,cpu3_model,dic5.value_name cpu3ModelStr,sx.cpu3_version,weld_status,
+        dic6.value_name weldStatusStr,weld_firm,dic7.value_name weldFirmStr,
+        dept_id,dept.name deptIdStr,sx.create_time
+        from machine_weldsx_info sx
+        left join sys_dictionary dic on dic.id = sx.power_supply
+        left join sys_dictionary dic1 on dic1.id = sx.wire_feeder_model
+        left join sys_dictionary dic2 on dic2.id = sx.weld_kind
+        left join sys_dictionary dic3 on dic3.id = sx.cpu1_model
+        left join sys_dictionary dic4 on dic4.id = sx.cpu2_model
+        left join sys_dictionary dic5 on dic5.id = sx.cpu3_model
+        left join sys_dictionary dic6 on dic6.id = sx.weld_status
+        left join sys_dictionary dic7 on dic7.id = sx.weld_firm
+        left join sys_dept dept on dept.id = sx.dept_id
+    </select>
+
+    <!--工艺库信息新增-->
+    <insert id="insertMachineWeldsxInfo" parameterType="com.gw.entities.MachineWeldsxInfo">
+        insert into machine_weldsx_info(weld_no,weld_cid,weld_code,weld_ip,weld_model,power_supply,wire_feeder_model,
+        weld_kind,weld_cpu_num,cpu1_no,cpu1_model,cpu1_version,cpu2_no,cpu2_model,cpu2_version,cpu3_no,cpu3_model,
+        cpu3_version,weld_status,weld_firm,dept_id,create_time)
+        values(#{machineWeldsxInfo.weldNo},#{machineWeldsxInfo.weldCid},#{machineWeldsxInfo.weldCode},#{machineWeldsxInfo.weldIp},
+        #{machineWeldsxInfo.weldModel},#{machineWeldsxInfo.powerSupply},
+        #{machineWeldsxInfo.wireFeederModel},#{machineWeldsxInfo.weldKind},#{machineWeldsxInfo.weldCpuNum},
+        #{machineWeldsxInfo.cpu1No},#{machineWeldsxInfo.cpu1Model},
+        #{machineWeldsxInfo.cpu1Version},#{machineWeldsxInfo.cpu2No},#{machineWeldsxInfo.cpu2Model},#{machineWeldsxInfo.cpu2Version},
+        #{machineWeldsxInfo.cpu3No},#{machineWeldsxInfo.cpu3Model},#{machineWeldsxInfo.cpu3Version},#{machineWeldsxInfo.weldStatus},
+        #{machineWeldsxInfo.weldFirm},#{machineWeldsxInfo.deptId},#{machineWeldsxInfo.createTime})
+    </insert>
+
+    <!--根据 id  查询 工艺库信息-->
+    <select id="selectMachineWeldsxInfoById" parameterType="Long" resultMap="MachineWeldsxMap">
+        select sx.id,sx.weld_no,sx.weld_cid,sx.weld_code,sx.weld_ip,sx.weld_model,dic.value_name powerSupplyStr,dic1.value_name wireFeederModelStr,
+        dic2.value_name weldKindStr,sx.weld_cpu_num,sx.cpu1_no,dic3.value_name cpu1ModelStr,sx.cpu1_version,sx.cpu2_no,dic4.value_name cpu2ModelStr,
+        sx.cpu2_version,sx.cpu3_no,dic5.value_name cpu3ModelStr,sx.cpu3_version,dic6.value_name weldStatusStr,dic7.value_name weldFirmStr,
+        dept.name deptIdStr,sx.create_time
+        from machine_weldsx_info sx
+        left join sys_dictionary dic on dic.id = sx.power_supply
+        left join sys_dictionary dic1 on dic1.id = sx.wire_feeder_model
+        left join sys_dictionary dic2 on dic2.id = sx.weld_kind
+        left join sys_dictionary dic3 on dic3.id = sx.cpu1_model
+        left join sys_dictionary dic4 on dic4.id = sx.cpu2_model
+        left join sys_dictionary dic5 on dic5.id = sx.cpu3_model
+        left join sys_dictionary dic6 on dic6.id = sx.weld_status
+        left join sys_dictionary dic7 on dic7.id = sx.weld_firm
+        left join sys_dept dept on dept.id = sx.dept_id
+        where sx.id = #{id}
+    </select>
+
+    <!--修改工艺库信息-->
+    <update id="updateMachineWeldsxInfo" parameterType="com.gw.entities.MachineWeldsxInfo">
+        update machine_weldsx_info set weld_no = #{machineWeldsxInfo.weldNo},weld_cid = #{machineWeldsxInfo.weldCid},
+        weld_code = #{machineWeldsxInfo.weldCode},weld_ip = #{machineWeldsxInfo.weldIp},
+        weld_model = #{machineWeldsxInfo.weldModel},power_supply = #{machineWeldsxInfo.powerSupply},
+        wire_feeder_model = #{machineWeldsxInfo.wireFeederModel},
+        weld_kind = #{machineWeldsxInfo.weldKind},weld_cpu_num = #{machineWeldsxInfo.weldCpuNum},
+        cpu1_no = #{machineWeldsxInfo.cpu1No},
+        cpu1_model = #{machineWeldsxInfo.cpu1Model},cpu1_version = #{machineWeldsxInfo.cpu1Version},
+        cpu2_no = #{machineWeldsxInfo.cpu2No},cpu2_model = #{machineWeldsxInfo.cpu2Model},
+        cpu2_version = #{machineWeldsxInfo.cpu2Version},cpu3_no = #{machineWeldsxInfo.cpu3No},
+        cpu3_model = #{machineWeldsxInfo.cpu3Model},
+        cpu3_version = #{machineWeldsxInfo.cpu3Version},weld_status = #{machineWeldsxInfo.weldStatus},
+        weld_firm = #{machineWeldsxInfo.weldFirm},dept_id = #{machineWeldsxInfo.deptId},create_time = #{machineWeldsxInfo.createTime}
+    </update>
+
+    <!--删除工艺库信息-->
+    <delete id="deleteMachineWeldsxInfoById" parameterType="Long">
+        delete from machine_weldsx_info where id = #{id}
+    </delete>
+</mapper>
