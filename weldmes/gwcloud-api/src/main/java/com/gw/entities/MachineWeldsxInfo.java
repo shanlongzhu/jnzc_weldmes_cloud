@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @Author zhanghan
  * @Date 2021/8/25 13:51
- * @Description 松下焊机实体类
+ * @Description 松下设备实体类
  */
 @Data
 public class MachineWeldsxInfo {
