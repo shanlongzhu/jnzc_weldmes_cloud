@@ -35,25 +35,17 @@ public class DasApplication implements CommandLineRunner {
         emqMqttClient.start();
         //启动所有任务
         powerBootJob.startAllJob();
-        //判断OTC的ip和松下ip是否相同（true：同一个服务器启动）
-        if (CommonFunction.getOtcIp().equals(CommonFunction.getSxIp())) {
-            //true:同一个端口启动一次
-            if (CommonFunction.getOtcPort() == CommonFunction.getSxPort()) {
-                //OTC（松下）服务端启动
-                nettyServer.start(CommonFunction.getOtcPort());
-            }
-            //false:端口不同则启动两个端口
-            else {
-                //OTC服务端启动
-                nettyServer.start(CommonFunction.getOtcPort());
+        //判断是否启用OTC业务功能
+        if (CommonFunction.isEnableOtcFunction()) {
+            //OTC（松下）服务端启动
+            nettyServer.start(CommonFunction.getOtcPort());
+        }
+        //判断是否启用松下业务功能
+        if (CommonFunction.isEnableSxFunction()) {
+            if (CommonFunction.getOtcPort() != CommonFunction.getSxPort()) {
                 //松下服务端启动
                 nettyServer.start(CommonFunction.getSxPort());
             }
-        } else {
-            //OTC服务端启动
-            nettyServer.start(CommonFunction.getOtcPort());
-            //松下服务端启动
-            nettyServer.start(CommonFunction.getSxPort());
         }
     }
 

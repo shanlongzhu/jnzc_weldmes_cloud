@@ -53,6 +53,16 @@ public class CommonFunction {
      */
     private static boolean slotCardEnableDevice = true;
 
+    /**
+     * 启用OTC的业务功能（默认true：启用）
+     */
+    private static boolean enableOtcFunction = true;
+
+    /**
+     * 启用松下的业务功能（默认true：启用）
+     */
+    private static boolean enableSxFunction = true;
+
     @Value("${otcNettyServer.port}")
     private void setOtcPort(int port) {
         otcPort = port;
@@ -140,5 +150,23 @@ public class CommonFunction {
     @Value("${slotCardEnableDevice}")
     private void setSlotCardEnableDevice(boolean slotCardEnableDevice) {
         CommonFunction.slotCardEnableDevice = slotCardEnableDevice;
+    }
+
+    public static boolean isEnableOtcFunction() {
+        return enableOtcFunction;
+    }
+
+    @Value("${enableOtcFunction}")
+    private void setEnableOtcFunction(boolean enableOtcFunction) {
+        CommonFunction.enableOtcFunction = enableOtcFunction;
+    }
+
+    public static boolean isEnableSxFunction() {
+        return enableSxFunction;
+    }
+
+    @Value("${enableSxFunction}")
+    private void setEnableSxFunction(boolean enableSxFunction) {
+        CommonFunction.enableSxFunction = enableSxFunction;
     }
 }

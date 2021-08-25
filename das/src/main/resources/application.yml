@@ -66,10 +66,10 @@ dataInsertForNumber:
   otc: 100
   sx: 100
 
-# OTC待机数据是否存储
+# OTC待机数据是否存储（true：存储）
 otcStandbySave: false
 
-# 松下待机数据是否存储
+# 松下待机数据是否存储（true：存储）
 sxStandbySave: false
 
 # mybatis-plus 配置
@@ -93,3 +93,9 @@ clearTaskBindingByTime: '0 0 7 * * ?'
 
 # 刷卡启用设备功能（默认：true 开启）
 slotCardEnableDevice: true
+
+# 是否启用OTC业务功能
+enableOtcFunction: true
+
+# 是否启用松下业务功能
+enableSxFunction: false
