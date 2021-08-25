@@ -98,6 +98,7 @@
         cpu3_model = #{machineWeldsxInfo.cpu3Model},
         cpu3_version = #{machineWeldsxInfo.cpu3Version},weld_status = #{machineWeldsxInfo.weldStatus},
         weld_firm = #{machineWeldsxInfo.weldFirm},dept_id = #{machineWeldsxInfo.deptId},create_time = #{machineWeldsxInfo.createTime}
+        where id = #{machineWeldsxInfo.id}
     </update>
 
     <!--删除工艺库信息-->
