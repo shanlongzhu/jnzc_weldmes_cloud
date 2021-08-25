@@ -3,8 +3,8 @@ package com.shth.das.mqtt;
 import com.alibaba.fastjson.JSON;
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.business.JnSxRtDataProtocol;
-import com.shth.das.common.CommonDbData;
 import com.shth.das.common.CommonMap;
+import com.shth.das.common.CommonThreadPool;
 import com.shth.das.common.DownTopicEnum;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnotc.JNCommandIssue;
@@ -53,7 +53,7 @@ public class EmqMqttCallback implements MqttCallback {
         log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload()));
         try {
             String message = new String(mqttMessage.getPayload());
-            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> messageManage(topic, message));
+            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> messageManage(topic, message));
         } catch (Exception e) {
             log.error("messageArrived Exception:{}", e.getMessage());
         }

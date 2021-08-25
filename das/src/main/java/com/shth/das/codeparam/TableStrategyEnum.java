@@ -1,4 +1,4 @@
-package com.shth.das.job;
+package com.shth.das.codeparam;
 
 /**
  * @description: 分表策略枚举类

@@ -3,6 +3,7 @@ package com.shth.das.business;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.pojo.db.GatherModel;
@@ -35,7 +36,7 @@ public class JnOtcRtDataProtocol {
         final String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
         final Channel channel = ctx.channel();
         //是否开启（true：开启）
-        if (DataInitialization.isSlotCardEnableDevice()) {
+        if (CommonFunction.isSlotCardEnableDevice()) {
             try {
                 //判断当前焊机是否已经刷卡（true：刷过卡），刷卡后解锁焊机
                 if (!CommonMap.OTC_TASK_CLAIM_MAP.isEmpty() && CommonMap.OTC_TASK_CLAIM_MAP.containsKey(gatherNo)) {
@@ -367,14 +368,14 @@ public class JnOtcRtDataProtocol {
                 if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
                     List<JNRtDataDB> rtdata = new ArrayList<>();
                     //采集模块信息
-                    List<GatherModel> gatherList = CommonDbData.getGatherList();
+                    List<GatherModel> gatherList = CommonList.getGatherList();
                     //焊机设备信息
-                    List<WeldModel> weldList = CommonDbData.getWeldList();
+                    List<WeldModel> weldList = CommonList.getWeldList();
                     //刷卡领取任务后进行数据绑定
                     Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
                     for (int a = 0; a < 239; a += 80) {
                         //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
-                        if (!DataInitialization.isOtcStandbySave()) {
+                        if (!CommonFunction.isOtcStandbySave()) {
                             Integer otcStandby = Integer.valueOf(str.substring(78 + a, 80 + a), 16);
                             //焊接状态为0表示待机，则直接进入下一次循环
                             if (otcStandby == 0) {
@@ -480,7 +481,7 @@ public class JnOtcRtDataProtocol {
                         data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
                                 .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
                         //待机数据不存储，则针对起弧、收弧各存储一条待机数据
-                        if (!DataInitialization.isOtcStandbySave()) {
+                        if (!CommonFunction.isOtcStandbySave()) {
                             //起弧（增加一条待机数据）
                             if (data.getWeldStatus() == 7) {
                                 JNRtDataDB jnRtDataDb = (JNRtDataDB) data.clone();
@@ -751,7 +752,7 @@ public class JnOtcRtDataProtocol {
      * @return 焊机ID
      */
     public static BigInteger getMachineIdByGatherNo(String gatherNo) {
-        List<WeldModel> weldList = CommonDbData.getWeldList();
+        List<WeldModel> weldList = CommonList.getWeldList();
         if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
             for (WeldModel weld : weldList) {
                 if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
@@ -784,7 +785,7 @@ public class JnOtcRtDataProtocol {
                 e.printStackTrace();
             }
             //关机数据通过线程池发送到mq
-            CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
                 List<JNRtDataUI> dataList = new ArrayList<>();
                 JNRtDataUI jnRtDataUi = new JNRtDataUI();
                 jnRtDataUi.setGatherNo(gatherNo);

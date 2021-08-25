@@ -1,4 +1,4 @@
-package com.shth.das.common;
+package com.shth.das.codeparam;
 
 /**
  * 松下设备协议的一些固定编码

@@ -2,7 +2,8 @@ package com.shth.das.job;
 
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Queues;
-import com.shth.das.common.CommonDbData;
+import com.shth.das.codeparam.TableStrategy;
+import com.shth.das.common.CommonList;
 import com.shth.das.common.CommonMap;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
@@ -81,8 +82,8 @@ public class ScheduledTask {
     @Scheduled(fixedRate = 1000 * 60 * 10)
     @Async
     public void scheduled2() {
-        CommonDbData.setGatherList(gatherService.getMachineGatherAll());
-        CommonDbData.setWeldList(weldService.getMachineWeldAll());
+        CommonList.setGatherList(gatherService.getMachineGatherAll());
+        CommonList.setWeldList(weldService.getMachineWeldAll());
         //CommonDbData.TASK_LIST = taskService.getTaskModelAll();
         //CommonDbData.WELDER_LIST = welderService.getWelderModelAll();
         //log.info("gatherList:--->>>>{}", CommonDbData.getGatherList().size());

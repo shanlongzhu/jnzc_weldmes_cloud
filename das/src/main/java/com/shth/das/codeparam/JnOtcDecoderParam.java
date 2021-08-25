@@ -1,4 +1,4 @@
-package com.shth.das.common;
+package com.shth.das.codeparam;
 
 import lombok.Data;
 

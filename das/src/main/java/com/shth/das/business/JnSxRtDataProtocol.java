@@ -1,6 +1,8 @@
 package com.shth.das.business;
 
 import com.alibaba.fastjson.JSON;
+import com.shth.das.codeparam.HandlerParam;
+import com.shth.das.codeparam.SxVerificationCode;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.pojo.db.SxMachineQueue;
@@ -409,7 +411,7 @@ public class JnSxRtDataProtocol {
                     }
                 }
                 //如果待机数据不存储。则根据起弧、收弧各存储一条待机数据
-                if (!DataInitialization.isSxStandbySave()) {
+                if (!CommonFunction.isSxStandbySave()) {
                     //初期焊接（起弧），增加一条待机数据
                     if (sxRtDataDb.getWeldStatus() == 5) {
                         SxRtDataDb sxdata = (SxRtDataDb) sxRtDataDb.clone();
@@ -530,7 +532,7 @@ public class JnSxRtDataProtocol {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
                     //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
-                    if (!DataInitialization.isSxStandbySave()) {
+                    if (!CommonFunction.isSxStandbySave()) {
                         Integer sxStandby = Integer.valueOf(str.substring(84, 88), 16);
                         //焊接状态为0表示待机，则直接进入下一次循环
                         if (sxStandby == 0) {
@@ -963,7 +965,7 @@ public class JnSxRtDataProtocol {
     public SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
-            if (!DataInitialization.isSxStandbySave()) {
+            if (!CommonFunction.isSxStandbySave()) {
                 Integer sxStandby = Integer.valueOf(str.substring(70, 72), 16);
                 //焊接状态为0表示待机，则直接进入下一次循环
                 if (sxStandby == 0) {
@@ -1045,7 +1047,7 @@ public class JnSxRtDataProtocol {
     public SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 118) {
             //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
-            if (!DataInitialization.isSxStandbySave()) {
+            if (!CommonFunction.isSxStandbySave()) {
                 Integer sxStandby = Integer.valueOf(str.substring(70, 72), 16);
                 //焊接状态为0表示待机，则直接进入下一次循环
                 if (sxStandby == 0) {
@@ -1345,7 +1347,7 @@ public class JnSxRtDataProtocol {
         sxRtDataUi.setWeldIp(clientIp);
         //-1 为关机
         sxRtDataUi.setWeldStatus(-1);
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             //实体类转JSON字符串
             String message = JSON.toJSONString(sxRtDataUi);
             //通过mqtt发送到服务端

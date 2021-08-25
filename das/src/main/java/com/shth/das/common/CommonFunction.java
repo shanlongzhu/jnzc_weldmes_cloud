@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * 数据初始化
+ * 系统的业务功能配置
  */
 @Component
-public class DataInitialization {
+public class CommonFunction {
 
     /**
      * OTC待机数据是否存储（默认：true 存储）
@@ -121,7 +121,7 @@ public class DataInitialization {
 
     @Value("${otcStandbySave}")
     private void setOtcStandbySave(boolean otcStandbySave) {
-        DataInitialization.otcStandbySave = otcStandbySave;
+        CommonFunction.otcStandbySave = otcStandbySave;
     }
 
     public static boolean isSxStandbySave() {
@@ -130,7 +130,7 @@ public class DataInitialization {
 
     @Value("${sxStandbySave}")
     private void setSxStandbySave(boolean sxStandbySave) {
-        DataInitialization.sxStandbySave = sxStandbySave;
+        CommonFunction.sxStandbySave = sxStandbySave;
     }
 
     public static boolean isSlotCardEnableDevice() {
@@ -139,6 +139,6 @@ public class DataInitialization {
 
     @Value("${slotCardEnableDevice}")
     private void setSlotCardEnableDevice(boolean slotCardEnableDevice) {
-        DataInitialization.slotCardEnableDevice = slotCardEnableDevice;
+        CommonFunction.slotCardEnableDevice = slotCardEnableDevice;
     }
 }

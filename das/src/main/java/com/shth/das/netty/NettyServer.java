@@ -1,6 +1,6 @@
 package com.shth.das.netty;
 
-import com.shth.das.common.CommonDbData;
+import com.shth.das.common.CommonThreadPool;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class NettyServer {
 
     public void start(int port) {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             // Netty 客户端连接监听事件处理线程池
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
             // Netty i/o 处理事件的线程池
@@ -29,6 +29,8 @@ public class NettyServer {
             @Override
             public void run() {
                 try {
+                    //睡眠1秒，等待系统任务执行完成
+                    Thread.sleep(1000);
                     // 服务端启动引导器
                     final ServerBootstrap server = new ServerBootstrap();
                     server.group(bossGroup, workerGroup)

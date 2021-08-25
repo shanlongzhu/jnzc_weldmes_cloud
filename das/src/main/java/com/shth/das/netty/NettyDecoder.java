@@ -2,8 +2,8 @@ package com.shth.das.netty;
 
 import com.shth.das.business.JnOtcDecoderAnalysis;
 import com.shth.das.business.JnSxDecoderAnalysis;
-import com.shth.das.common.DataInitialization;
-import com.shth.das.common.HandlerParam;
+import com.shth.das.common.CommonFunction;
+import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.util.CommonUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -70,11 +70,11 @@ public class NettyDecoder extends ByteToMessageDecoder {
             //服务端端口
             int serverPort = inetSocket.getPort();
             //端口为otcPort，则为江南版OTC通讯协议
-            if (serverPort == DataInitialization.getOtcPort()) {
+            if (serverPort == CommonFunction.getOtcPort()) {
                 this.otcRecursionReadBytes(ctx, message, out);
             }
             //端口为sxPort，则为松下通讯协议
-            if (serverPort == DataInitialization.getSxPort()) {
+            if (serverPort == CommonFunction.getSxPort()) {
                 this.sxRecursionReadBytes(ctx, message, out);
             }
             //读写指针清空

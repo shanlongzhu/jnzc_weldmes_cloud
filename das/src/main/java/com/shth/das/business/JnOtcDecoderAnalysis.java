@@ -1,8 +1,8 @@
 package com.shth.das.business;
 
 import com.shth.das.common.BaseAbstractDecoder;
-import com.shth.das.common.HandlerParam;
-import com.shth.das.common.JnOtcDecoderParam;
+import com.shth.das.codeparam.HandlerParam;
+import com.shth.das.codeparam.JnOtcDecoderParam;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,21 +1,21 @@
 package com.shth.das.common;
 
-import com.shth.das.pojo.db.*;
-import com.shth.das.pojo.jnotc.JNRtDataDB;
-import com.shth.das.pojo.jnsx.SxRtDataDb;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
- * 公共数据存放
+ * 公共线程池
+ *
+ * @author zsl
  */
 @Component
 @Slf4j
-public class CommonDbData {
+public class CommonThreadPool {
 
     /**
      * 执行THREAD_POOL_EXECUTOR多出的任务
@@ -29,27 +29,8 @@ public class CommonDbData {
      * 超时时间：30秒
      */
     public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(100, 2000, 30000, TimeUnit.MILLISECONDS,
-            new ArrayBlockingQueue<>(10), new CustomRejectedExecutionHandler());
+            new ArrayBlockingQueue<>(10), new CommonThreadPool.CustomRejectedExecutionHandler());
 
-    /**
-     * 采集模块数据
-     */
-    private volatile static List<GatherModel> GATHER_LIST = new ArrayList<>();
-
-    /**
-     * 焊机数据
-     */
-    private volatile static List<WeldModel> WELD_LIST = new ArrayList<>();
-
-    /**
-     * 任务数据
-     */
-    //private static List<TaskModel> TASK_LIST = new ArrayList<>();
-
-    /**
-     * 焊工数据
-     */
-    //private static List<WelderModel> WELDER_LIST = new ArrayList<>();
 
     /**
      * 自定义拒绝策略
@@ -64,22 +45,6 @@ public class CommonDbData {
             log.error("[CUSTOM_THREAD_POOL]-->创建过最大线程数：{} -- 当前线程数：{} -- 活跃线程数：{} -- 队列数量：{}",
                     CUSTOM_THREAD_POOL.getLargestPoolSize(), CUSTOM_THREAD_POOL.getPoolSize(), CUSTOM_THREAD_POOL.getActiveCount(), CUSTOM_THREAD_POOL.getQueue().size());
         }
-    }
-
-    public static List<GatherModel> getGatherList() {
-        return GATHER_LIST;
-    }
-
-    public synchronized static void setGatherList(List<GatherModel> gatherList) {
-        GATHER_LIST = gatherList;
-    }
-
-    public static List<WeldModel> getWeldList() {
-        return WELD_LIST;
-    }
-
-    public synchronized static void setWeldList(List<WeldModel> weldList) {
-        WELD_LIST = weldList;
     }
 
 }

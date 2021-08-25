@@ -3,8 +3,8 @@ package com.shth.das.netty;
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.business.JnSxRtDataProtocol;
 import com.shth.das.common.CommonMap;
-import com.shth.das.common.DataInitialization;
-import com.shth.das.common.HandlerParam;
+import com.shth.das.common.CommonFunction;
+import com.shth.das.codeparam.HandlerParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -104,13 +104,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             //通道赋值
             param.setCtx(ctx);
             //端口为otcPort，则为江南版OTC通讯协议
-            if (serverPort == DataInitialization.getOtcPort()) {
+            if (serverPort == CommonFunction.getOtcPort()) {
                 if (this.otcHandlerMapping.containsKey(param.getKey())) {
                     this.otcHandlerMapping.get(param.getKey()).accept(param);
                 }
             }
             //端口为sxPort，则为松下通讯协议
-            if (serverPort == DataInitialization.getSxPort()) {
+            if (serverPort == CommonFunction.getSxPort()) {
                 if (this.sxHandlerMapping.containsKey(param.getKey())) {
                     this.sxHandlerMapping.get(param.getKey()).accept(param);
                 }
@@ -135,7 +135,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //服务端端口
         int serverPort = inetSocket.getPort();
         String clientAddress = clientIp + ":" + clientPort;
-        if (serverPort == DataInitialization.getOtcPort()) {
+        if (serverPort == CommonFunction.getOtcPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
                 log.info("OTC存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
@@ -145,7 +145,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 log.info("OTC新增连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             }
         }
-        if (serverPort == DataInitialization.getSxPort()) {
+        if (serverPort == CommonFunction.getSxPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
                 log.info("SX存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
@@ -175,7 +175,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         int serverPort = inetSocket.getPort();
         String clientAddress = clientIp + ":" + clientPort;
         //端口为otcPort，则为江南版OTC通讯协议
-        if (serverPort == DataInitialization.getOtcPort()) {
+        if (serverPort == CommonFunction.getOtcPort()) {
             //包含此客户端才去删除
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接
@@ -185,7 +185,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             this.jnOtcRtDataProtocol.jnWeldOffDataManage(ctx, clientIp);
         }
         //端口为sxPort，则为松下通讯协议
-        if (serverPort == DataInitialization.getSxPort()) {
+        if (serverPort == CommonFunction.getSxPort()) {
             //包含此客户端才去删除
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接

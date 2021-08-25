@@ -1,7 +1,7 @@
 package com.shth.das.netty;
 
 import com.alibaba.druid.util.StringUtils;
-import com.shth.das.common.DataInitialization;
+import com.shth.das.common.CommonFunction;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -22,12 +22,12 @@ public class NettyEncoder extends MessageToByteEncoder<String> {
         //服务端端口
         int serverPort = inetSocket.getPort();
         //端口为port，则为江南版OTC通讯协议
-        if (serverPort == DataInitialization.getOtcPort()) {
+        if (serverPort == CommonFunction.getOtcPort()) {
             //单台设备睡眠250毫秒后再次下发
             Thread.sleep(250);
         }
         //端口为sxPort，则为松下通讯协议
-        if (serverPort == DataInitialization.getSxPort()) {
+        if (serverPort == CommonFunction.getSxPort()) {
             Thread.sleep(200);
         }
         //数据不为空时，写入通道

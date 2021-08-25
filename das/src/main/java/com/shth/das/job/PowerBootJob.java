@@ -2,8 +2,9 @@ package com.shth.das.job;
 
 import com.alibaba.druid.util.StringUtils;
 import com.shth.das.business.JnOtcRtDataProtocol;
-import com.shth.das.common.CommonDbData;
+import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonQueue;
+import com.shth.das.common.CommonThreadPool;
 import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
@@ -20,9 +21,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 
+/**
+ * 开机启动的任务
+ */
 @Component
 @Slf4j
-public class RtDataJob {
+public class PowerBootJob {
 
     @Autowired
     OtcRtDataService otcRtDataService;
@@ -59,7 +63,7 @@ public class RtDataJob {
      * 任务：创建OTC实时表
      */
     public void startJnOtcJob() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
             String tableName = TableStrategy.getOtcTableByDateTime(DateTimeUtils.getNowDateTime());
             if (!StringUtils.isEmpty(tableName)) {
@@ -73,7 +77,7 @@ public class RtDataJob {
      * 任务：创建松下实时表
      */
     public void startSxJob() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             //当天数据库表名
             String tableName = TableStrategy.getSxTableByDateTime(DateTimeUtils.getNowDateTime());
             if (!StringUtils.isEmpty(tableName)) {
@@ -88,7 +92,7 @@ public class RtDataJob {
      */
     @SuppressWarnings("InfiniteLoopStatement")
     public void startOtcOnQueueConsumer() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
                 while (true) {
                     //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
@@ -117,7 +121,7 @@ public class RtDataJob {
      */
     @SuppressWarnings("InfiniteLoopStatement")
     public void startOtcOffQueueConsumer() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
                     //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
@@ -142,7 +146,7 @@ public class RtDataJob {
      */
     @SuppressWarnings("InfiniteLoopStatement")
     public void startSxAddMachineQueue() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
                     //take()：如果队列为空，进行阻塞，直到有值，防止无限空轮询
@@ -161,7 +165,7 @@ public class RtDataJob {
      */
     @SuppressWarnings("InfiniteLoopStatement")
     public void startSxOnMachineQueue() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
                     final SxMachineQueue sxMachineQueue = CommonQueue.SX_ON_MACHINE_QUEUES.take();
@@ -191,7 +195,7 @@ public class RtDataJob {
      */
     @SuppressWarnings("InfiniteLoopStatement")
     public void startSxOffMachineQueue() {
-        CommonDbData.THREAD_POOL_EXECUTOR.execute(() -> {
+        CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
             while (true) {
                 try {
                     final SxMachineQueue sxMachineQueue = CommonQueue.SX_OFF_MACHINE_QUEUES.take();

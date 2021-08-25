@@ -1,7 +1,7 @@
 package com.shth.das.sys.rtdata.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
-import com.shth.das.job.TableStrategy;
+import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.sys.rtdata.mapper.OtcRtDataMapper;
 import com.shth.das.sys.rtdata.service.OtcRtDataService;
