@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/8/25 15:22
- * @Description 松下工艺库控制器
+ * @Description 松下设备控制器
  */
 @CrossOrigin
 @RestController
@@ -25,7 +25,7 @@ public class MachineWeldsxController {
 
     /**
      * @Date 2021/8/25 15:23
-     * @Description 工艺库列表查询
+     * @Description 松下设备列表查询
      * @Params
      */
     @RequestMapping(value = "sx/getSxProcessIssueInfos", method = RequestMethod.GET)
@@ -42,7 +42,7 @@ public class MachineWeldsxController {
 
     /**
      * @Date 2021/8/25 16:20
-     * @Description 工艺库信息新增
+     * @Description 松下设备信息新增
      * @Params
      */
     @RequestMapping(value = "sx/addSxProcessIssueInfos", method = RequestMethod.POST)
@@ -55,7 +55,7 @@ public class MachineWeldsxController {
 
     /**
      * @Date 2021/8/25 16:34
-     * @Description 根据 id  查询 工艺库信息
+     * @Description 根据 id  查询 松下设备信息
      * @Params
      */
     @RequestMapping(value = "sx/getSxProcessIssueInfoById", method = RequestMethod.GET)
@@ -68,7 +68,7 @@ public class MachineWeldsxController {
 
     /**
      * @Date 2021/8/25 16:43
-     * @Description 修改工艺库信息
+     * @Description 修改松下设备信息
      * @Params
      */
     @RequestMapping(value = "sx/updateSxProcessIssueInfo", method = RequestMethod.PUT)
@@ -81,7 +81,7 @@ public class MachineWeldsxController {
 
     /**
      * @Date 2021/8/25 16:57
-     * @Description 删除工艺库信息
+     * @Description 删除松下设备信息
      * @Params
      */
     @RequestMapping(value = "sx/delSxProcessIssueInfo", method = RequestMethod.DELETE)
