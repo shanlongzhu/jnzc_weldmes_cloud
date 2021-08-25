@@ -740,30 +740,52 @@ public class DispatchServiceImpl implements DispatchService{
 
                 SimpleDateFormat sdf = DateTimeUtil.sdf;
 
-                Date planStartTime = (Date)obs[3];
+                if(!ObjectUtils.isEmpty(obs[3])){
 
-                //计划开始时间
-                taskInfo.setPlanStarttime(sdf.format(planStartTime));
+                    Date planStartTime = sdf.parse(obs[3].toString());
 
-                Date planEndTime = (Date) obs[4];
+                    if(!ObjectUtils.isEmpty(planStartTime)){
 
-                //计划结束时间
-                taskInfo.setPlanEndtime(sdf.format(planEndTime));
+                        //计划开始时间
+                        taskInfo.setPlanStarttime(sdf.format(planStartTime));
+                    }
 
-                Date realityStartTime = (Date) obs[5];
-
-                if(!ObjectUtils.isEmpty(realityStartTime)){
-
-                    //实际开始时间
-                    taskInfo.setRealityStarttime(sdf.format(realityStartTime));
                 }
 
-                Date realityEndTime = (Date) obs[6];
+                if (!ObjectUtils.isEmpty(obs[4])){
 
-                if(!ObjectUtils.isEmpty(realityEndTime)){
+                    Date planEndTime = sdf.parse(obs[4].toString());
 
-                    //实际结束时间
-                    taskInfo.setRealityEndtime(sdf.format(realityEndTime));
+                    if(!ObjectUtils.isEmpty(planEndTime)){
+
+                        //计划结束时间
+                        taskInfo.setPlanEndtime(sdf.format(planEndTime));
+                    }
+
+                }
+
+                if (!ObjectUtils.isEmpty(obs[5])){
+
+                    Date realityStarttime = sdf.parse(obs[5].toString());
+
+                    if(!ObjectUtils.isEmpty(realityStarttime)){
+
+                        //实际开始时间
+                        taskInfo.setRealityStarttime(sdf.format(realityStarttime));
+                    }
+
+                }
+
+                if (!ObjectUtils.isEmpty(obs[6])){
+
+                    Date realityEndTime = sdf.parse(obs[6].toString());
+
+                    if(!ObjectUtils.isEmpty(realityEndTime)){
+
+                        //实际结束时间
+                        taskInfo.setRealityEndtime(sdf.format(realityEndTime));
+                    }
+
                 }
 
                 String evaluateContent = (String) obs[7];
