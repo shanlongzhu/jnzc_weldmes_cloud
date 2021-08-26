@@ -742,48 +742,48 @@ public class DispatchServiceImpl implements DispatchService{
 
                 if(!ObjectUtils.isEmpty(obs[3])){
 
-                    Date planStartTime = sdf.parse(obs[3].toString());
+                    String planStartTime = DateTimeUtil.getRightTimeFormat(obs[3].toString());
 
                     if(!ObjectUtils.isEmpty(planStartTime)){
 
                         //计划开始时间
-                        taskInfo.setPlanStarttime(sdf.format(planStartTime));
+                        taskInfo.setPlanStarttime(planStartTime);
                     }
 
                 }
 
                 if (!ObjectUtils.isEmpty(obs[4])){
 
-                    Date planEndTime = sdf.parse(obs[4].toString());
+                    String planEndTime = DateTimeUtil.getRightTimeFormat(obs[4].toString());
 
                     if(!ObjectUtils.isEmpty(planEndTime)){
 
                         //计划结束时间
-                        taskInfo.setPlanEndtime(sdf.format(planEndTime));
+                        taskInfo.setPlanEndtime(planEndTime);
                     }
 
                 }
 
                 if (!ObjectUtils.isEmpty(obs[5])){
 
-                    Date realityStarttime = sdf.parse(obs[5].toString());
+                    String realityStarttime = DateTimeUtil.getRightTimeFormat(obs[5].toString());
 
                     if(!ObjectUtils.isEmpty(realityStarttime)){
 
                         //实际开始时间
-                        taskInfo.setRealityStarttime(sdf.format(realityStarttime));
+                        taskInfo.setRealityStarttime(realityStarttime);
                     }
 
                 }
 
                 if (!ObjectUtils.isEmpty(obs[6])){
 
-                    Date realityEndTime = sdf.parse(obs[6].toString());
+                    String realityEndTime = DateTimeUtil.getRightTimeFormat(obs[6].toString());
 
                     if(!ObjectUtils.isEmpty(realityEndTime)){
 
                         //实际结束时间
-                        taskInfo.setRealityEndtime(sdf.format(realityEndTime));
+                        taskInfo.setRealityEndtime(realityEndTime);
                     }
 
                 }

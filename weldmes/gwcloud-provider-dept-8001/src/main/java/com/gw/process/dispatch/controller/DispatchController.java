@@ -101,28 +101,6 @@ public class DispatchController {
     }
 
     /**
-     * @Date 2021/6/23 8:42
-     * @Description  获取分页任务列表
-     * @Params pn 当前页码
-     */
-    /*@RequestMapping(value = "task/listT/{pn}")
-    public HttpResult queryCurrentPageTaskListController(@PathVariable Integer pn){
-
-        if(ObjectUtils.isEmpty(pn)){
-            pn = 1;
-        }
-        PageHelper.startPage(pn,10);
-
-        //获取任务列表
-        List<TaskInfo> taskInfos=dispatchService.queryTaskList(1,1);
-
-        //将查询结果进行分页
-        PageInfo<TaskInfo> page=new PageInfo(taskInfos,10);
-
-        return HttpResult.ok(page);
-    }*/
-
-    /**
      * @Date 2021/5/28 10:52
      * @Description 获取任务等级接口
      * @Params
