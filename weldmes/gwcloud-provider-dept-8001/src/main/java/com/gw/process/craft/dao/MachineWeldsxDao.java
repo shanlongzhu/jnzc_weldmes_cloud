@@ -48,4 +48,18 @@ public interface MachineWeldsxDao {
      * @Params
      */
     public void deleteMachineWeldsxInfoById(@Param("id") Long id);
+
+    /**
+     * @Date 2021/8/26 10:07
+     * @Description 设备序号 唯一性判断
+     * @Params
+     */
+    public Integer judgeWeldNoYesOrNo(@Param("weldNo")String weldNo);
+
+    /**
+     * @Date 2021/8/26 10:07
+     * @Description 设备CID 唯一性判断
+     * @Params
+     */
+    public Integer judgeWeldCidYesOrNo(@Param("weldCid")String weldCid);
 }

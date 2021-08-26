@@ -105,4 +105,14 @@
     <delete id="deleteMachineWeldsxInfoById" parameterType="Long">
         delete from machine_weldsx_info where id = #{id}
     </delete>
+
+    <!--设备序号 唯一性判断-->
+    <select id="judgeWeldNoYesOrNo" resultType="java.lang.Integer">
+        select (1) from machine_weldsx_info where weld_no = #{weldNo}
+    </select>
+
+    <!--设备CID 唯一性判断-->
+    <select id="judgeWeldCidYesOrNo" resultType="java.lang.Integer">
+        select (1) from machine_weldsx_info where weld_cid = #{weldCid}
+    </select>
 </mapper>

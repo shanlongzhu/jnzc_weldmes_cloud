@@ -5,8 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 
 import com.gw.entities.MachineWeldsxInfo;
+import com.gw.process.craft.dao.MachineWeldsxDao;
 import com.gw.process.craft.service.MachineWeldsxService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,9 @@ import java.util.List;
 public class MachineWeldsxController {
 
     @Autowired
+    MachineWeldsxDao machineWeldsxDao;
+
+    @Autowired
     MachineWeldsxService machineWeldsxService;
 
     /**
@@ -33,9 +38,10 @@ public class MachineWeldsxController {
 
         PageHelper.startPage(pn,10);
 
+        //松下设备列表查询
         List<MachineWeldsxInfo> list = machineWeldsxService.getMachineWeldsxInfos();
 
-        PageInfo page=new PageInfo(list,5);
+        PageInfo page = new PageInfo(list,5);
 
         return HttpResult.ok(page);
     }
@@ -48,6 +54,23 @@ public class MachineWeldsxController {
     @RequestMapping(value = "sx/addSxProcessIssueInfos", method = RequestMethod.POST)
     public HttpResult addSxProcessIssueInfo(@RequestBody MachineWeldsxInfo machineWeldsxInfo){
 
+        //设备序号 唯一标识判断
+        Integer weldNoYesOrNo = machineWeldsxDao.judgeWeldNoYesOrNo(machineWeldsxInfo.getWeldNo());
+
+        if(!ObjectUtils.isEmpty(weldNoYesOrNo)){
+
+            return HttpResult.ok("设备序号已存在!");
+        }
+
+        //设备CID 唯一标识判断
+        Integer weldCid = machineWeldsxDao.judgeWeldCidYesOrNo(machineWeldsxInfo.getWeldCid());
+
+        if(!ObjectUtils.isEmpty(weldCid)){
+
+            return HttpResult.ok("设备CID已存在!");
+        }
+
+        //松下设备新增
         machineWeldsxService.addMachineWeldsxInfo(machineWeldsxInfo);
 
         return HttpResult.ok("新增成功");
@@ -61,6 +84,7 @@ public class MachineWeldsxController {
     @RequestMapping(value = "sx/getSxProcessIssueInfoById", method = RequestMethod.GET)
     public HttpResult getSxProcessIssueInfoById(Long id){
 
+        //根据id 查询 松下设备信息
         MachineWeldsxInfo machineWeldsxInfo = machineWeldsxService.getMachineWeldsxInfoById(id);
 
         return HttpResult.ok(machineWeldsxInfo);
@@ -74,6 +98,7 @@ public class MachineWeldsxController {
     @RequestMapping(value = "sx/updateSxProcessIssueInfo", method = RequestMethod.PUT)
     public HttpResult updateSxProcessIssueInfo(@RequestBody MachineWeldsxInfo machineWeldsxInfo){
 
+        //修改松下设备信息
         machineWeldsxService.updateMachineWeldsxInfo(machineWeldsxInfo);
 
         return HttpResult.ok("修改成功");
@@ -87,6 +112,7 @@ public class MachineWeldsxController {
     @RequestMapping(value = "sx/delSxProcessIssueInfo", method = RequestMethod.DELETE)
     public HttpResult delSxProcessIssueInfo(Long id){
 
+        //删除松下设备信息
         machineWeldsxService.delMachineWeldsxInfo(id);
 
         return HttpResult.ok("删除成功");
