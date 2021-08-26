@@ -496,9 +496,9 @@ export default {
                 volMin: '',
             },
             rules: {
-                grade: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
+                // grade: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
                 taskNo: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],

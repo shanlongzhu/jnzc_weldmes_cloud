@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-25 13:49:12
+ * @LastEditTime: 2021-08-26 17:37:53
 -->
 
 <template>
@@ -199,55 +199,35 @@
                         width="60"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="machineNo"
-                        title="固定资产编号"
+                        field="weldNo"
+                        title="设备序号"
                         width="100"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="deptName"
-                        title="设备类型"
+                        field="weldCid"
+                        title="设备CID"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueName}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="welderName"
-                        title="所属项目"
+                        field="weldCode"
+                        title="设备编码"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDept.name}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="status"
+                        field="weldIp"
+                        title="IP地址"
+                        width="100"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="weldStatus"
                         title="状态"
-                        width="60"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNames}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="macPath"
-                        title="厂家"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamess}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="gatherNo"
-                        title="采集序号"
-                        min-width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.machineGatherInfo.gatherNo}}
-                        </template>
-                    </vxe-table-column>
+                        field="weldModel"
+                        title="设备机型"
+                        width="100"
+                    ></vxe-table-column>                
                 </vxe-table>
                 <div
                     class="p10 flex"
@@ -299,13 +279,10 @@
                     row-id="id"
                 >
                     <vxe-table-column
-                        field="gatherNo"
-                        title="采集序号"
+                        field="weldIp"
+                        title="ip"
                         min-width="100"
                     >
-                        <template #default="{row}">
-                            {{row[0].gatherNo}}
-                        </template>
                     </vxe-table-column>
                     <vxe-table-column
                         field="channelNo"
@@ -313,7 +290,7 @@
                         min-width="100"
                     >
                         <template #default="{row}">
-                            {{row.map(item => item.channelNo).join('，')}}
+                            {{row.weldInfo.map(item => item.channelNo).join('，')}}
                         </template>
                     </vxe-table-column>
                     <vxe-table-column
@@ -323,7 +300,7 @@
                     >
                         <template #default="{row}">
                             <span style="color:#13ce66">
-                                {{row.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
@@ -334,7 +311,7 @@
                     >
                         <template #default="{row}">
                             <span style="color:#f00">
-                                {{row.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
@@ -354,7 +331,7 @@
 <script>
 import mqtt from 'mqtt'
 import { getSxCo2TechList, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
-import { getWelderList } from '_api/productionEquipment/production'
+import { getWelderList, getSxWelderList } from '_api/productionEquipment/production'
 export default {
     components: {},
     props: {},
@@ -379,7 +356,6 @@ export default {
             //搜索条件设备型号
             //搜索条件
             searchObj: {
-                grade: '',
                 model: ''
             },
             model2: false,
@@ -512,10 +488,8 @@ export default {
                 pn: this.page,
                 ...this.searchObj
             }
-            // req.model = this.libray.weldModel;
-            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
             this.loading2 = true;
-            let { data, code } = await getWelderList(req);
+            let { data, code } = await getSxWelderList(req);
             this.loading2 = false;
             if (code == 200) {
                 this.list = data.list
@@ -595,7 +569,7 @@ export default {
         //命令下发
         submitIssue () {
             let equipmentArr = [];//选中的设备
-            let gatherNoArr = [];//选中设备的所有采集编号
+            let iPNoArr = [];//选中设备的所有采集编号
             this.reqMqttNum = 0;//发送数量
             this.backMqttNum = 0;//返回数量
             //把分页中存储的选中机型取出
@@ -608,12 +582,12 @@ export default {
                 return this.$message.error("请选择设备");
             }
             //检查选择的设备采集编号是否存在空值
-            if (equipmentArr.filter(item => !item.machineGatherInfo.gatherNo || item.machineGatherInfo.gatherNo == '').length > 0) {
+            if (equipmentArr.filter(item => !item.weldIp || item.weldIp == '').length > 0) {
                 return this.$message.error("选择的设备存在采集序号为空");
             }
             //取出选中设备所有采集编号
-            equipmentArr.filter(item => item.machineGatherInfo.gatherNo).forEach(item => {
-                gatherNoArr = [...gatherNoArr, ...item.machineGatherInfo.gatherNo.split(',')]
+            equipmentArr.filter(item => item.weldIp).forEach(item => {
+                iPNoArr = [...iPNoArr, ...item.weldIp.split(',')]
             });
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
@@ -625,22 +599,24 @@ export default {
                     //选择的工艺数据
                     let techArr = this.formatTechnoloay(this.selectTechnology);
                     this.newEqu = []
-                    for (let i = 0, len = gatherNoArr.length; i < len; i++) {
-                        ((i) => {
+                    for (let i = 0, len = iPNoArr.length; i < len; i++) {                        
+                        ((i) => {                            
+                            this.newEqu.push({'weldIp':iPNoArr[i],'weldInfo':[]})
                             setTimeout(() => {
                                 clearTimeout(this.timeout);
                                 let msgData = techArr.map(v => {
                                     let objItem = { ...v };
-                                    objItem['gatherNo'] = gatherNoArr[i];
+                                    objItem['weldIp'] = iPNoArr[i];
                                     objItem['isSuccessStatus'] = 0;//记录发送状态
                                     this.reqMqttNum++;//记录发送总条数
                                     return objItem;
                                 })
-                                this.newEqu.push(msgData)
+                                this.newEqu[i].weldInfo = msgData;
                                 const msg = JSON.stringify(msgData);
                                 this.doPublish(msg);
                                 console.log(msg)
                                 this.issueTimeOut();
+                                console.log(this.newEqu)
                             }, (i + 1) * 300);
                         })(i)
                     }
@@ -665,7 +641,7 @@ export default {
                 if (this.backMqttNum !== this.reqMqttNum) {
                     this.$message.error("下发超时")
                     this.newEqu.forEach(item => {
-                        item.forEach(v => {
+                        item.weldInfo.forEach(v => {
                             v.isSuccessStatus = 2;
                         })
                     });

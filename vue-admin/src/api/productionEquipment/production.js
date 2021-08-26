@@ -76,18 +76,8 @@ export function getWelderList(params = {}) {
   });
 }
 
-// 获取松下焊机设备列表
-export function getSxWelderList(params = {}) {
-  return request({
-    url: "/sx/getSxProcessIssueInfos",
-    method: "get",
-    params
-  });
-}
 
-
-
-// 删除焊机设备列表
+// 删除焊机设备
 export function delWelder(params = {}) {
   return request({
     url: "/welder",
@@ -214,4 +204,52 @@ export function getModelFindId(params = {}) {
 //导出
 export function exportWelderExcel(params = {}) {
   return `${process.env.VUE_APP_BASE_API}/welder/excel?${qs.stringify(params)}`;
+}
+
+
+
+//松下设备
+// 获取松下焊机设备列表
+export function getSxWelderList(params = {}) {
+  return request({
+    url: "/sx/getSxProcessIssueInfos",
+    method: "get",
+    params
+  });
+}
+
+// 新增焊机设备
+export function addSxWelder(data = {}) {
+  return request({
+    url: "/sx/addSxProcessIssueInfos",
+    method: "post",
+    data
+  });
+}
+
+// 获取松下焊机设备详情
+export function getSxWelderDetail(params) {
+  return request({
+    url: `/sx/getSxProcessIssueInfoById`,
+    method: "get",
+    params
+  });
+}
+
+// 删除松下焊机设备
+export function delSxWelder(params = {}) {
+  return request({
+    url: "/sx/delSxProcessIssueInfo",
+    method: "delete",
+    params
+  });
+}
+
+// 修改松下焊机设备
+export function editSxWelder(data = {}) {
+  return request({
+    url: "/sx/updateSxProcessIssueInfo",
+    method: "put",
+    data
+  });
 }

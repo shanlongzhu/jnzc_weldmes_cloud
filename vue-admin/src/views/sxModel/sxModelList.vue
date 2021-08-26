@@ -58,50 +58,7 @@
                     />
                 </el-select>
             </div>
-            <div class="con-w">
-                <span>厂家：</span>
-                <el-select
-                    v-model="searchObj.firm"
-                    size="small"
-                    class="w120"
-                    clearable
-                    placeholder="请选择"
-                >
-                    <el-option
-                        v-for="item in manufactorArr"
-                        :key="item.id"
-                        :label="item.valueName"
-                        :value="item.id"
-                    />
-                </el-select>
-            </div>
-            <div class="con-w">
-                <span>是否在网：</span>
-                <el-select
-                    v-model="searchObj.isNetwork"
-                    size="small"
-                    class="w100"
-                    clearable
-                    placeholder="请选择"
-                >
-                    <el-option
-                        label="是"
-                        value="0"
-                    />
-                    <el-option
-                        label="否"
-                        value="1"
-                    />
-                </el-select>
-            </div>
-            <div class="con-w">
-                <span>采集序号：</span>
-                <el-input
-                    size="small"
-                    class="w150"
-                    v-model="searchObj.gatherNo"
-                ></el-input>
-            </div>
+            
             <div class="con-w">
                 <span>IP：</span>
                 <el-input
@@ -143,7 +100,7 @@
                     v-has="'add'"
                 >新增</el-button>
             </div>
-            <div class="con-w">
+            <!-- <div class="con-w">
                 <el-upload
                     v-has="'import'"
                     :action="importUrl"
@@ -166,7 +123,7 @@
                     icon="el-icon-document-remove"
                     @click="exportExcelFun"
                 >导出</el-button>
-            </div>
+            </div> -->
             <!-- <div class="con-w">
                 <el-button
                     v-has="'exprot'"
@@ -209,132 +166,59 @@
                     fixed="left"
                 />
                 <el-table-column
-                    prop="machineNo"
-                    label="固定资产编号"
+                    prop="weldNo"
+                    label="设备序号"
                     align="left"
                     min-width="100"
                     fixed="left"
                 >
                     <template slot="header">
-                        <span>固定资产编号</span><span class="red-star">*</span>
+                        <span>设备序号</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="deptName"
-                    label="设备类型"
+                    prop="weldCid"
+                    label="设备CID"
                     align="left"
                     min-width="80"
                 >
                     <template slot="header">
-                        <span>设备类型</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
+                        <span>设备CID</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="createTime"
-                    label="入厂时间"
+                    prop="weldCode"
+                    label="设备编码"
                     align="left"
                     min-width="150"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
-                    label="所属项目"
-                    align="left"
-                    min-width="120"
-                >
-                    <template slot="header">
-                        <span>所属项目</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="ipPath"
-                    label="状态"
-                    align="left"
-                    min-width="60"
-                >
-                    <template slot-scope="scope">
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="macPath"
-                    label="厂家"
-                    align="left"
-                    min-width="100"
-                >
-                    <template slot="header">
-                        <span>厂家</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{}}
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="createTime"
-                    label="是否在网"
-                    align="left"
-                    min-width="70"
-                >
-                    <template slot-scope="scope">
-                        {{scope.row.isNetwork?'否':'是'}}
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="gatherNo"
-                    label="采集序号"
-                    align="left"
-                    min-width="150"
-                    show-overflow-tooltip
-                >
-                    <template slot="header">
-                        <span>采集序号</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{}}
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="areaStr"
-                    label="区域"
-                    align="left"
-                    min-width="100"
-                >
-                    <template slot="header">
-                        <span>区域</span><span class="red-star">*</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="bayStr"
-                    label="跨间"
-                    align="left"
-                    min-width="100"
-                >
-                    <template slot="header">
-                        <span>跨间</span><span class="red-star">*</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="ipPath"
+                    prop="weldIp"
                     label="IP地址"
                     align="left"
                     min-width="120"
                 >
-
+                    <template slot="header">
+                        <span>IP地址</span><span class="red-star">*</span>
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="createTime"
-                    label="设备型号"
+                    prop="weldStatus"
+                    label="状态"
+                    align="left"
+                    min-width="60"
+                >
+                </el-table-column>
+                
+                <el-table-column
+                    prop="weldModel"
+                    label="设备机型"
                     align="left"
                     min-width="120"
                 >
                     <template slot="header">
-                        <span>设备型号</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{}}
+                        <span>设备机型</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -400,178 +284,337 @@
                 label-width="150px"
                 class="demo-ruleForm"
             >
-                <el-form-item
-                    label="固定资产编号"
-                    prop="machineNo"
-                >
-                    <el-input
-                        v-model="ruleForm.machineNo"
-                        style="width:250px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="设备类型"
-                    prop="type"
-                >
-                    <el-select
-                        v-model="ruleForm.type"
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in typeArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="入厂时间"
-                    prop="createTime"
-                >
-                    <el-date-picker
-                        v-model="ruleForm.createTime"
-                        style="width:250px"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetime"
-                        placeholder="选择日期时间"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="所属项目"
-                    prop="deptId"
-                >
-                    <el-cascader
-                        v-model="ruleForm.deptId"
-                        size="small"
-                        style="width:250px"
-                        clearable
-                        :options="teamArr"
-                        :props="defalutProps"
-                        :show-all-levels="false"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="生产厂商"
-                    prop="firm"
-                >
-                    <el-select
-                        v-model="ruleForm.firm"
-                        placeholder="请选择"
-                        style="width:250px"
-                        @change="changeFirm"
-                    >
-                        <el-option
-                            v-for="item in manufactorArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="设备型号"
-                    prop="model"
-                >
-                    <el-select
-                        v-model="ruleForm.model"
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in modelArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="采集序号"
-                    prop="gid"
-                >
-                    <el-select
-                        v-model="ruleForm.gid"
-                        multiple
-                        :multiple-limit="1"
-                        filterable
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in gatherNos"
-                            :key="item.id"
-                            :label="item.gatherNo"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="区域"
-                    prop="area"
-                >
-                    <el-select
-                        v-model="ruleForm.area"
-                        placeholder="请选择"
-                        style="width:250px"
-                        @change="changeArea"
-                    >
-                        <el-option
-                            v-for="item in areaArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="跨间"
-                    prop="bay"
-                >
-                    <el-select
-                        v-model="ruleForm.bay"
-                        placeholder="请选择"
-                        style="width:250px"
-                    >
-                        <el-option
-                            v-for="item in straddleArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="IP地址"
-                    prop="ipPath"
-                >
-                    <el-input
-                        v-model="ruleForm.ipPath"
-                        style="width:250px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="状态"
-                    prop="status"
-                >
-                    <el-radio-group v-model="ruleForm.status">
-                        <el-radio
-                            :label="item.id"
-                            v-for="item in statusArr"
-                            :key="item.id"
-                        >{{item.valueName}}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item
-                    label="是否联网"
-                    prop="isNetwork"
-                >
-                    <el-radio-group v-model="ruleForm.isNetwork">
-                        <el-radio :label="0">是</el-radio>
-                        <el-radio :label="1">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="设备序号"
+                            prop="weldNo"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldNo"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="设备CID"
+                            prop="weldCid"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldCid"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="设备编码"
+                            prop="weldCode"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldCode"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="IP地址"
+                            prop="weldIp"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldIp"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="设备机型"
+                            prop="weldModel"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldModel"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="电源类型"
+                            prop="powerSupply"
+                        >
+                            <el-select
+                                v-model="ruleForm.powerSupply"
+                                placeholder="电源类型"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in powerSupplyArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="送丝机类型"
+                            prop="wireFeederModel"
+                        >
+                            <el-select
+                                v-model="ruleForm.wireFeederModel"
+                                placeholder="送丝速度"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in wireFeederModelArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="设备种类"
+                            prop="weldKind"
+                        >
+                            <el-select
+                                v-model="ruleForm.weldKind"
+                                placeholder="设备种类"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in weldKindArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="焊机CPU个数"
+                            prop="weldCpuNum"
+                        >
+                            <el-input
+                                v-model="ruleForm.weldCpuNum"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu1编号"
+                            prop="cpu1No"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu1No"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu1类型"
+                            prop="cpu1Model"
+                        >
+                            <el-select
+                                v-model="ruleForm.cpu1Model"
+                                placeholder="cpu1"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in cpu1Model"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu1软件版本"
+                            prop="cpu1Version"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu1Version"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu2编号"
+                            prop="cpu2No"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu2No"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu2类型"
+                            prop="cpu2Model"
+                        >
+                            <el-select
+                                v-model="ruleForm.cpu2Model"
+                                placeholder="cpu2"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in cpu2Model"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu2软件版本"
+                            prop="cpu2Version"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu2Version"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu3编号"
+                            prop="cpu3No"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu3No"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu3类型"
+                            prop="cpu3Model"
+                        >
+                            <el-select
+                                v-model="ruleForm.cpu3Model"
+                                placeholder="cpu3"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in cpu3Model"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="cpu3软件版本"
+                            prop="cpu3Version"
+                        >
+                            <el-input
+                                v-model="ruleForm.cpu3Version"
+                                style="width:250px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="状态"
+                            prop="weldStatus"
+                        >
+                            <el-radio-group v-model="ruleForm.weldStatus">
+                                <el-radio
+                                    :label="item.id"
+                                    v-for="item in statusArr"
+                                    :key="item.id"
+                                >{{item.valueName}}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="所属项目"
+                            prop="deptId"
+                        >
+                            <el-cascader
+                                v-model="ruleForm.deptId"
+                                size="small"
+                                style="width:250px"
+                                clearable
+                                :options="teamArr"
+                                :props="defalutProps"
+                                :show-all-levels="false"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="创建时间"
+                            prop="createTime"
+                        >
+                            <el-date-picker
+                                v-model="ruleForm.createTime"
+                                style="width:250px"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                type="datetime"
+                                placeholder="选择日期时间"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="生产厂商"
+                            prop="weldFirm"
+                        >
+                            <el-select
+                                v-model="ruleForm.weldFirm"
+                                placeholder="请选择"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in manufactorArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>      
 
                 <el-form-item>
                     <el-button
@@ -586,7 +629,7 @@
 </template>
 
 <script>
-import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel, findByIdArea, getSxWelderList } from '_api/productionEquipment/production'
+import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel, findByIdArea, getSxWelderList,addSxWelder,getSxWelderDetail,delSxWelder,editSxWelder } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 
@@ -644,7 +687,7 @@ export default {
                 "cpu3Version": 1,
                 "weldStatus": 15,
                 "weldStatusStr": "手工焊",
-                "weldFirm": 22,
+                "weldFirm": 21,
                 "weldFirmStr": "OTC",
                 "deptId": 6,
                 "deptIdStr": "装焊一区1",
@@ -706,7 +749,19 @@ export default {
             headers: {
                 'Authorization': getToken()
             },
-            loading: false
+            loading: false,
+            //电源类型列表
+            powerSupplyArr:[],
+            //送丝速度列表
+            wireFeederModelArr:[],
+            //设备种类列表
+            weldKindArr:[],
+            //cpu1类型列表
+            cpu1Model:[],
+            //cpu2类型列表
+            cpu2Model:[],
+            //cpu3类型
+            cpu3Model:[]
         }
     },
 
@@ -720,7 +775,7 @@ export default {
     methods: {
         //获取数据字典
         async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6", "16", "17"] });
+            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6", "16", "17","18","19","20","21","22","23"] });
             if (code == 200) {
                 this.statusArr = data['4'] || [];
                 this.manufactorArr = data['5'] || [];
@@ -728,6 +783,20 @@ export default {
                 this.areaArr = data['16'] || [];
                 this.straddleArr2 = data['17'] || [];
                 this.modelArr2 = data['6'] || [];
+
+
+                //电源类型
+                this.powerSupplyArr = data['18']||[];
+                //送丝速度
+                this.wireFeederModelArr = data['19']||[];
+                //设备种类
+                this.weldKindArr = data['23']||[];
+                //cpu1类型列表
+                this.cpu1Model = data['20']||[];
+                //cpu2类型列表
+                this.cpu2Model = data['21']||[];
+                //cpu3类型列表
+                this.cpu3Model = data['22']||[];
             }
         },
         //获取全部采集序号
@@ -782,20 +851,12 @@ export default {
             this.title = "修改焊机设备"
             this.getAllGatherNosFun();
             this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await getWelderDetail(id);
+            let { data, code } = await getSxWelderDetail({id});
             if (code == 200) {
                 this.visable1 = true;
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
-                    this.ruleForm = data[0] || {};
-                    this.ruleForm.gid = this.ruleForm.gid.split(',').map(Number);
-                    this.gatherNos.unshift({ id: parseInt(this.ruleForm.gid), gatherNo: this.ruleForm.machineGatherInfo.gatherNo });
-                    if (this.ruleForm.firm) {
-                        this.changeFirm(this.ruleForm.firm);
-                    }
-                    if (this.ruleForm.area) {
-                        this.changeArea(this.ruleForm.area);
-                    }
+                    this.ruleForm = data|| {};                    
                 })
             }
         },
@@ -806,7 +867,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                let { code, data } = await delWelder({ id })
+                let { code, data } = await delSxWelder({ id })
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.getList()
@@ -853,7 +914,7 @@ export default {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
                         req.gid = req.gid.join(',');
-                        const { data, code } = await editWelder(req)
+                        const { data, code } = await editSxWelder(req)
                         if (code == 200) {
                             this.$message.success('修改成功')
                             this.visable1 = false
@@ -862,8 +923,7 @@ export default {
                     } else {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        req.gid = req.gid.join(',');
-                        const { data, code } = await addWelder(req);
+                        const { data, code } = await addSxWelder(req);
                         if (code == 200) {
                             this.$message.success('新增成功')
                             this.visable1 = false

@@ -139,31 +139,17 @@ export const asyncRoutes = [
           title: '生产设备管理',
           mark:'102'
         }
-      }
-    ]
-  },
-  {
-    path: '/sx-model',
-    component: Layout,
-    redirect: 'sx-model-list',
-    alwaysShow: true,
-    name: 'sxModel',
-    meta: {
-      title: '松下生产设备管理',
-      icon: 'tree',
-      mark:'10'
-    },
-    children: [
+      },
       {
         path: 'sx-model-list',
         component: () => import('@/views/sxModel/sxModelList'),
         name: 'sxModelList',
         meta: {
-          title: '松下生产设备列表',
-          mark:'1001',
+          title: '松下生产设备',
+          mark:'103',
           noCache:true
         }
-      }      
+      }  
     ]
   },
   {
