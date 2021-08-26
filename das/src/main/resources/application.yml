@@ -98,4 +98,4 @@ slotCardEnableDevice: true
 enableOtcFunction: true
 
 # 是否启用松下业务功能
-enableSxFunction: false
+enableSxFunction: true
