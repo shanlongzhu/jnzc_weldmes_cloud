@@ -17,4 +17,18 @@ public class DateTimeUtil {
         String time = sdf.format(date);
         return time;
     }
+
+    /**
+     * @Date 2021/8/26 12:27
+     * @Description 时间格式转化
+     * @Params
+     */
+    public static String getRightTimeFormat(String time){
+
+        Date date =new Date(time);
+
+        String timeFormat = sdf.format(date);
+
+        return timeFormat;
+    }
 }
