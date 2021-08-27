@@ -27,9 +27,9 @@ public class MachineWeldsxServiceImpl implements MachineWeldsxService {
      * @Params
      */
     @Override
-    public List<MachineWeldsxInfo> getMachineWeldsxInfos(String weldModel) {
+    public List<MachineWeldsxInfo> getMachineWeldsxInfos(Long equipType) {
 
-        List<MachineWeldsxInfo> list = machineWeldsxDao.selectMachineWeldsxInfos(weldModel);
+        List<MachineWeldsxInfo> list = machineWeldsxDao.selectMachineWeldsxInfos(equipType);
 
         return list;
     }
