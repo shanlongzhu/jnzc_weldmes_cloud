@@ -6,6 +6,8 @@ import com.gw.sys.service.DeptAreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/8/26 16:46
@@ -20,7 +22,7 @@ public class DeptTOAreaAndBayController {
 
     /**
      * @Date 2021/8/26 11:05
-     * @Description 班组区域跨间绑定
+     * @Description 作业区区域跨间绑定
      * @Params
      */
     @RequestMapping(value = "deptTo/addDeptTOAreaAndBay",method = RequestMethod.POST)
@@ -34,5 +36,19 @@ public class DeptTOAreaAndBayController {
 
         return HttpResult.ok("绑定成功!");
     }
+
+    /**
+     * @Date 2021/8/27 16:15
+     * @Description 根据作业区id、区域id获取部门列表信息
+     * @Params
+     */
+    @RequestMapping(value = "deptTo/getDeptTOAreaAndBayInfo",method = RequestMethod.GET)
+    public HttpResult getDeptTOAreaAndBayInfo(Long deptId,Long areaId){
+
+        List<DeptAreaBayInfo> list = deptAreaBayService.getDeptTOAreaAndBay(deptId,areaId);
+
+        return HttpResult.ok(list);
+    }
+
 
 }

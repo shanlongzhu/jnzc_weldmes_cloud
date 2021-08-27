@@ -2,6 +2,8 @@ package com.gw.sys.service;
 
 import com.gw.entities.DeptAreaBayInfo;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/8/26 16:47
@@ -22,4 +24,11 @@ public interface DeptAreaBayService {
      * @Params
      */
     public void delDeptTOAreaAndBay(Long deptId);
+
+    /**
+     * @Date 2021/8/27 16:20
+     * @Description 根据作业区id、区域id获取部门列表信息
+     * @Params
+     */
+    public List<DeptAreaBayInfo> getDeptTOAreaAndBay(Long deptId,Long areaId);
 }

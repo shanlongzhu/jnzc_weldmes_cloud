@@ -7,6 +7,8 @@ import com.gw.sys.service.DeptAreaBayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author zhanghan
  * @Date 2021/8/26 16:48
@@ -42,5 +44,18 @@ public class DeptAreaBayServiceImpl implements DeptAreaBayService {
     public void delDeptTOAreaAndBay(Long deptId) {
 
         deptAreaBayDao.deleteDeptTOAreaAndBay(deptId);
+    }
+
+    /**
+     * @Date 2021/8/27 16:22
+     * @Description 根据作业区id、区域id获取部门列表信息
+     * @Params
+     */
+    @Override
+    public List<DeptAreaBayInfo> getDeptTOAreaAndBay(Long deptId, Long areaId) {
+
+        List<DeptAreaBayInfo> list = deptAreaBayDao.selectDeptAreaBayInfos(deptId,areaId);
+
+        return list;
     }
 }

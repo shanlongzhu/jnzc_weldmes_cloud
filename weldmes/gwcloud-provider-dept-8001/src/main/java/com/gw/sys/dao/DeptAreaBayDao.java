@@ -28,4 +28,11 @@ public interface DeptAreaBayDao {
      * @Params
      */
     public void deleteDeptTOAreaAndBay(@Param("deptId")Long deptId);
+
+    /**
+     * @Date 2021/8/27 16:22
+     * @Description 根据作业区id、区域id获取部门列表信息
+     * @Params
+     */
+    public List<DeptAreaBayInfo> selectDeptAreaBayInfos(@Param("deptId")Long deptId, @Param("areaId")Long areaId);
 }
