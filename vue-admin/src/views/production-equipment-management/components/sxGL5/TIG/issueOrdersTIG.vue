@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-26 16:48:39
+ * @LastEditTime: 2021-08-27 13:02:48
 -->
 
 <template>
@@ -162,7 +162,7 @@
             width="700"
         >
             <template #default>
-                <div class="top-con flex-n">
+                <!-- <div class="top-con flex-n">
                     <div class="con-w">
                         <span>班组：</span>
                         <el-cascader
@@ -176,7 +176,7 @@
                             @change="search"
                         />
                     </div>
-                </div>
+                </div> -->
                 <vxe-table
                     ref="vxeTable"
                     border
@@ -357,7 +357,7 @@ export default {
             //搜索条件
             searchObj: {
                 // grade: '',
-                model: ''
+                equipType: ''
             },
             model2: false,
             loading2: false,

@@ -4,7 +4,7 @@
         class="flex-c"
     >
         <div class="top-con flex-n">
-            <div class="con-w">
+            <!-- <div class="con-w">
                 <span>编号：</span>
                 <el-input
                     size="small"
@@ -58,7 +58,7 @@
                     />
                 </el-select>
             </div>
-            
+
             <div class="con-w">
                 <span>IP：</span>
                 <el-input
@@ -66,11 +66,11 @@
                     class="w150"
                     v-model="searchObj.ipPath"
                 ></el-input>
-            </div>
+            </div> -->
             <div class="con-w">
                 <span>设备型号：</span>
                 <el-select
-                    v-model="searchObj.model"
+                    v-model="searchObj.equipType"
                     size="small"
                     class="w150"
                     clearable
@@ -210,7 +210,7 @@
                     min-width="60"
                 >
                 </el-table-column>
-                
+
                 <el-table-column
                     prop="weldModel"
                     label="设备机型"
@@ -262,12 +262,14 @@
         <el-pagination
             class="p10"
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             background
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
-            @current-change="handleCurrentChange"
+            @current-change="handleCurrentChange"            
         />
 
         <!-- 新增/修改 -->
@@ -614,7 +616,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                </el-row>      
+                </el-row>
 
                 <el-form-item>
                     <el-button
@@ -629,7 +631,7 @@
 </template>
 
 <script>
-import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel, findByIdArea, getSxWelderList,addSxWelder,getSxWelderDetail,delSxWelder,editSxWelder } from '_api/productionEquipment/production'
+import { getWelderList, getWelderDetail, delWelder, exportWelderExcel, getAllGatherNos, addWelder, editWelder, getWeldingModel, findByIdArea, getSxWelderList, addSxWelder, getSxWelderDetail, delSxWelder, editSxWelder } from '_api/productionEquipment/production'
 import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 
@@ -640,15 +642,7 @@ export default {
         return {
             //搜索条件
             searchObj: {
-                machineNo: '',
-                type: '',
-                grade: '',
-                status: '',
-                firm: '',
-                isNetwork: '',
-                gatherNo: '',
-                ipPath: '',
-                model: ''
+                equipType:''
             },
             //搜索条件设备型号
             modelArr2: [],
@@ -656,6 +650,7 @@ export default {
             //分页
             page: 1,
             total: 0,
+            pageSize: 10,
 
             visable1: false,
             ruleFormObj: {
@@ -751,17 +746,17 @@ export default {
             },
             loading: false,
             //电源类型列表
-            powerSupplyArr:[],
+            powerSupplyArr: [],
             //送丝速度列表
-            wireFeederModelArr:[],
+            wireFeederModelArr: [],
             //设备种类列表
-            weldKindArr:[],
+            weldKindArr: [],
             //cpu1类型列表
-            cpu1Model:[],
+            cpu1Model: [],
             //cpu2类型列表
-            cpu2Model:[],
+            cpu2Model: [],
             //cpu3类型
-            cpu3Model:[]
+            cpu3Model: []
         }
     },
 
@@ -775,7 +770,7 @@ export default {
     methods: {
         //获取数据字典
         async getDicFun () {
-            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6", "16", "17","18","19","20","21","22","23"] });
+            let { data, code } = await getDictionaries({ "types": ["3", "4", "5", "6", "16", "17", "18", "19", "20", "21", "22", "23"] });
             if (code == 200) {
                 this.statusArr = data['4'] || [];
                 this.manufactorArr = data['5'] || [];
@@ -786,17 +781,17 @@ export default {
 
 
                 //电源类型
-                this.powerSupplyArr = data['18']||[];
+                this.powerSupplyArr = data['18'] || [];
                 //送丝速度
-                this.wireFeederModelArr = data['19']||[];
+                this.wireFeederModelArr = data['19'] || [];
                 //设备种类
-                this.weldKindArr = data['23']||[];
+                this.weldKindArr = data['23'] || [];
                 //cpu1类型列表
-                this.cpu1Model = data['20']||[];
+                this.cpu1Model = data['20'] || [];
                 //cpu2类型列表
-                this.cpu2Model = data['21']||[];
+                this.cpu2Model = data['21'] || [];
                 //cpu3类型列表
-                this.cpu3Model = data['22']||[];
+                this.cpu3Model = data['22'] || [];
             }
         },
         //获取全部采集序号
@@ -813,9 +808,10 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
+                size: this.pageSize,
                 ...this.searchObj
             }
-            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
+            // req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
             this.loading = true;
             let { data, code } = await getSxWelderList(req);
             this.loading = false;
@@ -851,12 +847,12 @@ export default {
             this.title = "修改焊机设备"
             this.getAllGatherNosFun();
             this.ruleForm = { ...this.ruleFormObj };
-            let { data, code } = await getSxWelderDetail({id});
+            let { data, code } = await getSxWelderDetail({ id });
             if (code == 200) {
                 this.visable1 = true;
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
-                    this.ruleForm = data|| {};                    
+                    this.ruleForm = data || {};
                 })
             }
         },
@@ -886,6 +882,13 @@ export default {
             this.page = p;
             this.getList();
         },
+        handleSizeChange (s) {
+            this.pageSize = s;
+            this.getList();
+        },
+
+
+
         //导出
         exportExcelFun () {
             this.$message({
@@ -913,7 +916,6 @@ export default {
                     if (this.ruleForm.hasOwnProperty('id')) {
                         const req = { ...this.ruleForm }
                         req.deptId = req.deptId && req.deptId.length > 0 ? req.deptId.slice(-1).join('') : req.deptId
-                        req.gid = req.gid.join(',');
                         const { data, code } = await editSxWelder(req)
                         if (code == 200) {
                             this.$message.success('修改成功')

@@ -279,10 +279,12 @@
         </div>
         <el-pagination
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             class="p10"
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
             background
             @current-change="handleCurrentChange"
@@ -513,6 +515,7 @@ export default {
             // 分页
             page: 1,
             total: 0,
+            pageSize:10,
             // 表格勾选数据
             selectTableAll: [],
             // 班组数据
@@ -615,6 +618,7 @@ export default {
             this.loading = true;
             const req = {
                 pn: this.page,
+                size:this.pageSize,
                 taskStatus: this.taskStatus,
                 grade: this.grade && this.grade.length > 0 ? this.grade.slice(-1).join('') : ''
             }
@@ -626,6 +630,10 @@ export default {
         handleCurrentChange (pn) {
             this.page = pn
             this.getList()
+        },
+        handleSizeChange (s) {
+            this.pageSize = s;
+            this.getList();
         },
         changeTime (v) {
             if (v && v[0]) {

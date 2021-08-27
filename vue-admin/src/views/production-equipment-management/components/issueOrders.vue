@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-07-23 20:56:34
+ * @LastEditTime: 2021-08-27 08:56:41
 -->
 
 <template>
@@ -409,7 +409,7 @@
                         min-width="100"
                     >
                         <template #default="{row}">
-                            {{row[0].gatherNo}}
+                            {{row.gatherNo}}
                         </template>
                     </vxe-table-column>
                     <vxe-table-column
@@ -418,7 +418,7 @@
                         min-width="100"
                     >
                         <template #default="{row}">
-                            {{row.map(item => item.channelNo).join('，')}}
+                            {{row.weldInfo.map(item => item.channelNo).join('，')}}
                         </template>
                     </vxe-table-column>
                     <vxe-table-column
@@ -428,7 +428,7 @@
                     >
                         <template #default="{row}">
                             <span style="color:#13ce66">
-                                {{row.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
@@ -439,7 +439,7 @@
                     >
                         <template #default="{row}">
                             <span style="color:#f00">
-                                {{row.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
@@ -732,6 +732,7 @@ export default {
                     this.newEqu = []
                     for (let i = 0, len = gatherNoArr.length; i < len; i++) {
                         ((i) => {
+                            this.newEqu.push({'gatherNo':gatherNoArr[i],'weldInfo':[]})
                             setTimeout(() => {
                                 clearTimeout(this.timeout);
                                 let msgData = techArr.map(v => {
@@ -741,7 +742,7 @@ export default {
                                     this.reqMqttNum++;//记录发送总条数
                                     return objItem;
                                 })
-                                this.newEqu.push(msgData)
+                                this.newEqu[i].weldInfo = msgData;
                                 const msg = JSON.stringify(msgData);
                                 this.doPublish(msg);
                                 console.log(msg)
@@ -770,7 +771,7 @@ export default {
                 if (this.backMqttNum !== this.reqMqttNum) {
                     this.$message.error("下发超时")
                     this.newEqu.forEach(item => {
-                        item.forEach(v => {
+                        item.weldInfo.forEach(v => {
                             v.isSuccessStatus = 2;
                         })
                     });

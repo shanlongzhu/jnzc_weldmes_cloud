@@ -183,6 +183,14 @@
                     @click="bindAreaFun"
                 >区间绑定</el-button>
             </div>
+            <div class="con-w">
+                <el-button
+                    v-has="'exprot'"
+                    size="small"
+                    icon="el-icon-document-remove"
+                    @click="bindAreaFun2"
+                >区间绑定2</el-button>
+            </div>
 
         </div>
         <div
@@ -397,10 +405,12 @@
         <el-pagination
             class="p10"
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             background
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
             @current-change="handleCurrentChange"
         />
@@ -604,6 +614,7 @@
 
         <area-bind ref="areaBind"></area-bind>
         <equipment-bind ref="equipmentBind"></equipment-bind>
+        <area-org-bind ref="areaBind2"></area-org-bind>
     </div>
 </template>
 
@@ -613,8 +624,9 @@ import { getTeam, getDictionaries } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
 import areaBind from './components/areaBind.vue'
 import EquipmentBind from './components/equipmentBind.vue'
+import AreaOrgBind from './components/areaOrgBind.vue'
 export default {
-    components: { areaBind, EquipmentBind },
+    components: { areaBind, EquipmentBind, AreaOrgBind },
     name: 'product-equip-manage',
     data () {
         return {
@@ -636,6 +648,7 @@ export default {
             //分页
             page: 1,
             total: 0,
+            pageSize:10,
 
             visable1: false,
             ruleFormObj: {
@@ -750,6 +763,7 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
+                size:this.pageSize,
                 ...this.searchObj
             }
             req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
@@ -831,6 +845,12 @@ export default {
             this.page = p;
             this.getList();
         },
+        handleSizeChange (s) {
+            this.pageSize = s;
+            this.getList();
+        },
+
+
         //导出
         exportExcelFun () {
             this.$message({
@@ -897,6 +917,10 @@ export default {
         //区间绑定
         bindAreaFun () {
             this.$refs.areaBind.init();
+        },
+
+        bindAreaFun2 () {
+            this.$refs.areaBind2.init();
         },
     }
 }

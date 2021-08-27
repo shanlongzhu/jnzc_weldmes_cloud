@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-26 17:37:53
+ * @LastEditTime: 2021-08-27 13:02:08
 -->
 
 <template>
@@ -161,22 +161,7 @@
             v-model="model2"
             width="700"
         >
-            <template #default>
-                <div class="top-con flex-n">
-                    <div class="con-w">
-                        <span>班组：</span>
-                        <el-cascader
-                            v-model="searchObj.grade"
-                            size="small"
-                            style="width:180px"
-                            clearable
-                            :options="teamArr"
-                            :props="defalutProps"
-                            :show-all-levels="false"
-                            @change="search"
-                        />
-                    </div>
-                </div>
+            <template #default>                
                 <vxe-table
                     ref="vxeTable"
                     border
@@ -356,7 +341,7 @@ export default {
             //搜索条件设备型号
             //搜索条件
             searchObj: {
-                model: ''
+                equipType: ''
             },
             model2: false,
             loading2: false,

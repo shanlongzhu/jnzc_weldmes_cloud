@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-31 14:26:52
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-18 14:51:32
+ * @LastEditTime: 2021-08-27 16:29:04
 -->
 <template>
     <el-tree
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { getAreaG } from '_api/system/systemApi'
+import { getAreaG,getAreaOrgG } from '_api/system/systemApi'
 
 export default {
     components: {},
@@ -45,7 +45,7 @@ export default {
         //获取部门tree
         async getUserTreeFun (id) {
             this.treeLoading = true;
-            let { data, code } = await getAreaG();
+            let { data, code } = await getAreaOrgG();
             this.treeLoading = false;
             if (code == 200) {
                 this.treeData = this.repentData(data || []);

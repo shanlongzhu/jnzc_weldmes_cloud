@@ -180,6 +180,9 @@ aside {
 .cur{
   cursor: pointer;
 }
+.el-table__body tr.current-row > td{
+  background-color: #aadef7 !important;
+}
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
   background-color: #aadef7;

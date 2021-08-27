@@ -333,3 +333,42 @@ export function getAreaG() {
     method: "post"
   });
 }
+//获取区域胯间机构tree数据
+export function getAreaOrgG() {
+  return request({
+    url: "/areaBay/getAreaBayTreeInfo",
+    method: "post"
+  });
+}
+
+//根据部门区域获取跨间
+export function getBayInfo(params={}) {
+  return request({
+    url: "/deptTo/getDeptTOAreaAndBayInfo",
+    method: "get",
+    params
+  });
+}
+
+
+
+
+
+//获取区域胯间tree数据
+export function getDeptTree() {
+  return request({
+    url: "/dept/getDeptWorkInfos",
+    method: "get"
+  });
+}
+
+//保存 区域跨间部门版定
+export function saveDeptTOAreaAndBay(data) {
+  return request({
+    url: "/deptTo/addDeptTOAreaAndBay",
+    method: "post",
+    data
+  });
+}
+
+

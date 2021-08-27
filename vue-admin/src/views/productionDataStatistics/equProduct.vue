@@ -170,10 +170,12 @@
         <el-pagination
             class="p10"
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             background
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
             @current-change="handleCurrentChange"
         />
@@ -202,6 +204,7 @@ export default {
             //分页
             page: 1,
             total: 0,
+            pageSize:10,
 
             //搜索条件
             startTime: moment(new Date()).startOf('day'),//时间
@@ -260,6 +263,7 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
+                size:this.pageSize,
                 time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 machineNo:this.machineNo,
@@ -277,6 +281,10 @@ export default {
         //分页切换
         handleCurrentChange (p) {
             this.page = p;
+            this.getList();
+        },
+        handleSizeChange (s) {
+            this.pageSize = s;
             this.getList();
         },
         //导出

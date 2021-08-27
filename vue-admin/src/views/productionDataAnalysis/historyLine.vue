@@ -152,8 +152,9 @@
                     :page-size="10"
                     align="right"
                     background
-                    small
-                    layout="total, prev, pager, next"
+                    :page-sizes="[10, 50, 100, 150, 200]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleSizeChange"
                     :total="total"
                     @current-change="handleCurrentChange"
                 />
@@ -201,6 +202,7 @@ export default {
             //分页
             page: 1,
             total: 0,
+            pageSize:10,
             loading: false,
 
             //任务编号下拉数据
@@ -263,7 +265,7 @@ export default {
                 this.getList();
                 this.voltageData = [];
                 this.electricityData = [];
-                this.timeData = [];                
+                this.timeData = [];
             } else {
                 return this.$message.error("请选择查询时间")
             }
@@ -274,6 +276,7 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
+                size:this.pageSize,
                 startTime: this.startTime ? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 endTime: this.endTime ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 ...this.searchObj
@@ -308,6 +311,10 @@ export default {
         //分页切换
         handleCurrentChange (p) {
             this.page = p;
+            this.getList();
+        },
+        handleSizeChange (s) {
+            this.pageSize = s;
             this.getList();
         },
 

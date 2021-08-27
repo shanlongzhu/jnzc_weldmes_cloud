@@ -147,10 +147,12 @@
         <el-pagination
             class="p10"
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             background
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
             @current-change="handleCurrentChange"
         />
@@ -290,6 +292,7 @@ export default {
             list: [],
             page: 1,
             total: 0,
+            pageSize:10,
             loading: false,
 
             //
@@ -339,7 +342,8 @@ export default {
         //获取列表
         async getList () {
             let req = {
-                pn: this.page
+                pn: this.page,
+                size:this.pageSize,
             }
             this.loading = true;
             let { data, code } = await getProcesLibraryList(req);
@@ -411,6 +415,11 @@ export default {
 
         handleCurrentChange (pn) {
             this.page = pn;
+            this.getList();
+        },
+
+        handleSizeChange (s) {
+            this.pageSize = s;
             this.getList();
         },
 
