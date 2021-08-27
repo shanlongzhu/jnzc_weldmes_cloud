@@ -33,6 +33,16 @@ public class DeptAreaBayInfo {
     private List<Long> bayIds;
 
     /**
+     * 跨间
+     */
+    private String bay;
+
+    /**
+     * 跨间
+     */
+    private Long bayId;
+
+    /**
      * 创建时间
      */
     private String createTime;
