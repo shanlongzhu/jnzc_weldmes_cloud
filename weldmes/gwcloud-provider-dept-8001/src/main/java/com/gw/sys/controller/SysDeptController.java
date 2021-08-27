@@ -118,8 +118,8 @@ public class SysDeptController {
      * @Description 获取到作业区层级信息
      * @Params
      */
-    @RequestMapping("dept/getDeptTreeInfosOverWork")
-    public HttpResult getDeptTreeInfosOverWork(){
+    @RequestMapping("dept/getDeptWorkInfos")
+    public HttpResult getDeptWorkInfos(){
 
         List<SysDept> list = sysDeptService.getDeptWorkInfos();
 
