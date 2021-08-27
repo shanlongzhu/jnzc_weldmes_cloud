@@ -19,7 +19,7 @@ public interface MachineWeldsxDao {
      * @Description 松下设备列表查询
      * @Params
      */
-    public List<MachineWeldsxInfo> selectMachineWeldsxInfos();
+    public List<MachineWeldsxInfo> selectMachineWeldsxInfos(@Param("weldModel")String weldModel);
 
     /**
      * @Date 2021/8/25 16:23

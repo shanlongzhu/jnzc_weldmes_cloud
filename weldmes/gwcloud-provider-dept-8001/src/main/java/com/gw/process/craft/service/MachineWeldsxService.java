@@ -16,7 +16,7 @@ public interface MachineWeldsxService {
      * @Description 松下设备列表查询
      * @Params
      */
-    public List<MachineWeldsxInfo> getMachineWeldsxInfos();
+    public List<MachineWeldsxInfo> getMachineWeldsxInfos(String weldModel);
 
     /**
      * @Date 2021/8/25 16:22

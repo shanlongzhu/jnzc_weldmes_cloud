@@ -49,6 +49,11 @@
         left join sys_dictionary dic6 on dic6.id = sx.weld_status
         left join sys_dictionary dic7 on dic7.id = sx.weld_firm
         left join sys_dept dept on dept.id = sx.dept_id
+        <where>
+            <if test="weldModel != null and weldModel != ''">
+                and sx.weld_model = #{weldModel}
+            </if>
+        </where>
     </select>
 
     <!--松下设备信息新增-->

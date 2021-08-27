@@ -34,12 +34,12 @@ public class MachineWeldsxController {
      * @Params
      */
     @RequestMapping(value = "sx/getSxProcessIssueInfos", method = RequestMethod.GET)
-    public HttpResult getSxProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+    public HttpResult getSxProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,String weldModel,Integer size){
 
-        PageHelper.startPage(pn,10);
+        PageHelper.startPage(pn,size);
 
         //松下设备列表查询
-        List<MachineWeldsxInfo> list = machineWeldsxService.getMachineWeldsxInfos();
+        List<MachineWeldsxInfo> list = machineWeldsxService.getMachineWeldsxInfos(weldModel);
 
         PageInfo page = new PageInfo(list,5);
 
