@@ -169,4 +169,15 @@ public class MachineWeldsxInfo {
      * 创建时间
      */
     private String createTime;
+
+    /**
+     * 设备型号(字典)
+     */
+    private Long equipType;
+
+    /**
+     * 设备型号
+     */
+    private String equipTypeStr;
+
 }
