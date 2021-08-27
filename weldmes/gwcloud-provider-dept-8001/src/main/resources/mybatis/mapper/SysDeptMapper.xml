@@ -68,4 +68,14 @@
         where dept1.`name` like "%"#{deptName}"%"
     </select>
 
+    <!--根据用户机构id获取作业区-->
+    <select id="selectWorkAreaDeptInfo" parameterType="Long" resultMap="deptMap">
+        select id,`name`,parent_id from sys_dept where id = #{deptId}
+    </select>
+
+    <!--查询作业区信息-->
+    <select id="selectWorkAreaSysDeptInfo" resultMap="deptMap">
+        select id,`name` from sys_dept where parent_id in (select id from sys_dept where parent_id = 1)
+    </select>
+
 </mapper>

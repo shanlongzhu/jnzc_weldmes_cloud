@@ -57,4 +57,19 @@ public interface SysDeptDao{
      */
     public List<SysDept> selectDeptInfosByName(@Param("deptName")String deptName);
 
+    /**
+     * @Date 2021/8/27 13:55
+     * @Description 根据用户机构id获取作业区
+     * @Params
+     */
+    public SysDept selectWorkAreaDeptInfo(@Param("deptId")Long deptId);
+
+    /**
+     * @Date 2021/8/27 13:55
+     * @Description 获取作业区信息
+     * @Params
+     */
+    public List<SysDept> selectWorkAreaSysDeptInfo();
+
+
 }

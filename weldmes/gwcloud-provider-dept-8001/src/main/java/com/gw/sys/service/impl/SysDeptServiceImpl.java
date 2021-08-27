@@ -1,11 +1,17 @@
 package com.gw.sys.service.impl;
 
+import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtil;
 import com.gw.entities.SysDept;
+import com.gw.entities.UserLoginInfo;
+import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.service.SysDeptService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +27,6 @@ public class SysDeptServiceImpl implements SysDeptService {
 
     @Autowired
     SysDeptDao sysDeptDao;
-
 
     /**
      * @Date 2021/7/8 16:38
@@ -126,6 +131,46 @@ public class SysDeptServiceImpl implements SysDeptService {
         }
 
         return list;
+    }
+
+    /**
+     * @Date 2021/8/27 11:15
+     * @Description 获取到作业区层级信息
+     * @Params
+     */
+    @Override
+    public List<SysDept> getDeptWorkInfos() {
+
+        Subject currentUser = SecurityUtils.getSubject();
+
+        //获取到当前用户
+        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
+
+        //获取到当前用户所属的机构信息
+        SysDept sysDept = sysDeptDao.selectWorkAreaDeptInfo(userLoginInfo.getDeptId());
+
+        List<SysDept> deptInfos = new ArrayList<>();
+
+        //用户为一级机构(集团)
+        if(sysDept.getParentId() == ConstantInfo.GROUP_FLAG){
+
+            deptInfos = sysDeptDao.selectWorkAreaSysDeptInfo();
+
+            return deptInfos;
+        }
+
+        //用户为二级机构(制造部)
+        if(sysDept.getParentId() == ConstantInfo.MANUFACTUR_FLAG){
+
+            deptInfos = sysDeptDao.selectDeptInfosByParentId(sysDept.getParentId());
+
+            return deptInfos;
+        }
+
+        //用户为三级机构(装焊区)
+        deptInfos.add(sysDept);
+
+        return deptInfos;
     }
 
 }

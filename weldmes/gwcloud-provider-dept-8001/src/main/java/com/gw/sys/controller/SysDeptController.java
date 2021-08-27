@@ -113,4 +113,17 @@ public class SysDeptController {
         return HttpResult.ok(page);
     }
 
+    /**
+     * @Date 2021/8/27 11:09
+     * @Description 获取到作业区层级信息
+     * @Params
+     */
+    @RequestMapping("dept/getDeptTreeInfosOverWork")
+    public HttpResult getDeptTreeInfosOverWork(){
+
+        List<SysDept> list = sysDeptService.getDeptWorkInfos();
+
+        return HttpResult.ok(list);
+    }
+
 }

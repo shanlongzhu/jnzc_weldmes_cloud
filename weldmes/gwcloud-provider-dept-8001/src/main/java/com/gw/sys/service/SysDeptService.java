@@ -54,4 +54,12 @@ public interface SysDeptService {
      */
     public List<SysDept> getDeptInfosByIdAndName(Long id,String name);
 
+    /**
+     * @Date 2021/8/27 11:12
+     * @Description 获取到作业区层级信息
+     * @Params
+     */
+    public List<SysDept> getDeptWorkInfos();
+
+
 }
