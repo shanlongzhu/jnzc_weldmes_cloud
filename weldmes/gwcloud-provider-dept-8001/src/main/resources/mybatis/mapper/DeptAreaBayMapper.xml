@@ -20,8 +20,8 @@
 
     <!--根据作业区id、区域id获取部门列表信息-->
     <select id="selectDeptAreaBayInfos" parameterType="Long" resultType="com.gw.entities.DeptAreaBayInfo">
-        select dea.bay_id,dic.value_name from dept_area_bay dea
-        left join sys_dictionary dic on dea.bay_id = dea.id
-        where dea.dept_id = #{deptId} and dic.area_id
+        select dea.bay_id bayId,dic.value_name bay from dept_area_bay dea
+        left join sys_dictionary dic on dea.bay_id = dic.id
+        where dea.dept_id = #{deptId} and dea.area_id
     </select>
 </mapper>
