@@ -45,5 +45,15 @@ public class ConstantInfo {
      */
     public static final String BAY_FLAG = "17";
 
+    /**
+     * 制造部层级标识
+     */
+    public static final Long MANUFACTUR_FLAG = 1L;
+
+    /**
+     * 集团层级标识
+     */
+    public static final Long GROUP_FLAG = 0L;
+
 
 }
