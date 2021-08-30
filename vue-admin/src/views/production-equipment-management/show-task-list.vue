@@ -117,7 +117,7 @@
                     prop="taskNo"
                     label="任务编号"
                     align="left"
-                    min-width="100"
+                    min-width="160"
                     fixed="left"
                 >
                 <template
