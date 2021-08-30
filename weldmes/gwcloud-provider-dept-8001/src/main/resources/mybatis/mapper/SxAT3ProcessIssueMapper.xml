@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.craft.dao.SxAT3ProcessIssueDao">
+
+    <resultMap id="SxAT3Map" type="com.gw.entities.SxAT3ProcessIssue">
+        <id property="id" column="id"></id>
+        <result property="wpsLibraryId" column="wps_library_id"></result>
+        <result property="command" column="command"></result>
+        <result property="channel" column="channel"></result>
+        <result property="channelFlag" column="channel_flag"></result>
+        <result property="presetEleMax" column="preset_ele_max"></result>
+        <result property="presetVolMax" column="preset_vol_max"></result>
+        <result property="presetEleMin" column="preset_ele_min"></result>
+        <result property="presetVolMin" column="preset_vol_min"></result>
+        <result property="eleAlarmMax" column="ele_alarm_max"></result>
+        <result property="volAlarmMax" column="vol_alarm_max"></result>
+        <result property="eleAlarmMin" column="ele_alarm_min"></result>
+        <result property="volAlarmMin" column="vol_alarm_min"></result>
+        <result property="alarmDelayTime" column="alarm_delay_time"></result>
+        <result property="alarmHaltTime" column="alarm_halt_time"></result>
+    </resultMap>
+
+    <!--松下AT3工艺列表查询-->
+    <select id="selectSxAT3ProcessIssueInfos" parameterType="Long" resultMap="SxAT3Map">
+        select id,wps_library_id,command,channel,channel_flag,preset_ele_max,preset_vol_max,
+        preset_ele_min,preset_vol_min,ele_alarm_max,vol_alarm_max,ele_alarm_min,vol_alarm_min,
+        alarm_delay_time,alarm_halt_time
+        from sx_at3_process_issue
+        where wps_library_id = #{wpsLibraryId}
+    </select>
+
+    <!--松下AT3工艺信息新增-->
+    <insert id="insertSxAT3ProcessIssueInfo" parameterType="com.gw.entities.SxAT3ProcessIssue">
+        insert into sx_at3_process_issue(wps_library_id,command,channel,channel_flag,preset_ele_max,preset_vol_max,
+        preset_ele_min,preset_vol_min,ele_alarm_max,vol_alarm_max,ele_alarm_min,vol_alarm_min,
+        alarm_delay_time,alarm_halt_time)
+        values(#{sxAT3ProcessIssue.wpsLibraryId},#{sxAT3ProcessIssue.command},#{sxAT3ProcessIssue.channel},
+        #{sxAT3ProcessIssue.channelFlag},#{sxAT3ProcessIssue.presetEleMax},#{sxAT3ProcessIssue.presetVolMax},
+        #{sxAT3ProcessIssue.presetEleMin},#{sxAT3ProcessIssue.presetVolMin},#{sxAT3ProcessIssue.eleAlarmMax},
+        #{sxAT3ProcessIssue.volAlarmMax},#{sxAT3ProcessIssue.eleAlarmMin},#{sxAT3ProcessIssue.volAlarmMin},
+        #{sxAT3ProcessIssue.alarmDelayTime},#{sxAT3ProcessIssue.alarmHaltTime})
+    </insert>
+
+    <!--根据 id 查询 松下AT3工艺信息-->
+    <select id="selectSxAT3ProcessIssueById" parameterType="Long" resultMap="SxAT3Map">
+        select id,wps_library_id,command,channel,channel_flag,preset_ele_max,preset_vol_max,
+        preset_ele_min,preset_vol_min,ele_alarm_max,vol_alarm_max,ele_alarm_min,vol_alarm_min,
+        alarm_delay_time,alarm_halt_time
+        from sx_at3_process_issue
+        where id = #{id}
+    </select>
+
+    <!--修改松下AT3工艺信息-->
+    <select id="updateSxAT3ProcessIssueInfo" parameterType="com.gw.entities.SxAT3ProcessIssue">
+        update sx_at3_process_issue set wps_library_id = #{sxAT3ProcessIssue.wpsLibraryId},
+        command = #{sxAT3ProcessIssue.command},channel = #{sxAT3ProcessIssue.channel},
+        channel_flag = #{sxAT3ProcessIssue.channelFlag},preset_ele_max = #{sxAT3ProcessIssue.presetEleMax},
+        preset_vol_max = #{sxAT3ProcessIssue.presetVolMax},preset_ele_min = #{sxAT3ProcessIssue.presetEleMin},
+        preset_vol_min = #{sxAT3ProcessIssue.presetVolMin},ele_alarm_max = #{sxAT3ProcessIssue.eleAlarmMax},
+        vol_alarm_max = #{sxAT3ProcessIssue.volAlarmMax},ele_alarm_min = #{sxAT3ProcessIssue.eleAlarmMin},
+        vol_alarm_min = #{sxAT3ProcessIssue.volAlarmMin},
+        alarm_delay_time = #{sxAT3ProcessIssue.alarmDelayTime},alarm_halt_time = #{sxAT3ProcessIssue.alarmHaltTime}
+        where id = #{sxAT3ProcessIssue.id}
+    </select>
+
+    <!--删除松下AT3工艺信息-->
+    <select id="deleteSxAT3ProcessIssueInfo" parameterType="Long">
+        delete from sx_at3_process_issue where id = #{id}
+    </select>
+</mapper>
