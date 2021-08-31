@@ -151,7 +151,7 @@ public class TeamController {
 
                 getTimeCell.setCellValue("");
             }else{
-                getTimeCell.setCellValue(sdf.parse(weldStatistics.getRealWeldTime()));
+                getTimeCell.setCellValue(weldStatistics.getRealWeldTime());
             }
 
             //工作时间
@@ -161,7 +161,7 @@ public class TeamController {
 
                 getTime2Cell.setCellValue("");
             }else{
-                getTime2Cell.setCellValue(sdf.parse(weldStatistics.getOnOffTime()));
+                getTime2Cell.setCellValue(weldStatistics.getOnOffTime());
             }
 
             //正常焊接时间
@@ -171,7 +171,7 @@ public class TeamController {
 
                 normalTimeCell.setCellValue("");
             }else{
-                normalTimeCell.setCellValue(sdf.parse(weldStatistics.getNormalTime()));
+                normalTimeCell.setCellValue(weldStatistics.getNormalTime());
             }
 
             //焊接效率
@@ -191,7 +191,7 @@ public class TeamController {
 
                 supergageTimeCell.setCellValue("");
             }else{
-                supergageTimeCell.setCellValue(sdf.parse(weldStatistics.getSupergageTime()));
+                supergageTimeCell.setCellValue(weldStatistics.getSupergageTime());
             }
 
             //规范符合率
