@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gw.process.craft.dao.SxFR2ProcessIssueDao">
+
+    <resultMap id="sxFR2Map" type="com.gw.entities.SxFR2ProcessIssue">
+        <id property="id" column="id"></id>
+        <result property="wpsLibraryId" column="wps_library_id"></result>
+        <result property="weldIp" column="weld_ip"></result>
+        <result property="command" column="command"></result>
+        <result property="channel" column="channel"></result>
+        <result property="channelFlag" column="channel_flag"></result>
+        <result property="presetEleMax" column="preset_ele_max"></result>
+        <result property="presetVolMax" column="preset_vol_max"></result>
+        <result property="presetEleMin" column="preset_ele_min"></result>
+        <result property="presetVolMin" column="preset_vol_min"></result>
+        <result property="initialEleMax" column="initial_ele_max"></result>
+        <result property="initialVolMax" column="initial_vol_max"></result>
+        <result property="initialEleMin" column="initial_ele_min"></result>
+        <result property="initialVolMin" column="initial_vol_min"></result>
+        <result property="arcEleMax" column="arc_ele_max"></result>
+        <result property="arcVolMax" column="arc_vol_max"></result>
+        <result property="arcEleMin" column="arc_ele_min"></result>
+        <result property="arcVolMin" column="arc_vol_min"></result>
+        <result property="texture" column="texture"></result>
+        <result property="wireDiameter" column="wire_diameter"></result>
+        <result property="gases" column="gases"></result>
+        <result property="weldingControl" column="welding_control"></result>
+        <result property="pulseHaveNot" column="pulse_have_not"></result>
+        <result property="spotWeldingTime" column="spot_welding_time"></result>
+        <result property="unitaryDifference" column="unitary_difference"></result>
+        <result property="dryExtendLength" column="dry_extend_length"></result>
+        <result property="weldMax" column="weld_max"></result>
+        <result property="weldMin" column="weld_min"></result>
+        <result property="initialMax" column="initial_max"></result>
+        <result property="initialMin" column="initial_min"></result>
+        <result property="arcMax" column="arc_max"></result>
+        <result property="arcMin" column="arc_min"></result>
+        <result property="delayTime" column="delay_time"></result>
+        <result property="amendPeriod" column="amend_period"></result>
+        <result property="presetEleAlarmMax" column="preset_ele_alarm_max"></result>
+        <result property="presetVolAlarmMax" column="preset_vol_alarm_max"></result>
+        <result property="presetEleAlarmMin" column="preset_ele_alarm_min"></result>
+        <result property="presetVolAlarmMin" column="preset_vol_alarm_min"></result>
+        <result property="initialEleAlarmMax" column="initial_ele_alarm_max"></result>
+        <result property="initialVolAlarmMax" column="initial_vol_alarm_max"></result>
+        <result property="initialEleAlarmMin" column="initial_ele_alarm_min"></result>
+        <result property="initialVolAlarmMin" column="initial_vol_alarm_min"></result>
+        <result property="arcEleAlarmMax" column="arc_ele_alarm_max"></result>
+        <result property="arcVolAlarmMax" column="arc_vol_alarm_max"></result>
+        <result property="arcEleAlarmMin" column="arc_ele_alarm_min"></result>
+        <result property="arcVolAlarmMin" column="arc_vol_alarm_min"></result>
+        <result property="arcDelayTime" column="arc_delay_time"></result>
+        <result property="alarmDelayTime" column="alarm_delay_time"></result>
+        <result property="alarmHaltTime" column="alarm_halt_time"></result>
+        <result property="flowMax" column="flow_max"></result>
+        <result property="alarmFlag" column="alarm_flag"></result>
+    </resultMap>
+
+    <!--松下FR2工艺信息列表查询-->
+    <select id="selectSxFR2ProcessIssueInfos" parameterType="Long" resultMap="sxFR2Map">
+        select id,wps_library_id,weld_ip,command,channel,channel_flag,preset_ele_max,
+        preset_vol_max,preset_ele_min,preset_vol_min,initial_ele_max,initial_vol_max,
+        initial_ele_min,initial_vol_min,arc_ele_max,arc_vol_max,arc_ele_min,arc_vol_min,
+        texture,wire_diameter,gases,welding_control,pulse_have_not,spot_welding_time,
+        unitary_difference,dry_extend_length,weld_max,weld_min,initial_max,initial_min,
+        arc_max,arc_min,delay_time,amend_period,preset_ele_alarm_max,preset_vol_alarm_max,
+        preset_ele_alarm_min,preset_vol_alarm_min,initial_ele_alarm_max,initial_vol_alarm_max,
+        initial_ele_alarm_min,initial_vol_alarm_min,arc_ele_alarm_max,arc_vol_alarm_max,
+        arc_ele_alarm_min,arc_vol_alarm_min,arc_delay_time,alarm_delay_time,alarm_halt_time,
+        flow_max,alarm_flag
+        from sx_fr2_process_issue
+        where wps_library_id = #{wpsLibraryId}
+    </select>
+
+    <!--根据id查询松下FR2工艺信息-->
+    <select id="selectSxFR2ProcessIssueInfoById" parameterType="Long" resultMap="sxFR2Map">
+        select id,wps_library_id,weld_ip,command,channel,channel_flag,preset_ele_max,
+        preset_vol_max,preset_ele_min,preset_vol_min,initial_ele_max,initial_vol_max,
+        initial_ele_min,initial_vol_min,arc_ele_max,arc_vol_max,arc_ele_min,arc_vol_min,
+        texture,wire_diameter,gases,welding_control,pulse_have_not,spot_welding_time,
+        unitary_difference,dry_extend_length,weld_max,weld_min,initial_max,initial_min,
+        arc_max,arc_min,delay_time,amend_period,preset_ele_alarm_max,preset_vol_alarm_max,
+        preset_ele_alarm_min,preset_vol_alarm_min,initial_ele_alarm_max,initial_vol_alarm_max,
+        initial_ele_alarm_min,initial_vol_alarm_min,arc_ele_alarm_max,arc_vol_alarm_max,
+        arc_ele_alarm_min,arc_vol_alarm_min,arc_delay_time,alarm_delay_time,alarm_halt_time,
+        flow_max,alarm_flag
+        from sx_fr2_process_issue
+        where id = #{id}
+    </select>
+
+    <!--新增松下FR2工艺信息-->
+    <insert id="insertSxFR2ProcessIssueInfo" parameterType="com.gw.entities.SxFR2ProcessIssue">
+        insert into sx_fr2_process_issue(wps_library_id,weld_ip,command,channel,channel_flag,preset_ele_max,
+                                preset_vol_max,preset_ele_min,preset_vol_min,initial_ele_max,initial_vol_max,
+                                initial_ele_min,initial_vol_min,arc_ele_max,arc_vol_max,arc_ele_min,arc_vol_min,
+                                texture,wire_diameter,gases,welding_control,pulse_have_not,spot_welding_time,
+                                unitary_difference,dry_extend_length,weld_max,weld_min,initial_max,initial_min,
+                                arc_max,arc_min,delay_time,amend_period,preset_ele_alarm_max,preset_vol_alarm_max,
+                                preset_ele_alarm_min,preset_vol_alarm_min,initial_ele_alarm_max,initial_vol_alarm_max,
+                                initial_ele_alarm_min,initial_vol_alarm_min,arc_ele_alarm_max,arc_vol_alarm_max,
+                                arc_ele_alarm_min,arc_vol_alarm_min,arc_delay_time,alarm_delay_time,alarm_halt_time,
+                                flow_max,alarm_flag)
+        values(#{sxFR2ProcessIssue.wpsLibraryId},#{sxFR2ProcessIssue.weldIp},#{sxFR2ProcessIssue.command},
+        #{sxFR2ProcessIssue.channel},#{sxFR2ProcessIssue.channelFlag},#{sxFR2ProcessIssue.presetEleMax},
+        #{sxFR2ProcessIssue.presetVolMax},#{sxFR2ProcessIssue.presetEleMin},#{sxFR2ProcessIssue.presetVolMin},
+        #{sxFR2ProcessIssue.initialEleMax},#{sxFR2ProcessIssue.initialVolMax},#{sxFR2ProcessIssue.initialEleMin},
+        #{sxFR2ProcessIssue.initialVolMin},#{sxFR2ProcessIssue.arcEleMax},#{sxFR2ProcessIssue.arcVolMax},
+        #{sxFR2ProcessIssue.arcEleMin},#{sxFR2ProcessIssue.arcVolMin},#{sxFR2ProcessIssue.texture},
+        #{sxFR2ProcessIssue.wireDiameter},#{sxFR2ProcessIssue.gases},#{sxFR2ProcessIssue.weldingControl},
+        #{sxFR2ProcessIssue.pulseHaveNot},#{sxFR2ProcessIssue.spotWeldingTime},#{sxFR2ProcessIssue.unitaryDifference},
+        #{sxFR2ProcessIssue.dryExtendLength},#{sxFR2ProcessIssue.weldMax},#{sxFR2ProcessIssue.weldMin},
+        #{sxFR2ProcessIssue.initialMax},#{sxFR2ProcessIssue.initialMin},#{sxFR2ProcessIssue.arcMax},
+        #{sxFR2ProcessIssue.arcMin},#{sxFR2ProcessIssue.delayTime},#{sxFR2ProcessIssue.amendPeriod},
+        #{sxFR2ProcessIssue.presetEleAlarmMax},#{sxFR2ProcessIssue.presetVolAlarmMax},#{sxFR2ProcessIssue.presetEleAlarmMin},
+        #{sxFR2ProcessIssue.presetVolAlarmMin},#{sxFR2ProcessIssue.initialEleAlarmMax},#{sxFR2ProcessIssue.initialVolAlarmMax},
+        #{sxFR2ProcessIssue.initialEleAlarmMin},#{sxFR2ProcessIssue.initialVolAlarmMin},#{sxFR2ProcessIssue.arcEleAlarmMax},
+        #{sxFR2ProcessIssue.arcVolAlarmMax},#{sxFR2ProcessIssue.arcEleAlarmMin},#{sxFR2ProcessIssue.arcVolAlarmMin},
+        #{sxFR2ProcessIssue.arcDelayTime},#{sxFR2ProcessIssue.alarmDelayTime},#{sxFR2ProcessIssue.alarmHaltTime},
+        #{sxFR2ProcessIssue.flowMax},#{sxFR2ProcessIssue.alarmFlag})
+    </insert>
+
+    <!--修改松下FR2工艺信息-->
+    <update id="updateSxFR2ProcessIssueInfo" parameterType="com.gw.entities.SxFR2ProcessIssue">
+        update sx_fr2_process_issue set wps_library_id = #{sxFR2ProcessIssue.wpsLibraryId},weld_ip = #{sxFR2ProcessIssue.weldIp},
+        command = #{sxFR2ProcessIssue.command},channel = #{sxFR2ProcessIssue.channel},
+        channel_flag = #{sxFR2ProcessIssue.channelFlag},preset_ele_max = #{sxFR2ProcessIssue.presetEleMax},
+        preset_vol_max = #{sxFR2ProcessIssue.presetVolMax},preset_ele_min = #{sxFR2ProcessIssue.presetEleMin},
+        preset_vol_min = #{sxFR2ProcessIssue.presetVolMin},initial_ele_max = #{sxFR2ProcessIssue.initialEleMax},
+        initial_vol_max = #{sxFR2ProcessIssue.initialVolMax},
+        initial_ele_min = #{sxFR2ProcessIssue.initialEleMin},initial_vol_min = #{sxFR2ProcessIssue.initialVolMin},
+        arc_ele_max = #{sxFR2ProcessIssue.arcEleMax},arc_vol_max = #{sxFR2ProcessIssue.arcVolMax},
+        arc_ele_min = #{sxFR2ProcessIssue.arcEleMin},arc_vol_min = #{sxFR2ProcessIssue.arcVolMin},
+        texture = #{sxFR2ProcessIssue.texture},wire_diameter = #{sxFR2ProcessIssue.wireDiameter},
+        gases = #{sxFR2ProcessIssue.gases},welding_control = #{sxFR2ProcessIssue.weldingControl},
+        pulse_have_not = #{sxFR2ProcessIssue.pulseHaveNot},spot_welding_time = #{sxFR2ProcessIssue.spotWeldingTime},
+        unitary_difference = #{sxFR2ProcessIssue.unitaryDifference},dry_extend_length = #{sxFR2ProcessIssue.dryExtendLength},
+        weld_max = #{sxFR2ProcessIssue.weldMax},weld_min = #{sxFR2ProcessIssue.weldMin},
+        initial_max = #{sxFR2ProcessIssue.initialMax},initial_min = #{sxFR2ProcessIssue.initialMin},
+        arc_max = #{sxFR2ProcessIssue.arcMax},arc_min = #{sxFR2ProcessIssue.arcMin},
+        delay_time = #{sxFR2ProcessIssue.delayTime},amend_period = #{sxFR2ProcessIssue.amendPeriod},
+        preset_ele_alarm_max = #{sxFR2ProcessIssue.presetEleAlarmMax},preset_vol_alarm_max = #{sxFR2ProcessIssue.presetVolAlarmMax},
+        preset_ele_alarm_min = #{sxFR2ProcessIssue.presetEleAlarmMin},preset_vol_alarm_min = #{sxFR2ProcessIssue.presetVolAlarmMin},
+        initial_ele_alarm_max = #{sxFR2ProcessIssue.initialEleAlarmMax},initial_vol_alarm_max = #{sxFR2ProcessIssue.initialVolAlarmMax},
+        initial_ele_alarm_min = #{sxFR2ProcessIssue.initialEleAlarmMin},initial_vol_alarm_min = #{sxFR2ProcessIssue.initialVolAlarmMin},
+        arc_ele_alarm_max = #{sxFR2ProcessIssue.arcEleAlarmMax},arc_vol_alarm_max = #{sxFR2ProcessIssue.arcVolAlarmMax},
+        arc_ele_alarm_min = #{sxFR2ProcessIssue.arcEleAlarmMin},arc_vol_alarm_min = #{sxFR2ProcessIssue.arcVolAlarmMin},
+        arc_delay_time = #{sxFR2ProcessIssue.arcDelayTime},alarm_delay_time = #{sxFR2ProcessIssue.alarmDelayTime},
+        alarm_halt_time = #{sxFR2ProcessIssue.alarmHaltTime},flow_max = #{sxFR2ProcessIssue.flowMax},
+        alarm_flag = #{sxFR2ProcessIssue.alarmFlag}
+        where id = #{sxFR2ProcessIssue.id}
+    </update>
+
+    <!--删除松下FR2工艺信息-->
+    <delete id="deleteSxFR2ProcessIssueInfo" parameterType="Long">
+        delete from sx_fr2_process_issue where id =#{id}
+    </delete>
+</mapper>
