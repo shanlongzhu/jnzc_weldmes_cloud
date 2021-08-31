@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">云 智 能 焊 接 管 控 系 统</h3>
+        <h3 class="title">数 字 化 焊 接 全 要 素 管 控 系 统</h3>
       </div>
 
       <!--用户名输入框-->
@@ -247,6 +247,7 @@ export default {
         margin: 0px auto 40px auto;
         text-align: center;
         font-weight: bold;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
       }
     }
 
