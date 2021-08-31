@@ -52,6 +52,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     }
 
     private void setSxHandlerMapping() {
+        //松下焊机第二次握手验证
+        this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
         //松下焊机GL5软硬件参数
         this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxSoftHardParam);
         //松下焊机GL5实时数据

@@ -101,6 +101,24 @@ public class JnSxRtDataProtocol {
     }
 
     /**
+     * 松下焊机第二次握手验证
+     *
+     * @param param 入参
+     */
+    public void jnSxSecondVerify(HandlerParam param) {
+        if (null != param) {
+            final ChannelHandlerContext ctx = param.getCtx();
+            final Map<String, Object> map = param.getValue();
+            if (map.containsKey("weldCid")) {
+                final String weldCid = (String) map.get("weldCid");
+                //保存设备CID和通道对应关系
+                CommonMap.SX_WELD_CID_CTX_MAP.put(weldCid, ctx);
+                CommonMap.SX_CTX_WELD_CID_MAP.put(ctx, weldCid);
+            }
+        }
+    }
+
+    /**
      * 松下焊机GL5软硬件参数存数据库
      *
      * @param param
@@ -396,6 +414,11 @@ public class JnSxRtDataProtocol {
         }
     }
 
+    /**
+     * 松下实时数据统一处理
+     *
+     * @param param 入参
+     */
     private void jnSxRtdManage(HandlerParam param) {
         final Map<String, Object> map = param.getValue();
         final ChannelHandlerContext ctx = param.getCtx();

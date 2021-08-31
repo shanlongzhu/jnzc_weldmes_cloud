@@ -3,7 +3,7 @@ package com.shth.das.business;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnSxDecoderParam;
 import com.shth.das.codeparam.SxVerificationCode;
-import com.shth.das.common.*;
+import com.shth.das.common.BaseAbstractDecoder;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.jnsx.*;
 import io.netty.channel.ChannelHandlerContext;
@@ -91,6 +91,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return null;
@@ -111,13 +112,17 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     //设备CID（8个字节：字符长度则为：16）
                     String weldCid = str.substring(12, 28);
-                    //保存设备CID和通道对应关系
-                    CommonMap.SX_WELD_CID_CTX_MAP.put(weldCid, ctx);
-                    CommonMap.SX_CTX_WELD_CID_MAP.put(ctx, weldCid);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("weldCid", weldCid);
+                    HandlerParam handlerParam = new HandlerParam();
+                    handlerParam.setKey(jnSxDecoderParam.getStr().length());
+                    handlerParam.setValue(map);
                     ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION).sync();
+                    return handlerParam;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return null;
@@ -150,6 +155,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return null;
@@ -172,7 +178,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 SxRtDataUi sxRtDataUi = this.jnSxRtDataProtocol.sxRtDataUiAnalysis(clientIp, str);
                 SxRtDataDb sxRtDataDb = this.jnSxRtDataProtocol.sxRtDataDbAnalysis(clientIp, str);
                 if (null != sxRtDataUi) {
-                    map.put("SxRtDataUI", sxRtDataUi);
+                    map.put("SxRtDataUi", sxRtDataUi);
                 }
                 if (null != sxRtDataDb) {
                     map.put("SxRtDataDb", sxRtDataDb);
