@@ -50,6 +50,9 @@ public class LoginController {
         //获取到当前用户
         Subject currentUser = SecurityUtils.getSubject();
 
+        //永不过期,在登陆最开始加上
+        SecurityUtils.getSubject().getSession().setTimeout(-1000L);
+
         UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
 
         String newPwdMD5 = DigestUtils.md5Hex(password);
