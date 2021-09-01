@@ -9,6 +9,7 @@ import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
+import com.shth.das.pojo.otcv2.OtcV2Cpve500ProcessIssue;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
@@ -1844,7 +1845,7 @@ public class JnSxRtDataProtocol {
      * @param at3ParamDownload 实体类
      * @return 16进制字符串
      */
-    public static String At3ParamDownloadProtocol(At3ParamDownload at3ParamDownload) {
+    public static String at3ParamDownloadProtocol(At3ParamDownload at3ParamDownload) {
         if (null != at3ParamDownload) {
             String head = SxVerificationCode.SX_AT3_PARAM_DOWNLOAD_HEAD;
             String command = CommonUtils.lengthJoint(at3ParamDownload.getCommand(), 2);

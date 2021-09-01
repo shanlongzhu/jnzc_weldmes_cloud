@@ -9,6 +9,7 @@ import com.shth.das.pojo.jnotc.JNPasswordIssue;
 import com.shth.das.pojo.jnotc.JNProcessClaim;
 import com.shth.das.pojo.jnotc.JNProcessIssue;
 import com.shth.das.pojo.jnsx.*;
+import com.shth.das.pojo.otcv2.OtcV2Cpve500ProcessIssue;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -274,8 +275,26 @@ public class MqttMessageAnalysis {
             At3ParamDownload at3ParamDownload = JSON.parseObject(message, At3ParamDownload.class);
             if (null != at3ParamDownload) {
                 final String weldCid = at3ParamDownload.getWeldCid();
-                String str = JnSxRtDataProtocol.At3ParamDownloadProtocol(at3ParamDownload);
+                String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
+            }
+        }
+    }
+
+    /**
+     * OTC2.0（CPVE500）工艺下发
+     *
+     * @param param mqtt入参实体类
+     */
+    public void otcV2Cpve500ProcessIssue(MqttParam param) {
+        if (null != param) {
+            final String message = param.getMessage();
+            final String topic = param.getTopic();
+            final OtcV2Cpve500ProcessIssue cpve500ProcessIssue = JSON.parseObject(message, OtcV2Cpve500ProcessIssue.class);
+            if (null != cpve500ProcessIssue) {
+                final String gatherNo = cpve500ProcessIssue.getGatherNo();
+                String str = OtcV2ProtocolJoint.otcV2Cpve500ProcessIssue(cpve500ProcessIssue);
+                otcChannelWrite(gatherNo, str, "----->OTC2.0（CPVE500）工艺下发成功", topic);
             }
         }
     }
@@ -283,7 +302,7 @@ public class MqttMessageAnalysis {
     /**
      * 根据采集编号查找通道并写入数据
      *
-     * @param gatherNo 采集编号
+     * @param gatherNo 采集编号(10进制数字)
      * @param str      16进制字符串
      * @param msg      打印内容
      * @param topic    主题
@@ -291,6 +310,7 @@ public class MqttMessageAnalysis {
     private void otcChannelWrite(String gatherNo, String str, String msg, String topic) {
         try {
             if (CommonUtils.isNotEmpty(gatherNo) && CommonUtils.isNotEmpty(str)) {
+                gatherNo = Integer.valueOf(gatherNo).toString();
                 if (CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
                     Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(gatherNo).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
@@ -301,12 +321,12 @@ public class MqttMessageAnalysis {
                 }
             }
         } catch (InterruptedException e) {
-            log.error("数据下行异常：{}", e.getMessage());
+            log.error("OTC数据下行异常：{}", e.getMessage());
         }
     }
 
     /**
-     * 根据设备IP查找通道并写入数据
+     * 根据设备CID查找通道并写入数据
      *
      * @param weldCid 设备CID
      * @param str     16进制字符串
@@ -326,7 +346,7 @@ public class MqttMessageAnalysis {
                 }
             }
         } catch (InterruptedException e) {
-            log.error("数据下行异常：{}", e.getMessage());
+            log.error("松下数据下行异常：{}", e.getMessage());
         }
     }
 }

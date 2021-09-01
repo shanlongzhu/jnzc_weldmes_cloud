@@ -5,12 +5,12 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * @description: OTC2.0工艺下发规范
+ * @description: OTC2.0(CPVE500)工艺下发规范
  * @author: Shan Long
  * @create: 2021-08-23
  */
 @Data
-public class OtcV2ProcessIssue {
+public class OtcV2Cpve500ProcessIssue {
 
     public static final String HEAD = "007E35010101";
     public static final String ORDER = "52";
@@ -22,7 +22,7 @@ public class OtcV2ProcessIssue {
     private String gatherNo;
     private String channelNo;                   //通道号
     private BigDecimal spotWeldTime;            //点焊时间
-    private BigDecimal preflowTime;             //提前送气时间
+    private BigDecimal preFlowTime;             //提前送气时间
     private BigDecimal initialEle;              //初期电流
     private BigDecimal initialVol;              //初期电压
     private BigDecimal initialVolUnitary;       //初期电压一元

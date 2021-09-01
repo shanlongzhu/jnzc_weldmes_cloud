@@ -46,6 +46,8 @@ public class MqttMessageManage {
         mqttMessageMap.put("sxFr2ChannelParamDownload", mqttMessageAnalysis::sxFr2ChannelParamDownload);
         //松下AT3系列参数下载
         mqttMessageMap.put("sxAt3ParamDownload", mqttMessageAnalysis::sxAt3ParamDownload);
+        //OTC2.0（CPVE500）工艺下发
+        mqttMessageMap.put("otcV2CPVE500ProcessIssue", mqttMessageAnalysis::otcV2Cpve500ProcessIssue);
     }
 
     /**

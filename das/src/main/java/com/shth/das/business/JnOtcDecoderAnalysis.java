@@ -32,7 +32,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
         this.decoderMapping.put(282, this::jnOtcRtDataAnalysis);
         //OTC1.0工艺下发返回解析
         this.decoderMapping.put(24, this::otcIssueReturnAnalysis);
-        //OTC1.0索取返回协议解析
+        //OTC（1.0、2.0）索取返回协议解析
         this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
         //OTC1.0密码返回和控制命令返回
         this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
