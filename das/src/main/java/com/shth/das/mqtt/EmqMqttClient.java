@@ -81,28 +81,28 @@ public class EmqMqttClient {
      * 主题批量订阅
      */
     private static void batchSubTopic() {
-        //OTC工艺下发
-        subTopic(DownTopicEnum.processIssue.name());
-        //OTC工艺索取
-        subTopic(DownTopicEnum.processClaim.name());
-        //OTC密码下发
-        subTopic(DownTopicEnum.passwordIssue.name());
-        //OTC控制命令下发
-        subTopic(DownTopicEnum.commandIssue.name());
-        //松下CO2工艺下发
-        subTopic(DownTopicEnum.sxCo2ProcessIssue.name());
-        //松下TIG工艺下发
-        subTopic(DownTopicEnum.sxTigProcessIssue.name());
-        //松下焊接通道读取
-        subTopic(DownTopicEnum.sxWeldChannelSet.name());
         //任务领取下发
         subTopic(DownTopicEnum.taskClaimIssue.name());
-        //松下工艺索取
-        subTopic(DownTopicEnum.sxProcessClaim.name());
+        //OTC1.0工艺下发
+        subTopic(DownTopicEnum.processIssue.name());
+        //OTC1.0工艺索取
+        subTopic(DownTopicEnum.processClaim.name());
+        //OTC1.0密码下发
+        subTopic(DownTopicEnum.passwordIssue.name());
+        //OTC1.0控制命令下发
+        subTopic(DownTopicEnum.commandIssue.name());
+        //松下GL5系列CO2焊机工艺下发
+        subTopic(DownTopicEnum.sxGl5Co2ProcessIssue.name());
+        //松下GL5系列TIG工艺下发
+        subTopic(DownTopicEnum.sxGl5TigProcessIssue.name());
+        //松下GL5系列焊接通道读取
+        subTopic(DownTopicEnum.sxGl5WeldChannelSet.name());
+        //松下GL5系列工艺索取
+        subTopic(DownTopicEnum.sxGl5ProcessClaim.name());
         //松下FR2系列通道参数查询/删除
-        subTopic(DownTopicEnum.sxChannelParamQuery.name());
+        subTopic(DownTopicEnum.sxFr2ChannelParamQuery.name());
         //松下FR2系列通道参数下载
-        subTopic(DownTopicEnum.sxChannelParamDownload.name());
+        subTopic(DownTopicEnum.sxFr2ChannelParamDownload.name());
         //松下AT3系列参数下载
         subTopic(DownTopicEnum.sxAt3ParamDownload.name());
     }

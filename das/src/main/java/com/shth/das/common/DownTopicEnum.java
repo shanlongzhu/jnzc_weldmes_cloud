@@ -29,28 +29,28 @@ public enum DownTopicEnum {
     /**
      * 松下GL5系列CO2焊机工艺下发
      */
-    sxCo2ProcessIssue,
+    sxGl5Co2ProcessIssue,
     /**
      * 松下GL5系列TIG焊机工艺下发
      */
-    sxTigProcessIssue,
+    sxGl5TigProcessIssue,
     /**
      * 松下GL5系列焊接通道设定（解锁或锁定）/读取
      */
-    sxWeldChannelSet,
+    sxGl5WeldChannelSet,
     /**
      * 松下GL5系列工艺索取
      */
-    sxProcessClaim,
+    sxGl5ProcessClaim,
 
     /**
      * 松下FR2系列（AT3）通道参数查询/删除
      */
-    sxChannelParamQuery,
+    sxFr2ChannelParamQuery,
     /**
      * 松下FR2系列通道参数下载
      */
-    sxChannelParamDownload,
+    sxFr2ChannelParamDownload,
 
     /**
      * 松下AT3系列参数下载
