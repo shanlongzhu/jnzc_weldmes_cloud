@@ -29,7 +29,7 @@ public class SxCO2ProcessIssueController {
      */
     @RequestMapping(value = "sxCO2/getSxCO2ProcessIssueInfos", method = RequestMethod.GET)
     public HttpResult getSxCO2ProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long wpsLibraryId,
-                                               Integer size){
+                                               @RequestParam(value="pn",defaultValue = "10") Integer size){
 
         PageHelper.startPage(pn,size);
 

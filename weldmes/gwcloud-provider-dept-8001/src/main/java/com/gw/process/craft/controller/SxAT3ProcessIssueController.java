@@ -30,7 +30,7 @@ public class SxAT3ProcessIssueController {
      */
     @RequestMapping(value = "sxAT3/getSxAT3ProcessIssueInfos", method = RequestMethod.GET)
     public HttpResult getSxAT3ProcessIssueInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn, Long wpsLibraryId,
-                                               Integer size){
+                                                @RequestParam(value="pn",defaultValue = "10") Integer size){
 
         PageHelper.startPage(pn,size);
 
