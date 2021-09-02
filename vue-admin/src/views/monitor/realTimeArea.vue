@@ -293,14 +293,14 @@ export default {
         setData (arr) {
             //统计
             for (let b of arr) {
-                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.machineGatherInfo.gatherNo));
                 if (isThat.length > 0) {
                     this.totalNum(b);
                 }
             }
             let v1 = arr.slice(-1)[0];
             this.list.forEach(item => {
-                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
+                if (parseInt(v1.gatherNo) == parseInt(item.machineGatherInfo.gatherNo)) {
                     item.voltage = v1.voltage
                     item.electricity = v1.electricity
                     item.welderName = v1.welderName

@@ -143,11 +143,13 @@
         <el-pagination
             class="p10"
             :current-page.sync="page"
-            :page-size="10"
+            :page-size="pageSize"
             align="right"
             small
             background
-            layout="total, prev, pager, next"
+            :page-sizes="[10, 50, 100, 150, 200]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
             :total="total"
             @current-change="handleCurrentChange"
         />
@@ -164,6 +166,7 @@ export default {
         return {
             page: 1,
             total: 0,
+            pageSize:10,
             list: [],
             loading: false
         }
@@ -177,7 +180,8 @@ export default {
             this.loading = true;
             let req = {
                 wpsLibraryId:this.id,
-                pn:this.page
+                pn:this.page,
+                size:this.pageSize
             }
             let { data, code } = await getSxCo2TechList(req);
             this.loading = false;
@@ -214,7 +218,11 @@ export default {
         handleCurrentChange(p){
             this.page = p;
             this.getExpandDetail();
-        }
+        },
+        handleSizeChange (s) {
+            this.pageSize = s;
+            this.getExpandDetail();
+        },
     }
 }
 </script>

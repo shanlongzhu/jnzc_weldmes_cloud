@@ -4,14 +4,156 @@
         ref="homeBg"
         style="width:100%"
     >
+        <!-- 部件 -->
         <div
             class="btn-box"
             :style="styleObj"
-            @click="showArea"
-        ></div>
+            @mouseenter="btnBoxOver('58')"
+        >
+            <div
+                class="btn-box-inner"
+                @click="showArea"
+            ></div>
+            <div class="btn-layer">
+                <div class="btn-layer-inner flex">
+                    <div
+                        class="btn-layer-l"
+                        style="flex:1"
+                        ref="electricity"
+                    ></div>
+                    <div
+                        class="btn-layer-r flex-n"
+                        style="flex:1"
+                    >
+                        <div class="layer-r-item layer-r-1">
+                            <div class="layer-item-inner">
+                                <div><span>{{workArrayPer||0}}</span>%</div>
+                                <div>工 作</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-2">
+                            <div class="layer-item-inner">
+                                <div><span>{{warnArrayPer||0}}</span>%</div>
+                                <div>故 障</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-3">
+                            <div class="layer-item-inner">
+                                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                                <div>待 机</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-4">
+                            <div class="layer-item-inner">
+                                <div><span>{{offnumPer||0}}</span>%</div>
+                                <div>关 机</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 曲面 -->
+        <div
+            class="btn-box btn-box2"
+            :style="styleObj2"
+            @mouseenter="btnBoxOver('60')"
+        >
+            <div
+                class="btn-box-inner"
+                @click="showArea"
+            ></div>
+            <div class="btn-layer">
+                <div class="btn-layer-inner flex">
+                    <div
+                        class="btn-layer-l"
+                        style="flex:1"
+                        ref="electricity2"
+                    ></div>
+                    <div
+                        class="btn-layer-r flex-n"
+                        style="flex:1"
+                    >
+                        <div class="layer-r-item layer-r-1">
+                            <div class="layer-item-inner">
+                                <div><span>{{workArrayPer||0}}</span>%</div>
+                                <div>工 作</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-2">
+                            <div class="layer-item-inner">
+                                <div><span>{{warnArrayPer||0}}</span>%</div>
+                                <div>故 障</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-3">
+                            <div class="layer-item-inner">
+                                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                                <div>待 机</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-4">
+                            <div class="layer-item-inner">
+                                <div><span>{{offnumPer||0}}</span>%</div>
+                                <div>关 机</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 平直 -->
+        <div
+            class="btn-box btn-box3"
+            :style="styleObj3"
+            @mouseenter="btnBoxOver('59')"
+        >
+            <div
+                class="btn-box-inner"
+                @click="showArea"
+            ></div>
+            <div class="btn-layer">
+                <div class="btn-layer-inner flex">
+                    <div
+                        class="btn-layer-l"
+                        style="flex:1"
+                        ref="electricity3"
+                    ></div>
+                    <div
+                        class="btn-layer-r flex-n"
+                        style="flex:1"
+                    >
+                        <div class="layer-r-item layer-r-1">
+                            <div class="layer-item-inner">
+                                <div><span>{{workArrayPer||0}}</span>%</div>
+                                <div>工 作</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-2">
+                            <div class="layer-item-inner">
+                                <div><span>{{warnArrayPer||0}}</span>%</div>
+                                <div>故 障</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-3">
+                            <div class="layer-item-inner">
+                                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                                <div>待 机</div>
+                            </div>
+                        </div>
+                        <div class="layer-r-item layer-r-4">
+                            <div class="layer-item-inner">
+                                <div><span>{{offnumPer||0}}</span>%</div>
+                                <div>关 机</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <img
             width="100%"
-            src="../../assets/home_images/home.jpg"
+            src="../../assets/home_images/home2.jpg"
         />
 
         <!-- 区域跨间 -->
@@ -24,10 +166,22 @@
             width="800px"
         >
             <div class="pb10">
-                <span class="mr20" style="font-size:16px">关机:<strong>{{offnum||0}}</strong></span>
-                <span class="mr20" style="color:#f00;font-size:16px">故障:<strong>{{warnArray.length||0}}</strong></span>
-                <span class="mr20" style="color:rgb(1, 209, 95);font-size:16px">待机:<strong>{{standbyArray.length||0}}</strong></span>
-                <span class="mr20" style="color:green;font-size:16px">焊接:<strong>{{workArray.length||0}}</strong></span>
+                <span
+                    class="mr20"
+                    style="font-size:16px"
+                >关机:<strong>{{offnum||0}}</strong></span>
+                <span
+                    class="mr20"
+                    style="color:#f00;font-size:16px"
+                >故障:<strong>{{warnArray.length||0}}</strong></span>
+                <span
+                    class="mr20"
+                    style="color:rgb(1, 209, 95);font-size:16px"
+                >待机:<strong>{{standbyArray.length||0}}</strong></span>
+                <span
+                    class="mr20"
+                    style="color:green;font-size:16px"
+                >焊接:<strong>{{workArray.length||0}}</strong></span>
             </div>
             <vxe-table
                 border
@@ -63,9 +217,12 @@
                     title="操作"
                     width="100"
                 >
-                <template #default="{row}">
-                    <span class="cur c-blue" @click="goPage(row)">查看详情</span>
-                </template>
+                    <template #default="{row}">
+                        <span
+                            class="cur c-blue"
+                            @click="goPage(row)"
+                        >查看详情</span>
+                    </template>
                 </vxe-table-column>
 
             </vxe-table>
@@ -79,6 +236,7 @@
 <script>
 import { getWelderListNoPage } from '_api/productionEquipment/production'
 import { getAreaG } from '_api/system/systemApi'
+import * as echarts from 'echarts';
 export default {
     components: {},
     props: {},
@@ -88,6 +246,7 @@ export default {
             newClientMq: {},
             img: {},
             set: '',
+            //部件
             styleObj: {},
             styleC: {
                 width: 133,
@@ -95,6 +254,23 @@ export default {
                 top: 910,
                 left: 233
             },
+            //曲面
+            styleObj2: {},
+            styleC2: {
+                width: 427,
+                height: 201,
+                top: 251,
+                left: 155
+            },
+            //平直
+            styleObj3: {},
+            styleC3: {
+                width: 380,
+                height: 215,
+                top: 476,
+                left: 152
+            },
+
             visable1: false,
             listAreaData: [],
             list: [],
@@ -111,14 +287,46 @@ export default {
             standbyArray: [],//待机
             warnArray: [],//故障
 
-            loading: false
+            loading: false,
+            //部件模块
+            myChart: {},
+            //曲面模块
+            myChart2: {},
+            //平直模块
+            myChart3: {},
+            option: {},
         }
     },
     watch: {},
     computed: {
         offnum () {
-            return this.list.length - (this.workArray.length + this.standbyArray.length + this.warnArray.length)
+            return ((this.list.length || 0) - (this.workArray.length + this.standbyArray.length + this.warnArray.length)) || 0
+        },
+
+        //关机百分比
+        offnumPer () { 
+            let newNum = isNaN(this.offnum / this.list.length)?0:this.offnum / this.list.length;                     
+            return (newNum * 100).toFixed(1);
+        },
+
+        //故障百分比
+        warnArrayPer () {
+            let newNum = isNaN(this.warnArray.length / this.list.length)?0:this.warnArray.length / this.list.length;
+            return (newNum * 100).toFixed(1);
+        },
+
+        //待机百分比
+        standbyArrayPer () {
+            let newNum = isNaN(this.standbyArray.length / this.list.length)?0:this.standbyArray.length / this.list.length;
+            return (newNum * 100).toFixed(1);
+        },
+
+        //工作百分比
+        workArrayPer () {
+            let newNum = isNaN(this.workArray.length / this.list.length)?0:this.workArray.length / this.list.length;
+            return (newNum * 100).toFixed(1);
         }
+
     },
     methods: {
 
@@ -129,17 +337,31 @@ export default {
             if (this.img.width > 0 || this.img.height > 0) {
                 let scale = this.img.width / this.$refs.homeBg.clientWidth;
                 clearInterval(this.set);
+                //部件
                 this.styleObj = { ...this.styleC };
                 this.styleObj.width = this.styleObj.width / scale + 'px';
                 this.styleObj.height = this.styleObj.height / scale + 'px';
                 this.styleObj.left = this.styleObj.left / scale + 'px';
                 this.styleObj.top = this.styleObj.top / scale + 'px';
+                //曲面
+                this.styleObj2 = { ...this.styleC2 };
+                this.styleObj2.width = this.styleObj2.width / scale + 'px';
+                this.styleObj2.height = this.styleObj2.height / scale + 'px';
+                this.styleObj2.left = this.styleObj2.left / scale + 'px';
+                this.styleObj2.top = this.styleObj2.top / scale + 'px';
+                //平直
+                this.styleObj3 = { ...this.styleC3 };
+                this.styleObj3.width = this.styleObj3.width / scale + 'px';
+                this.styleObj3.height = this.styleObj3.height / scale + 'px';
+                this.styleObj3.left = this.styleObj3.left / scale + 'px';
+                this.styleObj3.top = this.styleObj3.top / scale + 'px';
             }
         },
 
         showArea () {
             this.visable1 = true;
-            this.getAreaFun();           
+            this.getAreaFun();
+            this.cellClick({ row: {} });
         },
         async getAreaFun () {
             this.loading = true;
@@ -179,9 +401,12 @@ export default {
                 }
             }
         },
+        //鼠标经过显示
+        btnBoxOver (id) {
+            this.cellClick({ row: { areaId: id } })
+        },
 
         cellClick ({ row }) {
-            console.log(row)
             this.workArray = [];//焊接
             this.standbyArray = [];//待机
             this.warnArray = [];//故障
@@ -200,7 +425,11 @@ export default {
                 this.list = (data || []).map(item => {
                     let objItem = { ...item };
                     return objItem;
-                });
+                });                
+                this.myChart.clear();
+                this.myChart2.clear();
+                this.myChart3.clear();
+                this.setPieData();                
             }
         },
 
@@ -243,7 +472,7 @@ export default {
         setData (arr) {
             //统计
             for (let b of arr) {
-                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+                let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.machineGatherInfo.gatherNo));
                 if (isThat.length > 0) {
                     this.totalNum(b);
                 }
@@ -265,6 +494,21 @@ export default {
                     this.setWarnArray(v);
                     break;
             }
+            this.setPieData();            
+        },
+
+        //设置饼图值
+        setPieData(){
+            this.option.series[1].data[0].value = this.list.length || 0;
+            this.option.series[0].data = [
+                { value: this.workArrayPer, name: '工作' },
+                { value: this.warnArrayPer, name: '故障' },
+                { value: this.standbyArrayPer, name: '待机' },
+                { value: this.offnumPer, name: '关机' },
+            ]
+            this.myChart.setOption(this.option);
+            this.myChart2.setOption(this.option);
+            this.myChart3.setOption(this.option);
         },
 
         //获取数值下标
@@ -368,10 +612,10 @@ export default {
         },
 
         //
-        goPage(row){
+        goPage (row) {
             this.$router.push({
-                path:'/monitor-manager/real-time-area-detail',
-                query:{
+                path: '/monitor-manager/real-time-area-detail',
+                query: {
                     ...row
                 }
             })
@@ -385,24 +629,94 @@ export default {
         // this.styleObj.height = this.styleObj.height + 'px';
         // this.styleObj.left = this.styleObj.left + 'px';
         // this.styleObj.top = this.styleObj.top + 'px';
-         this.newMqtt();
+
     },
     mounted () {
-
         // 图片地址
-        var img_url = '/home_images/home.jpg';
-
+        var img_url = '/home_images/home2.jpg';
         // 创建对象
         this.img = new Image();
-
         // 改变图片的src
         this.img.src = img_url;
-
-
-
         this.set = setInterval(() => {
             this.check();
         }, 40);
+
+        this.newMqtt();
+        this.myChart = echarts.init(this.$refs.electricity);
+        this.myChart2 = echarts.init(this.$refs.electricity2);
+        this.myChart3 = echarts.init(this.$refs.electricity3);
+        this.option = {
+            tooltip: {
+                show: false,
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            color: ['#1efbe9', '#07f001', '#fbd51e', '#017dfc'],
+            legend: {
+                orient: 'vertical',
+                left: 10,
+                show: false
+            },
+            series: [
+                {
+                    name: '实时监测',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    hoverAnimation: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: false,
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        { value: 0, name: '工作' },
+                        { value: 0, name: '故障' },
+                        { value: 0, name: '待机' },
+                        { value: 0, name: '关机' },
+                    ]
+                },
+                {
+                    name: '焊机总数',
+                    type: 'pie',
+                    radius: ['0%', '30%'],
+                    avoidLabelOverlap: false,
+                    hoverAnimation: false,
+                    label: {
+                        show: true,
+                        position: 'center',
+                        verticalAlign: 'bottom',
+                        formatter: `{c}`,
+                        lineHeight: 30,
+                        color: '#1efbe9',
+                        fontSize: 18,
+                        fontWeight: '700',
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        { value: 0, name: '焊机总数' }
+                    ],
+                    itemStyle: {
+                        color: 'rgba(255, 0, 0, 0)'
+                    }
+                }
+            ]
+        };
+        this.myChart.setOption(this.option);
+        this.myChart2.setOption(this.option);
+        this.myChart3.setOption(this.option);
 
     }
 }
@@ -416,6 +730,86 @@ export default {
 }
 .btn-box {
     position: absolute;
+}
+
+// .btn-box2{
+//     background: #f00;
+// }
+
+// .btn-box3{
+//     background: #000;
+// }
+
+
+.btn-box .btn-box-inner {
+    width: 100%;
+    height: 100%;
     cursor: pointer;
+}
+.btn-layer {
+    background: url("/home_images/home-layer.png") no-repeat left top;
+    width: 400px;
+    height: 160px;
+    background-size: 400px auto;
+    position: absolute;
+    right: 1000px;
+    top: 0px;
+    opacity: 0;
+    display: block;
+    transition: opacity 0.3s ease 0s;
+}
+.btn-box:hover .btn-layer {
+    opacity: 1;
+    right: -400px;
+}
+.btn-layer-inner {
+    height: 136px;
+    width: 326px;
+    margin-top: 16px;
+    margin-left: 70px;
+}
+.layer-r-item {
+    width: 50%;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+.layer-r-item .layer-item-inner {
+    border-left: 4px solid #1efbe9;
+    padding-left: 8px;
+    line-height: 16px;
+    font-size: 12px;
+}
+.layer-r-item .layer-item-inner div:first-child {
+    padding-bottom: 2px;
+}
+.layer-r-item .layer-item-inner span {
+    font-size: 18px;
+    margin-right: 6px;
+    color: #1efbe9;
+    font-weight: bold;
+}
+
+.layer-r-2 .layer-item-inner {
+    border-color: #07f001;
+}
+.layer-r-2 .layer-item-inner span {
+    color: #07f001;
+}
+
+.layer-r-3 .layer-item-inner {
+    border-color: #fbd51e;
+}
+.layer-r-3 .layer-item-inner span {
+    color: #fbd51e;
+}
+
+.layer-r-4 .layer-item-inner {
+    border-color: #017dfc;
+}
+.layer-r-4 .layer-item-inner span {
+    color: #017dfc;
 }
 </style>
