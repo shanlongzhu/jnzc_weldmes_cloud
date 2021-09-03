@@ -81,4 +81,17 @@ public class SxCO2ProcessIssueServiceImpl implements SxCO2ProcessIssueService {
 
     }
 
+    /**
+     * @Date 2021/9/3 13:27
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    @Override
+    public List<Integer> getChannelNos(Long id) {
+
+        List<Integer> list = sxCO2ProcessIssueDao.queryChannelNos(id);
+
+        return list;
+    }
+
 }

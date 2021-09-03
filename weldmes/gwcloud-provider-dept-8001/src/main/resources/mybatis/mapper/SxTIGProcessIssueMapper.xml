@@ -229,4 +229,9 @@
         delete from sx_tig_process_issue where id = #{id}
     </delete>
 
+    <!--根据 工艺库id  查询  通道号-->
+    <select id="queryChannelNos" parameterType="Long" resultType="java.lang.Integer">
+		select channel_no from sx_tig_process_issue where wps_library_id = #{id}
+	</select>
+
 </mapper>

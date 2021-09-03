@@ -29,7 +29,7 @@ public class SxCO2ProcessIssueController {
      */
     @RequestMapping(value = "sxCO2/getSxCO2ProcessIssueInfos", method = RequestMethod.GET)
     public HttpResult getSxCO2ProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long wpsLibraryId,
-                                               @RequestParam(value="pn",defaultValue = "10") Integer size){
+                                               @RequestParam(value="size",defaultValue = "10") Integer size){
 
         PageHelper.startPage(pn,size);
 
@@ -90,6 +90,19 @@ public class SxCO2ProcessIssueController {
         sxCO2ProcessIssueService.deleteSxCO2ProcessIssueInfoById(id);
 
         return HttpResult.ok("删除成功");
+    }
+
+    /**
+     * @Date 2021/9/3 13:25
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    @RequestMapping(value = "sxCO2/getChannelNosById",method = RequestMethod.GET)
+    public HttpResult getSxCO2ChannelNos(Long id){
+
+        List<Integer> list = sxCO2ProcessIssueService.getChannelNos(id);
+
+        return HttpResult.ok(list);
     }
 
 

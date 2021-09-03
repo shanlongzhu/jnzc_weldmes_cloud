@@ -81,4 +81,17 @@ public class SxTIGProcessIssueServiceImpl implements SxTIGProcessIssueService {
 
     }
 
+    /**
+     * @Date 2021/9/3 13:39
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    @Override
+    public List<Integer> getChannelNos(Long id) {
+
+        List<Integer> list = sxTIGProcessIssueDao.queryChannelNos(id);
+
+        return list;
+    }
+
 }

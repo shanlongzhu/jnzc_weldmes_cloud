@@ -48,4 +48,11 @@ public interface SxCO2ProcessIssueDao {
      * @Params
      */
     public void deleteSxCO2ProcessIssueInfoById(@Param("id")Long id);
+
+    /**
+     * @Date 2021/9/3 13:27
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    List<Integer> queryChannelNos(@Param("id") Long id);
 }

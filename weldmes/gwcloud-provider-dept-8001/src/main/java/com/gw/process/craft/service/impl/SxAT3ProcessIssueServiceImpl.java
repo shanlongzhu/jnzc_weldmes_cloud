@@ -78,4 +78,17 @@ public class SxAT3ProcessIssueServiceImpl implements SxAT3ProcessIssueService {
         sxAT3ProcessIssueDao.deleteSxAT3ProcessIssueInfo(id);
     }
 
+    /**
+     * @Date 2021/9/3 13:49
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    @Override
+    public List<Integer> getChannelNos(Long id) {
+
+        List<Integer> list = sxAT3ProcessIssueDao.queryChannelNos(id);
+
+        return list;
+    }
+
 }
