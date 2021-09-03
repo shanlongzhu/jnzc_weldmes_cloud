@@ -394,3 +394,60 @@ export function delSxTIGTechDetail(params){
     params
   });
 }
+
+
+
+//**********AT3工艺************** */
+//获取松下AT3工艺列表
+export function getSxAT3TechList(params){
+  return request({
+    url: `/sxAT3/getSxAT3ProcessIssueInfos`,
+    method: "get",
+    params
+  });
+}
+
+//新增松下AT3工艺
+export function addSxAT3Tech(data){
+  return request({
+    url: `/sxAT3/addSxAT3ProcessIssueInfos`,
+    method: "post",
+    data
+  });
+}
+
+//获取松下AT3工艺详情
+export function getSxAT3TechDetail(params){
+  return request({
+    url: `/sxAT3/getSxAT3ProcessIssueInfoById`,
+    method: "get",
+    params
+  });
+}
+
+//修改松下AT3工艺详情
+export function editSxAT3TechDetail(data){
+  return request({
+    url: `/sxAT3/updateSxAT3ProcessIssueInfo`,
+    method: "put",
+    data
+  });
+}
+
+//删除松下AT3工艺
+export function delSxAT3TechDetail(params){
+  return request({
+    url: `/sxAT3/delSxAT3ProcessIssueInfo`,
+    method: "delete",
+    params
+  });
+}
+
+//获取工艺库下松下AT3通道号已使用
+export function getAT3ChannaNoIsUse(params){
+  return request({
+    url: `/sxAT3/getChannelNosById`,
+    method: "get",
+    params
+  });
+}

@@ -70,6 +70,14 @@
                             @editDetail="editDetailFunTIG"
                             @reload="getList"
                         ></expandTableTIG>
+                        <expandTableAT3
+                            v-else-if="row.sysDictionary.value==6"
+                            :id="row.id"
+                            :modelType="row.sysDictionary.value"
+                            @editDetail="editDetailFunAT3"
+                            @reload="getList"
+                        >
+                        </expandTableAT3>
                         <expand-table
                             v-else
                             :id="row.id"
@@ -112,7 +120,7 @@
                             size="mini"
                             type="warning"
                             plain
-                            @click="issueOrders(row)"
+                            @click="issueOrdersFun(row)"
                         >
                             工艺库下发
                         </el-button>
@@ -230,15 +238,18 @@
         </el-dialog>
         <!-- 工艺明细 -->
         <add-tech ref="addTech"></add-tech>
-        <!-- 松下 co2工艺新增 -->
+        <!-- 松下 工艺新增 -->
         <addSxCO2 ref="SxCO2"></addSxCO2>
         <addSxTIG ref="SxTIG"></addSxTIG>
+        <addSxAT3 ref="SxAT3"></addSxAT3>
+        <addSxFR2 ref="SxFR2"></addSxFR2>
 
         <!-- 工艺库下发 -->
         <issue-orders ref="issueOrdersRef"></issue-orders>
         <issueOrdersCo2 ref="issueOrdersCo2"></issueOrdersCo2>
         <issueOrdersTIG ref="issueOrdersTIG"></issueOrdersTIG>
-        
+        <issueOrdersAT3 ref="issueOrdersAT3"></issueOrdersAT3>
+
     </div>
 </template>
 
@@ -250,19 +261,38 @@ import expandTable from './components/expandTable.vue';
 import expandTableCo2 from './components/sxGL5/CO2/expandTableCo2'
 //GL5-TIG展开表格
 import expandTableTIG from './components/sxGL5/TIG/expandTableTIG'
+//AT3展开表格
+import expandTableAT3 from './components/sxAT3/expandTableAT3'
 
 //新增工艺
 import AddTech from './components/addTech.vue';
 import addSxTIG from './components/sxGL5/TIG/addSxTIG'
 import addSxCO2 from './components/sxGL5/CO2/addSxCO2'
+import addSxAT3 from './components/sxAT3/addSxAT3'
+import addSxFR2 from './components/FR2/addSxFR2'
 
 //工艺下发
 import IssueOrders from './components/issueOrders.vue';
 import issueOrdersCo2 from './components/sxGL5/CO2/issueOrdersCo2';
-import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG'
+import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG';
+import issueOrdersAT3 from './components/sxAT3/issueOrdersAT3'
 
 export default {
-    components: { expandTable, AddTech, IssueOrders, addSxCO2, addSxTIG, expandTableCo2, expandTableTIG,issueOrdersCo2,issueOrdersTIG },
+    components: {
+        expandTable,
+        AddTech,
+        IssueOrders,
+        addSxCO2,
+        addSxTIG,
+        expandTableCo2,
+        expandTableTIG,
+        issueOrdersCo2,
+        issueOrdersTIG,
+        addSxAT3,
+        expandTableAT3,
+        issueOrdersAT3,
+        addSxFR2
+    },
     data () {
         return {
             visable1: false,
@@ -292,7 +322,7 @@ export default {
             list: [],
             page: 1,
             total: 0,
-            pageSize:10,
+            pageSize: 10,
             loading: false,
 
             //
@@ -309,22 +339,24 @@ export default {
     mounted () {
     },
     methods: {
-        async issueOrders (row) {
-            
+        async issueOrdersFun (row) {
             switch (row.sysDictionary.value) {
-                case '5':
+                case '5'://co2
                     this.$refs.issueOrdersCo2.init(row);
                     break;
-                case '4':
+                case '4'://tig
                     this.$refs.issueOrdersTIG.init(row);
                     break;
-                default:
+                case '6'://at3
+                    this.$refs.issueOrdersAT3.init(row);
+                    break;
+                default://cpev500
                     this.$refs.issueOrdersRef.init(row);
                     break;
             }
 
 
-            
+
         },
 
         //获取数据字典
@@ -343,7 +375,7 @@ export default {
         async getList () {
             let req = {
                 pn: this.page,
-                size:this.pageSize,
+                size: this.pageSize,
             }
             this.loading = true;
             let { data, code } = await getProcesLibraryList(req);
@@ -455,13 +487,19 @@ export default {
         addLibraryFun (row) {
             console.log(row)
             switch (row.sysDictionary.value) {
-                case '5':
+                case '5'://co2工艺新增
                     this.$refs.SxCO2.addLibraryFun(row.id);
                     break;
-                case '4':
+                case '4'://tig工艺新增
                     this.$refs.SxTIG.addLibraryFun(row.id);
                     break;
-                default:
+                case '6'://at3工艺新增
+                    this.$refs.SxAT3.addLibraryFun(row.id);
+                    break;
+                case '7'://FR2工艺新增
+                    this.$refs.SxFR2.addLibraryFun(row.id);
+                    break;
+                default://cpev500工艺新增
                     this.$refs.addTech.addLibraryFun(row.id);
                     break;
             }
@@ -477,6 +515,9 @@ export default {
         },
         async editDetailFunTIG (obj) {
             this.$refs.SxTIG.editDetailFun(obj);
+        },
+        async editDetailFunAT3 (obj) {
+            this.$refs.SxAT3.editDetailFun(obj);
         },
 
     }

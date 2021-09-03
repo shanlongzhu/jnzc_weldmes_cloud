@@ -305,7 +305,9 @@ export default {
             let { code, data } = await findTypeList(req);
             this.loading = false;
             if (code == 200) {
-                this.list = data || [];
+                this.list = (data || []).sort((a, b) => {
+                    return a.value - b.value
+                });
                 this.total = data.total;
             }
         },
