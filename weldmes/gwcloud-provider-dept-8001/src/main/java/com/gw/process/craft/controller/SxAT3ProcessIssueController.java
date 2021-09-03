@@ -101,7 +101,7 @@ public class SxAT3ProcessIssueController {
     @RequestMapping(value = "sxAT3/getChannelNosById",method = RequestMethod.GET)
     public HttpResult getSxAT3ChannelNos(Long id){
 
-        List<Integer> list = sxAT3ProcessIssueService.getChannelNos(id);
+        List<String> list = sxAT3ProcessIssueService.getChannelNos(id);
 
         return HttpResult.ok(list);
     }

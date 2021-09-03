@@ -87,9 +87,9 @@ public class SxCO2ProcessIssueServiceImpl implements SxCO2ProcessIssueService {
      * @Params
      */
     @Override
-    public List<Integer> getChannelNos(Long id) {
+    public List<String> getChannelNos(Long id) {
 
-        List<Integer> list = sxCO2ProcessIssueDao.queryChannelNos(id);
+        List<String> list = sxCO2ProcessIssueDao.queryChannelNos(id);
 
         return list;
     }

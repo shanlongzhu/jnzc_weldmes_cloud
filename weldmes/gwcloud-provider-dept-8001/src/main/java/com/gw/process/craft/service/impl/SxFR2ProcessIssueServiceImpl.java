@@ -80,4 +80,12 @@ public class SxFR2ProcessIssueServiceImpl implements SxFR2ProcessIssueService {
 
     }
 
+    @Override
+    public List<String> getChannelNos(Long id) {
+
+        List<String> list = sxFR2ProcessIssueDao.queryChannelNos(id);
+
+        return list;
+    }
+
 }

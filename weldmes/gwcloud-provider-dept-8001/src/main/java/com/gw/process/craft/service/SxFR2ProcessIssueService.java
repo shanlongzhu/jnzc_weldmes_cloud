@@ -45,4 +45,11 @@ public interface SxFR2ProcessIssueService {
      * @Params
      */
     public void delSxFR2ProcessIssueInfo(Long id);
+
+    /**
+     * @Date 2021/9/3 13:26
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    public List<String> getChannelNos(Long id);
 }

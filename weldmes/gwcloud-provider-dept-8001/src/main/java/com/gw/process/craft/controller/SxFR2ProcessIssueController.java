@@ -29,7 +29,7 @@ public class SxFR2ProcessIssueController {
      */
     @RequestMapping(value = "sx/getSxFR2ProcessIssueInfos",method = RequestMethod.GET)
     public HttpResult getSxFR2ProcessIssueInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long wpsLibraryId,
-                                                @RequestParam(value="pn",defaultValue = "10") Integer size){
+                                                @RequestParam(value="size",defaultValue = "10") Integer size){
 
         PageHelper.startPage(pn,size);
 
@@ -90,5 +90,18 @@ public class SxFR2ProcessIssueController {
         sxFR2ProcessIssueService.delSxFR2ProcessIssueInfo(id);
 
         return HttpResult.ok("删除成功");
+    }
+
+    /**
+     * @Date 2021/9/3 13:25
+     * @Description 根据 工艺库id  查询  通道号
+     * @Params
+     */
+    @RequestMapping(value = "sxFR2/getChannelNosById",method = RequestMethod.GET)
+    public HttpResult getSxFR2ChannelNos(Long id){
+
+        List<String> list = sxFR2ProcessIssueService.getChannelNos(id);
+
+        return HttpResult.ok(list);
     }
 }

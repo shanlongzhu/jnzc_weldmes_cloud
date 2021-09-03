@@ -156,4 +156,9 @@
     <delete id="deleteSxFR2ProcessIssueInfo" parameterType="Long">
         delete from sx_fr2_process_issue where id =#{id}
     </delete>
+
+    <!--根据 工艺库id  查询  通道号-->
+    <select id="queryChannelNos" parameterType="Long" resultType="String">
+		select channel from sx_fr2_process_issue where wps_library_id = #{id}
+	</select>
 </mapper>

@@ -84,9 +84,9 @@ public class SxAT3ProcessIssueServiceImpl implements SxAT3ProcessIssueService {
      * @Params
      */
     @Override
-    public List<Integer> getChannelNos(Long id) {
+    public List<String> getChannelNos(Long id) {
 
-        List<Integer> list = sxAT3ProcessIssueDao.queryChannelNos(id);
+        List<String> list = sxAT3ProcessIssueDao.queryChannelNos(id);
 
         return list;
     }

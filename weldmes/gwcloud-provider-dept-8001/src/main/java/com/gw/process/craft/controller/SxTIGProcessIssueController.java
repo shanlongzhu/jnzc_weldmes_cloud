@@ -100,7 +100,7 @@ public class SxTIGProcessIssueController {
     @RequestMapping(value = "sxTIG/getChannelNosById",method = RequestMethod.GET)
     public HttpResult getSxTIGChannelNos(Long id){
 
-        List<Integer> list = sxTIGProcessIssueService.getChannelNos(id);
+        List<String> list = sxTIGProcessIssueService.getChannelNos(id);
 
         return HttpResult.ok(list);
     }

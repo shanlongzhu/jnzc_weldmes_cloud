@@ -54,6 +54,6 @@ public interface SxAT3ProcessIssueDao {
      * @Description 根据 工艺库id  查询  通道号
      * @Params
      */
-    List<Integer> queryChannelNos(@Param("id") Long id);
+    List<String> queryChannelNos(@Param("id") Long id);
 
 }

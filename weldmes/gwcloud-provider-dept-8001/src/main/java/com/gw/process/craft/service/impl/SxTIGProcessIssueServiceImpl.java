@@ -87,9 +87,9 @@ public class SxTIGProcessIssueServiceImpl implements SxTIGProcessIssueService {
      * @Params
      */
     @Override
-    public List<Integer> getChannelNos(Long id) {
+    public List<String> getChannelNos(Long id) {
 
-        List<Integer> list = sxTIGProcessIssueDao.queryChannelNos(id);
+        List<String> list = sxTIGProcessIssueDao.queryChannelNos(id);
 
         return list;
     }

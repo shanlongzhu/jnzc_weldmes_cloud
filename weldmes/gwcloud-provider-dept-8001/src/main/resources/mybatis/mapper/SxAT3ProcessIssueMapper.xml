@@ -71,7 +71,7 @@
     </select>
 
     <!--根据 工艺库id  查询  通道号-->
-    <select id="queryChannelNos" parameterType="Long" resultType="java.lang.Integer">
+    <select id="queryChannelNos" parameterType="Long" resultType="String">
 		select channel from sx_at3_process_issue where wps_library_id = #{id}
 	</select>
 </mapper>

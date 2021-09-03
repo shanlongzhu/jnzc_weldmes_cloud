@@ -51,5 +51,5 @@ public interface SxTIGProcessIssueService {
      * @Description 根据 工艺库id  查询  通道号
      * @Params
      */
-    public List<Integer> getChannelNos(Long id);
+    public List<String> getChannelNos(Long id);
 }

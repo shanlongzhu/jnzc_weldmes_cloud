@@ -185,7 +185,7 @@
     </delete>
 
     <!--根据 工艺库id  查询  通道号-->
-    <select id="queryChannelNos" parameterType="Long" resultType="java.lang.Integer">
+    <select id="queryChannelNos" parameterType="Long" resultType="String">
 		select channel_no from sx_co2_process_issue where wps_library_id = #{id}
 	</select>
 </mapper>

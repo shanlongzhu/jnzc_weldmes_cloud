@@ -100,7 +100,7 @@ public class SxCO2ProcessIssueController {
     @RequestMapping(value = "sxCO2/getChannelNosById",method = RequestMethod.GET)
     public HttpResult getSxCO2ChannelNos(Long id){
 
-        List<Integer> list = sxCO2ProcessIssueService.getChannelNos(id);
+        List<String> list = sxCO2ProcessIssueService.getChannelNos(id);
 
         return HttpResult.ok(list);
     }
