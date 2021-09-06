@@ -9,7 +9,6 @@ import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
-import com.shth.das.pojo.otcv2.OtcV2Cpve500ProcessIssue;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;

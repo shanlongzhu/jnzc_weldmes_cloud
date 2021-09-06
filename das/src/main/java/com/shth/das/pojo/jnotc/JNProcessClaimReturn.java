@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 public class JNProcessClaimReturn implements Serializable {
 
     private String gatherNo; //采集编号
-    private Integer status;  //命令状态
+    private Integer status;  //命令状态(控制命令)
     private String channelNo; //通道号：0-30
     private BigDecimal spotWeldTime;    //点焊时间
     private BigDecimal preflowTime;     //提前送气时间

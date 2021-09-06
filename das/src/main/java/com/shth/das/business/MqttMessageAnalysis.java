@@ -9,7 +9,6 @@ import com.shth.das.pojo.jnotc.JNPasswordIssue;
 import com.shth.das.pojo.jnotc.JNProcessClaim;
 import com.shth.das.pojo.jnotc.JNProcessIssue;
 import com.shth.das.pojo.jnsx.*;
-import com.shth.das.pojo.otcv2.OtcV2Cpve500ProcessIssue;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -277,24 +276,6 @@ public class MqttMessageAnalysis {
                 final String weldCid = at3ParamDownload.getWeldCid();
                 String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
-            }
-        }
-    }
-
-    /**
-     * OTC2.0（CPVE500）工艺下发
-     *
-     * @param param mqtt入参实体类
-     */
-    public void otcV2Cpve500ProcessIssue(MqttParam param) {
-        if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
-            final OtcV2Cpve500ProcessIssue cpve500ProcessIssue = JSON.parseObject(message, OtcV2Cpve500ProcessIssue.class);
-            if (null != cpve500ProcessIssue) {
-                final String gatherNo = cpve500ProcessIssue.getGatherNo();
-                String str = OtcV2ProtocolJoint.otcV2Cpve500ProcessIssue(cpve500ProcessIssue);
-                otcChannelWrite(gatherNo, str, "----->OTC2.0（CPVE500）工艺下发成功", topic);
             }
         }
     }

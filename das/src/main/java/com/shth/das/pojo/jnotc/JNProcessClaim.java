@@ -22,7 +22,7 @@ public class JNProcessClaim implements Serializable {
     //枚举类
     public enum Flag {
         //头部
-        HEAD("007E00000000"),
+        HEAD("007E0A010101"),
         //控制命令
         ORDER("56"),
         //尾部
