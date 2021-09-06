@@ -34,7 +34,7 @@
                                     :label="item.valueName"
                                     :value="item.id"
                                 />
-                            </el-select>                            
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -55,7 +55,7 @@
                                     :value="item.value"
                                 />
                             </el-select>
-                            
+
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -76,7 +76,7 @@
                                     :value="item.value"
                                 />
                             </el-select>
-                            
+
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -236,8 +236,8 @@
                                     v-model="ruleForm2.alarmHaltTime"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
-                    </el-row>                    
+                        </el-col>
+                    </el-row>
                 </div>
                 <el-form-item
                     class="mt10 tc"
@@ -264,7 +264,7 @@
             width="800px"
             class="procces-wrap"
         >
-            <div class="top-con flex-n">
+            <!-- <div class="top-con flex-n">
                 <div class="con-w">
                     <span>班组：</span>
                     <el-cascader
@@ -279,7 +279,7 @@
                         popper-class="teamList"
                     />
                 </div>
-            </div>
+            </div> -->
             <vxe-table
                 border
                 show-overflow
@@ -302,55 +302,35 @@
                     width="60"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="machineNo"
-                    title="固定资产编号"
+                    field="weldNo"
+                    title="设备序号"
                     width="100"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="deptName"
-                    title="设备类型"
+                    field="weldCid"
+                    title="设备CID"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueName}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="welderName"
-                    title="所属项目"
+                    field="weldCode"
+                    title="设备编码"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDept.name}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="status"
+                    field="weldIp"
+                    title="IP地址"
+                    width="100"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="weldStatus"
                     title="状态"
-                    width="60"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNames}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="macPath"
-                    title="厂家"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNamess}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="gatherNo"
-                    title="采集序号"
-                    min-width="100"
-                >
-                    <template #default="{row}">
-                        {{row.machineGatherInfo.gatherNo}}
-                    </template>
-                </vxe-table-column>
+                    field="weldModel"
+                    title="设备机型"
+                    width="100"
+                ></vxe-table-column>
             </vxe-table>
             <div
                 class="p10 flex"
@@ -387,7 +367,7 @@
 import mqtt from 'mqtt'
 import { getTeam, getAT3ChannaNoIsUse, addSxAT3Tech, getSxAT3TechDetail, editSxAT3TechDetail } from '_api/productionProcess/process'
 
-import { getWelderList } from '_api/productionEquipment/production'
+import { getWelderList, getSxWelderList } from '_api/productionEquipment/production'
 export default {
     name: 'addSxAT3',
     props: {},
@@ -413,8 +393,8 @@ export default {
             ruleForm2: {
                 //松下AT3工艺
                 channel: '0',//通道编号
-                command:'',//控制参数
-                channelFlag:0,//通道标志（0~9）
+                command: '',//控制参数
+                channelFlag: 0,//通道标志（0~9）
 
                 //*** 预置参数 */
                 presetEleMax: 0,//预置电流上限
@@ -438,40 +418,40 @@ export default {
                 channelFlag: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
-                presetEleMax: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                presetVolMax: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                presetEleMin: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                presetVolMin: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                eleAlarmMax: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                volAlarmMax: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                eleAlarmMin: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                volAlarmMin: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                alarmDelayTime: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                alarmHaltTime: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],               
+                // presetEleMax: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // presetVolMax: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // presetEleMin: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // presetVolMin: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // eleAlarmMax: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // volAlarmMax: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // eleAlarmMin: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // volAlarmMin: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // alarmDelayTime: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // alarmHaltTime: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],               
             },
 
             //控制下拉
-            commandArr:[
+            commandArr: [
                 {
                     label: '查询',
                     value: 1
@@ -486,7 +466,7 @@ export default {
                 },
             ],
             //通道标志
-            channelFlagArr:[
+            channelFlagArr: [
                 {
                     label: '0',
                     value: 0
@@ -527,7 +507,7 @@ export default {
                     label: '9',
                     value: 9
                 },
-            ],            
+            ],
             //通道号下拉            
             channelNoSourceArr: [
                 {
@@ -571,15 +551,14 @@ export default {
                     valueName: '通道10'
                 },
             ],
-            channelNoArr: [],           
+            channelNoArr: [],
 
 
 
             //选择设备
             model2: false,
             searchObj: {
-                grade: '',
-                model: ''
+                equipType: ''
             },
             loading2: false,
             page: 1,
@@ -632,7 +611,7 @@ export default {
                     this.ruleForm2.volAlarmMin = datajson['volAlarmMin'];//电压报警下限
                     this.ruleForm2.alarmDelayTime = datajson['alarmDelayTime'];//报警延时时间
                     this.ruleForm2.alarmHaltTime = datajson['alarmHaltTime'];//报警停机时间
-                    
+
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -754,10 +733,8 @@ export default {
                 pn: this.page,
                 ...this.searchObj
             }
-            // req.model = this.libray.weldModel;
-            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
             this.loading2 = true;
-            let { data, code } = await getWelderList(req);
+            let { data, code } = await getSxWelderList(req);
             this.loading2 = false;
             if (code == 200) {
                 this.list = data.list || [];
@@ -787,11 +764,11 @@ export default {
         submitIssue () {
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
+            } else if (this.selectModel.weldIp) {
                 this.createConnection();
                 setTimeout(() => {
                     let msg = {}
-                    msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
+                    msg['weldIp'] = this.selectModel.weldIp;
                     msg['channelNo'] = this.ruleForm2.channelNo;
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
@@ -799,7 +776,7 @@ export default {
                     this.issueTimeOut(1);
                 }, 500);
             } else {
-                return this.$message.error("选择的设备请先绑定采集编号!!");
+                return this.$message.error("选择的设备请先绑定IP!!");
             }
         },
 

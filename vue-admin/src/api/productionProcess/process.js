@@ -346,8 +346,17 @@ export function delSxCo2TechDetail(params){
   });
 }
 
+//获取工艺库下松下CO2通道号已使用
+export function getCO2ChannaNoIsUse(params){
+  return request({
+    url: `/sxCO2/getChannelNosById`,
+    method: "get",
+    params
+  });
+}
 
 
+// *******TIG********/
 //获取松下TIG工艺列表
 export function getSxTIGTechList(params){
   return request({
@@ -391,6 +400,15 @@ export function delSxTIGTechDetail(params){
   return request({
     url: `/sxTIG/deleteSxTIGProcessIssueInfo`,
     method: "delete",
+    params
+  });
+}
+
+//获取工艺库下松下TIG通道号已使用
+export function getTIGChannaNoIsUse(params){
+  return request({
+    url: `/sxTIG/getChannelNosById`,
+    method: "get",
     params
   });
 }
@@ -447,6 +465,62 @@ export function delSxAT3TechDetail(params){
 export function getAT3ChannaNoIsUse(params){
   return request({
     url: `/sxAT3/getChannelNosById`,
+    method: "get",
+    params
+  });
+}
+
+
+// *********FR2***************/
+//获取松下FR2工艺列表
+export function getSxFR2TechList(params){
+  return request({
+    url: `/sx/getSxFR2ProcessIssueInfos`,
+    method: "get",
+    params
+  });
+}
+
+//新增松下FR2工艺
+export function addSxFR2Tech(data){
+  return request({
+    url: `/sx/addSxFR2ProcessIssueInfo`,
+    method: "post",
+    data
+  });
+}
+
+//获取松下FR2工艺详情
+export function getSxFR2TechDetail(params){
+  return request({
+    url: `/sx/getSxFR2ProcessIssueInfoById`,
+    method: "get",
+    params
+  });
+}
+
+//修改松下FR2工艺详情
+export function editSxFR2TechDetail(data){
+  return request({
+    url: `/sx/alterSxFR2ProcessIssueInfo`,
+    method: "put",
+    data
+  });
+}
+
+//删除松下FR2工艺
+export function delSxFR2TechDetail(params){
+  return request({
+    url: `/sx/delSxFR2ProcessIssueInfo`,
+    method: "delete",
+    params
+  });
+}
+
+//获取工艺库下松下FR2通道号已使用
+export function getFR2ChannaNoIsUse(params){
+  return request({
+    url: `/sxFR2/getChannelNosById`,
     method: "get",
     params
   });

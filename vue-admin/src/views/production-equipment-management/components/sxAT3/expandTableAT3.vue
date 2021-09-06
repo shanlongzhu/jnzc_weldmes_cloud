@@ -118,7 +118,7 @@
                     </el-button>
                     </template>
                 </vxe-table-column>
-            </vxe-table>        
+            </vxe-table>          
         <el-pagination
             class="p10"
             :current-page.sync="page"

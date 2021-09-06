@@ -78,6 +78,13 @@
                             @reload="getList"
                         >
                         </expandTableAT3>
+                        <expandTableFR2
+                            v-else-if="row.sysDictionary.value==7"
+                            :id="row.id"
+                            :modelType="row.sysDictionary.value"
+                            @editDetail="editDetailFunFR2"
+                            @reload="getList"
+                        ></expandTableFR2>
                         <expand-table
                             v-else
                             :id="row.id"
@@ -249,6 +256,7 @@
         <issueOrdersCo2 ref="issueOrdersCo2"></issueOrdersCo2>
         <issueOrdersTIG ref="issueOrdersTIG"></issueOrdersTIG>
         <issueOrdersAT3 ref="issueOrdersAT3"></issueOrdersAT3>
+        <issueOrdersFR2 ref="issueOrdersFR2"></issueOrdersFR2>
 
     </div>
 </template>
@@ -263,6 +271,8 @@ import expandTableCo2 from './components/sxGL5/CO2/expandTableCo2'
 import expandTableTIG from './components/sxGL5/TIG/expandTableTIG'
 //AT3展开表格
 import expandTableAT3 from './components/sxAT3/expandTableAT3'
+//FR2展开表格
+import expandTableFR2 from './components/FR2/expandTableFR2'
 
 //新增工艺
 import AddTech from './components/addTech.vue';
@@ -276,6 +286,7 @@ import IssueOrders from './components/issueOrders.vue';
 import issueOrdersCo2 from './components/sxGL5/CO2/issueOrdersCo2';
 import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG';
 import issueOrdersAT3 from './components/sxAT3/issueOrdersAT3'
+import issueOrdersFR2 from './components/FR2/issueOrdersFR2'
 
 export default {
     components: {
@@ -291,7 +302,9 @@ export default {
         addSxAT3,
         expandTableAT3,
         issueOrdersAT3,
-        addSxFR2
+        addSxFR2,
+        expandTableFR2,
+        issueOrdersFR2
     },
     data () {
         return {
@@ -350,13 +363,13 @@ export default {
                 case '6'://at3
                     this.$refs.issueOrdersAT3.init(row);
                     break;
+                case '7'://fr2
+                    this.$refs.issueOrdersFR2.init(row);
+                    break;
                 default://cpev500
                     this.$refs.issueOrdersRef.init(row);
                     break;
             }
-
-
-
         },
 
         //获取数据字典
@@ -518,6 +531,9 @@ export default {
         },
         async editDetailFunAT3 (obj) {
             this.$refs.SxAT3.editDetailFun(obj);
+        },
+        async editDetailFunFR2 (obj) {
+            this.$refs.SxFR2.editDetailFun(obj);
         },
 
     }

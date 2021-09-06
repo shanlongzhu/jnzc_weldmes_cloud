@@ -843,7 +843,7 @@
             width="800px"
             class="procces-wrap"
         >
-            <div class="top-con flex-n">
+            <!-- <div class="top-con flex-n">
                 <div class="con-w">
                     <span>班组：</span>
                     <el-cascader
@@ -858,7 +858,7 @@
                         popper-class="teamList"
                     />
                 </div>
-            </div>
+            </div> -->
             <vxe-table
                 border
                 show-overflow
@@ -881,55 +881,35 @@
                     width="60"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="machineNo"
-                    title="固定资产编号"
+                    field="weldNo"
+                    title="设备序号"
                     width="100"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="deptName"
-                    title="设备类型"
+                    field="weldCid"
+                    title="设备CID"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueName}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="welderName"
-                    title="所属项目"
+                    field="weldCode"
+                    title="设备编码"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDept.name}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="status"
+                    field="weldIp"
+                    title="IP地址"
+                    width="100"
+                ></vxe-table-column>
+                <vxe-table-column
+                    field="weldStatus"
                     title="状态"
-                    width="60"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNames}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="macPath"
-                    title="厂家"
                     width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNamess}}
-                    </template>
-                </vxe-table-column>
+                ></vxe-table-column>
                 <vxe-table-column
-                    field="gatherNo"
-                    title="采集序号"
-                    min-width="100"
-                >
-                    <template #default="{row}">
-                        {{row.machineGatherInfo.gatherNo}}
-                    </template>
-                </vxe-table-column>
+                    field="weldModel"
+                    title="设备机型"
+                    width="100"
+                ></vxe-table-column>
             </vxe-table>
             <div
                 class="p10 flex"
@@ -964,9 +944,9 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getTeam, getAT3ChannaNoIsUse, addSxAT3Tech, getSxAT3TechDetail, editSxAT3TechDetail } from '_api/productionProcess/process'
-
-import { getWelderList } from '_api/productionEquipment/production'
+import { getTeam, getFR2ChannaNoIsUse, addSxFR2Tech, getSxFR2TechDetail, editSxFR2TechDetail } from '_api/productionProcess/process'
+import { getWelderList,getSxWelderList } from '_api/productionEquipment/production'
+import {getChannelNoSourceArr,getWireDiameterArr,getGasesArr } from './common'
 export default {
     name: 'addSxFR2',
     props: {},
@@ -1010,10 +990,10 @@ export default {
                 arcEleMin: 0,//收弧电流下限
                 arcVolMin: 0,//收弧电压下限
 
-                texture: 0,//材质
-                wireDiameter: 0,//丝径
-                gases: 0,//气体
-                weldingControl: 0,//焊接控制
+                texture: '',//材质
+                wireDiameter: '',//丝径
+                gases: '',//气体
+                weldingControl: '',//焊接控制
                 pulseHaveNot: '',//脉冲有无
                 spotWeldingTime: 0,//点焊时间
                 unitaryDifference: '',//一元/分别
@@ -1052,75 +1032,75 @@ export default {
                 channel: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
-                weldingStickTexture: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                weldingProcess: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                weldingStickDiameter: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                gases: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                unitarySeveral: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                weldingEle: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                weldingVol: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                weldingEleAdjust: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                weldingVolAdjust: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                inAdvanceAspirated: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                hysteresisAspirated: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                initialEle: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                initialVol: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                controlArc: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                spotWeldingTime: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcEle: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcVol: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcEleAdjust: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcVolAdjust: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcCharacter: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                weldingVolUnitary: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                arcVolUnitary: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
-                initialVolUnitary: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],
+                // weldingStickTexture: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // weldingProcess: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // weldingStickDiameter: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // gases: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // unitarySeveral: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // weldingEle: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // weldingVol: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // weldingEleAdjust: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // weldingVolAdjust: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // inAdvanceAspirated: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // hysteresisAspirated: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // initialEle: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // initialVol: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // controlArc: [
+                //     { required: true, message: '不能为空', trigger: 'change' }
+                // ],
+                // spotWeldingTime: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcEle: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcVol: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcEleAdjust: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcVolAdjust: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcCharacter: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // weldingVolUnitary: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // arcVolUnitary: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
+                // initialVolUnitary: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],
             },
 
             //控制下拉
@@ -1270,67 +1250,9 @@ export default {
                 },
             ],
             //丝径
-            wireDiameterArr: [
-                {
-                    label: '0.8',
-                    value: 0
-                },
-                {
-                    label: '0.9',
-                    value: 1
-                },
-                {
-                    label: '1.0',
-                    value: 2
-                },
-                {
-                    label: '1.2',
-                    value: 3
-                },
-                {
-                    label: '1.4',
-                    value: 4
-                },
-                {
-                    label: '1.6',
-                    value: 5
-                },
-                {
-                    label: 'OP1',
-                    value: 6
-                },
-            ],
+            wireDiameterArr: getWireDiameterArr(),
             //气体
-            gasesArr: [
-                {
-                    label: 'CO2',
-                    value: 0
-                },
-                {
-                    label: 'MAG',
-                    value: 1
-                },
-                {
-                    label: 'MIG',
-                    value: 2
-                },
-                {
-                    label: 'OP1',
-                    value: 3
-                },
-                {
-                    label: 'OP2',
-                    value: 4
-                },
-                {
-                    label: 'OP3',
-                    value: 5
-                },
-                {
-                    label: 'OP4',
-                    value: 6
-                },
-            ],
+            gasesArr: getGasesArr(),
             //手动送丝
             wireFeedArr: [
                 {
@@ -1431,48 +1353,7 @@ export default {
                 },
             ],
             //通道号下拉            
-            channelNoSourceArr: [
-                {
-                    id: '0',
-                    valueName: '通道1'
-                },
-                {
-                    id: '1',
-                    valueName: '通道2'
-                },
-                {
-                    id: '2',
-                    valueName: '通道3'
-                },
-                {
-                    id: '3',
-                    valueName: '通道4'
-                },
-                {
-                    id: '4',
-                    valueName: '通道5'
-                },
-                {
-                    id: '5',
-                    valueName: '通道6'
-                },
-                {
-                    id: '6',
-                    valueName: '通道7'
-                },
-                {
-                    id: '7',
-                    valueName: '通道8'
-                },
-                {
-                    id: '8',
-                    valueName: '通道9'
-                },
-                {
-                    id: '9',
-                    valueName: '通道10'
-                },
-            ],
+            channelNoSourceArr: getChannelNoSourceArr(),
             channelNoArr: [],
 
 
@@ -1494,8 +1375,7 @@ export default {
             //选择设备
             model2: false,
             searchObj: {
-                grade: '',
-                model: ''
+                equipType: ''
             },
             loading2: false,
             page: 1,
@@ -1542,12 +1422,55 @@ export default {
                     this.ruleForm2.presetVolMax = datajson['presetVolMax'];//预置电压上限
                     this.ruleForm2.presetEleMin = datajson['presetEleMin'];//预置电流下限
                     this.ruleForm2.presetVolMin = datajson['presetVolMin'];//预置电压下限
-                    this.ruleForm2.eleAlarmMax = datajson['eleAlarmMax'];//电流报警上限
-                    this.ruleForm2.volAlarmMax = datajson['volAlarmMax'];//电压报警上限
-                    this.ruleForm2.eleAlarmMin = datajson['eleAlarmMin'];//电流报警下限
-                    this.ruleForm2.volAlarmMin = datajson['volAlarmMin'];//电压报警下限
+
+                    this.ruleForm2.initialEleMax = datajson['initialEleMax'];//初期电流上限
+                    this.ruleForm2.initialVolMax = datajson['initialVolMax'];//初期电压上限
+                    this.ruleForm2.initialEleMin = datajson['initialEleMin'];//初期电流下限
+                    this.ruleForm2.initialVolMin = datajson['initialVolMin'];//初期电压下限
+
+                    this.ruleForm2.arcEleMax = datajson['arcEleMax'];//收弧电流上限
+                    this.ruleForm2.arcVolMax = datajson['arcVolMax'];//收弧电压上限
+                    this.ruleForm2.arcEleMin = datajson['arcEleMin'];//收弧电流下限
+                    this.ruleForm2.arcVolMin = datajson['arcVolMin'];//收弧电压下限
+
+                    this.ruleForm2.texture = datajson['texture'];//材质
+                    this.ruleForm2.wireDiameter = datajson['wireDiameter'];//丝径
+                    this.ruleForm2.gases = datajson['gases'];//气体
+                    this.ruleForm2.weldingControl = datajson['weldingControl'];//焊接控制
+                    this.ruleForm2.pulseHaveNot = datajson['pulseHaveNot'];//脉冲有无
+                    this.ruleForm2.spotWeldingTime = datajson['spotWeldingTime'];//点焊时间
+                    this.ruleForm2.unitaryDifference = datajson['unitaryDifference'];//一元/分别
+                    this.ruleForm2.dryExtendLength = datajson['dryExtendLength'];//干伸长度
+                    this.ruleForm2.weldMax = datajson['weldMax'];//焊接上限
+                    this.ruleForm2.weldMin = datajson['weldMin'];//焊接下限
+                    this.ruleForm2.initialMax = datajson['initialMax'];//初期上限
+                    this.ruleForm2.initialMin = datajson['initialMin'];//初期下限
+                    this.ruleForm2.arcMax = datajson['arcMax'];//收弧上限
+                    this.ruleForm2.arcMin = datajson['arcMin'];//收弧下限
+                    this.ruleForm2.delayTime = datajson['delayTime'];//延时时间
+                    this.ruleForm2.amendPeriod = datajson['amendPeriod'];//修正周期
+
+                    this.ruleForm2.presetEleAlarmMax = datajson['presetEleAlarmMax'];//预置电流报警上限
+                    this.ruleForm2.presetVolAlarmMax = datajson['presetVolAlarmMax'];//预置电压报警上限
+                    this.ruleForm2.presetEleAlarmMin = datajson['presetEleAlarmMin'];//预置电流报警下限
+                    this.ruleForm2.presetVolAlarmMin = datajson['presetVolAlarmMin'];//预置电压报警下限
+
+                    this.ruleForm2.initialEleAlarmMax = datajson['initialEleAlarmMax'];//初期电流报警上限
+                    this.ruleForm2.initialVolAlarmMax = datajson['initialVolAlarmMax'];//初期电压报警上限
+                    this.ruleForm2.initialEleAlarmMin = datajson['initialEleAlarmMin'];//初期电流报警下限
+                    this.ruleForm2.initialVolAlarmMin = datajson['initialVolAlarmMin'];//初期电压报警下限
+
+                    this.ruleForm2.arcEleAlarmMax = datajson['arcEleAlarmMax'];//收弧电流报警上限
+                    this.ruleForm2.arcVolAlarmMax = datajson['arcVolAlarmMax'];//收弧电压报警上限
+                    this.ruleForm2.arcEleAlarmMin = datajson['arcEleAlarmMin'];//收弧电流报警下限
+                    this.ruleForm2.arcVolAlarmMin = datajson['arcVolAlarmMin'];//收弧电压报警下限
+                    
+                    this.ruleForm2.arcDelayTime = datajson['arcDelayTime'];//起弧延时时间
                     this.ruleForm2.alarmDelayTime = datajson['alarmDelayTime'];//报警延时时间
                     this.ruleForm2.alarmHaltTime = datajson['alarmHaltTime'];//报警停机时间
+
+                    this.ruleForm2.flowMax = datajson['flowMax'];//流量上限(查询回复)
+                    this.ruleForm2.alarmFlag = datajson['alarmFlag'];//标志（下载参数）
                     
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
@@ -1589,8 +1512,8 @@ export default {
             this.title2 = "修改工艺FR2"
             this.ruleForm2 = { ...this.ruleFormObj2 };
             //获取已使用的通道
-            let res = await getAT3ChannaNoIsUse({ id: obj.parentId });
-            let { data, code } = await getSxAT3TechDetail({ id: obj.id });
+            let res = await getFR2ChannaNoIsUse({ id: obj.parentId });
+            let { data, code } = await getSxFR2TechDetail({ id: obj.id });
             if (code == 200) {
                 this.visable2 = true;
                 this.$nextTick(() => {
@@ -1604,7 +1527,7 @@ export default {
         //新增工艺
         async addLibraryFun (id) {
             this.title2 = "新增工艺FR2"
-            let { code, data } = await getAT3ChannaNoIsUse({ id });
+            let { code, data } = await getFR2ChannaNoIsUse({ id });
             if (code == 200) {
                 this.visable2 = true;
                 this.channelNoArr = this.channelNoSourceArr.filter(item => !data.includes(item.id));
@@ -1636,15 +1559,14 @@ export default {
         async submitLibary (vData) {
             const req = { ...vData }
             if (req.hasOwnProperty('id')) {
-                const { data, code } = await editSxAT3TechDetail(req)
+                const { data, code } = await editSxFR2TechDetail(req)
                 if (code == 200) {
                     this.$message.success('修改成功')
-                    console.log(this.$refs.addTech)
                     this.visable2 = false
                     this.$parent.getList()
                 }
             } else {
-                const { data, code } = await addSxAT3Tech(req);
+                const { data, code } = await addSxFR2Tech(req);
                 if (code == 200) {
                     this.$message.success('新增成功')
                     this.visable2 = false
@@ -1670,10 +1592,8 @@ export default {
                 pn: this.page,
                 ...this.searchObj
             }
-            // req.model = this.libray.weldModel;
-            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
             this.loading2 = true;
-            let { data, code } = await getWelderList(req);
+            let { data, code } = await getSxWelderList(req);
             this.loading2 = false;
             if (code == 200) {
                 this.list = data.list || [];
@@ -1703,11 +1623,11 @@ export default {
         submitIssue () {
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
+            } else if (this.selectModel.weldIp) {
                 this.createConnection();
                 setTimeout(() => {
                     let msg = {}
-                    msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
+                    msg['weldIp'] = this.selectModel.weldIp;
                     msg['channelNo'] = this.ruleForm2.channelNo;
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
@@ -1715,7 +1635,7 @@ export default {
                     this.issueTimeOut(1);
                 }, 500);
             } else {
-                return this.$message.error("选择的设备请先绑定采集编号!!");
+                return this.$message.error("选择的设备请先绑定IP!!");
             }
         },
 

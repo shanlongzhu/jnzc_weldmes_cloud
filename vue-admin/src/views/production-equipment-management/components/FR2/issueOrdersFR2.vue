@@ -4,13 +4,13 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-03 15:05:17
+ * @LastEditTime: 2021-09-06 11:01:28
 -->
 
 <template>
     <div>
         <vxe-modal
-            title="选择工艺AT3"
+            title="选择工艺FR2"
             v-model="model"
             width="1000"
         >
@@ -40,86 +40,139 @@
                         title="序号"
                     >
                     </vxe-table-column>
-                     <vxe-table-column
-                    field="channel"
-                    title="通道号"
-                    min-width="60"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="channelFlag"
-                    title="通道标志"
-                    min-width="70"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="initialEleMin"
-                    title="控制参数"
-                    min-width="100"
-                >
-                <template #default={row}>
-                    {{row.command==1?'查询':row.command==2?'下载':'删除'}}
-                </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetEleMax"
-                    title="预置电流上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetVolMax"
-                    title="预置电压上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetEleMin"
-                    title="预置电流下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetVolMin"
-                    title="预置电压下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="eleAlarmMax"
-                    title="电流报警上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="volAlarmMax"
-                    title="电压报警上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="eleAlarmMin"
-                    title="电流报警下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="volAlarmMin"
-                    title="电压报警下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="alarmDelayTime"
-                    title="报警延时时间"
-                    min-width="100"
-                >                
-                </vxe-table-column>
-                <vxe-table-column
-                    field="alarmHaltTime"
-                    title="报警停机时间"
-                    min-width="100"
-                >                
-                </vxe-table-column>
+                    <vxe-table-column
+                        field="channel"
+                        title="通道号"
+                        min-width="60"
+                    >
+                        <template #default={row}>
+                            {{getChanneName(row.channel)}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="channelFlag"
+                        title="通道标志"
+                        min-width="70"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="initialEleMin"
+                        title="控制参数"
+                        min-width="100"
+                    >
+                        <template #default={row}>
+                            {{row.command==1?'查询':row.command==2?'下载':'删除'}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetEleMax"
+                        title="预置电流上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetVolMax"
+                        title="预置电压上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetEleMin"
+                        title="预置电流下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetVolMin"
+                        title="预置电压下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="initialEleMax"
+                        title="初期电流上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="initialVolMax"
+                        title="初期电压上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="initialEleMin"
+                        title="初期电流下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="initialVolMin"
+                        title="初期电压下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="arcEleMax"
+                        title="收弧电流上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="arcVolMax"
+                        title="收弧电压上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="arcEleMin"
+                        title="收弧电流下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="arcVolMin"
+                        title="收弧电压下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="texture"
+                        title="材质"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="wireDiameter"
+                        title="丝径"
+                        min-width="100"
+                    >
+                        <template #default={row}>
+                            {{getWireDiameterArrFun(row.wireDiameter)}}
+                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="gases"
+                        title="气体"
+                        min-width="100"
+                    >
+                        <template #default={row}>
+                            {{getGasesArrFun(row.gases)}}
+                        </template>
+
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="weldingControl"
+                        title="焊接控制"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="pulseHaveNot"
+                        title="脉冲有无"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
                 </vxe-table>
                 <div class="p10 tr">
                     <el-button
@@ -140,7 +193,7 @@
             v-model="model2"
             width="700"
         >
-            <template #default>                
+            <template #default>
                 <vxe-table
                     ref="vxeTable"
                     border
@@ -191,7 +244,7 @@
                         field="weldModel"
                         title="设备机型"
                         width="100"
-                    ></vxe-table-column>                
+                    ></vxe-table-column>
                 </vxe-table>
                 <div
                     class="p10 flex"
@@ -294,8 +347,9 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getSxAT3TechList, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
+import { getSxFR2TechList, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
 import { getWelderList, getSxWelderList } from '_api/productionEquipment/production'
+import { getChannelNoSourceArr, getWireDiameterArr, getGasesArr } from './common'
 export default {
     components: {},
     props: {},
@@ -425,7 +479,7 @@ export default {
                 pageSize: 100,
                 wpsLibraryId: id
             }
-            let { data, code } = await getSxAT3TechList(req);
+            let { data, code } = await getSxFR2TechList(req);
             this.loading = false;
             if (code == 200) {
                 this.tableData = (data.list || []).sort((a, b) => {
@@ -563,9 +617,9 @@ export default {
                     //选择的工艺数据
                     let techArr = this.formatTechnoloay(this.selectTechnology);
                     this.newEqu = []
-                    for (let i = 0, len = iPNoArr.length; i < len; i++) {                        
-                        ((i) => {                            
-                            this.newEqu.push({'weldIp':iPNoArr[i],'weldInfo':[]})
+                    for (let i = 0, len = iPNoArr.length; i < len; i++) {
+                        ((i) => {
+                            this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
                             setTimeout(() => {
                                 clearTimeout(this.timeout);
                                 let msgData = techArr.map(v => {
@@ -613,6 +667,19 @@ export default {
                 }
             }, 5000)
         },
+
+        //通道
+        getChanneName (v) {
+            return getChannelNoSourceArr(v)
+        },
+        //丝径
+        getWireDiameterArrFun (v) {
+            return getWireDiameterArr(v)
+        },
+        //气体
+        getGasesArrFun (v) {
+            return getGasesArr(v);
+        }
 
     },
     created () {
