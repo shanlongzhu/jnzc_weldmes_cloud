@@ -61,22 +61,23 @@
 		SELECT d.id,d.`name` deptName,
 		COUNT(DISTINCT m.id) allCount,
 		COUNT(DISTINCT s.machineId) onOffCount,
-		SEC_TO_TIME(SUM(s.weldDuration)) onOffTime,
+		CONCAT(FLOOR(SUM(s.weldDuration)/3600),':',FLOOR(SUM(s.weldDuration)%3600/60),':',FLOOR(SUM(s.weldDuration)%3600%60)) onOffTime,
 		COUNT(DISTINCT s.taskId)-COUNT(DISTINCT s2.taskId) taskCount,
 		COUNT(DISTINCT s1.machineId) realWeldOnline,
-		SEC_TO_TIME(SUM(s1.weldDuration)) realWeldTime,
+		CONCAT(FLOOR(SUM(s1.weldDuration)/3600),':',FLOOR(SUM(s1.weldDuration)%3600/60),':',FLOOR(SUM(s1.weldDuration)%3600%60)) realWeldTime,
 		IF(SUM(s1.weldDuration)>300,COUNT(DISTINCT s2.machineId),0) noTaskCount,
 		GROUP_CONCAT(distinct s2.machineNo) noTaskMachineDetail,
 		ROUND(COUNT(DISTINCT s.machineId)/COUNT(DISTINCT m.id),2)*100 equipUtilization,
-		SEC_TO_TIME(SUM(s3.weldDuration)) supergageTime,
-		SEC_TO_TIME(SUM(s1.weldDuration)-SUM(s3.weldDuration)) normalTime,
+		CONCAT(FLOOR(SUM(s3.weldDuration)/3600),':',FLOOR(SUM(s3.weldDuration)%3600/60),':',FLOOR(SUM(s3.weldDuration)%3600%60)) supergageTime,
+		CONCAT(FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))/3600),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))%3600/60),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))%3600%60)) normalTime,
 		ROUND((SUM(s1.weldDuration))/SUM(s.weldDuration),2)*100 weldingEfficiency,
 		ROUND((SUM(s1.weldDuration)-SUM(s3.weldDuration))/SUM(s1.weldDuration),2)*100 standardPercentage,
 		sum(s.wireFeedRate*s.weldDuration)/600 materialsConsumption,
 		sum((s.electricity*s.voltage*s.weldDuration)/3600/1000)+(s.weldDuration-s1.weldDuration)/36000 powerConsumption
 		FROM sys_dept d
 		INNER JOIN machine_weld_info m ON d.id=m.dept_id
-		LEFT JOIN weld_statistics_data s ON d.id=s.machineDeptId AND m.id=s.machineId AND s.startTime &gt;= #{time1} and s.endTime &lt;= #{time2}
+		LEFT JOIN weld_statistics_data s ON d.id=s.machineDeptId AND m.id=s.machineId
+		AND s.startTime &gt;= #{time1} and s.endTime &lt;= #{time2}
 		LEFT JOIN weld_statistics_data s1 ON s.id=s1.id  AND s1.weldStatus IN (3,5,7,99)
 		LEFT JOIN weld_statistics_data s3 ON s1.id=s3.id  AND s1.weldStatus=99
 		LEFT JOIN weld_statistics_data s2 ON s1.id=s2.id AND s2.taskId is NULL
