@@ -18,7 +18,7 @@ public class SxProcessClaim implements Serializable {
     private String weldCid;
 
     /**
-     * 读写标志（0：主动上传；1：读取；2：设置；3：删除）
+     * 读写标志（1：读取；3：删除）
      */
     private int readWriteFlag;
 

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @description: 松下FR2系列（AT3）通道参数查询（无参数）、下载、删除回复
+ * @description: 松下FR2系列（AT3）通道参数查询（无参数）、下载回复、删除回复
  * @author: Shan Long
  * @create: 2021-07-22
  */

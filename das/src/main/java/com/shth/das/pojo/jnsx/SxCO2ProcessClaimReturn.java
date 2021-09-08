@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @description: 松下GL5系列CO2焊机工艺索取返回
+ * @description: 松下GL5系列CO2焊机工艺索取返回（CO2数据有返回）
  * @author: Shan Long
  * @create: 2021-07-12
  */

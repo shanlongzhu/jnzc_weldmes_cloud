@@ -25,6 +25,9 @@ public class SxRtDataUi implements Serializable {
      */
     private String weldCid;
 
+    /**
+     * 通用数据
+     */
     private String weldCode;        //设备编码（名称）
     private String weldIp;          //IP地址
     private String weldModel;       //设备机型

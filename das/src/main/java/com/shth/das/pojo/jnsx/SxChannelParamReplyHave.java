@@ -24,7 +24,7 @@ public class SxChannelParamReplyHave implements Serializable {
     private String weldIp;
 
     /**
-     * 控制（1.查询，2.下载，3.删除）
+     * 控制（1.查询）
      */
     private int command;
     /**

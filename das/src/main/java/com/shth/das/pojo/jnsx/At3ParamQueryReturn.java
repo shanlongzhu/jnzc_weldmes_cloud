@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @description: 松下AT3系列查询参数回复
+ * @description: 松下AT3系列查询参数回复（有参数）
  * @author: Shan Long
  * @create: 2021-07-26
  */
@@ -24,7 +24,7 @@ public class At3ParamQueryReturn implements Serializable {
     private String weldIp;
 
     /**
-     * 控制（1.查询，2.下载，3.删除）
+     * 控制（1.查询）
      */
     private int command;
     /**

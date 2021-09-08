@@ -19,7 +19,7 @@ public class At3ParamDownload implements Serializable {
     private String weldCid;
 
     /**
-     * 控制（1.查询，2.下载，3.删除）
+     * 控制（2.下载）
      */
     private int command;
     /**

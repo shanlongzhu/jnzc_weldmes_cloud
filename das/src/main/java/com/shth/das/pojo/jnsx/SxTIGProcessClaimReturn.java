@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @description: 松下GL5系列TIG焊机工艺索取返回实体类
+ * @description: 松下GL5系列TIG焊机工艺索取返回实体类（TIG数据有回复）
  * @author: Shan Long
  * @create: 2021-07-12
  */
