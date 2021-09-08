@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-08 14:19:43
+ * @LastEditTime: 2021-09-08 14:06:18
 -->
 
 <template>
@@ -135,20 +135,16 @@
 
         <!-- 密码层 -->
         <vxe-modal
-            title="下发密码"
+            title="选择命令"
             v-model="model1"
-            width="300"
+            width="400"
         >
             <template #default>
                 <div class="p10">
-                    <span>密码：</span>
-                    <el-input-number
-                        :controls="false"
-                        :min="1"
-                        :max="999"
-                        v-model="passwordInput"
-                        placeholder=""
-                    ></el-input-number>
+                    <el-radio-group v-model="commandNo">
+                        <el-radio :label="0">工作自由调节</el-radio>
+                        <el-radio :label="1">工作不可自由调节</el-radio>
+                    </el-radio-group>
                 </div>
                 <div class="p10 tc">
                     <el-button
@@ -191,24 +187,30 @@
                         <template #default="{row}">
                             {{row.gatherNo}}
                         </template>
-                    </vxe-table-column>                    
+                    </vxe-table-column>
                     <vxe-table-column
                         field="isSuccessStatus"
                         title="下发状态"
                         min-width="100"
                     >
                         <template #default="{row}">
-                            <span style="color:#13ce66" v-if='row.isSuccessStatus===0'>
+                            <span
+                                style="color:#13ce66"
+                                v-if='row.isSuccessStatus===0'
+                            >
                                 成功
                             </span>
-                            <span style="color:#f00" v-else-if='row.isSuccessStatus===1'>
+                            <span
+                                style="color:#f00"
+                                v-else-if='row.isSuccessStatus===1'
+                            >
                                 失败
                             </span>
                             <span v-else>
                                 发送等待中...
                             </span>
                         </template>
-                    </vxe-table-column>                    
+                    </vxe-table-column>
                 </vxe-table>
                 <div class="p10 tr">
                     <el-button
@@ -243,7 +245,7 @@ export default {
             },
             //密码
             model1: false,
-            passwordInput: 1,
+            commandNo: 0,
             //搜索条件设备型号
             //搜索条件
             searchObj: {
@@ -302,8 +304,8 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                console.log(`${message}`)
-                if (topic == 'passwordReturn') {
+                console.log(topic)
+                if (topic == 'commandReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -320,7 +322,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('passwordReturn', 0, (error, res) => {
+            this.client.subscribe('commandReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -329,7 +331,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('passwordIssue', msg, 0)
+            this.client.publish('commandIssue', msg, 0)
         },
 
 
@@ -405,7 +407,7 @@ export default {
             this.model1 = true;
 
         },
-        //密码下发
+        //控制命令下发
         passwordIssueFun () {
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
@@ -423,7 +425,7 @@ export default {
                                 clearTimeout(this.timeout);
                                 let objItem = {};
                                 objItem['gatherNo'] = this.gatherNoArr[i];
-                                objItem['password'] = this.passwordInput;
+                                objItem['command'] = this.commandNo;
                                 this.reqMqttNum++;//记录发送总条数
                                 const msg = JSON.stringify(objItem);
                                 this.doPublish(msg);
@@ -441,7 +443,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('passwordReturn', error => {
+                this.client.unsubscribe('commandReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

@@ -15,6 +15,7 @@
                 <el-button
                     size="small"
                     icon="el-icon-document-add"
+                    @click="commandIssueFun"
                 >控制命令下发</el-button>
             </div>
             <div class="con-w">
@@ -261,6 +262,8 @@
 
         <!-- 密码下发 -->
         <passwordIssue ref="passwordIssue"></passwordIssue>
+        <!-- 控制命令下发 -->
+        <commandIssue ref="commandIssue"></commandIssue>
     </div>
 </template>
 
@@ -288,11 +291,13 @@ import addSxFR2 from './components/FR2/addSxFR2'
 import IssueOrders from './components/issueOrders.vue';
 import issueOrdersCo2 from './components/sxGL5/CO2/issueOrdersCo2';
 import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG';
-import issueOrdersAT3 from './components/sxAT3/issueOrdersAT3'
-import issueOrdersFR2 from './components/FR2/issueOrdersFR2'
+import issueOrdersAT3 from './components/sxAT3/issueOrdersAT3';
+import issueOrdersFR2 from './components/FR2/issueOrdersFR2';
 
 // 密码下发
-import passwordIssue from './components/passwordIssue/passwordIssue'
+import passwordIssue from './components/passwordIssue/passwordIssue';
+//控制命令下发
+import commandIssue from './components/commandIssue/commandIssue'
 
 export default {
     components: {
@@ -311,7 +316,8 @@ export default {
         addSxFR2,
         expandTableFR2,
         issueOrdersFR2,
-        passwordIssue
+        passwordIssue,
+        commandIssue
     },
     data () {
         return {
@@ -547,6 +553,10 @@ export default {
         //密码下发
         passwordIssueFun(){
             this.$refs.passwordIssue.init();
+        },
+        //控制命令下发
+        commandIssueFun(){
+            this.$refs.commandIssue.init();
         }
 
     }
