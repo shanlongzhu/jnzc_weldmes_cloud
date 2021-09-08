@@ -133,7 +133,7 @@ public class MachineWeldsxInfo {
     /**
      * cpu3软件版本
      */
-    private Integer cpu3Version;
+    private String cpu3Version;
 
     /**
      * 设备状态（字典正常、维修）
