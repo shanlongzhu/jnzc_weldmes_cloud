@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-27 13:02:08
+ * @LastEditTime: 2021-09-08 10:40:04
 -->
 
 <template>
@@ -398,7 +398,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processIssueReturn') {
+                if (topic == 'sxProcessReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -417,7 +417,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processIssueReturn', 0, (error, res) => {
+            this.client.subscribe('sxProcessReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -426,7 +426,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processIssue', msg, 0)
+            this.client.publish('sxGl5Co2ProcessIssue', msg, 0)
         },
 
 
@@ -568,7 +568,7 @@ export default {
             }
             //检查选择的设备采集编号是否存在空值
             if (equipmentArr.filter(item => !item.weldIp || item.weldIp == '').length > 0) {
-                return this.$message.error("选择的设备存在采集序号为空");
+                return this.$message.error("选择的设备存在IP为空");
             }
             //取出选中设备所有采集编号
             equipmentArr.filter(item => item.weldIp).forEach(item => {
@@ -592,6 +592,7 @@ export default {
                                 let msgData = techArr.map(v => {
                                     let objItem = { ...v };
                                     objItem['weldIp'] = iPNoArr[i];
+                                    objItem['weldCid'] = equipmentArr[i].weldCid;
                                     objItem['isSuccessStatus'] = 0;//记录发送状态
                                     this.reqMqttNum++;//记录发送总条数
                                     return objItem;
@@ -616,7 +617,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processIssueReturn', error => {
+                this.client.unsubscribe('sxProcessReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

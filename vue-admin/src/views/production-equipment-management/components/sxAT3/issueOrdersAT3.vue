@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-03 15:05:17
+ * @LastEditTime: 2021-09-08 12:49:11
 -->
 
 <template>
@@ -51,7 +51,7 @@
                     min-width="70"
                 >
                 </vxe-table-column>
-                <vxe-table-column
+                <!-- <vxe-table-column
                     field="initialEleMin"
                     title="控制参数"
                     min-width="100"
@@ -59,7 +59,7 @@
                 <template #default={row}>
                     {{row.command==1?'查询':row.command==2?'下载':'删除'}}
                 </template>
-                </vxe-table-column>
+                </vxe-table-column> -->
                 <vxe-table-column
                     field="presetEleMax"
                     title="预置电流上限"
@@ -249,33 +249,33 @@
                     >
                     </vxe-table-column>
                     <vxe-table-column
-                        field="channelNo"
+                        field="channel"
                         title="下发通道号"
                         min-width="100"
                     >
                         <template #default="{row}">
-                            {{row.weldInfo.map(item => item.channelNo).join('，')}}
+                            {{row.weldInfo.map(item => item.channel).join('，')}}
                         </template>
                     </vxe-table-column>
                     <vxe-table-column
-                        field="channelNo"
+                        field="channel"
                         title="下发成功通道号"
                         min-width="100"
                     >
                         <template #default="{row}">
                             <span style="color:#13ce66">
-                                {{row.weldInfo.filter(item => item.isSuccessStatus==1).map(item=>item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==1).map(item=>item.channel).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
                     <vxe-table-column
-                        field="channelNo"
+                        field="channel"
                         title="下发失败通道号"
                         min-width="100"
                     >
                         <template #default="{row}">
                             <span style="color:#f00">
-                                {{row.weldInfo.filter(item => item.isSuccessStatus==2).map(item => item.channelNo).join('，')}}
+                                {{row.weldInfo.filter(item => item.isSuccessStatus==2).map(item => item.channel).join('，')}}
                             </span>
                         </template>
                     </vxe-table-column>
@@ -377,14 +377,14 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processIssueReturn') {
+                if (topic == 'sxChannelParamReply') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
                         item.forEach(v => {
-                            if (parseInt(v.gatherNo) === parseInt(datajson.gatherNo) && parseInt(v.channelNo) === parseInt(datajson.channelNo)) {
+                            if (parseInt(v.gatherNo) === parseInt(datajson.gatherNo) && parseInt(v.channel) === parseInt(datajson.channel)) {
                                 v.isSuccessStatus = datajson.flag === 0 ? 1 : 2;
                             }
                         })
@@ -396,7 +396,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processIssueReturn', 0, (error, res) => {
+            this.client.subscribe('sxChannelParamReply', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -405,7 +405,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processIssue', msg, 0)
+            this.client.publish('sxAt3ParamDownload', msg, 0)
         },
 
 
@@ -429,7 +429,7 @@ export default {
             this.loading = false;
             if (code == 200) {
                 this.tableData = (data.list || []).sort((a, b) => {
-                    return a.channelNo - b.channelNo
+                    return a.channel - b.channel
                 });
                 this.total = data.total || 0;
             }
@@ -547,7 +547,7 @@ export default {
             }
             //检查选择的设备采集编号是否存在空值
             if (equipmentArr.filter(item => !item.weldIp || item.weldIp == '').length > 0) {
-                return this.$message.error("选择的设备存在采集序号为空");
+                return this.$message.error("选择的设备存在IP为空");
             }
             //取出选中设备所有采集编号
             equipmentArr.filter(item => item.weldIp).forEach(item => {
@@ -571,6 +571,8 @@ export default {
                                 let msgData = techArr.map(v => {
                                     let objItem = { ...v };
                                     objItem['weldIp'] = iPNoArr[i];
+                                    objItem['weldCid'] = equipmentArr[i].weldCid;
+                                    objItem['command'] = 2;                                    
                                     objItem['isSuccessStatus'] = 0;//记录发送状态
                                     this.reqMqttNum++;//记录发送总条数
                                     return objItem;
@@ -595,7 +597,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processIssueReturn', error => {
+                this.client.unsubscribe('sxChannelParamReply', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

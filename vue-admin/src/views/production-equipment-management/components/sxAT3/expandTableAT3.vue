@@ -24,14 +24,14 @@
                     min-width="70"
                 >
                 </vxe-table-column>
-                <vxe-table-column
+                <!-- <vxe-table-column
                     field="initialEleMin"
                     title="控制参数"
                     min-width="100"
                 >
                 <template #default={row}>
                     {{row.command==1?'查询':row.command==2?'下载':'删除'}}
-                </template>
+                </template> -->
                 </vxe-table-column>
                 <vxe-table-column
                     field="presetEleMax"

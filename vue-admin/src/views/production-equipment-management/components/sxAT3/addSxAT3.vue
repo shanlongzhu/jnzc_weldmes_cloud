@@ -37,7 +37,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <!-- <el-col :span="6">
                         <el-form-item
                             label="控制"
                             prop="command"
@@ -57,7 +57,7 @@
                             </el-select>
 
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="6">
                         <el-form-item
                             label="通道标志"
@@ -596,7 +596,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processClaimReturn') {
+                if (topic == 'sxAt3ParamQueryReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -616,13 +616,29 @@ export default {
                     this.model2 = false;
                     this.issueTimeOut();
                 }
+                if (topic == 'sxChannelParamReply') {
+                    clearTimeout(this.timeout);
+                    console.log(`${message}`)
+                    var datajson = JSON.parse(`${message}`);
+                    this.$message.warning("无参数！！！");
+                    this.model2 = false;
+                    this.issueTimeOut();
+                }
             })
         },
 
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processClaimReturn', 0, (error, res) => {
+            //订阅有参数
+            this.client.subscribe('sxAt3ParamQueryReturn', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
+                    return
+                }
+            })
+            //订阅无参数
+            this.client.subscribe('sxChannelParamReply', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -631,7 +647,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processClaim', msg, 0)
+            this.client.publish('sxFr2ChannelParamQuery', msg, 0)
         },
 
         //选择柔软电弧模式
@@ -769,7 +785,9 @@ export default {
                 setTimeout(() => {
                     let msg = {}
                     msg['weldIp'] = this.selectModel.weldIp;
-                    msg['channelNo'] = this.ruleForm2.channelNo;
+                    msg['weldCid'] = this.selectModel.weldCid;
+                    msg['channel'] = this.ruleForm2.channel;
+                    msg['command'] = 1
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
                     //记时触发下发失败
@@ -783,14 +801,18 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processClaimReturn', error => {
+                this.client.unsubscribe('sxAt3ParamQueryReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
-                    setTimeout(() => {
-                        this.client.end();
-                    }, 500)
+                });
+
+                this.client.unsubscribe('sxChannelParamReply', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
                 });
 
                 if (n) {

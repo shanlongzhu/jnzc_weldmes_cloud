@@ -34,10 +34,10 @@
                                     :label="item.valueName"
                                     :value="item.id"
                                 />
-                            </el-select>                            
+                            </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <!-- <el-col :span="6">
                         <el-form-item
                             label="控制"
                             prop="command"
@@ -57,7 +57,7 @@
                             </el-select>
                             
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="6">
                         <el-form-item
                             label="通道标志"
@@ -76,7 +76,7 @@
                                     :value="item.value"
                                 />
                             </el-select>
-                            
+
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -266,7 +266,7 @@
                                     v-model="ruleForm2.arcVolMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="6">
@@ -348,7 +348,7 @@
                                     />
                                 </el-select>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="6">
@@ -420,7 +420,7 @@
                                     v-model="ruleForm2.dryExtendLength"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="6">
@@ -482,7 +482,7 @@
                                     v-model="ruleForm2.initialMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="6">
@@ -544,7 +544,7 @@
                                     v-model="ruleForm2.amendPeriod"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
 
                     <el-row>
@@ -607,7 +607,7 @@
                                     v-model="ruleForm2.presetVolAlarmMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
 
                     <el-row>
@@ -670,7 +670,7 @@
                                     v-model="ruleForm2.initialVolAlarmMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
 
                     <el-row>
@@ -733,7 +733,7 @@
                                     v-model="ruleForm2.arcVolAlarmMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
 
                     <el-row>
@@ -796,7 +796,7 @@
                                     v-model="ruleForm2.flowMax"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="6">
@@ -814,7 +814,7 @@
                                 ></el-input-number>
                             </el-form-item>
                         </el-col>
-                                               
+
                     </el-row>
 
                 </div>
@@ -945,8 +945,8 @@
 <script>
 import mqtt from 'mqtt'
 import { getTeam, getFR2ChannaNoIsUse, addSxFR2Tech, getSxFR2TechDetail, editSxFR2TechDetail } from '_api/productionProcess/process'
-import { getWelderList,getSxWelderList } from '_api/productionEquipment/production'
-import {getChannelNoSourceArr,getWireDiameterArr,getGasesArr } from './common'
+import { getWelderList, getSxWelderList } from '_api/productionEquipment/production'
+import { getChannelNoSourceArr, getWireDiameterArr, getGasesArr } from './common'
 export default {
     name: 'addSxFR2',
     props: {},
@@ -971,8 +971,8 @@ export default {
             ruleFormObj2: {},
             ruleForm2: {
                 channel: '0',//通道编号
-                command:'',//控制参数
-                channelFlag:0,//通道标志（0~9）
+                command: '',//控制参数
+                channelFlag: 0,//通道标志（0~9）
 
                 //*** 预置参数 */
                 presetEleMax: 0,//预置电流上限
@@ -1104,7 +1104,7 @@ export default {
             },
 
             //控制下拉
-            commandArr:[
+            commandArr: [
                 {
                     label: '查询',
                     value: 1
@@ -1119,7 +1119,7 @@ export default {
                 },
             ],
             //通道标志
-            channelFlagArr:[
+            channelFlagArr: [
                 {
                     label: '0',
                     value: 0
@@ -1413,7 +1413,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processClaimReturn') {
+                if (topic == 'sxChannelParamReplyHave') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -1464,15 +1464,23 @@ export default {
                     this.ruleForm2.arcVolAlarmMax = datajson['arcVolAlarmMax'];//收弧电压报警上限
                     this.ruleForm2.arcEleAlarmMin = datajson['arcEleAlarmMin'];//收弧电流报警下限
                     this.ruleForm2.arcVolAlarmMin = datajson['arcVolAlarmMin'];//收弧电压报警下限
-                    
+
                     this.ruleForm2.arcDelayTime = datajson['arcDelayTime'];//起弧延时时间
                     this.ruleForm2.alarmDelayTime = datajson['alarmDelayTime'];//报警延时时间
                     this.ruleForm2.alarmHaltTime = datajson['alarmHaltTime'];//报警停机时间
 
                     this.ruleForm2.flowMax = datajson['flowMax'];//流量上限(查询回复)
                     this.ruleForm2.alarmFlag = datajson['alarmFlag'];//标志（下载参数）
-                    
+
                     this.$message.success("索取成功！！！");
+                    this.model2 = false;
+                    this.issueTimeOut();
+                }
+                if (topic == 'sxChannelParamReply') {
+                    clearTimeout(this.timeout);
+                    console.log(`${message}`)
+                    var datajson = JSON.parse(`${message}`);
+                    this.$message.warning("无参数！！！");
                     this.model2 = false;
                     this.issueTimeOut();
                 }
@@ -1482,7 +1490,15 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processClaimReturn', 0, (error, res) => {
+            //有参数
+            this.client.subscribe('sxChannelParamReplyHave', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
+                    return
+                }
+            })
+            //无参数
+            this.client.subscribe('sxChannelParamReply', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -1491,7 +1507,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processClaim', msg, 0)
+            this.client.publish('sxFr2ChannelParamQuery', msg, 0)
         },
 
         //选择柔软电弧模式
@@ -1628,7 +1644,9 @@ export default {
                 setTimeout(() => {
                     let msg = {}
                     msg['weldIp'] = this.selectModel.weldIp;
-                    msg['channelNo'] = this.ruleForm2.channelNo;
+                    msg['weldCid'] = this.selectModel.weldCid;
+                    msg['channel'] = this.ruleForm2.channel;
+                    msg['command'] = 1
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
                     //记时触发下发失败
@@ -1642,14 +1660,17 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processClaimReturn', error => {
+                this.client.unsubscribe('sxChannelParamReplyHave', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
-                    setTimeout(() => {
-                        this.client.end();
-                    }, 500)
+                });
+                this.client.unsubscribe('sxChannelParamReply', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
                 });
 
                 if (n) {

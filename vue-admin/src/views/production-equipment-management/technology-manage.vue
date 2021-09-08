@@ -21,7 +21,8 @@
                 <el-button
                     size="small"
                     icon="el-icon-document-remove"
-                >历史下发查询</el-button>
+                    @click="passwordIssueFun"
+                >密码下发</el-button>
             </div>
             <div class="con-w">
                 <el-button
@@ -258,6 +259,8 @@
         <issueOrdersAT3 ref="issueOrdersAT3"></issueOrdersAT3>
         <issueOrdersFR2 ref="issueOrdersFR2"></issueOrdersFR2>
 
+        <!-- 密码下发 -->
+        <passwordIssue ref="passwordIssue"></passwordIssue>
     </div>
 </template>
 
@@ -288,6 +291,9 @@ import issueOrdersTIG from './components/sxGL5/TIG/issueOrdersTIG';
 import issueOrdersAT3 from './components/sxAT3/issueOrdersAT3'
 import issueOrdersFR2 from './components/FR2/issueOrdersFR2'
 
+// 密码下发
+import passwordIssue from './components/passwordIssue/passwordIssue'
+
 export default {
     components: {
         expandTable,
@@ -304,7 +310,8 @@ export default {
         issueOrdersAT3,
         addSxFR2,
         expandTableFR2,
-        issueOrdersFR2
+        issueOrdersFR2,
+        passwordIssue
     },
     data () {
         return {
@@ -535,6 +542,12 @@ export default {
         async editDetailFunFR2 (obj) {
             this.$refs.SxFR2.editDetailFun(obj);
         },
+
+
+        //密码下发
+        passwordIssueFun(){
+            this.$refs.passwordIssue.init();
+        }
 
     }
 }

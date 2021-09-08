@@ -46,7 +46,8 @@
                                 label="初期电流上限"
                                 prop="initialEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -60,7 +61,8 @@
                                 label="初期电流下限"
                                 prop="initialEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -74,7 +76,8 @@
                                 label="初期电压上限"
                                 prop="initialVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -88,7 +91,8 @@
                                 label="初期电压下限"
                                 prop="initialVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -104,7 +108,8 @@
                                 label="第一焊接电流上限"
                                 prop="firstWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -118,7 +123,8 @@
                                 label="第一焊接电流下限"
                                 prop="firstWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -132,7 +138,8 @@
                                 label="第一焊接电压上限"
                                 prop="firstWeldVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -146,7 +153,8 @@
                                 label="第一焊接电压下限"
                                 prop="firstWeldVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -162,7 +170,8 @@
                                 label="第二焊接电流上限"
                                 prop="secondWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -176,7 +185,8 @@
                                 label="第二焊接电流下限"
                                 prop="secondWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -190,7 +200,8 @@
                                 label="第二焊接电压上限"
                                 prop="secondWeldVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -204,7 +215,8 @@
                                 label="第二焊接电压下限"
                                 prop="secondWeldVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -220,7 +232,8 @@
                                 label="收弧电流上限"
                                 prop="arcEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -234,7 +247,8 @@
                                 label="收弧电流下限"
                                 prop="arcEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -248,7 +262,8 @@
                                 label="收弧电压上限"
                                 prop="arcVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -262,7 +277,8 @@
                                 label="收弧电压下限"
                                 prop="arcVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -278,7 +294,8 @@
                                 label="峰值焊接电流上限"
                                 prop="peakWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -292,7 +309,8 @@
                                 label="峰值焊接电流下限"
                                 prop="peakWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -306,7 +324,8 @@
                                 label="峰值焊接电压上限"
                                 prop="peakWeldVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -320,7 +339,8 @@
                                 label="峰值焊接电压下限"
                                 prop="peakWeldVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -421,7 +441,8 @@
                                 label="脉冲比率"
                                 prop="pulseRate"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -436,7 +457,8 @@
                                 label="脉冲频率"
                                 prop="pulseFrequency"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -451,7 +473,8 @@
                                 label="清洁宽度"
                                 prop="cleanWidth"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -466,7 +489,8 @@
                                 label="AC频率"
                                 prop="acFrequency"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -483,7 +507,8 @@
                                 label="MIX频率"
                                 prop="mixFrequency"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -498,7 +523,8 @@
                                 label="MIX（AC）比率"
                                 prop="mixAcRate"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -513,7 +539,8 @@
                                 label="脉冲弧度"
                                 prop="pulseRadian"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -528,7 +555,8 @@
                                 label="电弧挺度（预留）"
                                 prop="arcStiffness"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -545,7 +573,8 @@
                                 label="手工焊推力"
                                 prop="handWeldThrust"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -560,7 +589,8 @@
                                 label="提前送气时间"
                                 prop="beforeAspiratedTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -575,7 +605,8 @@
                                 label="滞后停气时间"
                                 prop="afterStopGasTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -590,7 +621,8 @@
                                 label="主焊上升时间"
                                 prop="mainWeldRiseTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -608,7 +640,8 @@
                                 label="主焊下降时间"
                                 prop="mainWeldDeclineTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -623,7 +656,8 @@
                                 label="主焊上升弧度"
                                 prop="mainWeldRiseRadian"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -638,7 +672,8 @@
                                 label="主焊下降弧度"
                                 prop="mainWeldDeclineRadian"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -653,7 +688,8 @@
                                 label="点焊时间"
                                 prop="spotWeldingTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -670,7 +706,8 @@
                                 label="点焊间隔时间"
                                 prop="spotWeldIntervalTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -684,7 +721,8 @@
                                 label="点焊上升时间"
                                 prop="spotWeldRiseTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -699,7 +737,8 @@
                                 label="点焊下降时间"
                                 prop="spotWeldDeclineTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -714,7 +753,8 @@
                                 label="点焊上升弧度"
                                 prop="spotWeldRiseRadian"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -723,8 +763,8 @@
                                     v-model="ruleForm2.spotWeldRiseRadian"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
-                    </el-row> 
+                        </el-col>
+                    </el-row>
 
                     <el-row>
                         <el-col :span="6">
@@ -732,7 +772,8 @@
                                 label="点焊下降弧度"
                                 prop="spotWeldDeclineRadian"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -747,7 +788,8 @@
                                 label="最大通道"
                                 prop="maxChannel"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -781,14 +823,15 @@
                                 label="手工焊焊接电流"
                                 prop="handWeldWeldEle"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
                                     v-model="ruleForm2.handWeldWeldEle"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
 
                     <el-row>
@@ -797,14 +840,15 @@
                                 label="手工焊引弧电流"
                                 prop="handWeldArcEle"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
                                     v-model="ruleForm2.handWeldArcEle"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                                          
+                        </el-col>
                     </el-row>
                 </div>
                 <div class="border-tip">
@@ -815,7 +859,8 @@
                                 label="初期电流上限"
                                 prop="dclInitialEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -829,7 +874,8 @@
                                 label="初期电流下限"
                                 prop="dclInitialEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -843,7 +889,8 @@
                                 label="焊接电流上限"
                                 prop="dclWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -857,7 +904,8 @@
                                 label="焊接电流下限"
                                 prop="dclWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -873,7 +921,8 @@
                                 label="第二焊接电流上限"
                                 prop="dclSecondWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -887,7 +936,8 @@
                                 label="第二焊接电流下限"
                                 prop="dclSecondWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -901,7 +951,8 @@
                                 label="收弧电流上限"
                                 prop="dclArcEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -915,7 +966,8 @@
                                 label="收弧电流下限"
                                 prop="dclArcEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -923,15 +975,16 @@
                                     v-model="ruleForm2.dclArcEleMin"
                                 ></el-input-number>
                             </el-form-item>
-                        </el-col>                        
+                        </el-col>
                     </el-row>
                     <el-row>
-                      <el-col :span="6">
+                        <el-col :span="6">
                             <el-form-item
                                 label="启动延时时间"
                                 prop="startDelayTime"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -945,7 +998,8 @@
                                 label="限流修正周期"
                                 prop="clAmendPeriod"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -964,7 +1018,8 @@
                                 label="初期电流上限"
                                 prop="oaInitialEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -978,7 +1033,8 @@
                                 label="初期电流下限"
                                 prop="oaInitialEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -992,7 +1048,8 @@
                                 label="初期电压上限"
                                 prop="oaInitialVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1006,7 +1063,8 @@
                                 label="初期电压下限"
                                 prop="oaInitialVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1022,7 +1080,8 @@
                                 label="焊接电流上限"
                                 prop="oaWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1036,7 +1095,8 @@
                                 label="焊接电流下限"
                                 prop="oaWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1050,7 +1110,8 @@
                                 label="焊接电压上限"
                                 prop="oaWeldVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1064,7 +1125,8 @@
                                 label="焊接电压下限"
                                 prop="oaWeldVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1081,7 +1143,8 @@
                                 label="第二焊接电流上限"
                                 prop="oaSecondWeldEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1095,7 +1158,8 @@
                                 label="第二焊接电流下限"
                                 prop="oaSecondWeldEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1109,7 +1173,8 @@
                                 label="第二焊接电压上限"
                                 prop="oaSecondWeldVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1123,7 +1188,8 @@
                                 label="第二焊接电压下限"
                                 prop="oaSecondWeldVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1140,7 +1206,8 @@
                                 label="收弧电流上限"
                                 prop="oaArcEleMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1154,7 +1221,8 @@
                                 label="收弧电流下限"
                                 prop="oaArcEleMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1168,7 +1236,8 @@
                                 label="收弧电压上限"
                                 prop="oaArcVolMax"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1182,7 +1251,8 @@
                                 label="收弧电压下限"
                                 prop="oaArcVolMin"
                             >
-                                <el-input-number :precision="0"
+                                <el-input-number
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1199,7 +1269,8 @@
                                 label="起弧延时时间"
                                 prop="arcDelayTime"
                             >
-                                <el-input-number :precision="1"
+                                <el-input-number
+                                    :precision="1"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1214,7 +1285,8 @@
                                 label="报警延时时间"
                                 prop="alarmDelayTime"
                             >
-                                <el-input-number :precision="1"
+                                <el-input-number
+                                    :precision="1"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1229,7 +1301,8 @@
                                 label="停机延时时间"
                                 prop="haltDelayTime"
                             >
-                                <el-input-number :precision="1"
+                                <el-input-number
+                                    :precision="1"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1244,7 +1317,8 @@
                                 label="停机冻结时间"
                                 prop="haltFreezeTime"
                             >
-                                <el-input-number :precision="1"
+                                <el-input-number
+                                    :precision="1"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -1383,9 +1457,9 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getTeam, getDictionaries, getProcesLibraryChildDetail, getTIGChannaNoIsUse, addProcesLibraryChild, editProcesLibraryChild,addSxTIGTech,getSxTIGTechDetail,editSxTIGTechDetail } from '_api/productionProcess/process'
+import { getTeam, getDictionaries, getProcesLibraryChildDetail, getTIGChannaNoIsUse, addProcesLibraryChild, editProcesLibraryChild, addSxTIGTech, getSxTIGTechDetail, editSxTIGTechDetail } from '_api/productionProcess/process'
 
-import { getWelderList,getSxWelderList } from '_api/productionEquipment/production'
+import { getWelderList, getSxWelderList } from '_api/productionEquipment/production'
 export default {
     name: 'addSxTIG',
     props: {},
@@ -1577,233 +1651,233 @@ export default {
                 // ],
             },
             //焊接方法
-            modeArr:[
+            modeArr: [
                 {
-                    label:'直流TIG',
-                    value:0
+                    label: '直流TIG',
+                    value: 0
                 },
                 {
-                    label:'交流TIG',
-                    value:1
+                    label: '交流TIG',
+                    value: 1
                 },
                 {
-                    label:'MIX TIG',
-                    value:2
+                    label: 'MIX TIG',
+                    value: 2
                 },
                 {
-                    label:'手工焊',
-                    value:3
+                    label: '手工焊',
+                    value: 3
                 }
             ],
             //收弧有无
-            weldingControlArr:[
+            weldingControlArr: [
                 {
-                    label:'收弧无',
-                    value:0
+                    label: '收弧无',
+                    value: 0
                 },
                 {
-                    label:'收弧有',
-                    value:1
+                    label: '收弧有',
+                    value: 1
                 },
                 {
-                    label:'重复收弧有',
-                    value:2
+                    label: '重复收弧有',
+                    value: 2
                 },
                 {
-                    label:'收弧点焊',
-                    value:3
+                    label: '收弧点焊',
+                    value: 3
                 },
                 {
-                    label:'连续点焊',
-                    value:4
+                    label: '连续点焊',
+                    value: 4
                 }
             ],
             //脉冲有无
-            weldingMannerArr:[
+            weldingMannerArr: [
                 {
-                    label:'脉冲无',
-                    value:0
+                    label: '脉冲无',
+                    value: 0
                 },
                 {
-                    label:'脉冲有',
-                    value:1
+                    label: '脉冲有',
+                    value: 1
                 },
             ],
             //交流波形
-            textureArr:[
+            textureArr: [
                 {
-                    label:'标准',
-                    value:0
+                    label: '标准',
+                    value: 0
                 },
                 {
-                    label:'硬',
-                    value:1
+                    label: '硬',
+                    value: 1
                 },
                 {
-                    label:'软',
-                    value:2
-                },                
+                    label: '软',
+                    value: 2
+                },
             ],
             //脉冲比率
-            wireDiameterArr:[
+            wireDiameterArr: [
                 {
-                    label:'0.8',
-                    value:0
+                    label: '0.8',
+                    value: 0
                 },
                 {
-                    label:'0.9',
-                    value:1
+                    label: '0.9',
+                    value: 1
                 },
                 {
-                    label:'1.0',
-                    value:2
+                    label: '1.0',
+                    value: 2
                 },
                 {
-                    label:'1.2',
-                    value:3
+                    label: '1.2',
+                    value: 3
                 },
                 {
-                    label:'1.4',
-                    value:4
+                    label: '1.4',
+                    value: 4
                 },
                 {
-                    label:'1.6',
-                    value:5
+                    label: '1.6',
+                    value: 5
                 },
                 {
-                    label:'OP1',
-                    value:6
+                    label: 'OP1',
+                    value: 6
                 },
             ],
             //气体
             gasesArr: [
                 {
-                    label:'CO2',
-                    value:0
+                    label: 'CO2',
+                    value: 0
                 },
                 {
-                    label:'MAG',
-                    value:1
+                    label: 'MAG',
+                    value: 1
                 },
                 {
-                    label:'MIG',
-                    value:2
+                    label: 'MIG',
+                    value: 2
                 },
                 {
-                    label:'OP1',
-                    value:3
+                    label: 'OP1',
+                    value: 3
                 },
                 {
-                    label:'OP2',
-                    value:4
+                    label: 'OP2',
+                    value: 4
                 },
                 {
-                    label:'OP3',
-                    value:5
+                    label: 'OP3',
+                    value: 5
                 },
                 {
-                    label:'OP4',
-                    value:6
+                    label: 'OP4',
+                    value: 6
                 },
             ],
             //手动送丝
             wireFeedArr: [
                 {
-                    label:'送丝停止',
-                    value:0
+                    label: '送丝停止',
+                    value: 0
                 },
                 {
-                    label:'送丝启动',
-                    value:1
-                },                
+                    label: '送丝启动',
+                    value: 1
+                },
             ],
             //检气状态
             checkGasStatusArr: [
                 {
-                    label:'检气停止',
-                    value:0
+                    label: '检气停止',
+                    value: 0
                 },
                 {
-                    label:'检气启动',
-                    value:1
-                },                
+                    label: '检气启动',
+                    value: 1
+                },
             ],
             //切换状态
-            cutStatusArr:[
+            cutStatusArr: [
                 {
-                    label:'初期',
-                    value:0
+                    label: '初期',
+                    value: 0
                 },
                 {
-                    label:'焊接',
-                    value:1
-                },   
+                    label: '焊接',
+                    value: 1
+                },
                 {
-                    label:'收弧',
-                    value:2
-                },                
+                    label: '收弧',
+                    value: 2
+                },
             ],
             //锁定状态
-            lockStatusArr:[
+            lockStatusArr: [
                 {
-                    label:'锁定无',
-                    value:0
+                    label: '锁定无',
+                    value: 0
                 },
                 {
-                    label:'锁定有',
-                    value:1
-                },                 
+                    label: '锁定有',
+                    value: 1
+                },
             ],
 
             //电流显示选择
-            eleShowSelectArr:[
+            eleShowSelectArr: [
                 {
-                    label:'电流',
-                    value:0
+                    label: '电流',
+                    value: 0
                 },
                 {
-                    label:'速度',
-                    value:1
-                },  
+                    label: '速度',
+                    value: 1
+                },
                 {
-                    label:'板厚',
-                    value:2
-                },             
+                    label: '板厚',
+                    value: 2
+                },
                 {
-                    label:'电焊时间',
-                    value:3
-                },      
+                    label: '电焊时间',
+                    value: 3
+                },
             ],
             //电压显示选择
-            volShowArr:[
+            volShowArr: [
                 {
-                    label:'电压',
-                    value:0
+                    label: '电压',
+                    value: 0
                 },
                 {
-                    label:'弧长',
-                    value:1
-                },  
+                    label: '弧长',
+                    value: 1
+                },
                 {
-                    label:'电弧特性',
-                    value:2
-                },             
+                    label: '电弧特性',
+                    value: 2
+                },
                 {
-                    label:'熔深控制',
-                    value:3
-                }, 
+                    label: '熔深控制',
+                    value: 3
+                },
             ],
-            
+
             //一元/分别
-            unitaryDifferenceArr:[
+            unitaryDifferenceArr: [
                 {
-                    label:'一元化',
-                    value:1
+                    label: '一元化',
+                    value: 1
                 },
                 {
-                    label:'分别',
-                    value:2
-                },   
+                    label: '分别',
+                    value: 2
+                },
             ],
             //通道号下拉            
             channelNoSourceArr: [
@@ -1849,23 +1923,23 @@ export default {
                 },
             ],
 
-            channelNoArr:[],
+            channelNoArr: [],
 
 
-            
+
             //收弧方式下拉
             controlArcArr: [],
             //焊丝材质
             weldingStickTextureArr: [],
-            
+
             gasesArrSource: [],
             //焊丝直径
             weldingStickDiameterArr: [],
             weldingStickDiameterArrSource: [],
             //焊接过程
             weldingProcessArr: [],
-            
-            
+
+
 
             //选择设备
             model2: false,
@@ -1889,7 +1963,7 @@ export default {
     },
     watch: {},
     computed: {
-        
+
     },
     methods: {
         //mqtt创建
@@ -1908,7 +1982,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processClaimReturn') {
+                if (topic == 'sxTIGProcessClaimReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -2005,12 +2079,30 @@ export default {
                     this.model2 = false;
                     this.issueTimeOut();
                 }
+
+                if (topic == 'sxProcessClaimReturn') {
+                    clearTimeout(this.timeout);
+                    console.log(`${message}`)
+                    var datajson = JSON.parse(`${message}`);
+
+                    this.$message.warning("无参数！！！");
+                    this.model2 = false;
+                    this.issueTimeOut();
+                }
             })
         },
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processClaimReturn', 0, (error, res) => {
+            //订阅有数据主题
+            this.client.subscribe('sxTIGProcessClaimReturn', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
+                    return
+                }
+            })
+            //订阅无数据主题
+            this.client.subscribe('sxProcessClaimReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -2019,8 +2111,8 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processClaim', msg, 0)
-        },        
+            this.client.publish('sxGl5ProcessClaim', msg, 0)
+        },
 
         //选择柔软电弧模式
         changeSoftArcSchema (v) {
@@ -2041,7 +2133,7 @@ export default {
             this.ruleForm2 = { ...this.ruleFormObj2 };
             //获取已使用的通道
             let res = await getTIGChannaNoIsUse({ id: obj.parentId });
-            let { data, code } = await getSxTIGTechDetail({id:obj.id});
+            let { data, code } = await getSxTIGTechDetail({ id: obj.id });
             if (code == 200) {
                 this.visable2 = true;
                 this.$nextTick(() => {
@@ -2104,7 +2196,7 @@ export default {
                 }
             }
         },
-       
+
 
         //索取规范
         requestSpec () {
@@ -2157,7 +2249,9 @@ export default {
                 this.createConnection();
                 setTimeout(() => {
                     let msg = {}
+                    msg['weldCid'] = this.selectModel.weldCid;
                     msg['weldIp'] = this.selectModel.weldIp;
+                    msg['readWriteFlag'] = 1;
                     msg['channelNo'] = this.ruleForm2.channelNo;
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
@@ -2172,14 +2266,17 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processClaimReturn', error => {
+                this.client.unsubscribe('sxTIGProcessClaimReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
-                    setTimeout(() => {
-                        this.client.end();
-                    }, 500)
+                });
+                this.client.unsubscribe('sxProcessClaimReturn', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
                 });
 
                 if (n) {
