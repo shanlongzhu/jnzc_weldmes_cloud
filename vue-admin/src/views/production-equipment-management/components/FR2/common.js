@@ -56,31 +56,31 @@ export function getChannelNoSourceArr(v) {
 export function getWireDiameterArr(v) {
   let data = [
     {
-      label: "0.8",
+      label: "0.6",
       value: 0
     },
     {
-      label: "0.9",
+      label: "0.8",
       value: 1
     },
     {
-      label: "1.0",
+      label: "0.9",
       value: 2
     },
     {
-      label: "1.2",
+      label: "1.0",
       value: 3
     },
     {
-      label: "1.4",
+      label: "1.2",
       value: 4
     },
     {
-      label: "1.6",
+      label: "1.4",
       value: 5
     },
     {
-      label: "OP1",
+      label: "1.6",
       value: 6
     }
   ];
@@ -108,23 +108,7 @@ export function getGasesArr(v) {
     {
       label: "MIG",
       value: 2
-    },
-    {
-      label: "OP1",
-      value: 3
-    },
-    {
-      label: "OP2",
-      value: 4
-    },
-    {
-      label: "OP3",
-      value: 5
-    },
-    {
-      label: "OP4",
-      value: 6
-    }
+    },    
   ];
   if (v === 0||v==='0' || v) {
     let filterData = data.filter(item => item.value == v);

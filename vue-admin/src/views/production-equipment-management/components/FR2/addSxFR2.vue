@@ -411,14 +411,19 @@
                                 label="干伸长度"
                                 prop="dryExtendLength"
                             >
-                                <el-input-number
-                                    :precision="0"
-                                    :controls="false"
-                                    size="mini"
-                                    style="width:110px"
-                                    :min="0"
+                                <el-select
                                     v-model="ruleForm2.dryExtendLength"
-                                ></el-input-number>
+                                    placeholder="请选择"
+                                    style="width:110px"
+                                    size="mini"
+                                >
+                                    <el-option
+                                        v-for="item in dryExtendLengthArr"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -536,7 +541,7 @@
                                 prop="amendPeriod"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="2"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -747,7 +752,8 @@
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
-                                    :min="0"
+                                    :min="0.1"
+                                    :max="3.0"
                                     v-model="ruleForm2.arcDelayTime"
                                 ></el-input-number>
                             </el-form-item>
@@ -762,7 +768,8 @@
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
-                                    :min="0"
+                                    :min="0.1"
+                                    :max="25.0"
                                     v-model="ruleForm2.alarmDelayTime"
                                 ></el-input-number>
                             </el-form-item>
@@ -777,7 +784,8 @@
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
-                                    :min="0"
+                                    :min="0.1"
+                                    :max="25.0"
                                     v-model="ruleForm2.alarmHaltTime"
                                 ></el-input-number>
                             </el-form-item>
@@ -1184,39 +1192,43 @@ export default {
             weldingControlArr: [
                 {
                     label: '收弧无',
-                    value: 0
-                },
-                {
-                    label: '收弧有',
                     value: 1
                 },
                 {
-                    label: '初期有',
+                    label: '点焊',
                     value: 2
                 },
                 {
-                    label: '电焊',
+                    label: '收弧有',
                     value: 3
+                },
+                {
+                    label: '脉冲自锁',
+                    value: 4
+                },
+                {
+                    label: '5',
+                    value: 5
+                },
+                {
+                    label: '6',
+                    value: 6
+                },
+                {
+                    label: '初期收弧有',
+                    value: 7
                 }
             ],
             //焊接方式
             weldingMannerArr: [
                 {
-                    label: '脉冲无',
+                    label: '脉冲有',
                     value: 0
                 },
                 {
-                    label: '脉冲有',
+                    label: '脉冲无',
                     value: 1
-                },
-                {
-                    label: '根焊',
-                    value: 2
-                },
-                {
-                    label: '大熔深',
-                    value: 3
-                }
+                }                
             ],
             //材质
             textureArr: [
@@ -1225,34 +1237,65 @@ export default {
                     value: 0
                 },
                 {
-                    label: '药芯碳钢',
+                    label: '不锈钢',
                     value: 1
                 },
                 {
-                    label: '不锈钢3系',
+                    label: '硬铝',
                     value: 2
                 },
                 {
-                    label: '不锈钢4系',
+                    label: '软铝',
                     value: 3
                 },
                 {
-                    label: '药芯不锈钢',
+                    label: '药芯碳钢',
                     value: 4
                 },
                 {
-                    label: 'OP1',
+                    label: '药芯不锈钢',
                     value: 5
-                },
-                {
-                    label: 'OP2',
-                    value: 6
                 },
             ],
             //丝径
             wireDiameterArr: getWireDiameterArr(),
             //气体
             gasesArr: getGasesArr(),
+            //干伸长度
+            dryExtendLengthArr:[
+                {
+                    label: 'OFF',
+                    value: 0
+                },
+                {
+                    label: '10mm',
+                    value: 1
+                },
+                {
+                    label: '12mm',
+                    value: 2
+                },
+                {
+                    label: '15mm',
+                    value: 3
+                },
+                {
+                    label: '20mm',
+                    value: 4
+                },
+                {
+                    label: '22mm',
+                    value: 5
+                },
+                {
+                    label: '25mm',
+                    value: 6
+                },
+                {
+                    label: '30mm',
+                    value: 7
+                }
+            ],
             //手动送丝
             wireFeedArr: [
                 {
@@ -1344,12 +1387,12 @@ export default {
             //一元/分别
             unitaryDifferenceArr: [
                 {
-                    label: '一元化',
-                    value: 1
+                    label: '分别',
+                    value: 0
                 },
                 {
-                    label: '分别',
-                    value: 2
+                    label: '一元',
+                    value: 1
                 },
             ],
             //通道号下拉            
