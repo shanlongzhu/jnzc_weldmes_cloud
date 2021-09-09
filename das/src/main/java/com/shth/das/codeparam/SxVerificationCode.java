@@ -20,7 +20,7 @@ public class SxVerificationCode {
     /**
      * 松下GL5系列软硬件参数回复
      */
-    public static final String SX_SOFT_HARDWARE_PARAM_DOWN = "FE5AA5001A000130430050076000000000000095001000000000";
+    public static final String SX_SOFT_HARDWARE_PARAM_DOWN = "FE5AA5001A000130430050076000000000000023001000000000";
 
     /**
      * 松下CO2焊机工艺下发头部数据

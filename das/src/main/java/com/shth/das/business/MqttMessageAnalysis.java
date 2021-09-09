@@ -9,6 +9,7 @@ import com.shth.das.pojo.jnotc.JNPasswordIssue;
 import com.shth.das.pojo.jnotc.JNProcessClaim;
 import com.shth.das.pojo.jnotc.JNProcessIssue;
 import com.shth.das.pojo.jnsx.*;
+import com.shth.das.util.CRC7Check;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -316,6 +317,8 @@ public class MqttMessageAnalysis {
      */
     private void sxChannelWrite(String weldCid, String str, String msg, String topic) {
         try {
+            //对字符串进行CRC7校验
+            str = CRC7Check.crc7CheckAndReplace(str);
             if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                 if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
                     final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
