@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 15:46:36
+ * @LastEditTime: 2021-09-09 16:16:04
 -->
 
 <template>
@@ -571,6 +571,7 @@ export default {
         },
         //命令下发
         submitIssue () {
+            this.doSubscribe();
             let equipmentArr = [];//选中的设备
             let iPNoArr = [];//选中设备的所有IP
             this.reqMqttNum = 0;//发送数量
@@ -596,8 +597,7 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {
-                this.createConnection();
+            }).then(async () => {                
                 //选择的工艺数据
                 this.newEqu = []
                 //选择的工艺数据
@@ -634,12 +634,12 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                // this.client.unsubscribe('sxProcessReturn', error => {
-                //     console.log("取消订阅")
-                //     if (error) {
-                //         console.log('取消订阅失败', error)
-                //     }
-                // })
+                this.client.unsubscribe('sxProcessReturn', error => {
+                    console.log("取消订阅")
+                    if (error) {
+                        console.log('取消订阅失败', error)
+                    }
+                })
                 // this.client.end();
                 if (this.backMqttNum !== this.reqMqttNum) {
                     this.$message.error("下发超时")
@@ -656,6 +656,7 @@ export default {
     },
     created () {
         this.getTeamList();
+        this.createConnection();
     },
     mounted () {
 
