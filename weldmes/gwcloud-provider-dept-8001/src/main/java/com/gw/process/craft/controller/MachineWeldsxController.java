@@ -35,7 +35,7 @@ public class MachineWeldsxController {
      */
     @RequestMapping(value = "sx/getSxProcessIssueInfos", method = RequestMethod.GET)
     public HttpResult getSxProcessIssueList(@RequestParam(value="pn",defaultValue = "1") Integer pn,Long equipType,
-                                            @RequestParam(value="pn",defaultValue = "10") Integer size){
+                                            @RequestParam(value="size",defaultValue = "10") Integer size){
 
         PageHelper.startPage(pn,size);
 
