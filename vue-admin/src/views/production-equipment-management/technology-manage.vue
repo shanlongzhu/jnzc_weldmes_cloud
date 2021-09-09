@@ -29,13 +29,13 @@
                 <el-button
                     size="small"
                     icon="el-icon-printer"
+                    @click="setLockFun(1)"
                 >松下焊机通道锁定</el-button>
             </div>
             <div class="con-w">
                 <el-button
                     size="small"
-                    type="success"
-                    plain
+                    @click="setLockFun(0)"
                 >松下焊机通道解锁</el-button>
             </div>
         </div>
@@ -264,6 +264,8 @@
         <passwordIssue ref="passwordIssue"></passwordIssue>
         <!-- 控制命令下发 -->
         <commandIssue ref="commandIssue"></commandIssue>
+        <!-- 通道解锁/锁定 -->
+        <setLock ref="setLock"></setLock>
     </div>
 </template>
 
@@ -298,6 +300,8 @@ import issueOrdersFR2 from './components/FR2/issueOrdersFR2';
 import passwordIssue from './components/passwordIssue/passwordIssue';
 //控制命令下发
 import commandIssue from './components/commandIssue/commandIssue'
+//设置通道锁定/解锁
+import setLock from './components/sxGL5/Lock/setLock'
 
 export default {
     components: {
@@ -317,7 +321,8 @@ export default {
         expandTableFR2,
         issueOrdersFR2,
         passwordIssue,
-        commandIssue
+        commandIssue,
+        setLock
     },
     data () {
         return {
@@ -557,6 +562,10 @@ export default {
         //控制命令下发
         commandIssueFun(){
             this.$refs.commandIssue.init();
+        },
+        // 通道解锁/锁定
+        setLockFun(v){
+            this.$refs.setLock.init(v);
         }
 
     }

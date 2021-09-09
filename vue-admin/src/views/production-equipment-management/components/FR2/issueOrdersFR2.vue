@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-08 12:55:01
+ * @LastEditTime: 2021-09-09 14:33:58
 -->
 
 <template>
@@ -586,8 +586,9 @@ export default {
         },
         //命令下发
         submitIssue () {
+            this.doSubscribe();
             let equipmentArr = [];//选中的设备
-            let iPNoArr = [];//选中设备的所有采集编号
+            let iPNoArr = [];//选中设备的所有IP
             this.reqMqttNum = 0;//发送数量
             this.backMqttNum = 0;//返回数量
             //把分页中存储的选中机型取出
@@ -599,11 +600,11 @@ export default {
             if (equipmentArr.length == 0) {
                 return this.$message.error("请选择设备");
             }
-            //检查选择的设备采集编号是否存在空值
+            //检查选择的设备IP是否存在空值
             if (equipmentArr.filter(item => !item.weldIp || item.weldIp == '').length > 0) {
-                return this.$message.error("选择的设备存在采集序号为空");
+                return this.$message.error("选择的设备存在IP为空");
             }
-            //取出选中设备所有采集编号
+            //取出选中设备所有IP
             equipmentArr.filter(item => item.weldIp).forEach(item => {
                 iPNoArr = [...iPNoArr, ...item.weldIp.split(',')]
             });
@@ -611,12 +612,12 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {
-                this.createConnection();
+            }).then(async () => {                
+                //选择的工艺数据
+                this.newEqu = []
                 setTimeout(() => {
                     //选择的工艺数据
                     let techArr = this.formatTechnoloay(this.selectTechnology);
-                    this.newEqu = []
                     for (let i = 0, len = iPNoArr.length; i < len; i++) {
                         ((i) => {
                             this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
@@ -686,6 +687,7 @@ export default {
     },
     created () {
         this.getTeamList();
+        this.createConnection();
     },
     mounted () {
 

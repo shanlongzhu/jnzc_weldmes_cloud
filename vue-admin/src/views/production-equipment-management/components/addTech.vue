@@ -1395,10 +1395,10 @@ export default {
         },
 
         submitIssue () {
+            this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
-                this.createConnection();
+            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {                
                 setTimeout(() => {
                     let msg = {}
                     msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
@@ -1438,6 +1438,7 @@ export default {
         this.ruleFormObj2 = { ...this.ruleForm2 }
         this.getDicFun();
         this.getTeamList();
+        this.createConnection();
     },
     mounted () { }
 }

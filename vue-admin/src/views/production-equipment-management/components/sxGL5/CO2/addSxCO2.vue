@@ -2031,10 +2031,10 @@ export default {
         },
 
         submitIssue () {
+            this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.weldIp) {
-                this.createConnection();
+            } else if (this.selectModel.weldIp) {                
                 setTimeout(() => {
                     let msg = {}
                     msg['weldCid'] = this.selectModel.weldCid;
@@ -2079,6 +2079,7 @@ export default {
     created () {
         this.ruleFormObj2 = { ...this.ruleForm2 }
         this.getTeamList();
+        this.createConnection();
     },
     mounted () { }
 }

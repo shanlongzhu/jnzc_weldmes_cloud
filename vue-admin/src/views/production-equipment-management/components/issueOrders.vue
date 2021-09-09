@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-08-27 08:56:41
+ * @LastEditTime: 2021-09-09 14:28:37
 -->
 
 <template>
@@ -699,6 +699,7 @@ export default {
         },
         //命令下发
         submitIssue () {
+            this.doSubscribe();
             let equipmentArr = [];//选中的设备
             let gatherNoArr = [];//选中设备的所有采集编号
             this.reqMqttNum = 0;//发送数量
@@ -724,12 +725,12 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {
-                this.createConnection();
+            }).then(async () => {                
+                //选择的工艺数据
+                this.newEqu = []
                 setTimeout(() => {
                     //选择的工艺数据
                     let techArr = this.formatTechnoloay(this.selectTechnology);
-                    this.newEqu = []
                     for (let i = 0, len = gatherNoArr.length; i < len; i++) {
                         ((i) => {
                             this.newEqu.push({'gatherNo':gatherNoArr[i],'weldInfo':[]})
@@ -783,6 +784,7 @@ export default {
     },
     created () {
         this.getTeamList();
+        this.createConnection();
     },
     mounted () {
 

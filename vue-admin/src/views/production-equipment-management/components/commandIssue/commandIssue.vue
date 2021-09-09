@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-08 14:06:18
+ * @LastEditTime: 2021-09-09 14:25:23
 -->
 
 <template>
@@ -304,15 +304,13 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                console.log(topic)
                 if (topic == 'commandReturn') {
                     clearTimeout(this.timeout);
-                    console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
                         if (parseInt(item.gatherNo) === parseInt(datajson.gatherNo)) {
-                            v.isSuccessStatus = datajson.flag === 0 ? 0 : 1;
+                            item.isSuccessStatus = datajson.flag === 0 ? 0 : 1;
                         }
                     });
                     this.issueTimeOut();
@@ -382,6 +380,7 @@ export default {
         },
         //命令下发
         submitIssue () {
+            this.doSubscribe();
             let equipmentArr = [];//选中的设备
             this.gatherNoArr = [];//选中设备的所有采集编号
             this.reqMqttNum = 0;//发送数量
@@ -405,6 +404,7 @@ export default {
             });
 
             this.model1 = true;
+            this.commandNo = 0;
 
         },
         //控制命令下发
@@ -413,11 +413,10 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {
-                this.createConnection();
+            }).then(async () => {                
+                //选择的工艺数据
+                this.newEqu = []
                 setTimeout(() => {
-                    //选择的工艺数据
-                    this.newEqu = []
                     for (let i = 0, len = this.gatherNoArr.length; i < len; i++) {
                         ((i) => {
                             this.newEqu.push({ 'gatherNo': this.gatherNoArr[i], 'isSuccessStatus': 2 })
@@ -435,6 +434,7 @@ export default {
                         })(i)
                     }
                 }, 500);
+                this.model1 = false;
                 this.model2 = false;
                 this.model3 = true;
             }).catch(() => { })
@@ -463,6 +463,7 @@ export default {
     },
     created () {
         this.getTeamList();
+        this.createConnection();
     },
     mounted () {
 

@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 14:28:03
+ * @LastEditTime: 2021-09-09 14:27:21
 -->
 
 <template>
@@ -18,17 +18,29 @@
             <template #default>
                 <div class="top-con flex-n">
                     <div class="con-w">
-                        <span>班组：</span>
-                        <el-cascader
-                            v-model="searchObj.grade"
+                        <span>设备型号：</span>
+                        <el-select
+                            v-model="searchObj.equipType"
                             size="small"
-                            style="width:180px"
+                            class="w150"
                             clearable
-                            :options="teamArr"
-                            :props="defalutProps"
-                            :show-all-levels="false"
-                            @change="search"
-                        />
+                            placeholder="请选择"
+                        >
+                            <el-option
+                                v-for="item in modelArr2"
+                                :key="item.id"
+                                :label="item.valueName"
+                                :value="item.id"
+                            />
+                        </el-select>
+                    </div>
+                    <div class="con-w">
+                        <el-button
+                            size="small"
+                            icon="el-icon-search"
+                            type="primary"
+                            @click="search"
+                        >搜索</el-button>
                     </div>
                 </div>
                 <vxe-table
@@ -53,55 +65,35 @@
                         width="60"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="machineNo"
-                        title="固定资产编号"
+                        field="weldNo"
+                        title="设备序号"
                         width="100"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="deptName"
-                        title="设备类型"
+                        field="weldCid"
+                        title="设备CID"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueName}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="welderName"
-                        title="所属项目"
+                        field="weldCode"
+                        title="设备编码"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDept.name}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="status"
+                        field="weldIp"
+                        title="IP地址"
+                        width="100"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="weldStatus"
                         title="状态"
-                        width="60"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNames}}
-                        </template>
-                    </vxe-table-column>
-                    <vxe-table-column
-                        field="macPath"
-                        title="厂家"
                         width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamess}}
-                        </template>
-                    </vxe-table-column>
+                    ></vxe-table-column>
                     <vxe-table-column
-                        field="gatherNo"
-                        title="采集序号"
-                        min-width="100"
-                    >
-                        <template #default="{row}">
-                            {{row.machineGatherInfo.gatherNo}}
-                        </template>
-                    </vxe-table-column>
+                        field="weldModel"
+                        title="设备机型"
+                        width="100"
+                    ></vxe-table-column>
                 </vxe-table>
                 <div
                     class="p10 flex"
@@ -133,22 +125,18 @@
             </template>
         </vxe-modal>
 
-        <!-- 密码层 -->
+        <!-- 选择通道 -->
         <vxe-modal
-            title="下发密码"
+            :title="lockTxt+' - 通道选择'"
             v-model="model1"
             width="300"
         >
             <template #default>
                 <div class="p10">
-                    <span>密码：</span>
-                    <el-input-number
-                        :controls="false"
-                        :min="1"
-                        :max="999"
-                        v-model="passwordInput"
-                        placeholder=""
-                    ></el-input-number>
+                    <el-radio-group v-model="channelSelect">
+                        <el-radio :label="0">焊接通道</el-radio>
+                        <el-radio :label="1">PC通道</el-radio>
+                    </el-radio-group>
                 </div>
                 <div class="p10 tc">
                     <el-button
@@ -184,13 +172,16 @@
                     row-id="id"
                 >
                     <vxe-table-column
-                        field="gatherNo"
-                        title="采集序号"
+                        field="weldCid"
+                        title="CID"
                         min-width="100"
                     >
-                        <template #default="{row}">
-                            {{row.gatherNo}}
-                        </template>
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="weldType"
+                        title="下发命令"
+                        min-width="100"
+                    >
                     </vxe-table-column>
                     <vxe-table-column
                         field="isSuccessStatus"
@@ -230,8 +221,8 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getProcesLibraryChild, delProcesLibraryChild, getTeam } from '_api/productionProcess/process'
-import { getWelderList } from '_api/productionEquipment/production'
+import { getDictionaries } from '_api/productionProcess/process'
+import { getSxWelderList } from '_api/productionEquipment/production'
 export default {
     components: {},
     props: {},
@@ -247,14 +238,13 @@ export default {
                 reconnect: true,
                 clientId: "adminTest" + new Date().getTime()
             },
-            //密码
+            //通道
             model1: false,
-            passwordInput: 1,
+            channelSelect: 0,
             //搜索条件设备型号
             //搜索条件
             searchObj: {
-                grade: '',
-                model: ''
+                equipType: ''
             },
             model2: false,
             loading2: false,
@@ -263,18 +253,11 @@ export default {
             //分页
             page: 1,
             total2: 0,
-            // 级联下拉配置
-            defalutProps: {
-                label: 'name',
-                value: 'id',
-                children: 'list'
-            },
-            //机构数据
-            teamArr: [],
+
             //设备选中数据
             selectEquipment: {},
             //选中设备的所有采集编号
-            gatherNoArr: [],
+            weldCidArr: [],
             //发送mqtt数据
             newEqu: [],
             //记录发送mqtt总条数
@@ -285,6 +268,12 @@ export default {
             model3: false,
             //订阅超时
             timeout: '',
+
+            //解锁/锁定 0解锁 1锁定
+            lockStatus: 0,
+            lockTxt: '',
+            //搜索条件设备型号
+            modelArr2: [],
 
 
         }
@@ -308,13 +297,15 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'passwordReturn') {
+                console.log(`${message}`)
+                if (topic == 'sxWeldChannelSetReturn') {
                     clearTimeout(this.timeout);
+                    console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
-                        if (parseInt(item.gatherNo) === parseInt(datajson.gatherNo)) {
-                            item.isSuccessStatus = datajson.flag === 0 ? 0 : 1;
+                        if (parseInt(item.weldCid) === parseInt(datajson.weldCid)) {
+                            item.isSuccessStatus = datajson.flag === 0 ? 0 : 1;                            
                         }
                     });
                     this.issueTimeOut();
@@ -324,7 +315,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('passwordReturn', 0, (error, res) => {
+            this.client.subscribe('sxWeldChannelSetReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -333,17 +324,29 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('passwordIssue', msg, 0)
+            this.client.publish('sxGl5WeldChannelSet', msg, 0)
         },
 
 
-        init () {
+        init (v) {
+            //v 1锁定 0解锁
+            this.lockTxt = v ? '锁定' : '解锁';
             this.model2 = true;
+            this.lockStatus = v;
             this.selectEquipment = {};
+            this.getDicFun();
             this.getList();
             this.$nextTick(() => {
                 this.$refs.vxeTable.clearCheckboxReserve();
             })
+        },
+
+        //获取数据字典
+        async getDicFun () {
+            let { data, code } = await getDictionaries({ "types": ["6"] });
+            if (code == 200) {
+                this.modelArr2 = data['6'] || [];
+            }
         },
 
         //获取设备
@@ -352,20 +355,13 @@ export default {
                 pn: this.page,
                 ...this.searchObj
             }
-            // req.model = this.libray.weldModel;
-            req.grade = this.searchObj.grade && this.searchObj.grade.length > 0 ? this.searchObj.grade.slice(-1).join('') : ''
             this.loading2 = true;
-            let { data, code } = await getWelderList(req);
+            let { data, code } = await getSxWelderList(req);
             this.loading2 = false;
             if (code == 200) {
                 this.list = data.list
                 this.total2 = data.total
             }
-        },
-        // 获取班组
-        async getTeamList () {
-            const { data, code } = await getTeam()
-            this.teamArr = data.workArea || []
         },
         search () {
             this.page = 1;
@@ -386,7 +382,7 @@ export default {
         submitIssue () {
             this.doSubscribe();
             let equipmentArr = [];//选中的设备
-            this.gatherNoArr = [];//选中设备的所有采集编号
+            this.weldCidArr = [];//选中设备的所有CID
             this.reqMqttNum = 0;//发送数量
             this.backMqttNum = 0;//返回数量
             //把分页中存储的选中机型取出
@@ -398,15 +394,15 @@ export default {
             if (equipmentArr.length == 0) {
                 return this.$message.error("请选择设备");
             }
-            //检查选择的设备采集编号是否存在空值
-            if (equipmentArr.filter(item => !item.machineGatherInfo.gatherNo || item.machineGatherInfo.gatherNo == '').length > 0) {
-                return this.$message.error("选择的设备存在采集序号为空");
+            //检查选择的设备CID是否存在空值
+            if (equipmentArr.filter(item => !item.weldCid || item.weldCid == '').length > 0) {
+                return this.$message.error("选择的设备存在CID为空");
             }
-            //取出选中设备所有采集编号
-            equipmentArr.filter(item => item.machineGatherInfo.gatherNo).forEach(item => {
-                this.gatherNoArr = [...this.gatherNoArr, ...item.machineGatherInfo.gatherNo.split(',')]
+            //取出选中设备所有CID
+            equipmentArr.filter(item => item.weldCid).forEach(item => {
+                this.weldCidArr = [...this.weldCidArr, ...item.weldCid.split(',')]
             });
-            this.passwordInput = 1;
+
             this.model1 = true;
 
         },
@@ -418,16 +414,18 @@ export default {
                 type: 'warning'
             }).then(async () => {                
                 //选择的工艺数据
-                this.newEqu = [];
+                this.newEqu = []
                 setTimeout(() => {
-                    for (let i = 0, len = this.gatherNoArr.length; i < len; i++) {
+                    for (let i = 0, len = this.weldCidArr.length; i < len; i++) {
                         ((i) => {
-                            this.newEqu.push({ 'gatherNo': this.gatherNoArr[i], 'isSuccessStatus': 2 })
+                            this.newEqu.push({ 'weldCid': this.weldCidArr[i], 'isSuccessStatus': 2,'weldType':this.lockTxt })
                             setTimeout(() => {
                                 clearTimeout(this.timeout);
                                 let objItem = {};
-                                objItem['gatherNo'] = this.gatherNoArr[i];
-                                objItem['password'] = this.passwordInput;
+                                objItem['weldCid'] = this.weldCidArr[i];
+                                objItem['readWriteFlag'] = 2;
+                                objItem['function'] = this.lockStatus;                                
+                                objItem['channelSelect'] = this.channelSelect;
                                 this.reqMqttNum++;//记录发送总条数
                                 const msg = JSON.stringify(objItem);
                                 this.doPublish(msg);
@@ -446,7 +444,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('passwordReturn', error => {
+                this.client.unsubscribe('sxWeldChannelSetReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
@@ -465,11 +463,9 @@ export default {
 
     },
     created () {
-        this.getTeamList();
-        this.createConnection();
     },
     mounted () {
-
+        this.createConnection();
     }
 }
 </script>
