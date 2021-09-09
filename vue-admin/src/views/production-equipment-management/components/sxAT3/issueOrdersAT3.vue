@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 14:32:55
+ * @LastEditTime: 2021-09-09 15:45:56
 -->
 
 <template>
@@ -40,18 +40,18 @@
                         title="序号"
                     >
                     </vxe-table-column>
-                     <vxe-table-column
-                    field="channel"
-                    title="通道号"
-                    min-width="60"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="channelFlag"
-                    title="通道标志"
-                    min-width="70"
-                >
-                </vxe-table-column>
-                <!-- <vxe-table-column
+                    <vxe-table-column
+                        field="channel"
+                        title="通道号"
+                        min-width="60"
+                    ></vxe-table-column>
+                    <vxe-table-column
+                        field="channelFlag"
+                        title="通道标志"
+                        min-width="70"
+                    >
+                    </vxe-table-column>
+                    <!-- <vxe-table-column
                     field="initialEleMin"
                     title="控制参数"
                     min-width="100"
@@ -60,66 +60,66 @@
                     {{row.command==1?'查询':row.command==2?'下载':'删除'}}
                 </template>
                 </vxe-table-column> -->
-                <vxe-table-column
-                    field="presetEleMax"
-                    title="预置电流上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetVolMax"
-                    title="预置电压上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetEleMin"
-                    title="预置电流下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="presetVolMin"
-                    title="预置电压下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="eleAlarmMax"
-                    title="电流报警上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="volAlarmMax"
-                    title="电压报警上限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="eleAlarmMin"
-                    title="电流报警下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="volAlarmMin"
-                    title="电压报警下限"
-                    min-width="100"
-                >
-                </vxe-table-column>
-                <vxe-table-column
-                    field="alarmDelayTime"
-                    title="报警延时时间"
-                    min-width="100"
-                >                
-                </vxe-table-column>
-                <vxe-table-column
-                    field="alarmHaltTime"
-                    title="报警停机时间"
-                    min-width="100"
-                >                
-                </vxe-table-column>
+                    <vxe-table-column
+                        field="presetEleMax"
+                        title="预置电流上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetVolMax"
+                        title="预置电压上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetEleMin"
+                        title="预置电流下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="presetVolMin"
+                        title="预置电压下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="eleAlarmMax"
+                        title="电流报警上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="volAlarmMax"
+                        title="电压报警上限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="eleAlarmMin"
+                        title="电流报警下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="volAlarmMin"
+                        title="电压报警下限"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="alarmDelayTime"
+                        title="报警延时时间"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
+                    <vxe-table-column
+                        field="alarmHaltTime"
+                        title="报警停机时间"
+                        min-width="100"
+                    >
+                    </vxe-table-column>
                 </vxe-table>
                 <div class="p10 tr">
                     <el-button
@@ -140,7 +140,7 @@
             v-model="model2"
             width="700"
         >
-            <template #default>                
+            <template #default>
                 <vxe-table
                     ref="vxeTable"
                     border
@@ -191,7 +191,7 @@
                         field="weldModel"
                         title="设备机型"
                         width="100"
-                    ></vxe-table-column>                
+                    ></vxe-table-column>
                 </vxe-table>
                 <div
                     class="p10 flex"
@@ -558,36 +558,34 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {                
+            }).then(async () => {
                 //选择的工艺数据
                 this.newEqu = []
-                setTimeout(() => {
-                    //选择的工艺数据
-                    let techArr = this.formatTechnoloay(this.selectTechnology);
-                    for (let i = 0, len = iPNoArr.length; i < len; i++) {                        
-                        ((i) => {                            
-                            this.newEqu.push({'weldIp':iPNoArr[i],'weldInfo':[]})
-                            setTimeout(() => {
-                                clearTimeout(this.timeout);
-                                let msgData = techArr.map(v => {
-                                    let objItem = { ...v };
-                                    objItem['weldIp'] = iPNoArr[i];
-                                    objItem['weldCid'] = equipmentArr[i].weldCid;
-                                    objItem['command'] = 2;                                    
-                                    objItem['isSuccessStatus'] = 0;//记录发送状态
-                                    this.reqMqttNum++;//记录发送总条数
-                                    return objItem;
-                                })
-                                this.newEqu[i].weldInfo = msgData;
-                                const msg = JSON.stringify(msgData);
-                                this.doPublish(msg);
-                                console.log(msg)
-                                this.issueTimeOut();
-                                console.log(this.newEqu)
-                            }, (i + 1) * 300);
-                        })(i)
-                    }
-                }, 500);
+                //选择的工艺数据
+                let techArr = this.formatTechnoloay(this.selectTechnology);
+                for (let i = 0, len = iPNoArr.length; i < len; i++) {
+                    ((i) => {
+                        this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
+                        setTimeout(() => {
+                            clearTimeout(this.timeout);
+                            let msgData = techArr.map(v => {
+                                let objItem = { ...v };
+                                objItem['weldIp'] = iPNoArr[i];
+                                objItem['weldCid'] = equipmentArr[i].weldCid;
+                                objItem['command'] = 2;
+                                objItem['isSuccessStatus'] = 0;//记录发送状态
+                                this.reqMqttNum++;//记录发送总条数
+                                return objItem;
+                            })
+                            this.newEqu[i].weldInfo = msgData;
+                            const msg = JSON.stringify(msgData);
+                            this.doPublish(msg);
+                            console.log(msg)
+                            this.issueTimeOut();
+                            console.log(this.newEqu)
+                        }, (i + 1) * 300);
+                    })(i)
+                }
                 this.model = false;
                 this.model2 = false;
                 this.model3 = true;
