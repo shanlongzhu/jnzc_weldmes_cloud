@@ -1,10 +1,12 @@
 package com.shth.das.util;
 
-import com.alibaba.druid.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * CRC7校验
  */
+@Slf4j
 public class CRC7Check {
 
     private static final int[] CRC7_TABLE = {0x00, 0x12, 0x24, 0x36, 0x48, 0x5a, 0x6c, 0x7e,
@@ -32,7 +34,7 @@ public class CRC7Check {
      */
     public static String crc7Check(String str) {
         int result = 0;
-        if (!str.isEmpty()) {
+        if (StringUtils.isNotBlank(str)) {
             for (int i = 0; i < str.length(); i = i + 2) {
                 result = CRC7_TABLE[(Integer.parseInt(str.substring(i, i + 2), 16) >> 1) ^ result];
                 result ^= ((Integer.parseInt(str.substring(i, i + 2), 16) & 0x01) == 0 ? 0x00 : 0x09);
@@ -49,7 +51,7 @@ public class CRC7Check {
      */
     public static String crc7CheckAndReplace(String str) {
         try {
-            if (!StringUtils.isEmpty(str)) {
+            if (StringUtils.isNotBlank(str) && str.length() >= 40) {
                 StringBuilder builder = new StringBuilder(str);
                 //替换第19字节得CRC7校验码位数
                 builder.replace(38, 40, "00");
@@ -62,7 +64,7 @@ public class CRC7Check {
                 return builder.toString();
             }
         } catch (Exception e) {
-            System.out.println("[CRC7校验异常！]" + e.getMessage());
+            log.error("[CRC7校验异常！]:{}", e.getMessage());
         }
         return null;
     }

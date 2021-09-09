@@ -1,5 +1,7 @@
 package com.shth.das.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ public class CommonUtils {
      *
      * @param str:16进制的字符串
      * @param startByte:对应字节序号
-     * @return
+     * @return Integer
      */
     public static Integer dataAnalysis(String str, int[] startByte) {
         if (startByte.length > 0) {
@@ -33,16 +35,16 @@ public class CommonUtils {
     /**
      * 非空判断，非空返回true
      *
-     * @return
+     * @return boolean
      */
     public static boolean isNotEmpty(String str) {
-        return null != str && !"".equals(str.trim());
+        return StringUtils.isNotBlank(str);
     }
 
     /**
      * 非空判断，非空返回true
      *
-     * @return
+     * @return boolean
      */
     public static boolean isNotEmpty(List<?> list) {
         return null != list && !list.isEmpty();
@@ -51,8 +53,8 @@ public class CommonUtils {
     /**
      * 字符串转化成为16进制字符串
      *
-     * @param s
-     * @return
+     * @param s 字符串
+     * @return String
      */
     public static String strTo16(String s) {
         StringBuilder str = new StringBuilder();
