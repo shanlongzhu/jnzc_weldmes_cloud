@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-10 14:45:34
+ * @LastEditTime: 2021-09-10 16:04:02
 -->
 
 <template>
@@ -613,7 +613,6 @@ export default {
 
                         const msg = JSON.stringify(objItem);
                         this.doPublish(msg);
-                        console.log(msg)
 
                         return objItem;
                     })
@@ -637,25 +636,15 @@ export default {
                     }
                 })
                 // this.client.end();
-                if (this.backMqttNum !== this.reqMqttNum) {
-                    this.$message.error("下发超时")
-                    this.newEqu.forEach(item => {
-                        item.weldInfo.forEach(v => {
+                //将没有匹配到返回成功的 改为失败
+                this.newEqu.forEach(item => {
+                    item.weldInfo.forEach(v => {
+                        if (v.isSuccessStatus != 1) {
                             v.isSuccessStatus = 2;
-                        })
-                    });
-                    clearTimeout(this.timeout)
-                }else {
-                    //将没有匹配到返回成功的 改为失败
-                    this.newEqu.forEach(item => {
-                        item.weldInfo.forEach(v => {
-                            if (v.isSuccessStatus != 1) {
-                                v.isSuccessStatus = 2;
-                            }
-                        })
-                    });
-                    clearTimeout(this.timeout)
-                }
+                        }
+                    })
+                });
+                clearTimeout(this.timeout)
             }, 5000)
         },
 
