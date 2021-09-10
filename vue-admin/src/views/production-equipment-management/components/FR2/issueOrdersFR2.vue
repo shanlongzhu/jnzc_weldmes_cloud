@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 14:33:58
+ * @LastEditTime: 2021-09-10 11:33:19
 -->
 
 <template>
@@ -612,36 +612,35 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {                
+            }).then(async () => {
                 //选择的工艺数据
                 this.newEqu = []
-                setTimeout(() => {
-                    //选择的工艺数据
-                    let techArr = this.formatTechnoloay(this.selectTechnology);
-                    for (let i = 0, len = iPNoArr.length; i < len; i++) {
-                        ((i) => {
-                            this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
-                            setTimeout(() => {
-                                clearTimeout(this.timeout);
-                                let msgData = techArr.map(v => {
-                                    let objItem = { ...v };
-                                    objItem['weldIp'] = iPNoArr[i];
-                                    objItem['weldCid'] = equipmentArr[i].weldCid;
-                                    objItem['command'] = 2;        
-                                    objItem['isSuccessStatus'] = 0;//记录发送状态
-                                    this.reqMqttNum++;//记录发送总条数
-                                    return objItem;
-                                })
-                                this.newEqu[i].weldInfo = msgData;
-                                const msg = JSON.stringify(msgData);
+                //选择的工艺数据
+                let techArr = this.formatTechnoloay(this.selectTechnology);
+                for (let i = 0, len = iPNoArr.length; i < len; i++) {
+                    ((i) => {
+                        this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
+                        setTimeout(() => {
+                            clearTimeout(this.timeout);
+                            let msgData = techArr.map(v => {
+                                let objItem = { ...v };
+                                objItem['weldIp'] = iPNoArr[i];
+                                objItem['weldCid'] = equipmentArr[i].weldCid;
+                                objItem['command'] = 2;
+                                objItem['isSuccessStatus'] = 0;//记录发送状态
+                                this.reqMqttNum++;//记录发送总条数
+
+                                const msg = JSON.stringify(objItem);
                                 this.doPublish(msg);
                                 console.log(msg)
-                                this.issueTimeOut();
-                                console.log(this.newEqu)
-                            }, (i + 1) * 300);
-                        })(i)
-                    }
-                }, 500);
+
+                                return objItem;
+                            })
+                            this.newEqu[i].weldInfo = msgData;
+                            this.issueTimeOut();
+                        }, (i + 1) * 300);
+                    })(i)
+                }
                 this.model = false;
                 this.model2 = false;
                 this.model3 = true;

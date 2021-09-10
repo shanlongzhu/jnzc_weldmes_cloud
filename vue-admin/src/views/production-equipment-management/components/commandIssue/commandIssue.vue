@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 15:20:13
+ * @LastEditTime: 2021-09-09 15:43:12
 -->
 
 <template>
@@ -413,27 +413,25 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {                
+            }).then(async () => {
                 //选择的工艺数据
                 this.newEqu = []
-                setTimeout(() => {
-                    for (let i = 0, len = this.gatherNoArr.length; i < len; i++) {
-                        ((i) => {
-                            this.newEqu.push({ 'gatherNo': this.gatherNoArr[i], 'isSuccessStatus': 2 })
-                            setTimeout(() => {
-                                clearTimeout(this.timeout);
-                                let objItem = {};
-                                objItem['gatherNo'] = this.gatherNoArr[i];
-                                objItem['command'] = this.commandNo;
-                                this.reqMqttNum++;//记录发送总条数
-                                const msg = JSON.stringify(objItem);
-                                this.doPublish(msg);
-                                console.log(msg)
-                                this.issueTimeOut();
-                            }, (i + 1) * 300);
-                        })(i)
-                    }
-                }, 500);
+                for (let i = 0, len = this.gatherNoArr.length; i < len; i++) {
+                    ((i) => {
+                        this.newEqu.push({ 'gatherNo': this.gatherNoArr[i], 'isSuccessStatus': 2 })
+                        setTimeout(() => {
+                            clearTimeout(this.timeout);
+                            let objItem = {};
+                            objItem['gatherNo'] = this.gatherNoArr[i];
+                            objItem['command'] = this.commandNo;
+                            this.reqMqttNum++;//记录发送总条数
+                            const msg = JSON.stringify(objItem);
+                            this.doPublish(msg);
+                            console.log(msg)
+                            this.issueTimeOut();
+                        }, (i + 1) * 300);
+                    })(i)
+                }
                 this.model1 = false;
                 this.model2 = false;
                 this.model3 = true;

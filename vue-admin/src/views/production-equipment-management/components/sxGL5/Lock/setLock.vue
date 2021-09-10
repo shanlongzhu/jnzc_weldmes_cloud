@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 14:27:21
+ * @LastEditTime: 2021-09-09 15:46:23
 -->
 
 <template>
@@ -305,7 +305,7 @@ export default {
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
                         if (parseInt(item.weldCid) === parseInt(datajson.weldCid)) {
-                            item.isSuccessStatus = datajson.flag === 0 ? 0 : 1;                            
+                            item.isSuccessStatus = datajson.flag === 0 ? 0 : 1;
                         }
                     });
                     this.issueTimeOut();
@@ -412,29 +412,27 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {                
+            }).then(async () => {
                 //选择的工艺数据
                 this.newEqu = []
-                setTimeout(() => {
-                    for (let i = 0, len = this.weldCidArr.length; i < len; i++) {
-                        ((i) => {
-                            this.newEqu.push({ 'weldCid': this.weldCidArr[i], 'isSuccessStatus': 2,'weldType':this.lockTxt })
-                            setTimeout(() => {
-                                clearTimeout(this.timeout);
-                                let objItem = {};
-                                objItem['weldCid'] = this.weldCidArr[i];
-                                objItem['readWriteFlag'] = 2;
-                                objItem['function'] = this.lockStatus;                                
-                                objItem['channelSelect'] = this.channelSelect;
-                                this.reqMqttNum++;//记录发送总条数
-                                const msg = JSON.stringify(objItem);
-                                this.doPublish(msg);
-                                console.log(msg)
-                                this.issueTimeOut();
-                            }, (i + 1) * 300);
-                        })(i)
-                    }
-                }, 500);
+                for (let i = 0, len = this.weldCidArr.length; i < len; i++) {
+                    ((i) => {
+                        this.newEqu.push({ 'weldCid': this.weldCidArr[i], 'isSuccessStatus': 2, 'weldType': this.lockTxt })
+                        setTimeout(() => {
+                            clearTimeout(this.timeout);
+                            let objItem = {};
+                            objItem['weldCid'] = this.weldCidArr[i];
+                            objItem['readWriteFlag'] = 2;
+                            objItem['function'] = this.lockStatus;
+                            objItem['channelSelect'] = this.channelSelect;
+                            this.reqMqttNum++;//记录发送总条数
+                            const msg = JSON.stringify(objItem);
+                            this.doPublish(msg);
+                            console.log(msg)
+                            this.issueTimeOut();
+                        }, (i + 1) * 300);
+                    })(i)
+                }
                 this.model1 = false;
                 this.model2 = false;
                 this.model3 = true;
