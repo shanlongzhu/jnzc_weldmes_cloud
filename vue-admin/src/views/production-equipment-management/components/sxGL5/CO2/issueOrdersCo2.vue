@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-10 10:45:04
+ * @LastEditTime: 2021-09-10 13:48:28
 -->
 
 <template>
@@ -405,8 +405,8 @@ export default {
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
                         item.forEach(v => {
-                            if (parseInt(v.gatherNo) === parseInt(datajson.gatherNo) && parseInt(v.channelNo) === parseInt(datajson.channelNo)) {
-                                v.isSuccessStatus = datajson.flag === 0 ? 1 : 2;
+                            if (parseInt(v.weldCid) === parseInt(datajson.weldCid) && parseInt(v.channelNo) === parseInt(datajson.channelNo)) {
+                                v.isSuccessStatus = 1;
                             }
                         })
                     });
@@ -585,27 +585,23 @@ export default {
                 //选择的工艺数据
                 let techArr = this.formatTechnoloay(this.selectTechnology);
                 for (let i = 0, len = iPNoArr.length; i < len; i++) {
-                    ((i) => {
-                        this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
-                        setTimeout(() => {
-                            clearTimeout(this.timeout);
-                            let msgData = techArr.map(v => {
-                                let objItem = { ...v };
-                                objItem['weldIp'] = iPNoArr[i];
-                                objItem['weldCid'] = equipmentArr[i].weldCid;
-                                objItem['isSuccessStatus'] = 0;//记录发送状态
-                                this.reqMqttNum++;//记录发送总条数
-                                //
-                                const msg = JSON.stringify(objItem);
-                                this.doPublish(msg);
-                                console.log(msg)
+                    this.newEqu.push({ 'weldIp': iPNoArr[i], 'weldInfo': [] })
+                    clearTimeout(this.timeout);
+                    let msgData = techArr.map(v => {
+                        let objItem = { ...v };
+                        objItem['weldIp'] = iPNoArr[i];
+                        objItem['weldCid'] = equipmentArr[i].weldCid;
+                        objItem['isSuccessStatus'] = 0;//记录发送状态
+                        this.reqMqttNum++;//记录发送总条数
+                        //
+                        const msg = JSON.stringify(objItem);
+                        this.doPublish(msg);
+                        console.log(msg)
 
-                                return objItem;
-                            })
-                            this.newEqu[i].weldInfo = msgData;
-                            this.issueTimeOut();
-                        }, (i + 1) * 300);
-                    })(i)
+                        return objItem;
+                    })
+                    this.newEqu[i].weldInfo = msgData;
+                    this.issueTimeOut();
                 }
                 this.model = false;
                 this.model2 = false;
@@ -632,7 +628,16 @@ export default {
                         })
                     });
                     clearTimeout(this.timeout)
-                }
+                } else {
+                    //将没有匹配到返回成功的 改为失败
+                    this.newEqu.forEach(item => {
+                        item.weldInfo.forEach(v => {
+                            if (v.isSuccessStatus != 1) {
+                                v.isSuccessStatus = 2;
+                            }
+                        })
+                    });
+                    clearTimeout(this.timeout)                }
             }, 5000)
         },
 
