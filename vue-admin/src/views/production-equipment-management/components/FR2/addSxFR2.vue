@@ -434,7 +434,7 @@
                                 prop="weldMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -449,7 +449,7 @@
                                 prop="weldMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -464,7 +464,7 @@
                                 prop="initialMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -479,7 +479,7 @@
                                 prop="initialMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -496,7 +496,7 @@
                                 prop="arcMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -511,7 +511,7 @@
                                 prop="arcMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -526,7 +526,7 @@
                                 prop="delayTime"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -541,7 +541,7 @@
                                 prop="amendPeriod"
                             >
                                 <el-input-number
-                                    :precision="2"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -559,7 +559,7 @@
                                 prop="presetEleAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -574,7 +574,7 @@
                                 prop="presetVolAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -589,7 +589,7 @@
                                 prop="presetEleAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -604,7 +604,7 @@
                                 prop="presetVolAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -622,7 +622,7 @@
                                 prop="initialEleAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -637,7 +637,7 @@
                                 prop="initialVolAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -652,7 +652,7 @@
                                 prop="initialEleAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -667,7 +667,7 @@
                                 prop="initialVolAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -685,7 +685,7 @@
                                 prop="arcEleAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -700,7 +700,7 @@
                                 prop="arcVolAlarmMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -715,7 +715,7 @@
                                 prop="arcEleAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -730,7 +730,7 @@
                                 prop="arcVolAlarmMin"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -796,7 +796,7 @@
                                 prop="flowMax"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
@@ -813,7 +813,7 @@
                                 prop="alarmFlag"
                             >
                                 <el-input-number
-                                    :precision="1"
+                                    :precision="0"
                                     :controls="false"
                                     size="mini"
                                     style="width:110px"
