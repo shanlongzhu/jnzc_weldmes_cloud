@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-10 13:48:28
+ * @LastEditTime: 2021-09-10 14:44:43
 -->
 
 <template>
@@ -400,11 +400,10 @@ export default {
             this.client.on('message', (topic, message) => {
                 if (topic == 'sxProcessReturn') {
                     clearTimeout(this.timeout);
-                    console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
                     this.newEqu.forEach(item => {
-                        item.forEach(v => {
+                        item.weldInfo.forEach(v => {
                             if (parseInt(v.weldCid) === parseInt(datajson.weldCid) && parseInt(v.channelNo) === parseInt(datajson.channelNo)) {
                                 v.isSuccessStatus = 1;
                             }
@@ -637,7 +636,8 @@ export default {
                             }
                         })
                     });
-                    clearTimeout(this.timeout)                }
+                    clearTimeout(this.timeout)
+                }
             }, 5000)
         },
 
