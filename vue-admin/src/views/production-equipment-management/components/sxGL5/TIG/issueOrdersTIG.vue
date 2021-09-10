@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 16:16:04
+ * @LastEditTime: 2021-09-10 11:32:15
 -->
 
 <template>
@@ -597,7 +597,7 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(async () => {                
+            }).then(async () => {
                 //选择的工艺数据
                 this.newEqu = []
                 //选择的工艺数据
@@ -613,14 +613,15 @@ export default {
                                 objItem['weldCid'] = equipmentArr[i].weldCid;
                                 objItem['isSuccessStatus'] = 0;//记录发送状态
                                 this.reqMqttNum++;//记录发送总条数
+
+                                const msg = JSON.stringify(objItem);
+                                this.doPublish(msg);
+                                console.log(msg)
+
                                 return objItem;
                             })
                             this.newEqu[i].weldInfo = msgData;
-                            const msg = JSON.stringify(msgData);
-                            this.doPublish(msg);
-                            console.log(msg)
                             this.issueTimeOut();
-                            console.log(this.newEqu)
                         }, (i + 1) * 300);
                     })(i)
                 }
