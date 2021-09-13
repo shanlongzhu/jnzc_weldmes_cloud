@@ -16,6 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -449,21 +450,29 @@ public class JnSxRtDataProtocol {
         if (map.containsKey("SxRtDataDb")) {
             SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
             if (null != sxRtDataDb) {
-                if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                    final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
-                    sxRtDataDb.setWeldCid(weldCid);
-                    //刷卡领取任务后进行数据绑定
-                    Map<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
-                    if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(weldCid)) {
-                        final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(weldCid);
-                        if (null != taskClaimIssue) {
-                            sxRtDataDb.setWelderId(taskClaimIssue.getWelderId());
-                            sxRtDataDb.setWelderName(taskClaimIssue.getWelderName());
-                            sxRtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                            sxRtDataDb.setTaskId(taskClaimIssue.getTaskId());
-                            sxRtDataDb.setTaskName(taskClaimIssue.getTaskName());
-                            sxRtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
-                        }
+                //如果找不到通道的CID，则不能增加设备实时数据
+                if (!CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
+                    InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
+                    //客户端IP
+                    final String clientIp = insocket.getAddress().getHostAddress();
+                    //客户端端口
+                    final int clientPort = insocket.getPort();
+                    log.warn("[jnSxRtdManage]当前通道找不到CID：-----> {}:{}", clientIp, clientPort);
+                    return;
+                }
+                final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                sxRtDataDb.setWeldCid(weldCid);
+                //刷卡领取任务后进行数据绑定
+                Map<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
+                if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(weldCid)) {
+                    final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(weldCid);
+                    if (null != taskClaimIssue) {
+                        sxRtDataDb.setWelderId(taskClaimIssue.getWelderId());
+                        sxRtDataDb.setWelderName(taskClaimIssue.getWelderName());
+                        sxRtDataDb.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                        sxRtDataDb.setTaskId(taskClaimIssue.getTaskId());
+                        sxRtDataDb.setTaskName(taskClaimIssue.getTaskName());
+                        sxRtDataDb.setTaskNo(taskClaimIssue.getTaskNo());
                     }
                 }
                 if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
