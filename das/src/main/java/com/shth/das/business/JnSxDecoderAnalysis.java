@@ -32,33 +32,33 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     }
 
     private void setDecoderMapping() {
-        //松下第一次握手验证
+        //松下【GL5、FR2、AT3】第一次握手验证
         this.decoderMapping.put(42, this::jnSxFirstVerify);
-        //松下第二次握手验证
+        //松下【GL5、FR2、AT3】第二次握手验证
         this.decoderMapping.put(128, this::jnSxSecondVerify);
         //松下焊机GL5软硬件参数
         this.decoderMapping.put(180, this::jnSxSoftHardParam);
-        //松下焊机GL5实时数据
+        //松下焊机GL5系列CO2实时数据
         this.decoderMapping.put(206, this::jnSxGl5RtDataAnalysis);
         //松下焊机GL5系列CO2状态信息
         this.decoderMapping.put(246, this::jnSxGl5StatusAnalysis);
-        //松下GL5系列工艺信息和焊接通道设定
+        //松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
         this.decoderMapping.put(106, this::jnSxGl5ProcessWeldSet);
-        //松下GL5系列CO2工艺索取返回
+        //松下焊机GL5系列CO2工艺索取返回（有数据）
         this.decoderMapping.put(406, this::jnSxCo2ProcessClaimReturn);
-        //松下GL5系列TIG工艺索取返回
+        //松下焊机GL5系列TIG工艺索取返回（有数据）
         this.decoderMapping.put(446, this::jnSxTigProcessClaimReturn);
-        //松下FR2系列CO2焊机实时数据解析
-        this.decoderMapping.put(112, this::jnSxFr2Co2RtDataDbAnalysis);//正常
-        //松下FR2系列TIG实时数据
+        //松下焊机FR2系列CO2实时数据
+        this.decoderMapping.put(112, this::jnSxFr2Co2RtDataDbAnalysis);
+        //松下焊机FR2系列TIG实时数据
         this.decoderMapping.put(118, this::jnSxFr2TigRtDataDbAnalysis);
-        //松下FR2系列CO2和TIG的状态信息
-        this.decoderMapping.put(156, this::jnSxFr2StatusUiAnalysis);//正常
-        //松下FR2系列通道参数查询回复（无参数）、下载回复、删除回复
-        this.decoderMapping.put(52, this::jnSxChannelParamReplyAnalysis);//正常
-        //松下FR2系列通道参数查询回复（有参数）
+        //松下焊机FR2系列CO2和TIG的状态信息
+        this.decoderMapping.put(156, this::jnSxFr2StatusUiAnalysis);
+        //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
+        this.decoderMapping.put(52, this::jnSxChannelParamReplyAnalysis);
+        //松下焊机FR2系列通道参数【查询回复（有参数）】
         this.decoderMapping.put(220, this::jnSxChannelParamReplyHave);
-        //松下AT3系列查询回复（有参数）
+        //松下焊机AT3系列【查询回复（有参数）】
         this.decoderMapping.put(92, this::jnSxAt3ParamQueryReturn);
     }
 
@@ -114,8 +114,6 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     String weldCid = str.substring(12, 28);
                     Map<String, Object> map = new HashMap<>();
                     map.put("weldCid", weldCid);
-                    final String clientIp = jnSxDecoderParam.getClientIp();
-                    System.out.println("--------clientIp:"+clientIp+"--------weldCid:"+weldCid);
                     HandlerParam handlerParam = new HandlerParam();
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
@@ -220,7 +218,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     }
 
     /**
-     * 松下GL5系列工艺信息和焊接通道设定
+     * 松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
      *
      * @param jnSxDecoderParam 入参
      * @return 返回
@@ -232,7 +230,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             if (str.length() == 106) {
                 HandlerParam handlerParam = new HandlerParam();
                 Map<String, Object> map = new HashMap<>();
-                //松下GL5工艺下发回复/索取返回
+                //松下GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回】
                 if ("1201".equals(str.substring(40, 44))) {
                     //读写标志：0：主动上传；1：读取；2：设置；3：删除
                     if ("1".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
@@ -257,7 +255,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                         }
                     }
                 }
-                //松下GL5焊接规范通道设定回复/读取回复
+                //松下GL5系列【通道设定返回、通道读取返回】
                 if ("1202".equals(str.substring(40, 44)) && "FE5AA50035".equals(str.substring(0, 10))) {
                     SxWeldChannelSetReturn weldChannelSetReturn = this.jnSxRtDataProtocol.sxWeldChannelSetReturnAnalysis(clientIp, str);
                     if (null != weldChannelSetReturn) {
@@ -421,7 +419,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     }
 
     /**
-     * 松下FR2系列通道参数查询（无参数）、下载、删除回复
+     * 松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
      *
      * @param jnSxDecoderParam 入参
      * @return 返回
@@ -430,7 +428,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
             final String clientIp = jnSxDecoderParam.getClientIp();
-            //松下FR2系列通道参数查询（无参数）、下载、删除回复
+            //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
             if (str.length() == 52 && "FE5AA5001A".equals(str.substring(0, 10))) {
                 SxChannelParamReply sxChannelParamReply = this.jnSxRtDataProtocol.sxChannelParamReplyAnalysis(clientIp, str);
                 if (null != sxChannelParamReply) {

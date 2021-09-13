@@ -24,27 +24,27 @@ public class MqttMessageManage {
         MqttMessageAnalysis mqttMessageAnalysis = new MqttMessageAnalysis();
         //焊工刷卡领取任务
         mqttMessageMap.put("taskClaimIssue", mqttMessageAnalysis::taskClaimIssue);
-        //OTC1.0工艺下发
+        //OTC（1.0）工艺下发
         mqttMessageMap.put("processIssue", mqttMessageAnalysis::otcV1ProcessIssue);
-        //OTC1.0工艺索取
+        //OTC（1.0）工艺索取
         mqttMessageMap.put("processClaim", mqttMessageAnalysis::otcV1ProcessClaim);
-        //OTC1.0密码下发
+        //OTC（1.0）密码下发
         mqttMessageMap.put("passwordIssue", mqttMessageAnalysis::otcV1PasswordIssue);
-        //OTC1.0控制命令下发
+        //OTC（1.0）控制命令下发
         mqttMessageMap.put("commandIssue", mqttMessageAnalysis::otcV1CommandIssue);
         //松下GL5系列CO2焊机工艺下发
         mqttMessageMap.put("sxGl5Co2ProcessIssue", mqttMessageAnalysis::sxGl5Co2ProcessIssue);
         //松下GL5系列TIG焊机工艺下发
         mqttMessageMap.put("sxGl5TigProcessIssue", mqttMessageAnalysis::sxGl5TigProcessIssue);
-        //松下GL5系列TIG焊机工艺下发
+        //松下GL5系列【通道设定、通道读取】:106
         mqttMessageMap.put("sxGl5WeldChannelSet", mqttMessageAnalysis::sxGl5WeldChannelSet);
-        //松下GL5系列工艺索取/删除
+        //松下GL5系列【工艺索取、工艺删除】:106
         mqttMessageMap.put("sxGl5ProcessClaim", mqttMessageAnalysis::sxGl5ProcessClaim);
-        //松下FR2系列通道参数查询/删除
+        //松下【FR2、AT3】系列【通道参数查询、通道参数删除】
         mqttMessageMap.put("sxFr2ChannelParamQuery", mqttMessageAnalysis::sxFr2ChannelParamQuery);
-        //松下FR2系列通道参数下载
+        //松下FR2系列【通道参数下载】
         mqttMessageMap.put("sxFr2ChannelParamDownload", mqttMessageAnalysis::sxFr2ChannelParamDownload);
-        //松下AT3系列参数下载
+        //松下AT3系列【通道参数下载】
         mqttMessageMap.put("sxAt3ParamDownload", mqttMessageAnalysis::sxAt3ParamDownload);
     }
 

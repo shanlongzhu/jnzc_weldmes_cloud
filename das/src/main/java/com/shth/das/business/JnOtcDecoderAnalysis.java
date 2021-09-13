@@ -1,8 +1,8 @@
 package com.shth.das.business;
 
-import com.shth.das.common.BaseAbstractDecoder;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnOtcDecoderParam;
+import com.shth.das.common.BaseAbstractDecoder;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,13 +28,13 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
     private final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
 
     public JnOtcDecoderAnalysis() {
-        //OTC1.0实时数据解析
+        //OTC（1.0）实时数据解析
         this.decoderMapping.put(282, this::jnOtcRtDataAnalysis);
-        //OTC1.0工艺下发返回解析
+        //OTC（1.0）工艺下发返回解析
         this.decoderMapping.put(24, this::otcIssueReturnAnalysis);
-        //OTC（1.0、2.0）索取返回协议解析
+        //OTC（1.0）索取返回协议解析
         this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
-        //OTC1.0密码返回和控制命令返回
+        //OTC（1.0）密码返回和控制命令返回
         this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
     }
 

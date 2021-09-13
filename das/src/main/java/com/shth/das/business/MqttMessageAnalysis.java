@@ -167,6 +167,7 @@ public class MqttMessageAnalysis {
             SxCO2ProcessIssue sxCo2ProcessIssue = JSON.parseObject(message, SxCO2ProcessIssue.class);
             if (null != sxCo2ProcessIssue) {
                 final String weldCid = sxCo2ProcessIssue.getWeldCid();
+                //length：406
                 String str = JnSxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列CO2工艺下发成功", topic);
             }
@@ -185,6 +186,7 @@ public class MqttMessageAnalysis {
             SxTIGProcessIssue sxTigProcessIssue = JSON.parseObject(message, SxTIGProcessIssue.class);
             if (null != sxTigProcessIssue) {
                 final String weldCid = sxTigProcessIssue.getWeldCid();
+                //length：446
                 String str = JnSxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列TIG工艺下发成功", topic);
             }
@@ -192,7 +194,7 @@ public class MqttMessageAnalysis {
     }
 
     /**
-     * 松下GL5系列TIG焊机工艺下发
+     * 松下GL5系列【通道设定、通道读取】
      *
      * @param param mqtt入参实体类
      */
@@ -203,14 +205,15 @@ public class MqttMessageAnalysis {
             SxWeldChannelSetting sxWeldChannelSetting = JSON.parseObject(message, SxWeldChannelSetting.class);
             if (null != sxWeldChannelSetting) {
                 final String weldCid = sxWeldChannelSetting.getWeldCid();
+                //length:106
                 String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
-                sxChannelWrite(weldCid, str, "----->松下GL5系列焊机通道设定/读取成功", topic);
+                sxChannelWrite(weldCid, str, "----->松下GL5系列焊机通道[设定/读取]成功", topic);
             }
         }
     }
 
     /**
-     * 松下GL5系列工艺索取/删除
+     * 松下GL5系列工艺【工艺索取、工艺删除】
      *
      * @param param mqtt入参实体类
      */
@@ -221,14 +224,15 @@ public class MqttMessageAnalysis {
             SxProcessClaim sxProcessClaim = JSON.parseObject(message, SxProcessClaim.class);
             if (null != sxProcessClaim) {
                 final String weldCid = sxProcessClaim.getWeldCid();
+                //length:106
                 String str = JnSxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
-                sxChannelWrite(weldCid, str, "----->松下GL5系列工艺索取/删除成功", topic);
+                sxChannelWrite(weldCid, str, "----->松下GL5系列工艺[索取/删除]成功", topic);
             }
         }
     }
 
     /**
-     * 松下FR2系列通道参数查询/删除
+     * 松下【FR2、AT3】系列【通道参数查询、通道参数删除】
      *
      * @param param mqtt入参实体类
      */
@@ -239,14 +243,15 @@ public class MqttMessageAnalysis {
             SxChannelParamQuery sxChannelParamQuery = JSON.parseObject(message, SxChannelParamQuery.class);
             if (null != sxChannelParamQuery) {
                 final String weldCid = sxChannelParamQuery.getWeldCid();
+                //length:52
                 String str = JnSxRtDataProtocol.sxChannelParamQueryProtocol(sxChannelParamQuery);
-                sxChannelWrite(weldCid, str, "----->松下FR2系列通道参数查询/删除成功", topic);
+                sxChannelWrite(weldCid, str, "----->松下[FR2、AT3]系列通道参数[查询/删除]成功", topic);
             }
         }
     }
 
     /**
-     * 松下FR2系列通道参数下载
+     * 松下FR2系列【通道参数下载】
      *
      * @param param mqtt入参实体类
      */
@@ -257,6 +262,7 @@ public class MqttMessageAnalysis {
             SxChannelParamReplyHave channelParamReplyHave = JSON.parseObject(message, SxChannelParamReplyHave.class);
             if (null != channelParamReplyHave) {
                 String weldCid = channelParamReplyHave.getWeldCid();
+                //length：204
                 String str = JnSxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
                 sxChannelWrite(weldCid, str, "----->松下FR2系列通道参数下载成功", topic);
             }
@@ -264,7 +270,7 @@ public class MqttMessageAnalysis {
     }
 
     /**
-     * 松下AT3系列参数下载
+     * 松下AT3系列【通道参数下载】
      *
      * @param param mqtt入参实体类
      */
@@ -275,6 +281,7 @@ public class MqttMessageAnalysis {
             At3ParamDownload at3ParamDownload = JSON.parseObject(message, At3ParamDownload.class);
             if (null != at3ParamDownload) {
                 final String weldCid = at3ParamDownload.getWeldCid();
+                //length：92
                 String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
             }

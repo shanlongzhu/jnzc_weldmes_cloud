@@ -182,7 +182,7 @@ public class JnSxRtDataProtocol {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
-            //松下工艺索取返回(无数据)
+            //松下GL5系列工艺索取返回(无数据)
             if (map.containsKey("SxProcessClaimReturn")) {
                 SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
                 if (null != sxProcessClaimReturn) {
@@ -196,7 +196,7 @@ public class JnSxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessClaimReturn.name(), message, 0);
                 }
             }
-            //松下工艺下发回复发送到mq
+            //松下GL5系列工艺下发返回
             if (map.containsKey("SxProcessReturn")) {
                 SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get("SxProcessReturn");
                 if (null != sxProcessReturn) {
@@ -210,7 +210,7 @@ public class JnSxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessReturn.name(), message, 0);
                 }
             }
-            //松下工艺删除返回
+            //松下GL5系列工艺删除返回
             if (map.containsKey("SxProcessDeleteReturn")) {
                 SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
                 if (null != sxProcessDeleteReturn) {
@@ -224,7 +224,7 @@ public class JnSxRtDataProtocol {
                     EmqMqttClient.publishMessage(UpTopicEnum.sxProcessDeleteReturn.name(), message, 0);
                 }
             }
-            //松下焊机通道设定回复/读取回复发mq
+            //松下GL5系列焊机通道【通道设定返回、通道读取返回】
             if (map.containsKey("SxWeldChannelSetReturn")) {
                 SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get("SxWeldChannelSetReturn");
                 if (null != sxWeldChannelSetReturn) {
@@ -242,7 +242,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下GL5系列CO2工艺索取返回
+     * 松下焊机GL5系列CO2工艺索取返回（有数据）
      *
      * @param param
      */
@@ -268,7 +268,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下GL5系列TIG工艺索取返回
+     * 松下焊机GL5系列TIG工艺索取返回（有数据）
      *
      * @param param
      */
@@ -276,7 +276,7 @@ public class JnSxRtDataProtocol {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
-            //松下TIG工艺索取返回
+            //松下焊机GL5系列TIG工艺索取返回（有数据）
             if (map.containsKey("SxTIGProcessClaimReturn")) {
                 SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
                 if (null != sxTIGProcessClaimReturn) {
@@ -342,7 +342,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下FR2通道参数查询回复（无参数）、下载回复、删除回复
+     * 松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
      *
      * @param param
      */
@@ -350,7 +350,7 @@ public class JnSxRtDataProtocol {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
-            //松下FR2通道参数查询回复（无参数）、下载回复、删除回复
+            //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
             if (map.containsKey("SxChannelParamReply")) {
                 SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
                 if (null != sxChannelParamReply) {
@@ -368,14 +368,14 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下FR2通道参数查询回复（有参数）
+     * 松下焊机FR2系列通道参数【查询回复（有参数）】
      *
      * @param param
      */
     public void jnSxChannelParamReplyHave(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
-            //松下FR2通道参数查询回复（有参数）
+            //松下焊机FR2系列通道参数【查询回复（有参数）】
             if (map.containsKey("SxChannelParamReplyHave")) {
                 SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
                 if (null != sxChannelParamReplyHave) {
@@ -1528,7 +1528,9 @@ public class JnSxRtDataProtocol {
                         oaWeldEleMax + oaWeldEleMin + oaWeldVolMax + oaWeldVolMin + oaArcEleMax + oaArcEleMin + oaArcVolMax +
                         oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime + haltFreezeTime + reserved4;
                 str = str.toUpperCase();
-                return str;
+                if (str.length() == 406) {
+                    return str;
+                }
             } catch (Exception e) {
                 log.error("松下CO2焊机工艺参数解析异常：" + e.getMessage());
                 return null;
@@ -1663,7 +1665,9 @@ public class JnSxRtDataProtocol {
                         oaArcEleMax + oaArcEleMin + oaArcVolMax + oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime +
                         haltFreezeTime + reserved4;
                 str = str.toUpperCase();
-                return str;
+                if (str.length() == 446) {
+                    return str;
+                }
             } catch (Exception e) {
                 log.error("松下TIG焊机工艺参数解析异常:" + e.getMessage());
                 return null;
@@ -1673,7 +1677,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下焊机/通道设定（解锁或锁定）
+     * 松下GL5系列【通道设定、通道读取】
      *
      * @param sxWeldChannelSetting 松下焊机通道设定实体类
      * @return 16进制字符串
@@ -1700,7 +1704,9 @@ public class JnSxRtDataProtocol {
                 String reserved = "000000000000000000000000";
                 String str = head + datetime + reserved1 + readWriteFlag + reserved2 + function + channelSelect + reserved;
                 str = str.toUpperCase();
-                return str;
+                if (str.length() == 106) {
+                    return str;
+                }
             } catch (Exception e) {
                 log.error("松下焊机通道设定/读取参数拼接异常：" + e.getLocalizedMessage());
                 return null;
@@ -1710,9 +1716,9 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下工艺索取协议拼接
+     * 松下【工艺索取、工艺删除】协议拼接
      *
-     * @param sxProcessClaim 松下工艺索取/删除实体类
+     * @param sxProcessClaim 松下工艺[索取/删除]实体类
      * @return 16进制字符串
      */
     public static String sxProcessClaimProtocol(SxProcessClaim sxProcessClaim) {
@@ -1736,7 +1742,9 @@ public class JnSxRtDataProtocol {
                 String reserved3 = "0000000000000000000000000000";
                 String str = head + datetime + reserved1 + readWriteFlag + reserved2 + channelNo + reserved3;
                 str = str.toUpperCase();
-                return str;
+                if (str.length() == 106) {
+                    return str;
+                }
             } catch (Exception e) {
                 log.error("松下工艺索取/删除协议拼接异常：" + e.getMessage());
                 return null;
@@ -1746,9 +1754,9 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下FR2系列通道参数查询/删除协议拼接
+     * 松下【FR2、AT3】系列【通道参数查询、通道参数删除】
      *
-     * @param sxChannelParamQuery 松下FR2系列通道参数查询/删除
+     * @param sxChannelParamQuery 松下【FR2、AT3】系列通道参数查询/删除
      * @return 16进制字符串
      */
     public static String sxChannelParamQueryProtocol(SxChannelParamQuery sxChannelParamQuery) {
@@ -1767,7 +1775,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下FR2系列通道参数下载
+     * 松下FR2系列【通道参数下载】
      *
      * @param channelParamReplyHave 参数下载实体类
      * @return 16进制字符串
@@ -1842,7 +1850,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下AT3系列参数下载协议拼接
+     * 松下AT3系列【通道参数下载】协议拼接
      *
      * @param at3ParamDownload 实体类
      * @return 16进制字符串
@@ -1868,7 +1876,9 @@ public class JnSxRtDataProtocol {
             String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
                     presetVolMin + eleAlarmMax + volAlarmMax + eleAlarmMin + volAlarmMin + alarmDelayTime + alarmHaltTime + reserved1;
             str = str.toUpperCase();
-            return str;
+            if (str.length() == 92) {
+                return str;
+            }
         }
         return null;
     }

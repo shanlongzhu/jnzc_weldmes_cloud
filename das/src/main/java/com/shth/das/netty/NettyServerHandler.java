@@ -52,31 +52,31 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     }
 
     private void setSxHandlerMapping() {
-        //松下焊机第二次握手验证
+        //松下焊机【GL5、FR2、AT3】第二次握手验证
         this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
         //松下焊机GL5软硬件参数
         this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxSoftHardParam);
-        //松下焊机GL5实时数据
+        //松下焊机GL5系列CO2实时数据
         this.sxHandlerMapping.put(206, this.jnSxRtDataProtocol::jnSxGl5RtDataManage);
         //松下焊机GL5系列CO2状态信息
         this.sxHandlerMapping.put(246, this.jnSxRtDataProtocol::jnSxGl5StatusManage);
-        //松下GL5系列工艺信息和焊接通道设定
+        //松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
         this.sxHandlerMapping.put(106, this.jnSxRtDataProtocol::jnSxGl5ProcessWeldSet);
-        //松下GL5系列CO2工艺索取返回
+        //松下焊机GL5系列CO2工艺索取返回（有数据）
         this.sxHandlerMapping.put(406, this.jnSxRtDataProtocol::jnSxCo2ProcessClaimReturn);
-        //松下GL5系列TIG工艺索取返回
+        //松下焊机GL5系列TIG工艺索取返回（有数据）
         this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxTigProcessClaimReturn);
-        //松下FR2系列CO2焊机实时数据解析
+        //松下焊机FR2系列CO2实时数据
         this.sxHandlerMapping.put(112, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
-        //松下FR2系列TIG实时数据
+        //松下焊机FR2系列TIG实时数据
         this.sxHandlerMapping.put(118, this.jnSxRtDataProtocol::jnSxFr2TigRtDataDbManage);
-        //松下FR2系列CO2和TIG的状态信息
+        //松下焊机FR2系列【CO2和TIG】的状态信息
         this.sxHandlerMapping.put(156, this.jnSxRtDataProtocol::jnSxFr2StatusUiManage);
-        //松下FR2系列通道参数查询（无参数）、下载、删除回复
+        //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
         this.sxHandlerMapping.put(52, this.jnSxRtDataProtocol::jnSxChannelParamReply);
-        //松下FR2系列通道参数查询（有参数）
+        //松下焊机FR2系列通道参数【查询回复（有参数）】
         this.sxHandlerMapping.put(220, this.jnSxRtDataProtocol::jnSxChannelParamReplyHave);
-        //松下AT3系列查询回复（有参数）
+        //松下焊机AT3系列【查询回复（有参数）】
         this.sxHandlerMapping.put(92, this.jnSxRtDataProtocol::jnSxAt3ParamQueryReturn);
     }
 

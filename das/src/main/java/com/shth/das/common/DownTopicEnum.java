@@ -11,21 +11,22 @@ public enum DownTopicEnum {
     taskClaimIssue,
 
     /**
-     * OTC工艺下发
+     * OTC（1.0）工艺下发
      */
     processIssue,
     /**
-     * OTC工艺索取
+     * OTC（1.0）工艺索取
      */
     processClaim,
     /**
-     * OTC密码下发
+     * OTC（1.0）密码下发
      */
     passwordIssue,
     /**
-     * OTC控制命令下发
+     * OTC（1.0）控制命令下发
      */
     commandIssue,
+
     /**
      * 松下GL5系列CO2焊机工艺下发
      */
@@ -35,25 +36,24 @@ public enum DownTopicEnum {
      */
     sxGl5TigProcessIssue,
     /**
-     * 松下GL5系列焊接通道设定（解锁或锁定）/读取
+     * 松下GL5系列【通道设定、通道读取】
      */
     sxGl5WeldChannelSet,
     /**
-     * 松下GL5系列工艺索取
+     * 松下GL5系列【工艺索取、工艺删除】
      */
     sxGl5ProcessClaim,
-
     /**
-     * 松下FR2系列（AT3）通道参数查询/删除
+     * 松下【FR2、AT3】系列【通道参数查询、通道参数删除】
      */
     sxFr2ChannelParamQuery,
     /**
-     * 松下FR2系列通道参数下载
+     * 松下FR2系列【通道参数下载】
      */
     sxFr2ChannelParamDownload,
-
     /**
-     * 松下AT3系列参数下载
+     * 松下AT3系列【通道参数下载】
      */
     sxAt3ParamDownload,
+
 }
