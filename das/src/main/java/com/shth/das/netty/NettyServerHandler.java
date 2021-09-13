@@ -67,7 +67,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //松下GL5系列TIG工艺索取返回
         this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxTigProcessClaimReturn);
         //松下FR2系列CO2焊机实时数据解析
-        this.sxHandlerMapping.put(126, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
+        this.sxHandlerMapping.put(112, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
         //松下FR2系列TIG实时数据
         this.sxHandlerMapping.put(118, this.jnSxRtDataProtocol::jnSxFr2TigRtDataDbManage);
         //松下FR2系列CO2和TIG的状态信息
@@ -75,7 +75,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //松下FR2系列通道参数查询（无参数）、下载、删除回复
         this.sxHandlerMapping.put(52, this.jnSxRtDataProtocol::jnSxChannelParamReply);
         //松下FR2系列通道参数查询（有参数）
-        this.sxHandlerMapping.put(218, this.jnSxRtDataProtocol::jnSxChannelParamReplyHave);
+        this.sxHandlerMapping.put(220, this.jnSxRtDataProtocol::jnSxChannelParamReplyHave);
         //松下AT3系列查询回复（有参数）
         this.sxHandlerMapping.put(92, this.jnSxRtDataProtocol::jnSxAt3ParamQueryReturn);
     }

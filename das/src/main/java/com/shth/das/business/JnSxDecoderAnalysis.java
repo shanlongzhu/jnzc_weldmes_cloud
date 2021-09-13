@@ -49,15 +49,15 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         //松下GL5系列TIG工艺索取返回
         this.decoderMapping.put(446, this::jnSxTigProcessClaimReturn);
         //松下FR2系列CO2焊机实时数据解析
-        this.decoderMapping.put(126, this::jnSxFr2Co2RtDataDbAnalysis);
+        this.decoderMapping.put(112, this::jnSxFr2Co2RtDataDbAnalysis);//正常
         //松下FR2系列TIG实时数据
         this.decoderMapping.put(118, this::jnSxFr2TigRtDataDbAnalysis);
         //松下FR2系列CO2和TIG的状态信息
-        this.decoderMapping.put(156, this::jnSxFr2StatusUiAnalysis);
-        //松下FR2系列通道参数查询（无参数）、下载、删除回复
-        this.decoderMapping.put(52, this::jnSxChannelParamReplyAnalysis);
-        //松下FR2系列通道参数查询（有参数）
-        this.decoderMapping.put(218, this::jnSxChannelParamReplyHave);
+        this.decoderMapping.put(156, this::jnSxFr2StatusUiAnalysis);//正常
+        //松下FR2系列通道参数查询回复（无参数）、下载回复、删除回复
+        this.decoderMapping.put(52, this::jnSxChannelParamReplyAnalysis);//正常
+        //松下FR2系列通道参数查询回复（有参数）
+        this.decoderMapping.put(220, this::jnSxChannelParamReplyHave);
         //松下AT3系列查询回复（有参数）
         this.decoderMapping.put(92, this::jnSxAt3ParamQueryReturn);
     }
@@ -114,6 +114,8 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     String weldCid = str.substring(12, 28);
                     Map<String, Object> map = new HashMap<>();
                     map.put("weldCid", weldCid);
+                    final String clientIp = jnSxDecoderParam.getClientIp();
+                    System.out.println("--------clientIp:"+clientIp+"--------weldCid:"+weldCid);
                     HandlerParam handlerParam = new HandlerParam();
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
@@ -333,7 +335,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String str = jnSxDecoderParam.getStr();
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列CO2实时数据
-            if (str.length() == 126 && "FE5AA5003F".equals(str.substring(0, 10))) {
+            if (str.length() == 112 && "FE5AA50038".equals(str.substring(0, 10))) {
                 Map<String, Object> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
                 SxRtDataDb sxRtDataDb = this.jnSxRtDataProtocol.fr2Co2RtDataDbAnalysis(clientIp, str);
@@ -455,7 +457,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
             final String str = jnSxDecoderParam.getStr();
             final String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列通道参数查询（有参数）
-            if (str.length() == 218 && "FE5AA5006E".equals(str.substring(0, 10))) {
+            if (str.length() == 220 && "FE5AA5006E".equals(str.substring(0, 10))) {
                 SxChannelParamReplyHave sxChannelParamReplyHave = this.jnSxRtDataProtocol.sxChannelParamReplyHaveAnalysis(clientIp, str);
                 if (null != sxChannelParamReplyHave) {
                     Map<String, Object> map = new HashMap<>();

@@ -50,7 +50,7 @@ public class SxVerificationCode {
     /**
      * 松下FR2系列通道参数下载头部数据
      */
-    public static final String SX_CHANNEL_PARAM_DOWNLOAD_HEAD = "FE5AA5006E0001404100900760000000000000950211";
+    public static final String SX_CHANNEL_PARAM_DOWNLOAD_HEAD = "FE5AA500560001404100900760000000000000950211";
 
     /**
      * 松下AT3系列参数下载头部固定数据

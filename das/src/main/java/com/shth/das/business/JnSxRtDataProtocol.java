@@ -1058,7 +1058,7 @@ public class JnSxRtDataProtocol {
             rtDataDb.setRealityWeldVol(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));
             rtDataDb.setWireSpeed(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)));
             rtDataDb.setAlarmsCode(Integer.valueOf(str.substring(108, 112), 16).toString());
-            rtDataDb.setRunFlag(Integer.valueOf(str.substring(118, 120), 16));
+            //rtDataDb.setRunFlag(Integer.valueOf(str.substring(118, 120), 16));
             rtDataDb.setWeldFlag(1);
             return rtDataDb;
         }
@@ -1095,7 +1095,7 @@ public class JnSxRtDataProtocol {
             sxRtDataUi.setRealityWeldVol(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));
             sxRtDataUi.setWireSpeed(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)));
             sxRtDataUi.setAlarmsCode(Integer.valueOf(str.substring(108, 112), 16).toString());
-            sxRtDataUi.setRunFlag(Integer.valueOf(str.substring(118, 120), 16));
+            //sxRtDataUi.setRunFlag(Integer.valueOf(str.substring(118, 120), 16));
             sxRtDataUi.setWeldFlag(1);
             return sxRtDataUi;
         }
@@ -1759,7 +1759,9 @@ public class JnSxRtDataProtocol {
             String reserved = "0000";
             String str = head + command + channel + reserved;
             str = str.toUpperCase();
-            return str;
+            if (str.length() == 52) {
+                return str;
+            }
         }
         return null;
     }
@@ -1820,20 +1822,21 @@ public class JnSxRtDataProtocol {
             String arcVolAlarmMin = CommonUtils.lengthJoint(paramDownload.getArcVolAlarmMin().intValue(), 4);
             String arcDelayTime = CommonUtils.lengthJoint(paramDownload.getArcDelayTime().intValue(), 2);
             String alarmDelayTime = CommonUtils.lengthJoint(paramDownload.getAlarmDelayTime().intValue(), 2);
-            String alarmHaltTime = CommonUtils.lengthJoint(paramDownload.getAlarmHaltTime().intValue(), 2);
-            String reserved2 = "00";
-            String alarmFlag = CommonUtils.lengthJoint(paramDownload.getAlarmFlag(), 2);
-            String reserved3 = "00000000";
+            //String alarmHaltTime = CommonUtils.lengthJoint(paramDownload.getAlarmHaltTime().intValue(), 2);
+            //String reserved2 = "00";
+            //String alarmFlag = CommonUtils.lengthJoint(paramDownload.getAlarmFlag(), 2);
+            //String reserved3 = "00000000";
             String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
                     presetVolMin + initialEleMax + initialVolMax + initialEleMin + initialVolMin + arcEleMax + arcVolMax +
                     arcEleMin + arcVolMin + texture + wireDiameter + gases + weldingControl + pulseHaveNot + spotWeldingTime +
                     unitaryDifference + dryExtendLength + reserved1 + weldMax + weldMin + initialMax + initialMin + arcMax +
                     arcMin + delayTime + amendPeriod + presetEleAlarmMax + presetVolAlarmMax + presetEleAlarmMin + presetVolAlarmMin +
                     initialEleAlarmMax + initialVolAlarmMax + initialEleAlarmMin + initialVolAlarmMin + arcEleAlarmMax +
-                    arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime + alarmHaltTime + reserved2 +
-                    alarmFlag + reserved3;
+                    arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime;
             str = str.toUpperCase();
-            return str;
+            if (str.length() == 204) {
+                return str;
+            }
         }
         return null;
     }
