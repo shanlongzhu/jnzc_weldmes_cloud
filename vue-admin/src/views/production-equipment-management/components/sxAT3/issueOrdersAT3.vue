@@ -1,6 +1,6 @@
 <!--
  * @Descripttion: Co2工艺库下发
- * @version: 
+ * @version:
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
@@ -354,6 +354,7 @@ export default {
             model3: false,
             //订阅超时
             timeout: '',
+          messageObj:''
 
 
         }
@@ -558,6 +559,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
+              this.messageObj = this.$message({
+                message:'下发中...',
+                duration:0,
+                type:'warning'
+              });
                 //选择的工艺数据
                 this.newEqu = []
                 //选择的工艺数据
@@ -599,6 +605,8 @@ export default {
                     }
                 })
                 // this.client.end();
+              this.messageObj.close();
+              this.$message.info('下发完成');
                 this.newEqu.forEach(item => {
                     item.weldInfo.forEach(v => {
                         if (v.isSuccessStatus != 1) {

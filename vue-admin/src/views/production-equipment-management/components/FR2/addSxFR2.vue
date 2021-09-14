@@ -55,7 +55,7 @@
                                     :value="item.value"
                                 />
                             </el-select>
-                            
+
                         </el-form-item>
                     </el-col> -->
                     <el-col :span="6">
@@ -833,6 +833,7 @@
                     <el-button
                         type="primary"
                         @click="requestSpec"
+                        :loading="issLoading"
                     >索取规范</el-button>
                     <el-button
                         type="primary"
@@ -882,6 +883,7 @@
                 row-id="id"
                 :radio-config="{ trigger: 'row',highlight: true}"
                 @cell-click="radioChangeEvent"
+                ref="proModelTable"
             >
                 <vxe-table-column
                     type="radio"
@@ -1034,7 +1036,7 @@ export default {
                 alarmDelayTime: 0,//报警延时时间
                 alarmHaltTime: 0,//报警停机时间
                 flowMax: 0,//流量上限(查询回复)
-                alarmFlag: 0,//标志（下载参数）                
+                alarmFlag: 0,//标志（下载参数）
             },
             rules2: {
                 channel: [
@@ -1228,7 +1230,7 @@ export default {
                 {
                     label: '脉冲无',
                     value: 1
-                }                
+                }
             ],
             //材质
             textureArr: [
@@ -1395,7 +1397,7 @@ export default {
                     value: 1
                 },
             ],
-            //通道号下拉            
+            //通道号下拉
             channelNoSourceArr: getChannelNoSourceArr(),
             channelNoArr: [],
 
@@ -1432,7 +1434,9 @@ export default {
                 children: 'list'
             },
             //选中的设备
-            selectModel: {}
+            selectModel: {},
+            messageObj:'',
+          issLoading:false
         }
     },
     watch: {},
@@ -1514,7 +1518,8 @@ export default {
 
                     this.ruleForm2.flowMax = datajson['flowMax'];//流量上限(查询回复)
                     this.ruleForm2.alarmFlag = datajson['alarmFlag'];//标志（下载参数）
-
+                    this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -1523,6 +1528,8 @@ export default {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
+                  this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.warning("无参数！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -1640,6 +1647,12 @@ export default {
             if (this.ruleForm2.channel && this.ruleForm2.channel != '') {
                 this.model2 = true;
                 this.getList();
+              this.$nextTick(()=>{
+                this.issLoading = true;
+                this.selectModel = {}
+                this.$refs.proModelTable.clearRadioRow();
+                this.$refs.proModelTable.clearCurrentRow();
+              })
             } else {
                 return this.$message.error("请先选择通道号！！！");
             }
@@ -1683,7 +1696,14 @@ export default {
             this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.weldIp) {                
+            } else if (this.selectModel.weldIp) {
+              this.messageObj = this.$message({
+                message:'索取中...',
+                duration:0,
+                type:'warning'
+              });
+              //关闭索取层
+              this.model2 = false;
                 setTimeout(() => {
                     let msg = {}
                     msg['weldIp'] = this.selectModel.weldIp;
@@ -1717,6 +1737,8 @@ export default {
                 });
 
                 if (n) {
+                    this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.error("下发超时")
                 }
                 clearTimeout(this.timeout)

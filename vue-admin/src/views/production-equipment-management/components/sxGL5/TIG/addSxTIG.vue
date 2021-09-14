@@ -1338,6 +1338,7 @@
                     <el-button
                         type="primary"
                         @click="requestSpec"
+                        :loading="issLoading"
                     >索取规范</el-button>
                     <el-button
                         type="primary"
@@ -1387,6 +1388,7 @@
                 row-id="id"
                 :radio-config="{ trigger: 'row',highlight: true}"
                 @cell-click="radioChangeEvent"
+                ref="proModelTable"
             >
                 <vxe-table-column
                     type="radio"
@@ -1529,7 +1531,7 @@ export default {
                 mainWeldDeclineTime: '',//主焊下降时间
                 mainWeldRiseRadian: '',//主焊上升弧度
                 mainWeldDeclineRadian: '',//主焊下降弧度
-                spotWeldingTime: '',//点焊时间                
+                spotWeldingTime: '',//点焊时间
                 spotWeldIntervalTime: '',//点焊间隔时间
                 spotWeldRiseTime: '',//点焊上升时间
                 spotWeldDeclineTime: '',//点焊下降时间
@@ -1879,7 +1881,7 @@ export default {
                     value: 2
                 },
             ],
-            //通道号下拉            
+            //通道号下拉
             channelNoSourceArr: [
                 {
                     id: '0',
@@ -1958,7 +1960,9 @@ export default {
                 children: 'list'
             },
             //选中的设备
-            selectModel: {}
+            selectModel: {},
+            messageObj:'',
+            issLoading:false
         }
     },
     watch: {},
@@ -2074,7 +2078,8 @@ export default {
                     this.ruleForm2.alarmDelayTime = datajson['alarmDelayTime'];//报警延时时间
                     this.ruleForm2.haltDelayTime = datajson['haltDelayTime'];//停机延时时间
                     this.ruleForm2.haltFreezeTime = datajson['haltFreezeTime'];//停机冻结时间
-
+                  this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -2084,7 +2089,8 @@ export default {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
-
+                  this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.warning("无参数！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -2129,7 +2135,7 @@ export default {
 
         //子组件调用修改
         async editDetailFun (obj) {
-            this.title2 = "修改工艺"
+            this.title2 = "修改工艺TIG"
             this.ruleForm2 = { ...this.ruleFormObj2 };
             //获取已使用的通道
             let res = await getTIGChannaNoIsUse({ id: obj.parentId });
@@ -2146,7 +2152,7 @@ export default {
 
         //新增工艺
         async addLibraryFun (id) {
-            this.title2 = "新建工艺"
+            this.title2 = "新建工艺TIG"
             let { code, data } = await getTIGChannaNoIsUse({ id });
             if (code == 200) {
                 this.visable2 = true;
@@ -2203,6 +2209,12 @@ export default {
             if (this.ruleForm2.channelNo && this.ruleForm2.channelNo != '') {
                 this.model2 = true;
                 this.getList();
+                this.$nextTick(()=>{
+                  this.issLoading = true;
+                  this.selectModel = {}
+                  this.$refs.proModelTable.clearRadioRow();
+                  this.$refs.proModelTable.clearCurrentRow();
+                })
             } else {
                 return this.$message.error("请先选择通道号！！！");
             }
@@ -2246,7 +2258,14 @@ export default {
             this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.weldIp) {                
+            } else if (this.selectModel.weldIp) {
+              this.messageObj = this.$message({
+                message:'索取中...',
+                duration:0,
+                type:'warning'
+              });
+              //关闭索取层
+              this.model2 = false;
                 setTimeout(() => {
                     let msg = {}
                     msg['weldCid'] = this.selectModel.weldCid;
@@ -2280,6 +2299,8 @@ export default {
                 });
 
                 if (n) {
+                  this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.error("下发超时")
                 }
                 clearTimeout(this.timeout)

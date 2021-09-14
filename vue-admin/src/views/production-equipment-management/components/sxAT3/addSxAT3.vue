@@ -246,6 +246,7 @@
                     <el-button
                         type="primary"
                         @click="requestSpec"
+                        :loading="issLoading"
                     >索取规范</el-button>
                     <el-button
                         type="primary"
@@ -295,6 +296,7 @@
                 row-id="id"
                 :radio-config="{ trigger: 'row',highlight: true}"
                 @cell-click="radioChangeEvent"
+                ref="proModelTable"
             >
                 <vxe-table-column
                     type="radio"
@@ -406,7 +408,7 @@ export default {
                 eleAlarmMin: 0,//电流报警下限
                 volAlarmMin: 0,//电压报警下限
                 alarmDelayTime: 0,//报警延时时间
-                alarmHaltTime: 0,//报警停机时间                
+                alarmHaltTime: 0,//报警停机时间
             },
             rules2: {
                 channel: [
@@ -447,7 +449,7 @@ export default {
                 // ],
                 // alarmHaltTime: [
                 //     { required: true, message: '不能为空', trigger: 'blur' }
-                // ],               
+                // ],
             },
 
             //控制下拉
@@ -508,7 +510,7 @@ export default {
                     value: 9
                 },
             ],
-            //通道号下拉            
+            //通道号下拉
             channelNoSourceArr: [
                 {
                     id: '0',
@@ -572,7 +574,9 @@ export default {
                 children: 'list'
             },
             //选中的设备
-            selectModel: {}
+            selectModel: {},
+            messageObj:'',
+          issLoading:false
         }
     },
     watch: {},
@@ -613,6 +617,8 @@ export default {
                     this.ruleForm2.alarmHaltTime = datajson['alarmHaltTime'];//报警停机时间
 
                     this.$message.success("索取成功！！！");
+                    this.messageObj.close();
+                  this.issLoading = false;
                     this.model2 = false;
                     this.issueTimeOut();
                 }
@@ -620,6 +626,8 @@ export default {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
+                    this.messageObj.close();
+                  this.issLoading = false;
                     this.$message.warning("无参数！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -738,6 +746,12 @@ export default {
             if (this.ruleForm2.channel && this.ruleForm2.channel != '') {
                 this.model2 = true;
                 this.getList();
+              this.$nextTick(()=>{
+                this.issLoading = true;
+                this.selectModel = {}
+                this.$refs.proModelTable.clearRadioRow();
+                this.$refs.proModelTable.clearCurrentRow();
+              })
             } else {
                 return this.$message.error("请先选择通道号！！！");
             }
@@ -781,7 +795,14 @@ export default {
             this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.weldIp) {                
+            } else if (this.selectModel.weldIp) {
+               this.messageObj = this.$message({
+                  message:'索取中...',
+                  duration:0,
+                  type:'warning'
+                });
+                //关闭索取层
+                this.model2 = false;
                 setTimeout(() => {
                     let msg = {}
                     msg['weldIp'] = this.selectModel.weldIp;
@@ -816,7 +837,9 @@ export default {
                 });
 
                 if (n) {
-                    this.$message.error("下发超时")
+                  this.messageObj.close();
+                  this.issLoading = false;
+                    this.$message.error("下发超时");
                 }
                 clearTimeout(this.timeout)
             }, 5000)
