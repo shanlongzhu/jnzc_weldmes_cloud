@@ -41,20 +41,20 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     }
 
     private void setOtcHandlerMapping() {
-        //OTC1.0实时数据解析
+        //OTC（1.0）实时数据解析
         this.otcHandlerMapping.put(282, this.jnOtcRtDataProtocol::jnRtDataManage);
-        //OTC1.0工艺下发返回解析
+        //OTC（1.0）工艺下发返回解析
         this.otcHandlerMapping.put(24, this.jnOtcRtDataProtocol::otcIssueReturnManage);
-        //OTC1.0索取返回协议解析
+        //OTC（1.0）索取返回协议解析
         this.otcHandlerMapping.put(112, this.jnOtcRtDataProtocol::otcClaimReturnManage);
-        //OTC1.0密码返回和控制命令返回
+        //OTC（1.0）密码返回和控制命令返回
         this.otcHandlerMapping.put(22, this.jnOtcRtDataProtocol::otcPwdCmdReturnManage);
     }
 
     private void setSxHandlerMapping() {
         //松下焊机【GL5、FR2、AT3】第二次握手验证
         this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
-        //松下焊机GL5软硬件参数
+        //松下焊机GL5系列软硬件参数
         this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxSoftHardParam);
         //松下焊机GL5系列CO2实时数据
         this.sxHandlerMapping.put(206, this.jnSxRtDataProtocol::jnSxGl5RtDataManage);
