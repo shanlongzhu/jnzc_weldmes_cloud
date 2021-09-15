@@ -82,29 +82,29 @@ public class EmqMqttClient {
      */
     private static void batchSubTopic() {
         //任务领取下发
-        subTopic(DownTopicEnum.taskClaimIssue.name());
+        subTopic(DownTopicEnum.jnTaskClaimIssue.name());
         //OTC1.0工艺下发
-        subTopic(DownTopicEnum.processIssue.name());
+        subTopic(DownTopicEnum.jnOtcV1ProcessIssue.name());
         //OTC1.0工艺索取
-        subTopic(DownTopicEnum.processClaim.name());
+        subTopic(DownTopicEnum.jnOtcV1ProcessClaim.name());
         //OTC1.0密码下发
-        subTopic(DownTopicEnum.passwordIssue.name());
+        subTopic(DownTopicEnum.jnOtcV1PasswordIssue.name());
         //OTC1.0控制命令下发
-        subTopic(DownTopicEnum.commandIssue.name());
+        subTopic(DownTopicEnum.jnOtcV1CommandIssue.name());
         //松下GL5系列CO2焊机工艺下发
-        subTopic(DownTopicEnum.sxGl5Co2ProcessIssue.name());
-        //松下GL5系列TIG工艺下发
-        subTopic(DownTopicEnum.sxGl5TigProcessIssue.name());
-        //松下GL5系列焊接通道读取
-        subTopic(DownTopicEnum.sxGl5WeldChannelSet.name());
-        //松下GL5系列工艺索取
-        subTopic(DownTopicEnum.sxGl5ProcessClaim.name());
-        //松下FR2系列通道参数查询/删除
-        subTopic(DownTopicEnum.sxFr2ChannelParamQuery.name());
-        //松下FR2系列通道参数下载
-        subTopic(DownTopicEnum.sxFr2ChannelParamDownload.name());
-        //松下AT3系列参数下载
-        subTopic(DownTopicEnum.sxAt3ParamDownload.name());
+        subTopic(DownTopicEnum.jnSxGl5Co2ProcessIssue.name());
+        //松下GL5系列TIG焊机工艺下发
+        subTopic(DownTopicEnum.jnSxGl5TigProcessIssue.name());
+        //松下GL5系列【通道设定、通道读取】
+        subTopic(DownTopicEnum.jnSxGl5WeldChannelSet.name());
+        //松下GL5系列【工艺索取、工艺删除】
+        subTopic(DownTopicEnum.jnSxGl5ProcessClaim.name());
+        //松下【FR2、AT3】系列【通道参数查询、通道参数删除】
+        subTopic(DownTopicEnum.jnSxFr2ChannelParamQuery.name());
+        //松下FR2系列【通道参数下载】
+        subTopic(DownTopicEnum.jnSxFr2ChannelParamDownload.name());
+        //松下AT3系列【通道参数下载】
+        subTopic(DownTopicEnum.jnSxAt3ParamDownload.name());
     }
 
     /**

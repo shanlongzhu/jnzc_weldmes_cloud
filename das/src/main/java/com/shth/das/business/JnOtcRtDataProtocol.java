@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 江南项目数据解析类
@@ -119,7 +118,7 @@ public class JnOtcRtDataProtocol {
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1RtData.name(), message, 0);
                 }
             }
             //实时数据存数据库
@@ -148,7 +147,7 @@ public class JnOtcRtDataProtocol {
                     //Java类转JSON字符串
                     String message = JSON.toJSONString(processIssueReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.processIssueReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1ProcessIssueReturn.name(), message, 0);
                 }
             }
         }
@@ -168,7 +167,7 @@ public class JnOtcRtDataProtocol {
                 if (null != processClaimReturn) {
                     String message = JSON.toJSONString(processClaimReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.processClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1ProcessClaimReturn.name(), message, 0);
                 }
             }
         }
@@ -189,7 +188,7 @@ public class JnOtcRtDataProtocol {
                 if (null != passwordReturn) {
                     String message = JSON.toJSONString(passwordReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.passwordReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1PasswordReturn.name(), message, 0);
                 }
             }
             //控制命令返回
@@ -198,7 +197,7 @@ public class JnOtcRtDataProtocol {
                 if (null != commandReturn) {
                     String message = JSON.toJSONString(commandReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.commandReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1CommandReturn.name(), message, 0);
                 }
             }
             //锁焊机或者解锁焊机返回
@@ -798,7 +797,7 @@ public class JnOtcRtDataProtocol {
                 jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
                 dataList.add(jnRtDataUi);
                 String dataArray = JSONArray.toJSONString(dataList);
-                EmqMqttClient.publishMessage(UpTopicEnum.rtcdata.name(), dataArray, 0);
+                EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1RtData.name(), dataArray, 0);
             });
             //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
             CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);

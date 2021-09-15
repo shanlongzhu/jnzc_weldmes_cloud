@@ -8,52 +8,52 @@ public enum DownTopicEnum {
     /**
      * 任务领取下发
      */
-    taskClaimIssue,
+    jnTaskClaimIssue,
 
     /**
      * OTC（1.0）工艺下发
      */
-    processIssue,
+    jnOtcV1ProcessIssue,
     /**
      * OTC（1.0）工艺索取
      */
-    processClaim,
+    jnOtcV1ProcessClaim,
     /**
      * OTC（1.0）密码下发
      */
-    passwordIssue,
+    jnOtcV1PasswordIssue,
     /**
      * OTC（1.0）控制命令下发
      */
-    commandIssue,
+    jnOtcV1CommandIssue,
 
     /**
      * 松下GL5系列CO2焊机工艺下发
      */
-    sxGl5Co2ProcessIssue,
+    jnSxGl5Co2ProcessIssue,
     /**
      * 松下GL5系列TIG焊机工艺下发
      */
-    sxGl5TigProcessIssue,
+    jnSxGl5TigProcessIssue,
     /**
      * 松下GL5系列【通道设定、通道读取】
      */
-    sxGl5WeldChannelSet,
+    jnSxGl5WeldChannelSet,
     /**
      * 松下GL5系列【工艺索取、工艺删除】
      */
-    sxGl5ProcessClaim,
+    jnSxGl5ProcessClaim,
     /**
      * 松下【FR2、AT3】系列【通道参数查询、通道参数删除】
      */
-    sxFr2ChannelParamQuery,
+    jnSxFr2ChannelParamQuery,
     /**
      * 松下FR2系列【通道参数下载】
      */
-    sxFr2ChannelParamDownload,
+    jnSxFr2ChannelParamDownload,
     /**
      * 松下AT3系列【通道参数下载】
      */
-    sxAt3ParamDownload,
+    jnSxAt3ParamDownload,
 
 }
