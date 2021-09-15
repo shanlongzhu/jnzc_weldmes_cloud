@@ -3,19 +3,29 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken,removePublicToken,getWelderInfo,removeWelderInfo } from '@/utils/auth' // get token from cookie
+import { getToken,removePublicToken,getWelderInfo,removeWelderInfo,removeToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
-
+const authIde = process.env.VUE_APP_AUTH_IDE;
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
   // set page title
   document.title = getPageTitle(to.meta.title)
   // determine whether the user has logged in
+
+  //根据项目标识判断是否是访问同一个项目
+  if(sessionStorage.getItem('authIde')){
+    if(sessionStorage.getItem('authIde')!=authIde){
+      removeToken();
+    }
+  }else{
+    sessionStorage.setItem('authIde',authIde)
+  }
+
   const hasToken = getToken()
   //进入焊工刷卡界面
   if(to.path==='/swipeCard'){
@@ -64,6 +74,7 @@ router.beforeEach(async(to, from, next) => {
             next({ ...to, replace: true })
           }
         } catch (error) {
+          sessionStorage.removeItem('authIde')
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
@@ -74,8 +85,9 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     removePublicToken();
-    removeWelderInfo();
+    removeWelderInfo();    
     /* has no token*/
+    sessionStorage.removeItem('authIde')
 
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
