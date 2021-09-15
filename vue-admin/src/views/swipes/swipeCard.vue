@@ -147,7 +147,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'rtcdata') {
+                if (topic == 'jnOtcV1RtData') {
                     var datajson = JSON.parse(`${message}`);
                     if (datajson.length > 0) {
                         //更新列表状态
@@ -177,10 +177,9 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('rtcdata', 0, (error, res) => {
-                // console.log('订阅rtcdata')
+            this.client.subscribe('jnOtcV1RtData', 0, (error, res) => {
                 if (error) {
-                    this.$message.error("订阅rtcdata超时")
+                    this.$message.error("订阅jnOtcV1RtData超时")
                     return
                 }
             })

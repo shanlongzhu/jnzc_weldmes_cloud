@@ -262,10 +262,10 @@ export default {
                 },
                 reconnect: true,
                 onSuccess: (res) => {
-                    this.newClientMq.subscribe('rtcdata', {
+                    this.newClientMq.subscribe('jnOtcV1RtData', {
                         qos: 0,
                         onSuccess: function (e) {
-                            console.log("下发返回主题订阅成功：rtcdata");
+                            console.log("下发返回主题订阅成功：jnOtcV1RtData");
                         },
                         onFailure: function (e) {
                             console.log(e);
@@ -274,7 +274,7 @@ export default {
                 }
             })
             this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
-                if (destinationName == 'rtcdata') {
+                if (destinationName == 'jnOtcV1RtData') {
                     var datajson = JSON.parse(payloadString);
                     if (datajson.length > 0) {
                         if (!this.drawer) {
