@@ -1138,7 +1138,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processClaimReturn') {
+                if (topic == 'jnOtcV1ProcessClaimReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -1192,7 +1192,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processClaimReturn', 0, (error, res) => {
+            this.client.subscribe('jnOtcV1ProcessClaimReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -1201,7 +1201,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processClaim', msg, 0)
+            this.client.publish('jnOtcV1ProcessClaim', msg, 0)
         },
 
 
@@ -1416,7 +1416,7 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processClaimReturn', error => {
+                this.client.unsubscribe('jnOtcV1ProcessClaimReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

@@ -23,7 +23,6 @@
         <div
             class="table-con"
             style="flex:1;height:0px; overflow-y:auto"
-            v-loading="loading"
         >
             <el-tree
                 :data="data"

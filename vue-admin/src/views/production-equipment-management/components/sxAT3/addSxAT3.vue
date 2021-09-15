@@ -600,7 +600,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'sxAt3ParamQueryReturn') {
+                if (topic == 'jnSxAT3ParamQueryReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -622,7 +622,7 @@ export default {
                     this.model2 = false;
                     this.issueTimeOut();
                 }
-                if (topic == 'sxChannelParamReply') {
+                if (topic == 'jnSxFR2OrAT3ChannelParamReply') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -639,14 +639,14 @@ export default {
         //订阅主题
         doSubscribe () {
             //订阅有参数
-            this.client.subscribe('sxAt3ParamQueryReturn', 0, (error, res) => {
+            this.client.subscribe('jnSxAT3ParamQueryReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
                 }
             })
             //订阅无参数
-            this.client.subscribe('sxChannelParamReply', 0, (error, res) => {
+            this.client.subscribe('jnSxFR2OrAT3ChannelParamReply', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -655,7 +655,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('sxFr2ChannelParamQuery', msg, 0)
+            this.client.publish('jnSxFr2ChannelParamQuery', msg, 0)
         },
 
         //选择柔软电弧模式
@@ -822,14 +822,14 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('sxAt3ParamQueryReturn', error => {
+                this.client.unsubscribe('jnSxAT3ParamQueryReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
                 });
 
-                this.client.unsubscribe('sxChannelParamReply', error => {
+                this.client.unsubscribe('jnSxFR2OrAT3ChannelParamReply', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

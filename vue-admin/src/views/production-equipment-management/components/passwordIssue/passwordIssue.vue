@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 15:45:39
+ * @LastEditTime: 2021-09-15 11:52:11
 -->
 
 <template>
@@ -308,7 +308,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'passwordReturn') {
+                if (topic == 'jnOtcV1PasswordReturn') {
                     clearTimeout(this.timeout);
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
@@ -324,7 +324,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('passwordReturn', 0, (error, res) => {
+            this.client.subscribe('jnOtcV1PasswordReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -333,7 +333,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('passwordIssue', msg, 0)
+            this.client.publish('jnOtcV1PasswordIssue', msg, 0)
         },
 
 
@@ -444,7 +444,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('passwordReturn', error => {
+                this.client.unsubscribe('jnOtcV1PasswordReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

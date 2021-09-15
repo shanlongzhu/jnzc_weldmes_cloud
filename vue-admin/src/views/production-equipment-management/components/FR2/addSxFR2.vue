@@ -1264,7 +1264,7 @@ export default {
             //气体
             gasesArr: getGasesArr(),
             //干伸长度
-            dryExtendLengthArr:[
+            dryExtendLengthArr: [
                 {
                     label: 'OFF',
                     value: 0
@@ -1435,8 +1435,8 @@ export default {
             },
             //选中的设备
             selectModel: {},
-            messageObj:'',
-          issLoading:false
+            messageObj: '',
+            issLoading: false
         }
     },
     watch: {},
@@ -1460,7 +1460,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'sxChannelParamReplyHave') {
+                if (topic == 'jnSxFR2ChannelParamReplyHave') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -1519,17 +1519,17 @@ export default {
                     this.ruleForm2.flowMax = datajson['flowMax'];//流量上限(查询回复)
                     this.ruleForm2.alarmFlag = datajson['alarmFlag'];//标志（下载参数）
                     this.messageObj.close();
-                  this.issLoading = false;
+                    this.issLoading = false;
                     this.$message.success("索取成功！！！");
                     this.model2 = false;
                     this.issueTimeOut();
                 }
-                if (topic == 'sxChannelParamReply') {
+                if (topic == 'jnSxFR2OrAT3ChannelParamReply') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
-                  this.messageObj.close();
-                  this.issLoading = false;
+                    this.messageObj.close();
+                    this.issLoading = false;
                     this.$message.warning("无参数！！！");
                     this.model2 = false;
                     this.issueTimeOut();
@@ -1541,14 +1541,14 @@ export default {
         //订阅主题
         doSubscribe () {
             //有参数
-            this.client.subscribe('sxChannelParamReplyHave', 0, (error, res) => {
+            this.client.subscribe('jnSxFR2ChannelParamReplyHave', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
                 }
             })
             //无参数
-            this.client.subscribe('sxChannelParamReply', 0, (error, res) => {
+            this.client.subscribe('jnSxFR2OrAT3ChannelParamReply', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -1557,7 +1557,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('sxFr2ChannelParamQuery', msg, 0)
+            this.client.publish('jnSxFr2ChannelParamQuery', msg, 0)
         },
 
         //选择柔软电弧模式
@@ -1647,12 +1647,12 @@ export default {
             if (this.ruleForm2.channel && this.ruleForm2.channel != '') {
                 this.model2 = true;
                 this.getList();
-              this.$nextTick(()=>{
-                this.issLoading = true;
-                this.selectModel = {}
-                this.$refs.proModelTable.clearRadioRow();
-                this.$refs.proModelTable.clearCurrentRow();
-              })
+                this.$nextTick(() => {
+                    this.issLoading = true;
+                    this.selectModel = {}
+                    this.$refs.proModelTable.clearRadioRow();
+                    this.$refs.proModelTable.clearCurrentRow();
+                })
             } else {
                 return this.$message.error("请先选择通道号！！！");
             }
@@ -1697,13 +1697,13 @@ export default {
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
             } else if (this.selectModel.weldIp) {
-              this.messageObj = this.$message({
-                message:'索取中...',
-                duration:0,
-                type:'warning'
-              });
-              //关闭索取层
-              this.model2 = false;
+                this.messageObj = this.$message({
+                    message: '索取中...',
+                    duration: 0,
+                    type: 'warning'
+                });
+                //关闭索取层
+                this.model2 = false;
                 setTimeout(() => {
                     let msg = {}
                     msg['weldIp'] = this.selectModel.weldIp;
@@ -1723,13 +1723,13 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('sxChannelParamReplyHave', error => {
+                this.client.unsubscribe('jnSxFR2ChannelParamReplyHave', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
                 });
-                this.client.unsubscribe('sxChannelParamReply', error => {
+                this.client.unsubscribe('jnSxFR2OrAT3ChannelParamReply', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
@@ -1738,7 +1738,7 @@ export default {
 
                 if (n) {
                     this.messageObj.close();
-                  this.issLoading = false;
+                    this.issLoading = false;
                     this.$message.error("下发超时")
                 }
                 clearTimeout(this.timeout)

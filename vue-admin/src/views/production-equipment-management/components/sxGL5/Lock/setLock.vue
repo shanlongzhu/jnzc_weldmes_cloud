@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-10 16:29:03
+ * @LastEditTime: 2021-09-15 13:18:06
 -->
 
 <template>
@@ -297,7 +297,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'sxWeldChannelSetReturn') {
+                if (topic == 'jnSxGL5WeldChannelSetOrReadReturn') {
                     clearTimeout(this.timeout);
                     var datajson = JSON.parse(`${message}`);
                     this.backMqttNum++;
@@ -313,7 +313,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('sxWeldChannelSetReturn', 0, (error, res) => {
+            this.client.subscribe('jnSxGL5WeldChannelSetOrReadReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -322,7 +322,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('sxGl5WeldChannelSet', msg, 0)
+            this.client.publish('jnSxGl5WeldChannelSet', msg, 0)
         },
 
 
@@ -435,7 +435,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('sxWeldChannelSetReturn', error => {
+                this.client.unsubscribe('jnSxGL5WeldChannelSetOrReadReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

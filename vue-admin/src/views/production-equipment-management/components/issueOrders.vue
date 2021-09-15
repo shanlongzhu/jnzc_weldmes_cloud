@@ -4,7 +4,7 @@
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
- * @LastEditTime: 2021-09-09 15:46:54
+ * @LastEditTime: 2021-09-15 11:39:42
 -->
 
 <template>
@@ -542,7 +542,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'processIssueReturn') {
+                if (topic == 'jnOtcV1ProcessIssueReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -561,7 +561,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('processIssueReturn', 0, (error, res) => {
+            this.client.subscribe('jnOtcV1ProcessIssueReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -570,7 +570,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('processIssue', msg, 0)
+            this.client.publish('jnOtcV1ProcessIssue', msg, 0)
         },
 
 
@@ -760,7 +760,7 @@ export default {
         //下发超时
         issueTimeOut () {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('processIssueReturn', error => {
+                this.client.unsubscribe('jnOtcV1ProcessIssueReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

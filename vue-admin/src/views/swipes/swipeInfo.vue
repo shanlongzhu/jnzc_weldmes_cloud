@@ -407,7 +407,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'taskClaimIssueReturn') {
+                if (topic == 'jnTaskClaimIssueReturn') {
                     console.log(`${message}`)
 
                 }
@@ -417,7 +417,7 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('taskClaimIssueReturn', 0, (error, res) => {
+            this.client.subscribe('jnTaskClaimIssueReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -426,7 +426,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('taskClaimIssue', msg, 1)
+            this.client.publish('jnTaskClaimIssue', msg, 1)
         },
 
         //任务绑定
@@ -494,7 +494,7 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('taskClaimIssueReturn', error => {
+                this.client.unsubscribe('jnTaskClaimIssueReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)

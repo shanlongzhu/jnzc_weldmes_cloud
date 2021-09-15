@@ -1789,7 +1789,7 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'sxCO2ProcessClaimReturn') {
+                if (topic == 'jnSxGL5CO2ProcessClaimReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -1871,7 +1871,7 @@ export default {
                     this.model2 = false;
                     this.issueTimeOut();
                 }
-                if (topic == 'sxProcessClaimReturn') {
+                if (topic == 'jnSxGL5ProcessClaimReturn') {
                     clearTimeout(this.timeout);
                     console.log(`${message}`)
                     var datajson = JSON.parse(`${message}`);
@@ -1891,14 +1891,14 @@ export default {
         //订阅主题
         doSubscribe () {
             //订阅有数据回复
-            this.client.subscribe('sxCO2ProcessClaimReturn', 0, (error, res) => {
+            this.client.subscribe('jnSxGL5CO2ProcessClaimReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
                 }
             });
             //订阅无数据回复
-            this.client.subscribe('sxProcessClaimReturn', 0, (error, res) => {
+            this.client.subscribe('jnSxGL5ProcessClaimReturn', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -1907,7 +1907,7 @@ export default {
         },
 
         doPublish (msg) {
-            this.client.publish('sxGl5ProcessClaim', msg, 0)
+            this.client.publish('jnSxGl5ProcessClaim', msg, 0)
         },
 
         //选择柔软电弧模式
@@ -2075,14 +2075,14 @@ export default {
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
-                this.client.unsubscribe('sxCO2ProcessClaimReturn', error => {
+                this.client.unsubscribe('jnSxGL5CO2ProcessClaimReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
                 });
 
-                this.client.unsubscribe('sxProcessClaimReturn', error => {
+                this.client.unsubscribe('jnSxGL5ProcessClaimReturn', error => {
                     console.log("取消订阅")
                     if (error) {
                         console.log('取消订阅失败', error)
