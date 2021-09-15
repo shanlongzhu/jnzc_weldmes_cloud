@@ -4,11 +4,14 @@ import com.gw.entities.UserLoginInfo;
 import com.gw.entities.SysUser;
 import com.gw.sys.service.UserRolesAndPerService;
 import lombok.SneakyThrows;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
@@ -55,10 +58,17 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
+        Subject currentUser = SecurityUtils.getSubject();
+
         UsernamePasswordToken userToken = (UsernamePasswordToken)token;
 
+        Session session  = currentUser.getSession();
+
+        String userName = (String)session.getAttribute("userName");
+
+        //String passWord = (String)session.getAttribute("passWord");
         //获取前端传入的用户名
-        String userName = userToken.getUsername();
+        //String userName = userToken.getUsername();
 
         //从数据库中获取用户
         SysUser sysUser = userRolesAndPerService.queryUserInfoByUserNameAndPwd(userName);

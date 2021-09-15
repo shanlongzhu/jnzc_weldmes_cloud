@@ -70,6 +70,10 @@ public class LoginController {
 
             UsernamePasswordToken userToken = new UsernamePasswordToken(username,newPwdMD5);
 
+            currentUser.getSession().setAttribute("userName",username);
+
+            currentUser.getSession().setAttribute("passWord",password);
+
             try{
 
                 //登录认证 --> 由此跳转入UserRealm中进行认证
