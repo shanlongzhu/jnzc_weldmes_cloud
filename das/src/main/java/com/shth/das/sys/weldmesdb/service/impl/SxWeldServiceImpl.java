@@ -5,12 +5,14 @@ import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.sys.weldmesdb.mapper.SxWeldMapper;
 import com.shth.das.sys.weldmesdb.service.SxWeldService;
 import com.shth.das.util.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(value = "ds1TransactionManager", rollbackFor = Exception.class)
+@Slf4j
 public class SxWeldServiceImpl implements SxWeldService {
 
     @Autowired
@@ -47,7 +49,7 @@ public class SxWeldServiceImpl implements SxWeldService {
             }
             result = sxWeldMapper.insert(sxWeldModel);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("新增松下设备到DB中异常：", e);
             throw new RuntimeException();
         }
         return result;

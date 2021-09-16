@@ -140,7 +140,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         if (serverPort == CommonFunction.getOtcPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.info("OTC存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
+                log.warn("OTC存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             } else {
                 //保存连接
                 CommonMap.OTC_CHANNEL_MAP.put(clientAddress, ctx);
@@ -150,7 +150,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         if (serverPort == CommonFunction.getSxPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.info("SX存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
+                log.warn("SX存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
             } else {
                 //保存连接
                 CommonMap.SX_CHANNEL_MAP.put(clientAddress, ctx);
@@ -218,7 +218,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("异常捕捉：" + cause.getMessage());
+        log.error("异常捕捉：{}", cause.getMessage());
         ctx.flush();
         if (ctx.channel().isActive()) {
             ctx.channel().close();

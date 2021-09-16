@@ -53,6 +53,7 @@ mqtt:
   cleanSession: true
   automaticReconnect: true
 
+
 # netty服务端口配置
 otcNettyServer:
   ip: 127.0.0.1
@@ -99,3 +100,12 @@ enableOtcFunction: true
 
 # 是否启用松下业务功能
 enableSxFunction: true
+
+# 使用SLF4J日志框架进行日志记录功能
+logging:
+# 日志级别从高到低分别是：error、warn、info、debug、trace
+  level:
+    root: info
+# 指定输出的日志文件名（不指定路径默认和项目同路径，没有会自动新建）
+  file:
+    name: D:\jn-das-log\jndas.log

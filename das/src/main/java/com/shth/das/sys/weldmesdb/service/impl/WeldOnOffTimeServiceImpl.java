@@ -5,6 +5,7 @@ import com.shth.das.sys.weldmesdb.mapper.WeldOnOffTimeMapper;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Transactional(value = "ds1TransactionManager", rollbackFor = Exception.class)
+@Slf4j
 public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
 
     @Autowired
@@ -25,7 +27,7 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
         try {
             weldOnOffTimeMapper.insert(weldOnOffTime);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("设备开关机时间新增存DB异常：", e);
             throw new RuntimeException();
         }
     }
@@ -76,7 +78,7 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("设备开关机时间修改存DB异常：", e);
             throw new RuntimeException();
         }
     }

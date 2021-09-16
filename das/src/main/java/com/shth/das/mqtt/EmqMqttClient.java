@@ -143,13 +143,13 @@ public class EmqMqttClient {
                 } else {
                     mqttClient.disconnect();
                     mqttClient.close();
-                    log.info("mqtt客户端重连失败");
+                    log.error("mqtt客户端重连失败");
                 }
             } else {
-                log.info("mqtt客户端连接为空,重连失败");
+                log.error("mqtt客户端连接为空,重连失败");
             }
         } catch (Exception e) {
-            log.error("mqtt客户端重连异常：{}", e.getMessage());
+            log.error("mqtt客户端重连异常：", e);
         }
     }
 
@@ -163,7 +163,7 @@ public class EmqMqttClient {
             mqttClient.subscribe(topic, 0);
             log.info("主题订阅成功：" + topic);
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error("MQTT客户端订阅主题异常：", e);
         }
     }
 
@@ -181,11 +181,10 @@ public class EmqMqttClient {
             } else {
                 reConnectMqtt();
                 mqttClient.subscribe(topic, qos);
-                log.info("主题订阅成功：" + topic);
+                log.info("重连后主题订阅成功：" + topic);
             }
         } catch (MqttException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error("MQTT客户端订阅某个主题异常：", e);
         }
     }
 
@@ -205,8 +204,7 @@ public class EmqMqttClient {
                 log.info("取消订阅成功：" + topic);
             }
         } catch (MqttException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error("MQTT客户端清空主题异常：", e);
         }
     }
 

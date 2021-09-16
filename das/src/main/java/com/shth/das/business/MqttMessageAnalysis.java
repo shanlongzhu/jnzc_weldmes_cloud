@@ -310,7 +310,7 @@ public class MqttMessageAnalysis {
                 }
             }
         } catch (InterruptedException e) {
-            log.error("OTC数据下行异常：{}", e.getMessage());
+            log.error("OTC数据下行异常：", e);
         }
     }
 
@@ -337,7 +337,7 @@ public class MqttMessageAnalysis {
                 }
             }
         } catch (InterruptedException e) {
-            log.error("松下数据下行异常：{}", e.getMessage());
+            log.error("松下数据下行异常：", e);
         }
     }
 }

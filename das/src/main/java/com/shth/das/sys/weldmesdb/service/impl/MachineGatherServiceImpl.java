@@ -5,6 +5,7 @@ import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.sys.weldmesdb.mapper.MachineGatherMapper;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import com.shth.das.util.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(value = "ds1TransactionManager", rollbackFor = Exception.class)
+@Slf4j
 public class MachineGatherServiceImpl implements MachineGatherService {
 
     @Autowired
@@ -31,7 +33,7 @@ public class MachineGatherServiceImpl implements MachineGatherService {
             gatherModel.setIpPath(weldIp);
             gatherMapper.update(gatherModel, new QueryWrapper<GatherModel>().eq("gather_no", gatherNo));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("OTC设备根据采集编号更新IP异常：", e);
             throw new RuntimeException();
         }
     }

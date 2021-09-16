@@ -57,7 +57,7 @@ public class JnOtcRtDataProtocol {
                     }
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("OTC设备刷卡启用设备功能异常：", e);
             }
         } else {
             try {
@@ -68,7 +68,7 @@ public class JnOtcRtDataProtocol {
                     channel.writeAndFlush(str).sync();
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("解锁焊机指令异常：", e);
             }
         }
     }
@@ -90,7 +90,7 @@ public class JnOtcRtDataProtocol {
                 //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
                 CommonQueue.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("OTC开机设备阻塞队列添加：", e);
             }
         }
         if (!CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
@@ -204,47 +204,51 @@ public class JnOtcRtDataProtocol {
             if (map.containsKey("JnLockMachineReturn")) {
                 final JnLockMachineReturn jnLockMachineReturn = (JnLockMachineReturn) map.get("JnLockMachineReturn");
                 if (null != jnLockMachineReturn) {
-                    //采集编号
-                    final String gatherNo = jnLockMachineReturn.getGatherNo();
-                    //控制命令：（18：锁焊机，19：解锁焊机）
-                    final int command = jnLockMachineReturn.getCommand();
-                    //接收结果:0 成功（如果成功，删除重试次数）
-                    if (jnLockMachineReturn.getResult() == 0) {
-                        if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
-                            CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo).remove(command);
+                    try {
+                        //采集编号
+                        final String gatherNo = jnLockMachineReturn.getGatherNo();
+                        //控制命令：（18：锁焊机，19：解锁焊机）
+                        final int command = jnLockMachineReturn.getCommand();
+                        //接收结果:0 成功（如果成功，删除重试次数）
+                        if (jnLockMachineReturn.getResult() == 0) {
+                            if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
+                                CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo).remove(command);
+                            }
                         }
-                    }
-                    //接收结果:1 失败（失败进行重试）
-                    else if (jnLockMachineReturn.getResult() == 1) {
-                        //判断是否有当前设备（true：增加重试次数）
-                        if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
-                            final Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
-                            if (otcLockMap.containsKey(command)) {
-                                //得到重试次数
-                                Integer numOfRetries = otcLockMap.get(command);
-                                if (numOfRetries < 3) {
-                                    numOfRetries++;
-                                    otcLockMap.put(command, numOfRetries);
+                        //接收结果:1 失败（失败进行重试）
+                        else if (jnLockMachineReturn.getResult() == 1) {
+                            //判断是否有当前设备（true：增加重试次数）
+                            if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
+                                final Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
+                                if (otcLockMap.containsKey(command)) {
+                                    //得到重试次数
+                                    Integer numOfRetries = otcLockMap.get(command);
+                                    if (numOfRetries < 3) {
+                                        numOfRetries++;
+                                        otcLockMap.put(command, numOfRetries);
+                                        //锁焊机或解锁焊机再次下行
+                                        otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
+                                    }
+                                }
+                                //没有直接新增一个
+                                else {
+                                    otcLockMap.put(command, 1);
+                                    CommonMap.OTC_LOCK_FAIL_RETRY_MAP.put(gatherNo, otcLockMap);
                                     //锁焊机或解锁焊机再次下行
                                     otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
                                 }
                             }
                             //没有直接新增一个
                             else {
+                                Map<Integer, Integer> otcLockMap = new HashMap<>();
                                 otcLockMap.put(command, 1);
                                 CommonMap.OTC_LOCK_FAIL_RETRY_MAP.put(gatherNo, otcLockMap);
                                 //锁焊机或解锁焊机再次下行
                                 otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
                             }
                         }
-                        //没有直接新增一个
-                        else {
-                            Map<Integer, Integer> otcLockMap = new HashMap<>();
-                            otcLockMap.put(command, 1);
-                            CommonMap.OTC_LOCK_FAIL_RETRY_MAP.put(gatherNo, otcLockMap);
-                            //锁焊机或解锁焊机再次下行
-                            otcLockMachineRetries(gatherNo, String.valueOf(command), ctx.channel());
-                        }
+                    } catch (Exception e) {
+                        log.error("锁焊机或者解锁焊机返回异常：", e);
                     }
                 }
             }
@@ -268,7 +272,7 @@ public class JnOtcRtDataProtocol {
                 channel.writeAndFlush(str).sync();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error("锁焊机或者解锁焊机重试异常：", e);
         }
     }
 
@@ -318,7 +322,7 @@ public class JnOtcRtDataProtocol {
                             String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
                             data.setWeldTime(weldDateTime);
                         } catch (Exception e) {
-                            log.error("[jnRtDataUiAnalysis]:" + e.getMessage());
+                            log.error("OTC1.0实时数据时间格式异常:", e);
                             data.setWeldTime(nowDateTime);
                         }
                         data.setWeldIp(clientIp);
@@ -350,7 +354,7 @@ public class JnOtcRtDataProtocol {
                 }
             }
         } catch (Exception e) {
-            log.error("江南实时数据协议解析异常：{}", e.getMessage());
+            log.error("OTC1.0实时数据解析发MQTT异常：", e);
         }
         return null;
     }
@@ -452,7 +456,7 @@ public class JnOtcRtDataProtocol {
                                 data.setWeldTime(nowDateTime);
                             }
                         } catch (Exception e) {
-                            log.error("[jnRtDataDbAnalysis]:" + e.getMessage());
+                            log.error("OTC1.0实时数据时间格式异常:", e);
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
@@ -513,7 +517,7 @@ public class JnOtcRtDataProtocol {
                 }
             }
         } catch (Exception e) {
-            log.error("江南实时数据协议解析异常：{}", e.getMessage());
+            log.error("OTC1.0实时数据解析存DB异常：", e);
         }
         return null;
     }
@@ -525,43 +529,46 @@ public class JnOtcRtDataProtocol {
      * @return 返回解析完成的16进制字符串
      */
     public static String jnIssueProtocol(JNProcessIssue model) {
-        String head = JNProcessIssue.Flag.HEAD.value;
-        String order = JNProcessIssue.Flag.ORDER.value;
-        String foot = JNProcessIssue.Flag.FOOT.value;
-        String gatherNo = CommonUtils.lengthJoint(model.getGatherNo(), 4);//采集编号：0001
-        String channelNo = CommonUtils.lengthJoint(model.getChannelNo(), 2);//通道号：01
-        String spotWeldTime = CommonUtils.lengthJoint(model.getSpotWeldTime().intValue(), 4);//点焊时间：30
-        String preflowTime = CommonUtils.lengthJoint(model.getPreflowTime().intValue(), 4);//提前送气时间：1
-        String initialEle = CommonUtils.lengthJoint(model.getInitialEle().intValue(), 4);//初期电流:100
-        String initialVol = CommonUtils.lengthJoint(model.getInitialVol().intValue(), 4);//初期电压:190
-        String initialVolUnitary = CommonUtils.lengthJoint(model.getInitialVolUnitary().intValue(), 4);//初期电压一元:0
-        String weldElectricity = CommonUtils.lengthJoint(model.getWeldElectricity().intValue(), 4);//焊接电流:100
-        String weldVoltage = CommonUtils.lengthJoint(model.getWeldVoltage().intValue(), 4);//焊接电压:190
-        String weldVoltageUnitary = CommonUtils.lengthJoint(model.getWeldVoltageUnitary().intValue(), 4);//焊接电压一元:0
-        String extinguishArcEle = CommonUtils.lengthJoint(model.getExtinguishArcEle().intValue(), 4);//收弧电流:100
-        String extinguishArcVol = CommonUtils.lengthJoint(model.getExtinguishArcVol().intValue(), 4);//收弧电压:190
-        String extinguishArcVolUnitary = CommonUtils.lengthJoint(model.getExtinguishArcVolUnitary().intValue(), 4);//收弧电压一元:0
-        String hysteresisAspirated = CommonUtils.lengthJoint(model.getHysteresisAspirated().intValue(), 4);//滞后送气:1
-        String arcPeculiarity = CommonUtils.lengthJoint(model.getArcPeculiarity().intValue(), 4);//电弧特性:0
-        String gases = CommonUtils.lengthJoint(model.getGases().intValue(), 2);//气体:0
-        String wireDiameter = CommonUtils.lengthJoint(model.getWireDiameter().intValue(), 2);//焊丝直径:12
-        String wireMaterials = CommonUtils.lengthJoint(model.getWireMaterials(), 2);//焊丝材料:0
-        String weldProcess = CommonUtils.lengthJoint(model.getWeldProcess(), 2);//焊接过程:0
-        String controlInfo = CommonUtils.lengthJoint(model.getControlInfo(), 4);//控制信息:229
-        String weldEleAdjust = CommonUtils.lengthJoint(model.getWeldEleAdjust().intValue(), 2);//焊接电流微调:0
-        String weldVolAdjust = CommonUtils.lengthJoint(model.getWeldVolAdjust().intValue(), 2);//焊接电压微调:0
-        String extinguishArcEleAdjust = CommonUtils.lengthJoint(model.getExtinguishArcEleAdjust().intValue(), 2);//收弧电流微调:0
-        String extinguishArcVolAdjust = CommonUtils.lengthJoint(model.getExtinguishArcVolAdjust().intValue(), 2);//收弧电压微调:0
-        String alarmsElectricityMax = CommonUtils.lengthJoint(model.getAlarmsElectricityMax().intValue(), 4);//报警电流上限:0
-        String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().intValue(), 4);//报警电流下限:0
-        String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
-        String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
-        String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity +
-                weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity +
-                gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust +
-                alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
-        str = str.toUpperCase(); //字母全部转为大写
-        return str;
+        if (null != model) {
+            String head = JNProcessIssue.Flag.HEAD.value;
+            String order = JNProcessIssue.Flag.ORDER.value;
+            String foot = JNProcessIssue.Flag.FOOT.value;
+            String gatherNo = CommonUtils.lengthJoint(model.getGatherNo(), 4);//采集编号：0001
+            String channelNo = CommonUtils.lengthJoint(model.getChannelNo(), 2);//通道号：01
+            String spotWeldTime = CommonUtils.lengthJoint(model.getSpotWeldTime().intValue(), 4);//点焊时间：30
+            String preflowTime = CommonUtils.lengthJoint(model.getPreflowTime().intValue(), 4);//提前送气时间：1
+            String initialEle = CommonUtils.lengthJoint(model.getInitialEle().intValue(), 4);//初期电流:100
+            String initialVol = CommonUtils.lengthJoint(model.getInitialVol().intValue(), 4);//初期电压:190
+            String initialVolUnitary = CommonUtils.lengthJoint(model.getInitialVolUnitary().intValue(), 4);//初期电压一元:0
+            String weldElectricity = CommonUtils.lengthJoint(model.getWeldElectricity().intValue(), 4);//焊接电流:100
+            String weldVoltage = CommonUtils.lengthJoint(model.getWeldVoltage().intValue(), 4);//焊接电压:190
+            String weldVoltageUnitary = CommonUtils.lengthJoint(model.getWeldVoltageUnitary().intValue(), 4);//焊接电压一元:0
+            String extinguishArcEle = CommonUtils.lengthJoint(model.getExtinguishArcEle().intValue(), 4);//收弧电流:100
+            String extinguishArcVol = CommonUtils.lengthJoint(model.getExtinguishArcVol().intValue(), 4);//收弧电压:190
+            String extinguishArcVolUnitary = CommonUtils.lengthJoint(model.getExtinguishArcVolUnitary().intValue(), 4);//收弧电压一元:0
+            String hysteresisAspirated = CommonUtils.lengthJoint(model.getHysteresisAspirated().intValue(), 4);//滞后送气:1
+            String arcPeculiarity = CommonUtils.lengthJoint(model.getArcPeculiarity().intValue(), 4);//电弧特性:0
+            String gases = CommonUtils.lengthJoint(model.getGases().intValue(), 2);//气体:0
+            String wireDiameter = CommonUtils.lengthJoint(model.getWireDiameter().intValue(), 2);//焊丝直径:12
+            String wireMaterials = CommonUtils.lengthJoint(model.getWireMaterials(), 2);//焊丝材料:0
+            String weldProcess = CommonUtils.lengthJoint(model.getWeldProcess(), 2);//焊接过程:0
+            String controlInfo = CommonUtils.lengthJoint(model.getControlInfo(), 4);//控制信息:229
+            String weldEleAdjust = CommonUtils.lengthJoint(model.getWeldEleAdjust().intValue(), 2);//焊接电流微调:0
+            String weldVolAdjust = CommonUtils.lengthJoint(model.getWeldVolAdjust().intValue(), 2);//焊接电压微调:0
+            String extinguishArcEleAdjust = CommonUtils.lengthJoint(model.getExtinguishArcEleAdjust().intValue(), 2);//收弧电流微调:0
+            String extinguishArcVolAdjust = CommonUtils.lengthJoint(model.getExtinguishArcVolAdjust().intValue(), 2);//收弧电压微调:0
+            String alarmsElectricityMax = CommonUtils.lengthJoint(model.getAlarmsElectricityMax().intValue(), 4);//报警电流上限:0
+            String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().intValue(), 4);//报警电流下限:0
+            String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
+            String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
+            String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity +
+                    weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity +
+                    gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust +
+                    alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
+            str = str.toUpperCase(); //字母全部转为大写
+            return str;
+        }
+        return null;
     }
 
     /**
@@ -590,16 +597,19 @@ public class JnOtcRtDataProtocol {
      * @return 返回16进制字符串
      */
     public static String jnClaimProtocol(JNProcessClaim claimModel) {
-        String head = JNProcessClaim.Flag.HEAD.value;
-        String foot = JNProcessClaim.Flag.FOOT.value;
-        String order = JNProcessClaim.Flag.ORDER.value;
-        //采集编号：0001
-        String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);
-        //通道号：01
-        String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);
-        String str = head + order + gatherNo + channelNo + foot;
-        str = str.toUpperCase();
-        return str;
+        if (null != claimModel) {
+            String head = JNProcessClaim.Flag.HEAD.value;
+            String foot = JNProcessClaim.Flag.FOOT.value;
+            String order = JNProcessClaim.Flag.ORDER.value;
+            //采集编号：0001
+            String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);
+            //通道号：01
+            String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);
+            String str = head + order + gatherNo + channelNo + foot;
+            str = str.toUpperCase();
+            return str;
+        }
+        return null;
     }
 
     /**
@@ -664,14 +674,17 @@ public class JnOtcRtDataProtocol {
      * @return 16进制字符串
      */
     public static String jnPasswordProtocol(JNPasswordIssue jnPasswordIssue) {
-        String head = JNPasswordIssue.Flag.HEAD.value;
-        String order = JNPasswordIssue.Flag.ORDER.value;
-        String foot = JNPasswordIssue.Flag.FOOT.value;
-        String gatherNo = CommonUtils.lengthJoint(jnPasswordIssue.getGatherNo(), 4);
-        String password = CommonUtils.lengthJoint(jnPasswordIssue.getPassword(), 4);
-        String str = head + order + gatherNo + password + foot;
-        str = str.toUpperCase();
-        return str;
+        if (null != jnPasswordIssue) {
+            String head = JNPasswordIssue.Flag.HEAD.value;
+            String order = JNPasswordIssue.Flag.ORDER.value;
+            String foot = JNPasswordIssue.Flag.FOOT.value;
+            String gatherNo = CommonUtils.lengthJoint(jnPasswordIssue.getGatherNo(), 4);
+            String password = CommonUtils.lengthJoint(jnPasswordIssue.getPassword(), 4);
+            String str = head + order + gatherNo + password + foot;
+            str = str.toUpperCase();
+            return str;
+        }
+        return null;
     }
 
     /**
@@ -681,14 +694,17 @@ public class JnOtcRtDataProtocol {
      * @return 16进制字符串
      */
     public static String jnCommandProtocol(JNCommandIssue jnCommandIssue) {
-        String head = JNCommandIssue.Flag.HEAD.value;
-        String order = JNCommandIssue.Flag.ORDER.value;
-        String foot = JNCommandIssue.Flag.FOOT.value;
-        String gatherNo = CommonUtils.lengthJoint(jnCommandIssue.getGatherNo(), 4);
-        String command = CommonUtils.lengthJoint(jnCommandIssue.getCommand(), 2);
-        String str = head + order + gatherNo + command + foot;
-        str = str.toUpperCase();
-        return str;
+        if (null != jnCommandIssue) {
+            String head = JNCommandIssue.Flag.HEAD.value;
+            String order = JNCommandIssue.Flag.ORDER.value;
+            String foot = JNCommandIssue.Flag.FOOT.value;
+            String gatherNo = CommonUtils.lengthJoint(jnCommandIssue.getGatherNo(), 4);
+            String command = CommonUtils.lengthJoint(jnCommandIssue.getCommand(), 2);
+            String str = head + order + gatherNo + command + foot;
+            str = str.toUpperCase();
+            return str;
+        }
+        return null;
     }
 
     /**
@@ -738,7 +754,7 @@ public class JnOtcRtDataProtocol {
                 jnLockMachineReturn.setResult(Integer.valueOf(str.substring(16, 18), 16));
                 return jnLockMachineReturn;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("锁焊机和解锁焊机指令返回协议解析异常：", e);
                 return null;
             }
         }
@@ -752,16 +768,20 @@ public class JnOtcRtDataProtocol {
      * @return 焊机ID
      */
     public static BigInteger getMachineIdByGatherNo(String gatherNo) {
-        List<WeldModel> weldList = CommonList.getWeldList();
-        if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
-            for (WeldModel weld : weldList) {
-                if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                    if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
+        try {
+            List<WeldModel> weldList = CommonList.getWeldList();
+            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
+                for (WeldModel weld : weldList) {
+                    if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
+                        if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
 //                    if (gatherNo.equals(Integer.valueOf(weld.getGatherNo()).toString())) {
-                        return weld.getId();
+                            return weld.getId();
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            log.error("根据采集编号查询焊机ID异常：", e);
         }
         return BigInteger.ZERO;
     }
@@ -782,7 +802,7 @@ public class JnOtcRtDataProtocol {
                 otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("OTC设备关机数据添加到阻塞队列异常：", e);
             }
             //关机数据通过线程池发送到mq
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
@@ -799,7 +819,6 @@ public class JnOtcRtDataProtocol {
                 String dataArray = JSONArray.toJSONString(dataList);
                 EmqMqttClient.publishMessage(UpTopicEnum.jnOtcV1RtData.name(), dataArray, 0);
             });
-            //log.info("OTC关机：" + "：{}", UpTopicEnum.rtcdata.name() + ":" + dataArray);
             CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
             CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
         }

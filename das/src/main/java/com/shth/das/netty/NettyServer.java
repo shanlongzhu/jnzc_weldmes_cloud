@@ -62,7 +62,7 @@ public class NettyServer {
                     // 关闭事件处理组
                     bossGroup.shutdownGracefully();
                     workerGroup.shutdownGracefully();
-                    log.info("Netty服务端已关闭!");
+                    log.error("Netty服务端已关闭!");
                 }
             }
         });

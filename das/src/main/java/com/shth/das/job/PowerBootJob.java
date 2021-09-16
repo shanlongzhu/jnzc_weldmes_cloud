@@ -120,7 +120,7 @@ public class PowerBootJob {
                         machineGatherService.updateGatherIpByNumber(gatherNo, weldIp);
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error("启动OTC开机设备阻塞队列消费者异常：", e);
                 }
             });
         }
@@ -147,7 +147,7 @@ public class PowerBootJob {
                         onOffTime.setMachineType(0);
                         weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error("启动OTC关机设备阻塞队列消费者异常：", e);
                     }
                 }
             });
@@ -169,7 +169,7 @@ public class PowerBootJob {
                         //调用接口，数据存入数据库
                         sxWeldService.insertSxWeld(sxWeldModel);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("启动松下新增设备队列存储的消费者异常：", e);
                     }
                 }
             });
@@ -202,7 +202,7 @@ public class PowerBootJob {
                         //开机新增一条
                         weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("启动松下开机设备队列存储的消费者异常：", e);
                     }
                 }
             });
@@ -235,7 +235,7 @@ public class PowerBootJob {
                         //关机修改最近一条
                         weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("启动松下关机设备队列存储的消费者异常：", e);
                     }
                 }
             });

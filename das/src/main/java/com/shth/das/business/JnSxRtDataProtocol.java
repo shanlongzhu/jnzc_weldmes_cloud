@@ -56,7 +56,7 @@ public class JnSxRtDataProtocol {
             try {
                 CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下新增设备添加到阻塞队列异常：", e);
             }
             //设备存储到松下开机阻塞队列
             try {
@@ -68,7 +68,7 @@ public class JnSxRtDataProtocol {
                     CommonQueue.SX_ON_MACHINE_QUEUES.put(sxMachineQueue);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下开机设备添加到阻塞队列异常：", e);
             }
         }
     }
@@ -97,7 +97,7 @@ public class JnSxRtDataProtocol {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("松下焊接通道设定异常：", e);
         }
     }
 
@@ -588,7 +588,7 @@ public class JnSxRtDataProtocol {
                     sxRtDataUi.setWeldFlag(0);
                     return sxRtDataUi;
                 } catch (Exception e) {
-                    log.error("松下GL5实时数据解析异常：{}", e.getMessage());
+                    log.error("松下GL5实时数据解析发MQTT异常：", e);
                 }
             }
         }
@@ -644,7 +644,7 @@ public class JnSxRtDataProtocol {
                     sxRtDataDb.setWeldFlag(0);
                     return sxRtDataDb;
                 } catch (Exception e) {
-                    log.error("松下GL5实时数据解析异常：{}", e.getMessage());
+                    log.error("松下GL5实时数据解析存DB异常：", e);
                 }
             }
         }
@@ -1415,7 +1415,7 @@ public class JnSxRtDataProtocol {
                 sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.SX_OFF_MACHINE_QUEUES.put(sxMachineQueue);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下设备关机添加到阻塞队列异常：", e);
             }
         }
         sxRtDataUi.setWeldIp(clientIp);
@@ -1541,7 +1541,7 @@ public class JnSxRtDataProtocol {
                     return str;
                 }
             } catch (Exception e) {
-                log.error("松下CO2焊机工艺参数解析异常：" + e.getMessage());
+                log.error("松下CO2焊机工艺下发参数拼接异常：", e);
                 return null;
             }
         }
@@ -1678,7 +1678,7 @@ public class JnSxRtDataProtocol {
                     return str;
                 }
             } catch (Exception e) {
-                log.error("松下TIG焊机工艺参数解析异常:" + e.getMessage());
+                log.error("松下GL5系列TIG焊机工艺下发字符串拼接异常:", e);
                 return null;
             }
         }
@@ -1717,7 +1717,7 @@ public class JnSxRtDataProtocol {
                     return str;
                 }
             } catch (Exception e) {
-                log.error("松下焊机通道设定/读取参数拼接异常：" + e.getLocalizedMessage());
+                log.error("松下GL5系列【通道设定、通道读取】：", e);
                 return null;
             }
         }
@@ -1725,7 +1725,7 @@ public class JnSxRtDataProtocol {
     }
 
     /**
-     * 松下【工艺索取、工艺删除】协议拼接
+     * 松下GL5系列工艺【工艺索取、工艺删除】协议拼接
      *
      * @param sxProcessClaim 松下工艺[索取/删除]实体类
      * @return 16进制字符串
@@ -1755,7 +1755,7 @@ public class JnSxRtDataProtocol {
                     return str;
                 }
             } catch (Exception e) {
-                log.error("松下工艺索取/删除协议拼接异常：" + e.getMessage());
+                log.error("松下GL5系列工艺【工艺索取、工艺删除】字符串拼接异常：", e);
                 return null;
             }
         }

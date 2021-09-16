@@ -144,7 +144,7 @@ public class ScheduledTask {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("每个整点执行一次OTC实时数据定时统计异常：", e);
             }
         }
     }
@@ -193,7 +193,7 @@ public class ScheduledTask {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("每个整点执行一次松下实时数据定时统计异常：", e);
             }
         }
     }
@@ -232,8 +232,7 @@ public class ScheduledTask {
                     }
                 }
             } catch (Exception e) {
-                log.error("时间校准异常：{}", e.getMessage());
-                e.printStackTrace();
+                log.error("OTC设备时间定时校准异常：", e);
             }
         }
     }
@@ -254,7 +253,7 @@ public class ScheduledTask {
                     otcRtDataService.insertRtDataList(jnRtDataDbList);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("3秒执行一次OTC设备实时数据存DB异常：", e);
             } finally {
                 otcLinkedBlockingQueue.clear();
             }
@@ -277,7 +276,7 @@ public class ScheduledTask {
                     sxRtDataService.insertSxRtDataList(sxRtDataList);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("3秒执行一次松下设备实时数据存DB异常：", e);
             } finally {
                 sxLinkedBlockingQueue.clear();
             }

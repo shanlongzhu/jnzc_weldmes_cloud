@@ -3,6 +3,7 @@ package com.shth.das.codeparam;
 import com.alibaba.druid.util.StringUtils;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.*;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * @author: Shan Long
  * @create: 2021-08-19
  */
+@Slf4j
 public class TableStrategy {
 
     /**
@@ -229,7 +231,7 @@ public class TableStrategy {
                     return list;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("根据时间段计算年份异常：", e);
                 return null;
             }
         }
@@ -274,7 +276,7 @@ public class TableStrategy {
                     return list;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("根据时间段计算月份异常：", e);
                 return null;
             }
         }
@@ -293,7 +295,7 @@ public class TableStrategy {
                 final LocalDate parse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
                 return LocalDateTime.of(parse, LocalTime.MIN).with(DayOfWeek.MONDAY).format(DateTimeUtils.CUSTOM_DATE);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("根据时间点获取周异常：", e);
                 return null;
             }
         }
@@ -325,7 +327,7 @@ public class TableStrategy {
                     return list;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("根据时间段计算周数异常：", e);
                 return null;
             }
         }
@@ -366,7 +368,7 @@ public class TableStrategy {
                     return list;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("根据时间段计算天数异常：", e);
                 return null;
             }
         }

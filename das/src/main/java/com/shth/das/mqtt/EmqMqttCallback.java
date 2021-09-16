@@ -23,7 +23,7 @@ public class EmqMqttCallback implements MqttCallback {
     @SneakyThrows
     @Override
     public void connectionLost(Throwable throwable) {
-        log.info("连接丢失，正在重连..." + throwable.getMessage());
+        log.warn("连接丢失，正在重连..." + throwable.getMessage());
         Thread.sleep(2000);
         EmqMqttClient.reConnectMqtt();
     }
@@ -41,7 +41,7 @@ public class EmqMqttCallback implements MqttCallback {
             String message = new String(mqttMessage.getPayload());
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> new MqttMessageManage().mqttMessageManage(topic, message));
         } catch (Exception e) {
-            log.error("messageArrived Exception:{}", e.getMessage());
+            log.error("MQTT客户端消息回调-数据接收处理异常：", e);
         }
     }
 

@@ -7,6 +7,7 @@ import com.shth.das.sys.rtdata.mapper.SxRtDataMapper;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @Service
 @Transactional(value = "ds2TransactionManager", rollbackFor = Exception.class)
+@Slf4j
 public class SxRtDataServiceImpl implements SxRtDataService {
 
     @Autowired
@@ -40,7 +42,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
                     sxRtDataMapper.insertSxRtDataList(map);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下实时数据批量插入异常：", e);
                 throw new RuntimeException();
             }
         }

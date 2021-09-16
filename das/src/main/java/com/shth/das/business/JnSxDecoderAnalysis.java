@@ -7,6 +7,7 @@ import com.shth.das.common.BaseAbstractDecoder;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.jnsx.*;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.function.Function;
  * @author: Shan Long
  * @create: 2021-08-09
  */
+@Slf4j
 public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
 
     /**
@@ -90,7 +92,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION).sync();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下第一次握手验证异常：", e);
                 return null;
             }
         }
@@ -121,7 +123,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     return handlerParam;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下第二次握手验证异常：", e);
                 return null;
             }
         }
@@ -154,7 +156,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     return handlerParam;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("松下焊机GL5软硬件参数异常：", e);
                 return null;
             }
         }
