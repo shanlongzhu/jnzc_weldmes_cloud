@@ -61,13 +61,13 @@
                         width="100"
                     >
                         <template #default="{row,rowIndex}">
-                            <span @click.stop="editFun(row.id,rowIndex)">
+                            <span @click.stop="editFun(row.id,rowIndex)" v-has="'edit'">
                                 <i
                                     style="font-size:16px; color:#1890ff;cursor:pointer;margin-left:10px"
                                     class="el-icon-edit"
                                 ></i>
                             </span>
-                            <span @click.stop="delFun(row.id)">
+                            <span @click.stop="delFun(row.id)" v-has="'del'">
                                 <i
                                     style="font-size:16px;color:red;cursor:pointer;margin-left:10px"
                                     class="el-icon-delete"

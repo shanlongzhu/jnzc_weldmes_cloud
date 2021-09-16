@@ -46,6 +46,7 @@
                     size="small"
                     icon="el-icon-plus"
                     @click="addFun"
+                    v-has="'add'"
                 >新增</el-button>
             </div>
             <div class="con-w">
@@ -55,8 +56,10 @@
                     :on-success="handleAvatarSuccess"
                     :headers="headers"
                     accept=".xlsx"
+                    v-has="'import'"
                 >
                     <el-button
+                        v-has="'import'"
                         size="small"
                         icon="el-icon-document-add"
                     >导入</el-button>
@@ -65,6 +68,7 @@
             </div>
             <div class="con-w">
                 <el-button
+                    v-has="'export'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="exprotExcelFun"
@@ -82,6 +86,7 @@
                     type="success"
                     plain
                     @click="changeAllStatus"
+                    v-has="'allStatus'"
                 >批量完成</el-button>
             </div>
             <div class="con-w">
@@ -90,6 +95,7 @@
                     type="danger"
                     plain
                     @click="delAll"
+                    v-has="'allDel'"
                 >批量删除</el-button>
             </div>
         </div>
@@ -120,9 +126,7 @@
                     min-width="160"
                     fixed="left"
                 >
-                <template
-                        slot="header"
-                    >
+                    <template slot="header">
                         <span>任务编号</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
@@ -133,9 +137,7 @@
                     width="130"
                     show-overflow-tooltip
                 >
-                <template
-                        slot="header"
-                    >
+                    <template slot="header">
                         <span>任务等级</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
@@ -145,9 +147,7 @@
                     align="left"
                     width="130"
                 >
-                <template
-                        slot="header"
-                    >
+                    <template slot="header">
                         <span>所属班组</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
@@ -229,6 +229,7 @@
                             type="primary"
                             plain
                             @click="editFun(scope.row.id)"
+                            v-has="'edit'"
                         >
                             修改
                         </el-button>
@@ -237,6 +238,7 @@
                             type="danger"
                             plain
                             @click="delProcessFun(scope.row.id)"
+                            v-has="'del'"
                         >
                             删除
                         </el-button>
@@ -254,6 +256,7 @@
                             type="warning"
                             plain
                             @click="isEnd(scope.row.id)"
+                            v-has="'isEnd'"
                         >
                             确认完成
                         </el-button>
@@ -270,6 +273,7 @@
                             type="info"
                             plain
                             @click="evelFun(scope.row)"
+                            v-has="'evel'"
                         >
                             评价
                         </el-button>
@@ -515,7 +519,7 @@ export default {
             // 分页
             page: 1,
             total: 0,
-            pageSize:10,
+            pageSize: 10,
             // 表格勾选数据
             selectTableAll: [],
             // 班组数据
@@ -595,7 +599,7 @@ export default {
                 },
                 reconnect: true,
                 onSuccess: (res) => {
-                    console.log('连接成功');                    
+                    console.log('连接成功');
                 }
             })
         },
@@ -618,7 +622,7 @@ export default {
             this.loading = true;
             const req = {
                 pn: this.page,
-                size:this.pageSize,
+                size: this.pageSize,
                 taskStatus: this.taskStatus,
                 grade: this.grade && this.grade.length > 0 ? this.grade.slice(-1).join('') : ''
             }
@@ -726,7 +730,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 const idList = this.selectTableAll.map(item => item.id)
-                const { code,data } = await changeAllStatus({ idList })
+                const { code, data } = await changeAllStatus({ idList })
                 if (code == 200) {
                     this.$message.success('操作成功')
                     this.selectTableAll = []
@@ -765,14 +769,14 @@ export default {
                         if (v[i].firmCode == '1') {
                             msg['weldType'] = 1;//设备类型
                             msg['weldIp'] = v[i].ipPath
-                        }else
-                        if (v[i].firmCode == '0') {
-                            msg['weldType'] = 0;//设备类型
-                            msg['gatherNo'] = v[i].gatherNo || "";//设备IP
-                        }
+                        } else
+                            if (v[i].firmCode == '0') {
+                                msg['weldType'] = 0;//设备类型
+                                msg['gatherNo'] = v[i].gatherNo || "";//设备IP
+                            }
                         msg['startFlag'] = 1;//开始标记
                         let msgStr = JSON.stringify(msg);
-                        this.newClientMq.publish('taskClaimIssue',msgStr,1)
+                        this.newClientMq.publish('taskClaimIssue', msgStr, 1)
                     }, 200 * i)
                 }
             }

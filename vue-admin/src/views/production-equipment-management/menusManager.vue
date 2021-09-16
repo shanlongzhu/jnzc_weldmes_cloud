@@ -11,6 +11,7 @@
             <el-button
                 size="small"
                 @click="append"
+                v-has="'add'"
             >添加顶级菜单</el-button>
         </div>
         <div class="flex tree-top-wrap">
@@ -42,6 +43,7 @@
                         <el-button
                             type="text"
                             size="mini"
+                            v-has="'edit'"
                             @click="() => editFun(data,node)"
                         >
                             <i
@@ -52,6 +54,7 @@
                         <el-button
                             type="text"
                             size="mini"
+                            v-has="'add'"
                             v-show="data.type=='1'"
                             @click="() => append(data,node)"
                         >
@@ -63,6 +66,7 @@
                         <el-button
                             type="text"
                             size="mini"
+                            v-has="'del'"
                             @click="() => remove(node, data)"
                         >
                             <i

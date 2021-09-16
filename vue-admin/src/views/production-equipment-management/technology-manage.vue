@@ -9,6 +9,7 @@
                     size="small"
                     icon="el-icon-plus"
                     @click="addFun"
+                    v-has="'addGYK'"
                 >新增工艺库</el-button>
             </div>
             <div class="con-w">
@@ -16,6 +17,7 @@
                     size="small"
                     icon="el-icon-document-add"
                     @click="commandIssueFun"
+                    v-has="'commandIssue'"
                 >控制命令下发</el-button>
             </div>
             <div class="con-w">
@@ -23,6 +25,7 @@
                     size="small"
                     icon="el-icon-document-remove"
                     @click="passwordIssueFun"
+                    v-has="'passwordIssue'"
                 >密码下发</el-button>
             </div>
             <div class="con-w">
@@ -30,12 +33,14 @@
                     size="small"
                     icon="el-icon-printer"
                     @click="setLockFun(1)"
+                    v-has="'setLock'"
                 >松下焊机通道锁定</el-button>
             </div>
             <div class="con-w">
                 <el-button
                     size="small"
                     @click="setLockFun(0)"
+                    v-has="'setLock'"
                 >松下焊机通道解锁</el-button>
             </div>
         </div>
@@ -130,6 +135,7 @@
                             type="warning"
                             plain
                             @click="issueOrdersFun(row)"
+                            v-has="'issueOrders'"
                         >
                             工艺库下发
                         </el-button>
@@ -138,6 +144,7 @@
                             type="success"
                             plain
                             @click="addLibraryFun(row)"
+                            v-has="'addGY'"
                         >
                             新增工艺
                         </el-button>
@@ -146,6 +153,7 @@
                             type="primary"
                             plain
                             @click="editFun(row.id)"
+                            v-has="'editGYK'"
                         >
                             修改
                         </el-button>
@@ -154,6 +162,7 @@
                             type="danger"
                             plain
                             @click="delFun(row.id)"
+                            v-has="'delGYK'"
                         >
                             删除
                         </el-button>

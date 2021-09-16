@@ -169,7 +169,7 @@
             </div>
             <div class="con-w">
                 <el-button
-                    v-has="'exprot'"
+                    v-has="'bind'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="bindMichFun"
@@ -177,7 +177,7 @@
             </div>
             <div class="con-w">
                 <el-button
-                    v-has="'exprot'"
+                    v-has="'bind'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="bindAreaFun"
@@ -185,7 +185,7 @@
             </div>
             <div class="con-w">
                 <el-button
-                    v-has="'exprot'"
+                    v-has="'bind'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="bindAreaFun2"

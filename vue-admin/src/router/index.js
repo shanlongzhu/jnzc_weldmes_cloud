@@ -149,7 +149,7 @@ export const asyncRoutes = [
           mark:'103',
           noCache:true
         }
-      }  
+      }
     ]
   },
   {
@@ -239,7 +239,7 @@ export const asyncRoutes = [
       // {
       //   path: 'table',
       //   component: () => import('@/views/charts/keyboard'),
-      //   name: 'DynamicTable',        
+      //   name: 'DynamicTable',
       //   meta: { title: '生产任务详情',mark:'401' }
       // },
       // {
@@ -257,9 +257,9 @@ export const asyncRoutes = [
           name: 'welderHistoryLine',
           meta: {
             title: '历史回溯',
-            mark:'601',
+            mark:'401',
             noCache: true }
-      }   
+      }
     ]
   },
   {
@@ -315,9 +315,9 @@ export const asyncRoutes = [
         name: 'taskDetail',
         meta: {
           title: '生产任务详情',
-          mark:'504'
+          mark:'505'
         }
-      }, 
+      },
       // {
       //   path: 'welding-task',
       //   component: () => import('@/views/productionDataStatistics/weldingMachine'),
@@ -326,7 +326,7 @@ export const asyncRoutes = [
       //     title: '焊机任务列表',
       //     mark:'505'
       //   }
-      // },      
+      // },
     ]
   },
   // {
@@ -349,7 +349,7 @@ export const asyncRoutes = [
   //           title: '历史曲线',
   //           mark:'601',
   //           noCache: true }
-  //     }     
+  //     }
   //   ]
   // },
   {
@@ -443,7 +443,7 @@ export const asyncRoutes = [
         meta: {
           mark:'801',
           title: '日志列表' }
-      }      
+      }
     ]
   },
   {
@@ -485,7 +485,7 @@ export const asyncRoutes = [
           activeMenu: '/example/list' ,
           noCache:true
         }
-      }      
+      }
     ]
   },
   /* {

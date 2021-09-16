@@ -78,6 +78,7 @@
                     size="small"
                     icon="el-icon-plus"
                     @click="addFun"
+                    v-has="'add'"
                 >新增</el-button>
             </div>
             <div class="con-w">
@@ -87,8 +88,10 @@
                     :on-success="handleAvatarSuccess"
                     :headers="headers"
                     accept=".xlsx"
+                    v-has="'import'"
                 >
                     <el-button
+                        v-has="'import'"
                         size="small"
                         icon="el-icon-document-add"
                     >导入</el-button>
@@ -100,6 +103,7 @@
                     size="small"
                     icon="el-icon-document-remove"
                     @click="exportExcelFun"
+                    v-has="'export'"
                 >导出</el-button>
             </div>
 
@@ -214,6 +218,7 @@
                             type="primary"
                             plain
                             @click="editFun(scope.row.id)"
+                            v-has="'edit'"
                         >
                             修改
                         </el-button>
@@ -222,6 +227,7 @@
                             type="danger"
                             plain
                             @click="delFun(scope.row.id)"
+                            v-has="'del'"
                         >
                             删除
                         </el-button>
