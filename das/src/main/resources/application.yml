@@ -45,7 +45,7 @@ spring:
 mqtt:
   host: localhost
   port: 1883
-  clientId: das
+  clientId: jndas
   username: admin
   password: 123456
   connectionTimeout: 30000
