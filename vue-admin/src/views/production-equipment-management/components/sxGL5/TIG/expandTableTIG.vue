@@ -127,6 +127,7 @@
                         type="primary"
                         plain
                         @click="editFun(row.id)"
+                        v-has="'editGY'"
                     >
                         修改
                     </el-button>
@@ -135,6 +136,7 @@
                         type="danger"
                         plain
                         @click="delFun(row.id)"
+                        v-has="'delGY'"
                     >
                         删除
                     </el-button>

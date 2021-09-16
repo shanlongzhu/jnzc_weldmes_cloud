@@ -53,6 +53,7 @@
                             size="small"
                             icon="el-icon-plus"
                             @click="addFun"
+                            v-has="'add'"
                         >新增</el-button>
                     </div>
                 </div>
@@ -111,6 +112,7 @@
                                     type="primary"
                                     plain
                                     @click="editFun(row.childrenId||row.id)"
+                                    v-has="'edit'"
                                 >
                                     修改
                                 </el-button>
@@ -119,6 +121,7 @@
                                     type="danger"
                                     plain
                                     @click="delFun(row.childrenId||row.id)"
+                                    v-has="'del'"
                                 >
                                     删除
                                 </el-button>
