@@ -180,4 +180,14 @@ public class MachineWeldsxInfo {
      */
     private String equipTypeStr;
 
+    /**
+     * 区域
+     */
+    private Long area;
+
+    /**
+     * 跨间
+     */
+    private Long bay;
+
 }
