@@ -212,7 +212,7 @@
         sxm.weld_model model,sxm.weld_firm firm,NULL is_network,
         GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,d.value_name typeStr,d1.value_name statusStr,
         d2.value_name firmStr,sxm.weld_model modelStr,s.`name`,sxm.weld_ip,sxm.area,
-        sxm.bay,d4.value_name areaStr,d5.value_name bayStr
+        sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag
         FROM machine_weldsx_info sxm
         LEFT JOIN sys_dictionary d ON sxm.equip_type = d.id
         LEFT JOIN sys_dictionary d1 ON sxm.weld_status = d1.id
@@ -230,7 +230,7 @@
         (SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,
         m.model,m.firm,m.is_network,GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,
         d.value_name typeStr,d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,
-        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag
         FROM machine_weld_info m
         LEFT JOIN sys_dictionary d ON m.type = d.id
         LEFT JOIN sys_dictionary d1 ON m.`status` = d1.id
