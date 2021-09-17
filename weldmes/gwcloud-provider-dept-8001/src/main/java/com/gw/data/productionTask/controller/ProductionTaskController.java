@@ -9,6 +9,7 @@ import com.gw.entities.WeldStatisticsData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -49,28 +50,47 @@ public class ProductionTaskController {
             cell.setCellValue(titles[i]);
         }
         for (int i = 0; i < list.size(); i++) {
+
             row = sheet.createRow(i + 1);
             WeldStatisticsData weldStatisticsData = list.get(i);
+
             Cell getFWelderNoCell = row.createCell(0);
             getFWelderNoCell.setCellValue(weldStatisticsData.getWelderInfo().getWelderNo());
+
             Cell getWelderNameCell = row.createCell(1);
             getWelderNameCell.setCellValue(weldStatisticsData.getWelderInfo().getWelderName());
+
             Cell getFWeldNoCell = row.createCell(2);
             getFWeldNoCell.setCellValue(weldStatisticsData.getMachineWeldInfo().getMachineNo());
+
             Cell getFJunctionNoCell = row.createCell(3);
             getFJunctionNoCell.setCellValue(weldStatisticsData.getTaskInfo().getTaskNo());
+
             Cell getRealityStartTimeCell = row.createCell(4);
             getRealityStartTimeCell.setCellValue(weldStatisticsData.getTaskInfo().getRealityStarttime());
+
             Cell getRealityEndTimeCell = row.createCell(5);
             getRealityEndTimeCell.setCellValue(weldStatisticsData.getTaskInfo().getRealityEndtime());
+
             Cell eleScopeCell = row.createCell(6);
             eleScopeCell.setCellValue(weldStatisticsData.getEleScope());
+
             Cell electricityCell = row.createCell(7);
-            electricityCell.setCellValue((RichTextString) weldStatisticsData.getElectricity());
+            if(ObjectUtils.isEmpty(weldStatisticsData.getElectricity())){
+                electricityCell.setCellValue("");
+            }else{
+                electricityCell.setCellValue(weldStatisticsData.getElectricity().doubleValue());
+            }
+
             Cell volScopeCell = row.createCell(8);
             volScopeCell.setCellValue(weldStatisticsData.getVolScope());
+
             Cell voltageyCell = row.createCell(9);
-            voltageyCell.setCellValue((RichTextString) weldStatisticsData.getVoltage());
+            if(ObjectUtils.isEmpty(weldStatisticsData.getVoltage())){
+                voltageyCell.setCellValue("");
+            }else{
+                voltageyCell.setCellValue(weldStatisticsData.getVoltage().doubleValue());
+            }
         }
         try {
             String time=new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
