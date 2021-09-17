@@ -144,6 +144,12 @@
             <artifactId>guava</artifactId>
             <version>28.1-jre</version>
         </dependency>
+        <!-- 使用oshi获取系统CPU，内存信息 -->
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>3.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -322,7 +322,7 @@ public class JnOtcRtDataProtocol {
                             String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
                             data.setWeldTime(weldDateTime);
                         } catch (Exception e) {
-                            log.error("OTC1.0实时数据时间格式异常:", e);
+                            log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
                             data.setWeldTime(nowDateTime);
                         }
                         data.setWeldIp(clientIp);
@@ -456,7 +456,7 @@ public class JnOtcRtDataProtocol {
                                 data.setWeldTime(nowDateTime);
                             }
                         } catch (Exception e) {
-                            log.error("OTC1.0实时数据时间格式异常:", e);
+                            log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
