@@ -206,28 +206,45 @@
         select id,machine_no machineNo from machine_weld_info
     </select>
 
-    <!--根据 部门d列表 查询设备信息列表-->
+    <!--根据 部门id列表 查询设备信息列表-->
     <select id="selectMachineWeldInfosByDeptIds" parameterType="Long" resultType="com.gw.entities.MachineWeldInfo">
-        SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,
-               m.`status`,m.model,m.firm,m.is_network,
-               GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,
-               d.value_name typeStr,d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,
-               s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
-        from machine_weld_info m
-        left join sys_dictionary d on m.type = d.id
-        left join sys_dictionary d1 on m.`status` = d1.id
-        left join sys_dictionary d2 on m.firm = d2.id
-        left join sys_dictionary d3 on m.model = d3.id
-        left join sys_dictionary d4 on m.area = d4.id
-        left join sys_dictionary d5 on m.bay = d5.id
-        left join sys_dept s on m.dept_id = s.id
-        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
-		where m.dept_id in
+        (SELECT sxm.id,sxm.weld_code machine_no,sxm.create_time,sxm.equip_type type,sxm.dept_id,machine_gather_info.id g_id,sxm.weld_status,
+        sxm.weld_model model,sxm.weld_firm firm,NULL is_network,
+        GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,d.value_name typeStr,d1.value_name statusStr,
+        d2.value_name firmStr,sxm.weld_model modelStr,s.`name`,sxm.weld_ip,sxm.area,
+        sxm.bay,d4.value_name areaStr,d5.value_name bayStr
+        FROM machine_weldsx_info sxm
+        LEFT JOIN sys_dictionary d ON sxm.equip_type = d.id
+        LEFT JOIN sys_dictionary d1 ON sxm.weld_status = d1.id
+        LEFT JOIN sys_dictionary d2 ON sxm.weld_firm = d2.id
+        LEFT JOIN sys_dictionary d4 ON sxm.area = d4.id
+        LEFT JOIN sys_dictionary d5 ON sxm.bay = d5.id
+        LEFT JOIN sys_dept s ON sxm.dept_id = s.id
+        LEFT JOIN machine_gather_info ON FIND_IN_SET( machine_gather_info.gather_no, sxm.weld_cid )
+        WHERE sxm.dept_id IN
         <foreach collection="deptIds" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
-		group by
-        m.machine_no
+        GROUP BY sxm.weld_code )
+        UNION ALL
+        (SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,
+        m.model,m.firm,m.is_network,GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,
+        d.value_name typeStr,d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,
+        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        FROM machine_weld_info m
+        LEFT JOIN sys_dictionary d ON m.type = d.id
+        LEFT JOIN sys_dictionary d1 ON m.`status` = d1.id
+        LEFT JOIN sys_dictionary d2 ON m.firm = d2.id
+        LEFT JOIN sys_dictionary d3 ON m.model = d3.id
+        LEFT JOIN sys_dictionary d4 ON m.area = d4.id
+        LEFT JOIN sys_dictionary d5 ON m.bay = d5.id
+        LEFT JOIN sys_dept s ON m.dept_id = s.id
+        LEFT JOIN machine_gather_info ON FIND_IN_SET( machine_gather_info.id, m.g_id )
+        WHERE m.dept_id IN
+        <foreach collection="deptIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY m.machine_no)
     </select>
 
     <!--查询焊机列表(是否绑定了任务)-->
