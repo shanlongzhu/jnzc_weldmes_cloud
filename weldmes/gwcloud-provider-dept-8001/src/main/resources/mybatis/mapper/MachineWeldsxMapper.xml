@@ -29,6 +29,8 @@
         <result property="deptId" column="dept_id"></result>
         <result property="createTime" column="create_time"></result>
         <result property="equipType" column="equip_type"></result>
+        <result property="area" column="area"></result>
+        <result property="bay" column="bay"></result>
     </resultMap>
 
     <!--松下设备列表查询-->
@@ -39,7 +41,7 @@
         sx.cpu1_version,sx.cpu2_no,cpu2_model,dic4.value_name cpu2ModelStr,
         sx.cpu2_version,sx.cpu3_no,cpu3_model,dic5.value_name cpu3ModelStr,sx.cpu3_version,weld_status,
         dic6.value_name weldStatusStr,weld_firm,dic7.value_name weldFirmStr,equip_type,dic8.value_name equipTypeStr,
-        dept_id,dept.name deptIdStr,sx.create_time
+        dept_id,dept.name deptIdStr,sx.create_time,sx.area,sx.bay
         from machine_weldsx_info sx
         left join sys_dictionary dic on dic.id = sx.power_supply
         left join sys_dictionary dic1 on dic1.id = sx.wire_feeder_model
@@ -62,14 +64,15 @@
     <insert id="insertMachineWeldsxInfo" parameterType="com.gw.entities.MachineWeldsxInfo">
         insert into machine_weldsx_info(weld_no,weld_cid,weld_code,weld_ip,weld_model,power_supply,wire_feeder_model,
         weld_kind,weld_cpu_num,cpu1_no,cpu1_model,cpu1_version,cpu2_no,cpu2_model,cpu2_version,cpu3_no,cpu3_model,
-        cpu3_version,weld_status,weld_firm,dept_id,create_time,equip_type)
+        cpu3_version,weld_status,weld_firm,dept_id,create_time,equip_type,area,bay)
         values(#{machineWeldsxInfo.weldNo},#{machineWeldsxInfo.weldCid},#{machineWeldsxInfo.weldCode},#{machineWeldsxInfo.weldIp},
         #{machineWeldsxInfo.weldModel},#{machineWeldsxInfo.powerSupply},
         #{machineWeldsxInfo.wireFeederModel},#{machineWeldsxInfo.weldKind},#{machineWeldsxInfo.weldCpuNum},
         #{machineWeldsxInfo.cpu1No},#{machineWeldsxInfo.cpu1Model},
         #{machineWeldsxInfo.cpu1Version},#{machineWeldsxInfo.cpu2No},#{machineWeldsxInfo.cpu2Model},#{machineWeldsxInfo.cpu2Version},
         #{machineWeldsxInfo.cpu3No},#{machineWeldsxInfo.cpu3Model},#{machineWeldsxInfo.cpu3Version},#{machineWeldsxInfo.weldStatus},
-        #{machineWeldsxInfo.weldFirm},#{machineWeldsxInfo.deptId},#{machineWeldsxInfo.createTime},#{machineWeldsxInfo.equipType})
+        #{machineWeldsxInfo.weldFirm},#{machineWeldsxInfo.deptId},#{machineWeldsxInfo.createTime},#{machineWeldsxInfo.equipType},
+        #{machineWeldsxInfo.area},#{machineWeldsxInfo.bay})
     </insert>
 
     <!--根据 id  查询 松下设备信息-->
@@ -80,7 +83,7 @@
         sx.cpu1_version,sx.cpu2_no,cpu2_model,dic4.value_name cpu2ModelStr,
         sx.cpu2_version,sx.cpu3_no,cpu3_model,dic5.value_name cpu3ModelStr,sx.cpu3_version,weld_status,
         dic6.value_name weldStatusStr,weld_firm,dic7.value_name weldFirmStr,equip_type,dic8.value_name equipTypeStr,
-        dept_id,dept.name deptIdStr,sx.create_time
+        dept_id,dept.name deptIdStr,sx.create_time,sx.area,sx.bay
         from machine_weldsx_info sx
         left join sys_dictionary dic on dic.id = sx.power_supply
         left join sys_dictionary dic1 on dic1.id = sx.wire_feeder_model
@@ -109,7 +112,8 @@
         cpu3_model = #{machineWeldsxInfo.cpu3Model},
         cpu3_version = #{machineWeldsxInfo.cpu3Version},weld_status = #{machineWeldsxInfo.weldStatus},
         weld_firm = #{machineWeldsxInfo.weldFirm},dept_id = #{machineWeldsxInfo.deptId},
-        create_time = #{machineWeldsxInfo.createTime},equip_type = #{machineWeldsxInfo.equipType}
+        create_time = #{machineWeldsxInfo.createTime},equip_type = #{machineWeldsxInfo.equipType},
+        area = #{machineWeldsxInfo.area},bay = #{machineWeldsxInfo.bay}
         where id = #{machineWeldsxInfo.id}
     </update>
 
