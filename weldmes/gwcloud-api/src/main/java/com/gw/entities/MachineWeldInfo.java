@@ -85,4 +85,9 @@ public class MachineWeldInfo implements Serializable {
      */
     private String gatherNo;
 
+    /**
+     * 设备标识
+     */
+    private String macFlag;
+
 }
