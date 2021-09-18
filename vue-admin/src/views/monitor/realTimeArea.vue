@@ -44,7 +44,7 @@
                 >
                     <div class="real-con-box flex-n">
                         <div
-                            class="real-con-item flex-n"
+                            class="real-con-item flex"
                             v-for="item in list"
                             :key="item.id"
                             @click="handlerWeld(item)"
@@ -370,8 +370,8 @@ export default {
         },
 
         setLineData (arr) {
-            if (this.selectItem.hasOwnProperty('gatherNo')) {
-                let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
+            if (this.selectItem.machineGatherInfo.hasOwnProperty('gatherNo')) {
+                let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.machineGatherInfo.gatherNo));
                 if (filterArr.length > 0) {
                     this.mqttLastData = filterArr.slice(-1)[0];
                     if (this.lineData.length > 15) {
@@ -591,14 +591,24 @@ export default {
     font-size: 12px;
     align-items: center;
     padding: 10px;
-    width: 230px;
+    width: 260px;
 }
 .real-con-item .real-con-item-img {
     margin-right: 6px;
+    width: 100px;
+}
+.real-con-item .real-con-item-txt{
+    flex:1;
 }
 .real-con-item .real-con-item-txt p {
     margin: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+    width: 130px;
 }
+
 .real-con-item .real-con-item-txt p span {
     color: #666;
 }

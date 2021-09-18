@@ -204,7 +204,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="weldStatus"
+                    prop="weldStatusStr"
                     label="状态"
                     align="left"
                     min-width="60"
@@ -221,6 +221,120 @@
                         <span>设备机型</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
+                <el-table-column
+                    prop="powerSupplyStr"
+                    label="电源类型"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="wireFeederModelStr"
+                    label="送丝机类型"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="weldKindStr"
+                    label="设备种类"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+
+                <el-table-column
+                    prop="weldCpuNum"
+                    label="焊机CPU个数"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu1No"
+                    label="cpu1编号"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu1ModelStr"
+                    label="cpu1类型"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu1Version"
+                    label="cpu1软件版本"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu2No"
+                    label="cpu2编号"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu2ModelStr"
+                    label="cpu2类型"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu2Version"
+                    label="cpu2软件版本"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu3No"
+                    label="cpu3编号"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu3ModelStr"
+                    label="cpu3类型"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="cpu3Version"
+                    label="cpu3软件版本"
+                    align="left"
+                    min-width="120"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="deptIdStr"
+                    label="所属项目"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="createTime"
+                    label="创建时间"
+                    align="left"
+                    min-width="150"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="weldFirmStr"
+                    label="生产厂商"
+                    align="left"
+                    min-width="100"
+                >
+                </el-table-column>
+
                 <el-table-column
                     label="操作"
                     align="left"
@@ -269,7 +383,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             :total="total"
-            @current-change="handleCurrentChange"            
+            @current-change="handleCurrentChange"
         />
 
         <!-- 新增/修改 -->
@@ -582,6 +696,49 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="区域"
+                            prop="area"
+                        >
+                            <el-select
+                                v-model="ruleForm.area"
+                                placeholder="请选择"
+                                style="width:250px"
+                                @change="changeArea"
+                            >
+                                <el-option
+                                    v-for="item in areaArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="跨间"
+                            prop="bay"
+                        >
+                            <el-select
+                                v-model="ruleForm.bay"
+                                placeholder="请选择"
+                                style="width:250px"
+                            >
+                                <el-option
+                                    v-for="item in straddleArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
                 <el-row>
                     <el-col :span="12">
                         <el-form-item
@@ -642,7 +799,7 @@ export default {
         return {
             //搜索条件
             searchObj: {
-                equipType:''
+                equipType: ''
             },
             //搜索条件设备型号
             modelArr2: [],
@@ -656,57 +813,53 @@ export default {
             ruleFormObj: {
             },
             ruleForm: {
-                "weldNo": "0006",
-                "weldCid": "7008",
-                "weldCode": "0C22380000",
-                "weldIp": "192.168.3.10",
-                "weldModel": "YD-500GL4",
-                "powerSupply": 88,
-                "powerSupplyStr": "250A",
-                "wireFeederModel": 94,
-                "wireFeederModelStr": "印刷电机",
-                "weldKind": 121,
-                "weldKindStr": "CO2/MAG",
-                "weldCpuNum": 3,
-                "cpu1No": "1",
-                "cpu1Model": 97,
-                "cpu1ModelStr": "M16C65",
-                "cpu1Version": "TSMP15781090",
-                "cpu2No": "1",
-                "cpu2Model": 106,
-                "cpu2ModelStr": "30624",
-                "cpu2Version": "TSMP15791100",
-                "cpu3No": "1",
-                "cpu3Model": 113,
-                "cpu3ModelStr": "M16C65",
-                "cpu3Version": 1,
-                "weldStatus": 15,
-                "weldStatusStr": "手工焊",
-                "weldFirm": 21,
-                "weldFirmStr": "OTC",
-                "deptId": 6,
-                "deptIdStr": "装焊一区1",
-                "createTime": "2021-07-01 16:13:18"
+                weldNo: "",
+                weldCid: "",
+                weldCode: "",
+                weldIp: "",
+                weldModel: "",
+                powerSupply: "",
+                powerSupplyStr: "",
+                wireFeederModel: "",
+                wireFeederModelStr: "",
+                weldKind: "",
+                weldKindStr: "",
+                weldCpuNum: "",
+                cpu1No: "",
+                cpu1Model: "",
+                cpu1ModelStr: "",
+                cpu1Version: "",
+                cpu2No: "",
+                cpu2Model: "",
+                cpu2ModelStr: "",
+                cpu2Version: "",
+                cpu3No: "",
+                cpu3Model: "",
+                cpu3ModelStr: "",
+                cpu3Version: "",
+                weldStatus: "",
+                weldStatusStr: "",
+                weldFirm: 21,
+                weldFirmStr: "",
+                deptId: "",
+                deptIdStr: "",
+                createTime: "",
+                area: '',//区域
+                bay: ''//跨间
             },
             rules: {
-                machineNo: [
+                weldNo: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                type: [
-                    { required: true, message: '不能为空', trigger: 'change' }
+                weldCid: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                deptId: [
-                    { required: true, message: '不能为空', trigger: 'change' }
+                weldIp: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                firm: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                gid: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
-                model: [
-                    { required: true, message: '不能为空', trigger: 'change' }
-                ],
+                weldCode: [
+                    { required: true, message: '不能为空', trigger: 'blur' }
+                ],                
                 area: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],

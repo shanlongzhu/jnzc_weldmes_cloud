@@ -8,7 +8,7 @@
             style="flex:1; height:0px"
         >
             <div
-            v-show="isMenuShow"
+                v-show="isMenuShow"
                 class="user-l"
                 style='height:100%;width:300px;border:1px solid #ddd;'
             >
@@ -19,7 +19,11 @@
                     <organization @currentChangeTree="currentChangeTree"></organization>
                 </div>
             </div>
-            <div style="width:10px" class="flex-c btn-show-hide" @click="changeMenuShowHide"><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}" ></span></div>
+            <div
+                style="width:10px"
+                class="flex-c btn-show-hide"
+                @click="changeMenuShowHide"
+            ><span :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"></span></div>
             <div
                 class="user-r flex-c real-tit"
                 style='height:100%;flex:1; width:0px'
@@ -40,7 +44,7 @@
                 >
                     <div class="real-con-box flex-n">
                         <div
-                            class="real-con-item flex-n"
+                            class="real-con-item flex"
                             v-for="item in list"
                             :key="item.id"
                             @click="handlerWeld(item)"
@@ -49,7 +53,7 @@
                                 <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
-                                <p><span>设备编号：</span>{{item.machineNo||'--'}}</p>
+                                <p :title="item.machineNo"><span>设备编号：</span>{{item.macFlag}}-{{item.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{item.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{item.welderName||'--'}}</p>
                                 <p><span>焊接电流：</span>{{item.electricity||item.electricity===0?item.electricity:'--'}}A</p>
@@ -224,7 +228,7 @@ export default {
 
             mqttLastData: {},
 
-            isMenuShow:true
+            isMenuShow: true
 
 
 
@@ -260,7 +264,16 @@ export default {
                     this.newClientMq.subscribe('jnOtcV1RtData', {
                         qos: 0,
                         onSuccess: function (e) {
-                            console.log("下发返回主题订阅成功：jnOtcV1RtData");
+                            console.log("返回主题订阅成功：jnOtcV1RtData");
+                        },
+                        onFailure: function (e) {
+                            console.log(e);
+                        }
+                    });
+                    this.newClientMq.subscribe('jnSxRtData', {
+                        qos: 0,
+                        onSuccess: function (e) {
+                            console.log("返回主题订阅成功：jnSxRtData");
                         },
                         onFailure: function (e) {
                             console.log(e);
@@ -268,9 +281,25 @@ export default {
                     })
                 }
             })
-            this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {                
+            this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
+                //otc设备实时监测
                 if (destinationName == 'jnOtcV1RtData') {
                     var datajson = JSON.parse(payloadString);
+                    console.log(datajson)
+                    if (datajson.length > 0) {
+                        if (!this.drawer) {
+                            //更新列表状态
+                            this.setData(datajson);
+                        } else {
+                            //获取曲线数据
+                            this.setLineData(datajson);
+                        }
+                    }
+                }
+                //sx设备实时监测
+                if (destinationName == 'jnSxRtData') {
+                    var datajson = JSON.parse(payloadString);
+                    console.log(datajson)
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -289,7 +318,7 @@ export default {
             //统计
             for (let b of arr) {
                 let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
-                if (this.searchObj.id!=1) {
+                if (this.searchObj.id != 1) {
                     if (isThat.length > 0) {
                         this.totalNum(b);
                     }
@@ -547,7 +576,7 @@ export default {
                 this.warnArray.push(v.gatherNo);
             }
         },
-        changeMenuShowHide(){
+        changeMenuShowHide () {
             this.isMenuShow = !this.isMenuShow;
         }
     }
@@ -590,13 +619,22 @@ export default {
     font-size: 12px;
     align-items: center;
     padding: 10px;
-    width: 230px;
+    width: 260px;
 }
 .real-con-item .real-con-item-img {
     margin-right: 6px;
+    width: 100px;
+}
+.real-con-item .real-con-item-txt{
+    flex:1;
 }
 .real-con-item .real-con-item-txt p {
     margin: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+    width: 130px;
 }
 .real-con-item .real-con-item-txt p span {
     color: #666;
