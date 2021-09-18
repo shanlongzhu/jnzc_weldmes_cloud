@@ -208,7 +208,7 @@
 
     <!--根据 部门id列表 查询设备信息列表-->
     <select id="selectMachineWeldInfosByDeptIds" parameterType="Long" resultType="com.gw.entities.MachineWeldInfo">
-        (SELECT sxm.id,sxm.weld_code machine_no,sxm.create_time,sxm.equip_type type,sxm.dept_id,machine_gather_info.id g_id,sxm.weld_status,
+        (SELECT sxm.id,sxm.weld_cid machine_no,sxm.create_time,sxm.equip_type type,sxm.dept_id,machine_gather_info.id g_id,sxm.weld_status,
         sxm.sx_model model,sxm.weld_firm firm,NULL is_network,
         GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,d.value_name typeStr,d1.value_name statusStr,
         d2.value_name firmStr,sxm.weld_model modelStr,s.`name`,sxm.weld_ip,sxm.area,
