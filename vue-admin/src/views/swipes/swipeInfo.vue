@@ -443,7 +443,7 @@ export default {
                 this.$confirm(this.selectTask.craftRemarks, '工艺备注', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type: 'warning'
+                type: 'warning',
             }).then(() => {
                 this.bindTaskData();
             }).catch(() => { })
@@ -675,5 +675,8 @@ export default {
     .el-row {
         padding: 10px 0;
     }
+}
+.el-message-box__message{
+    white-space: pre;
 }
 </style>
