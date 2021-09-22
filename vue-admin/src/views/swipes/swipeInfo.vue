@@ -110,17 +110,17 @@
                         <vxe-table-column
                             field="taskNo"
                             title="任务号"
-                            width="80"
+                            min-width="120"
                         ></vxe-table-column>
                         <vxe-table-column
                             field="taskName"
                             title="任务名称"
-                            min-width="100"
+                            min-width="80"
                         ></vxe-table-column>
                         <vxe-table-column
                             field="statusStr"
                             title="任务状态"
-                            width="120"
+                            width="80"
                         ></vxe-table-column>
                     </vxe-table>
                 </div>
@@ -439,57 +439,69 @@ export default {
             if (!this.selectTask.hasOwnProperty("id")) {
                 return this.$message.error('请选择任务');
             }
-            this.createConnection();
-            setTimeout(() => {
-                let msg = {}
-                msg['welderId'] = this.welderInfo.id;//焊工ID
-                msg['welderName'] = this.welderInfo.welderName;//焊工姓名
-                msg['welderDeptId'] = this.welderInfo.deptId;//焊工组织ID
-                msg['welderNo'] = this.welderInfo.welderNo;//焊工编号
-                msg['taskId'] = this.selectTask.id;//任务ID
-                msg['taskName'] = this.selectTask.taskName;//任务名称
-                msg['taskNo'] = this.selectTask.taskNo;//任务编号
-
-                msg['machineId'] = this.curModel.id;//焊机ID
-                msg['machineNo'] = this.curModel.machineNo;//焊机编号
-                msg['machineDeptId'] = this.curModel.deptId;//焊机组织ID
-
-
-
-                msg['weldIp'] = "";
-                msg['gatherNo'] = "";
-                if (this.curModel.sysDictionary.valueNamess == 'OTC') {
-                    msg['weldType'] = 0;//设备类型
-                    msg['gatherNo'] = this.curModel.machineGatherInfo.gatherNo;//采集编号
-                }
-                if (this.curModel.sysDictionary.valueNamess == '松下') {
-                    msg['weldType'] = 1;//设备类型
-                    msg['weldIp'] = this.curModel.ipPath || "";//设备IP
-                }
-                msg['startFlag'] = 0;//开始标记
-
-                this.doPublish(JSON.stringify(msg));
-                console.log(msg)
-                this.addTaskClaimInfo(msg);
-                this.butLoading = true;
-                //记时触发下发失败
-                this.issueTimeOut();
-                this.$message({
-                    message: '已发送',
-                    type: 'success',
-                    duration:'1000'
-                });
-
-                if (this.timeout) {
-                    clearTimeout(this.timeout);
-                }
-                setTimeout(() => {
-                    this.client.end();
-                    this.$router.replace({ path: '/swipeCard' })
-                }, 1000)
-
-            }, 500);
+            if(this.selectTask.craftRemarks&&this.selectTask.craftRemarks.trim()!=""){
+                this.$confirm(this.selectTask.craftRemarks, '工艺备注', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.bindTaskData();
+            }).catch(() => { })
+            }else{
+                this.bindTaskData();
+            }
         },
+
+        bindTaskData () {
+            let msg = {}
+            msg['welderId'] = this.welderInfo.id;//焊工ID
+            msg['welderName'] = this.welderInfo.welderName;//焊工姓名
+            msg['welderDeptId'] = this.welderInfo.deptId;//焊工组织ID
+            msg['welderNo'] = this.welderInfo.welderNo;//焊工编号
+            msg['taskId'] = this.selectTask.id;//任务ID
+            msg['taskName'] = this.selectTask.taskName;//任务名称
+            msg['taskNo'] = this.selectTask.taskNo;//任务编号
+
+            msg['machineId'] = this.curModel.id;//焊机ID
+            msg['machineNo'] = this.curModel.machineNo;//焊机编号
+            msg['machineDeptId'] = this.curModel.deptId;//焊机组织ID
+
+
+
+            msg['weldIp'] = "";
+            msg['gatherNo'] = "";
+            if (this.curModel.sysDictionary.valueNamess == 'OTC') {
+                msg['weldType'] = 0;//设备类型
+                msg['gatherNo'] = this.curModel.machineGatherInfo.gatherNo;//采集编号
+            }
+            if (this.curModel.sysDictionary.valueNamess == '松下') {
+                msg['weldType'] = 1;//设备类型
+                msg['weldIp'] = this.curModel.ipPath || "";//设备IP
+            }
+            msg['startFlag'] = 0;//开始标记
+
+            this.doPublish(JSON.stringify(msg));
+            console.log(msg)
+            this.addTaskClaimInfo(msg);
+            this.butLoading = true;
+            //记时触发下发失败
+            this.issueTimeOut();
+            this.$message({
+                message: '已发送',
+                type: 'success',
+                duration: '1000'
+            });
+
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+            }
+            setTimeout(() => {
+                this.client.end();
+                this.$router.replace({ path: '/swipeCard' })
+            }, 1000)
+        },
+
+
         //下发超时
         issueTimeOut (n) {
             this.timeout = setTimeout(() => {
@@ -537,7 +549,7 @@ export default {
         }, 1000)
     },
     mounted () {
-
+        this.createConnection();
     },
 }
 </script>

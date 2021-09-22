@@ -218,6 +218,12 @@
                     width="120"
                 />
                 <el-table-column
+                    prop="craftRemarks"
+                    label="工艺备注"
+                    align="left"
+                    width="150"
+                />
+                <el-table-column
                     label="操 作"
                     align="left"
                     fixed="right"
@@ -298,7 +304,7 @@
         <el-dialog
             :title="title"
             :visible.sync="visable1"
-            width="600px"
+            width="700px"
         >
             <el-form
                 ref="ruleForm"
@@ -307,124 +313,171 @@
                 label-width="100px"
                 class="demo-ruleForm"
             >
-                <el-form-item
-                    label="任务编号"
-                    prop="taskNo"
-                >
-                    <el-input
-                        v-model="ruleForm.taskNo"
-                        style="width:200px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="任务等级"
-                    prop="grade"
-                >
-                    <el-select
-                        v-model="ruleForm.grade"
-                        placeholder="请选择"
-                        style="width:200px"
-                        @change="changeSelectGetWelder"
-                    >
-                        <el-option
-                            v-for="item in levelArr"
-                            :key="item.id"
-                            :label="item.valueName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="所属班组"
-                    prop="deptId"
-                >
-                    <el-cascader
-                        v-model="ruleForm.deptId"
-                        size="small"
-                        style="width:200px"
-                        clearable
-                        :options="teamArr"
-                        :props="defalutProps"
-                        :show-all-levels="false"
-                        @change="changeSelectGetWelder"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="焊工姓名"
-                    prop="welderId"
-                >
-                    <el-select
-                        v-model="ruleForm.welderId"
-                        placeholder="请选择"
-                        style="width:200px"
-                    >
-                        <el-option
-                            v-for="item in welderArr"
-                            :key="item.id"
-                            :label="item.welderName"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item
-                    label="电压上限"
-                    prop="volMax"
-                >
-                    <el-input
-                        v-model="ruleForm.volMax"
-                        style="width:200px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="电压下限"
-                    prop="volMin"
-                >
-                    <el-input
-                        v-model="ruleForm.volMin"
-                        style="width:200px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="电流上限"
-                    prop="eleMax"
-                >
-                    <el-input
-                        v-model="ruleForm.eleMax"
-                        style="width:200px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="电流下限"
-                    prop="eleMin"
-                >
-                    <el-input
-                        v-model="ruleForm.eleMin"
-                        style="width:200px"
-                    />
-                </el-form-item>
-                <el-form-item
-                    label="计划时间"
-                    prop="planStarttime"
-                >
-                    <el-date-picker
-                        v-model="dateTime"
-                        style="width:98%"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetimerange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        @change="changeTime"
-                    />
-                </el-form-item>
-
-                <el-form-item>
-                    <el-button
-                        type="primary"
-                        @click="submitForm('ruleForm')"
-                    >保存</el-button>
-                    <el-button @click="visable1 = false">取消</el-button>
-                </el-form-item>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="任务编号"
+                            prop="taskNo"
+                        >
+                            <el-input
+                                v-model="ruleForm.taskNo"
+                                style="width:200px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="任务等级"
+                            prop="grade"
+                        >
+                            <el-select
+                                v-model="ruleForm.grade"
+                                placeholder="请选择"
+                                style="width:200px"
+                                @change="changeSelectGetWelder"
+                            >
+                                <el-option
+                                    v-for="item in levelArr"
+                                    :key="item.id"
+                                    :label="item.valueName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="所属班组"
+                            prop="deptId"
+                        >
+                            <el-cascader
+                                v-model="ruleForm.deptId"
+                                size="small"
+                                style="width:200px"
+                                clearable
+                                :options="teamArr"
+                                :props="defalutProps"
+                                :show-all-levels="false"
+                                @change="changeSelectGetWelder"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="焊工姓名"
+                            prop="welderId"
+                        >
+                            <el-select
+                                v-model="ruleForm.welderId"
+                                placeholder="请选择"
+                                style="width:200px"
+                            >
+                                <el-option
+                                    v-for="item in welderArr"
+                                    :key="item.id"
+                                    :label="item.welderName"
+                                    :value="item.id"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="电压上限"
+                            prop="volMax"
+                        >
+                            <el-input
+                                v-model="ruleForm.volMax"
+                                style="width:200px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="电压下限"
+                            prop="volMin"
+                        >
+                            <el-input
+                                v-model="ruleForm.volMin"
+                                style="width:200px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="电流上限"
+                            prop="eleMax"
+                        >
+                            <el-input
+                                v-model="ruleForm.eleMax"
+                                style="width:200px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item
+                            label="电流下限"
+                            prop="eleMin"
+                        >
+                            <el-input
+                                v-model="ruleForm.eleMin"
+                                style="width:200px"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="20">
+                        <el-form-item
+                            label="工艺备注"
+                            prop="craftRemarks"
+                        >
+                            <el-input
+                                type="textarea"
+                                :rows="2"
+                                placeholder="请输入内容"
+                                v-model="ruleForm.craftRemarks"
+                            >
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="20">
+                        <el-form-item
+                            label="计划时间"
+                            prop="planStarttime"
+                        >
+                            <el-date-picker
+                                v-model="dateTime"
+                                style="width:98%"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                type="datetimerange"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                @change="changeTime"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item>
+                            <el-button
+                                type="primary"
+                                @click="submitForm('ruleForm')"
+                            >保存</el-button>
+                            <el-button @click="visable1 = false">取消</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
         </el-dialog>
 
@@ -500,6 +553,7 @@ export default {
                 eleMin: '',
                 volMax: '',
                 volMin: '',
+                craftRemarks: ''//工艺备注
             },
             rules: {
                 // grade: [
