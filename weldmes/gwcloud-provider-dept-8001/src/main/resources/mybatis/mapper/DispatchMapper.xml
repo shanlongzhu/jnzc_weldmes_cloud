@@ -26,6 +26,7 @@
         <result property="deptName" column="name"></result><!--所属班组-->
         <result property="workSpaceName" column="workSpace"></result><!--所属作业区-->
         <result property="workSpaceId" column="parent_id"></result><!--所属作业区-->
+        <result property="craftRemarks" column="craft_remarks"></result>
     </resultMap>
 
     <resultMap id="deptInfoMap" type="com.gw.entities.SysDept">
@@ -47,7 +48,8 @@
                dept.name,deptWork.name workSpace,task.plan_starttime,task.plan_endtime,
                task.reality_starttime,task.reality_endtime,
                task.evaluate_content,dictionaryTP.value_name evaluate_stars,dictionaryTP.id startId,
-               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
+               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,
+               task.volMin,task.craft_remarks
         from task_info task
         left join sys_dept dept on dept.id = task.dept_id
         left join sys_dept deptWork on deptWork.id = dept.parent_id
@@ -76,7 +78,8 @@
         dept.name,task.plan_starttime,task.plan_endtime,
         task.reality_starttime,task.reality_endtime,
         task.evaluate_content,dictionaryTP.value_name evaluate_stars,
-        task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
+        task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,
+        task.eleMin,task.volMax,task.volMin,task.craft_remarks
         from task_info task
         left join sys_dept dept on dept.id=task.dept_id
         left join sys_dictionary dictionary on dictionary.id=task.status
@@ -91,7 +94,8 @@
                dept.name,task.plan_starttime,task.plan_endtime,
                task.reality_starttime,task.reality_endtime,
                task.evaluate_content,dictionaryTP.value_name evaluate_stars,
-               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,task.eleMin,task.volMax,task.volMin
+               task.dept_id,task.welder_id,dictionary.value_name status,task.eleMax,
+               task.eleMin,task.volMax,task.volMin,task.craft_remarks
         from task_info task
         left join sys_dept dept on dept.id=task.dept_id
         left join sys_dictionary dictionary on dictionary.id=task.status
@@ -126,10 +130,10 @@
     <!--新增任务信息-->
      <insert id="addTaskInfo" parameterType="com.gw.entities.TaskInfo">
         insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,status,create_time,
-        eleMax,eleMin,volMax,volMin,welder_id)
+        eleMax,eleMin,volMax,volMin,welder_id,craft_remarks)
         values (#{taskInfo.taskNo},'',#{taskInfo.grade},#{taskInfo.deptId},#{taskInfo.planStarttime},
         #{taskInfo.planEndtime},52,#{taskInfo.createTime},#{taskInfo.eleMax},#{taskInfo.eleMin},
-        #{taskInfo.volMax},#{taskInfo.volMin},#{taskInfo.welderId})
+        #{taskInfo.volMax},#{taskInfo.volMin},#{taskInfo.welderId},#{taskInfo.craftRemarks})
     </insert>
 
     <!--通过任务id查询任务信息-->
@@ -138,7 +142,7 @@
         task.plan_starttime,task.plan_endtime,task.welder_id,
         task.reality_starttime,task.reality_endtime,task.status,
         task.dept_id,sys_dept.name deptName,sys_dept.parent_id,
-        task.eleMax,task.eleMin,task.volMax,task.volMin
+        task.eleMax,task.eleMin,task.volMax,task.volMin,task.craft_remarks
         from task_info task
         left join sys_dept on task.dept_id = sys_dept.id
         where task.id = #{id}
@@ -161,6 +165,7 @@
             eleMin = #{taskInfo.eleMin},
             volMax = #{taskInfo.volMax},
             volMin = #{taskInfo.volMin},
+            <if test="taskInfo.craftRemarks != null and taskInfo.craftRemarks !=''">craft_remarks = #{taskInfo.craftRemarks},</if>
         </trim>
         where id=#{taskInfo.id}
     </update>
@@ -193,13 +198,13 @@
 
     <!--批量插入任务信息-->
     <insert id="addTaskInfoList" parameterType="ArrayList">
-        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,
-                              plan_endtime,reality_starttime,status,
-                              reality_endtime,evaluate_content,evaluate_stars,create_time)
+        insert into task_info(task_no,task_name,grade,dept_id,plan_starttime,plan_endtime,reality_starttime,
+        status,reality_endtime,evaluate_content,evaluate_stars,create_time,eleMax,eleMin,volMax,volMin,craft_remarks)
         values
         <foreach collection="taskInfos" item="item" index="index" separator=",">
-            (#{item.taskNo},'',#{item.grade},#{item.deptId},#{item.planStarttime},#{item.planEndtime},#{item.realityStarttime},
-            52,#{item.realityEndtime},#{item.evaluateContent},#{item.evaluateStars},NOW())
+            (#{item.taskNo},'',#{item.grade},#{item.deptId},#{item.planStarttime},#{item.planEndtime},
+            #{item.realityStarttime},52,#{item.realityEndtime},#{item.evaluateContent},#{item.evaluateStars},NOW(),
+            #{item.eleMax},#{item.eleMin},#{item.volMax},#{item.volMin},#{item.craftRemarks})
         </foreach>
     </insert>
 
