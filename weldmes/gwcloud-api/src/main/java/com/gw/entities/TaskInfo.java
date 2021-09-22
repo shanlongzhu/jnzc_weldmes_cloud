@@ -144,4 +144,9 @@ public class TaskInfo {
      * 电压下限
      */
     private Double volMin;
+
+    /**
+     * 工艺备注
+     */
+    private String craftRemarks;
 }
