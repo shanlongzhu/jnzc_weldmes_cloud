@@ -43,7 +43,8 @@
 
     <!--根据焊工id查询任务工单信息列表-->
     <select id="selectTaskInfoByWelderId" parameterType="Long" resultType="com.gw.entities.TaskInfo">
-        select task.task_no taskNo,dictionary.value_name statusStr,task.id,task.task_name taskName,task.dept_id deptId
+        select task.task_no taskNo,dictionary.value_name statusStr,task.id,task.task_name taskName,task.dept_id deptId,
+        task.craft_remarks craftRemarks
         from task_info task
         left join sys_dictionary dictionary on dictionary.id = task.status
         where task.welder_id = #{welderId}
