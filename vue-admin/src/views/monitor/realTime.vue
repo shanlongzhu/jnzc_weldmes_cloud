@@ -303,10 +303,10 @@ export default {
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
-                            this.setData(datajson);
+                            this.setDataSx(datajson);
                         } else {
                             //获取曲线数据
-                            this.setLineData(datajson);
+                            this.setLineDataSx(datajson);
                         }
                     }
                 }
@@ -337,6 +337,31 @@ export default {
                 }
             })
         },
+
+        //更新松下列表
+        setDataSx (b) {
+            //统计
+            let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+            if (this.searchObj.id != 1) {
+                if (isThat.length > 0) {
+                    this.totalNum(b);
+                }
+            } else {
+                this.totalNum(b);
+            }
+            let v1 = {...b};
+            this.list.forEach(item => {
+                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.voltage
+                    item.electricity = v1.electricity
+                    item.welderName = v1.welderName
+                    item.taskNo = v1.taskNo
+                    item.weldStatus = v1.weldStatus;//状态
+                }
+            })
+        },
+
+
         search () {
             this.page = 1;
             this.getList();
@@ -410,6 +435,20 @@ export default {
                     filterArr.forEach(item => {
                         this.lineData.push(item);
                     })
+                    this.$refs.lineComEChild.init(this.lineData);
+                    this.$refs.lineComVChild.init(this.lineData);
+                }
+            }
+        },
+        //sx更新曲线
+        setLineData (arr) {
+            if (this.selectItem.hasOwnProperty('gatherNo')) {                
+                if (parseInt(arr.gatherNo) == parseInt(this.selectItem.gatherNo)) {
+                    this.mqttLastData = {...arr};
+                    if (this.lineData.length > 15) {
+                        this.lineData.shift();
+                    }
+                    this.lineData.push(mqttLastData);
                     this.$refs.lineComEChild.init(this.lineData);
                     this.$refs.lineComVChild.init(this.lineData);
                 }
@@ -625,8 +664,8 @@ export default {
     margin-right: 6px;
     width: 100px;
 }
-.real-con-item .real-con-item-txt{
-    flex:1;
+.real-con-item .real-con-item-txt {
+    flex: 1;
 }
 .real-con-item .real-con-item-txt p {
     margin: 0px;

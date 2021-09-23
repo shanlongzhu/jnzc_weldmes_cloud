@@ -677,6 +677,6 @@ export default {
     }
 }
 .el-message-box__message{
-    white-space: pre;
+    white-space: pre-wrap;
 }
 </style>
