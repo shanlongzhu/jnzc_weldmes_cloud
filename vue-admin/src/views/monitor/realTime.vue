@@ -300,14 +300,12 @@ export default {
                 if (destinationName == 'jnSxRtData') {
                     var datajson = JSON.parse(payloadString);
                     console.log(datajson)
-                    if (datajson.length > 0) {
-                        if (!this.drawer) {
-                            //更新列表状态
-                            this.setDataSx(datajson);
-                        } else {
-                            //获取曲线数据
-                            this.setLineDataSx(datajson);
-                        }
+                    if (!this.drawer) {
+                        //更新列表状态
+                        this.setDataSx(datajson);
+                    } else {
+                        //获取曲线数据
+                        this.setLineDataSx(datajson);
                     }
                 }
             }
@@ -341,7 +339,7 @@ export default {
         //更新松下列表
         setDataSx (b) {
             //统计
-            let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
+            let isThat = this.list.filter(item => parseInt(b.weldCid) == parseInt(item.gatherNo));
             if (this.searchObj.id != 1) {
                 if (isThat.length > 0) {
                     this.totalNum(b);
@@ -349,13 +347,13 @@ export default {
             } else {
                 this.totalNum(b);
             }
-            let v1 = {...b};
+            let v1 = { ...b };
             this.list.forEach(item => {
-                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
-                    item.voltage = v1.voltage
-                    item.electricity = v1.electricity
-                    item.welderName = v1.welderName
-                    item.taskNo = v1.taskNo
+                if (parseInt(v1.weldCid) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.weldVol || '';
+                    item.electricity = v1.weldEle || '';
+                    item.welderName = v1.welderName || '';
+                    item.taskNo = v1.taskNo || ''
                     item.weldStatus = v1.weldStatus;//状态
                 }
             })
@@ -442,9 +440,9 @@ export default {
         },
         //sx更新曲线
         setLineDataSx (arr) {
-            if (this.selectItem.hasOwnProperty('gatherNo')) {                
-                if (parseInt(arr.gatherNo) == parseInt(this.selectItem.gatherNo)) {
-                    this.mqttLastData = {...arr};
+            if (this.selectItem.hasOwnProperty('gatherNo')) {
+                if (parseInt(arr.weldCid) == parseInt(this.selectItem.gatherNo)) {
+                    this.mqttLastData = { ...arr };
                     if (this.lineData.length > 15) {
                         this.lineData.shift();
                     }
