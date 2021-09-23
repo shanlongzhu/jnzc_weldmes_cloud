@@ -448,7 +448,7 @@ export default {
                     if (this.lineData.length > 15) {
                         this.lineData.shift();
                     }
-                    this.lineData.push(mqttLastData);
+                    this.lineData.push(this.mqttLastData);
                     this.$refs.lineComEChild.init(this.lineData);
                     this.$refs.lineComVChild.init(this.lineData);
                 }
