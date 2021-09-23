@@ -441,7 +441,7 @@ export default {
             }
         },
         //sx更新曲线
-        setLineData (arr) {
+        setLineDataSx (arr) {
             if (this.selectItem.hasOwnProperty('gatherNo')) {                
                 if (parseInt(arr.gatherNo) == parseInt(this.selectItem.gatherNo)) {
                     this.mqttLastData = {...arr};
