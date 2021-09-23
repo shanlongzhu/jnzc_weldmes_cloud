@@ -102,8 +102,8 @@
                                 <p><span>设备编号：</span>{{mqttLastData.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{mqttLastData.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{mqttLastData.welderName||'--'}}</p>
-                                <p><span>焊接电流：</span>{{mqttLastData.electricity||mqttLastData.electricity===0?mqttLastData.electricity:'--'}}A</p>
-                                <p><span>焊接电压：</span>{{mqttLastData.voltage||mqttLastData.voltage===0?mqttLastData.voltage:'--'}}V</p>
+                                <p><span>焊接电流：</span>{{mqttLastData.weldEle||mqttLastData.weldEle===0?mqttLastData.weldEle:'--'}}A</p>
+                                <p><span>焊接电压：</span>{{mqttLastData.weldVol||mqttLastData.weldVol===0?mqttLastData.weldVol:'--'}}V</p>
                                 <p><span>焊机状态：</span><strong>{{statusText(mqttLastData.weldStatus).str}}</strong></p>
                             </div>
                         </div>
@@ -111,15 +111,15 @@
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">焊接参数</span>
                         <div class="wel-tip">
-                            <p><span>焊接电流</span><strong>{{mqttLastData.electricity}}A</strong></p>
-                            <p><span>焊接电压</span><strong>{{mqttLastData.voltage}}V</strong></p>
+                            <p><span>焊接电流</span><strong>{{mqttLastData.weldEle}}A</strong></p>
+                            <p><span>焊接电压</span><strong>{{mqttLastData.weldVol}}V</strong></p>
                         </div>
                     </div>
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">预置参数</span>
                         <div class="wel-tip">
-                            <p><span>预置电流</span><strong>{{mqttLastData.presetEle}}A</strong></p>
-                            <p><span>预置电压</span><strong>{{mqttLastData.presetVol}}V</strong></p>
+                            <p><span>预置电流</span><strong>{{mqttLastData.initialEle}}A</strong></p>
+                            <p><span>预置电压</span><strong>{{mqttLastData.initialVol}}V</strong></p>
                         </div>
                     </div>
                     <div
@@ -158,7 +158,7 @@
                                     焊接时长：
                                 </el-col>
                                 <el-col :span="12">
-                                    瞬时功率：{{mqttLastData.electricity*mqttLastData.voltage}}
+                                    瞬时功率：{{mqttLastData.weldEle*mqttLastData.weldVol}}
                                 </el-col>
                             </el-row>
                         </div>
@@ -270,6 +270,15 @@ export default {
                         onFailure: function (e) {
                             console.log(e);
                         }
+                    });
+                    this.newClientMq.subscribe('jnSxRtData', {
+                        qos: 0,
+                        onSuccess: function (e) {
+                            console.log("返回主题订阅成功：jnSxRtData");
+                        },
+                        onFailure: function (e) {
+                            console.log(e);
+                        }
                     })
                 }
             })
@@ -284,6 +293,18 @@ export default {
                             //获取曲线数据
                             this.setLineData(datajson);
                         }
+                    }
+                }
+                //sx设备实时监测
+                if (destinationName == 'jnSxRtData') {
+                    var datajson = JSON.parse(payloadString);
+                    console.log(datajson)
+                    if (!this.drawer) {
+                        //更新列表状态
+                        this.setDataSx(datajson);
+                    } else {
+                        //获取曲线数据
+                        this.setLineDataSx(datajson);
                     }
                 }
             }
@@ -309,6 +330,31 @@ export default {
                 }
             })
         },
+
+        //更新松下列表
+        setDataSx (b) {
+            //统计
+            let isThat = this.list.filter(item => parseInt(b.weldCid) == parseInt(item.gatherNo));
+            if (this.searchObj.id != 1) {
+                if (isThat.length > 0) {
+                    this.totalNum(b);
+                }
+            } else {
+                this.totalNum(b);
+            }
+            let v1 = { ...b };
+            this.list.forEach(item => {
+                if (parseInt(v1.weldCid) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.weldVol || '';
+                    item.electricity = v1.weldEle || '';
+                    item.welderName = v1.welderName || '';
+                    item.taskNo = v1.taskNo || ''
+                    item.weldStatus = v1.weldStatus;//状态
+                }
+            })
+        },
+
+
         search () {
             this.page = 1;
             this.getList();
@@ -382,6 +428,21 @@ export default {
                     filterArr.forEach(item => {
                         this.lineData.push(item);
                     })
+                    this.$refs.lineComEChild.init(this.lineData);
+                    this.$refs.lineComVChild.init(this.lineData);
+                }
+            }
+        },
+
+        //sx更新曲线
+        setLineDataSx (arr) {
+            if (this.selectItem.hasOwnProperty('gatherNo')) {
+                if (parseInt(arr.weldCid) == parseInt(this.selectItem.gatherNo)) {
+                    this.mqttLastData = { ...arr };
+                    if (this.lineData.length > 15) {
+                        this.lineData.shift();
+                    }
+                    this.lineData.push(this.mqttLastData);
                     this.$refs.lineComEChild.init(this.lineData);
                     this.$refs.lineComVChild.init(this.lineData);
                 }

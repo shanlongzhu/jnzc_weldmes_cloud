@@ -102,8 +102,8 @@
                                 <p><span>设备编号：</span>{{mqttLastData.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{mqttLastData.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{mqttLastData.welderName||'--'}}</p>
-                                <p><span>焊接电流：</span>{{mqttLastData.electricity||mqttLastData.electricity===0?mqttLastData.electricity:'--'}}A</p>
-                                <p><span>焊接电压：</span>{{mqttLastData.voltage||mqttLastData.voltage===0?mqttLastData.voltage:'--'}}V</p>
+                                <p><span>焊接电流：</span>{{mqttLastData.weldEle||mqttLastData.weldEle===0?mqttLastData.weldEle:'--'}}A</p>
+                                <p><span>焊接电压：</span>{{mqttLastData.weldVol||mqttLastData.weldVol===0?mqttLastData.weldVol:'--'}}V</p>
                                 <p><span>焊机状态：</span><strong>{{statusText(mqttLastData.weldStatus).str}}</strong></p>
                             </div>
                         </div>
@@ -111,15 +111,15 @@
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">焊接参数</span>
                         <div class="wel-tip">
-                            <p><span>焊接电流</span><strong>{{mqttLastData.electricity}}A</strong></p>
-                            <p><span>焊接电压</span><strong>{{mqttLastData.voltage}}V</strong></p>
+                            <p><span>焊接电流</span><strong>{{mqttLastData.weldEle}}A</strong></p>
+                            <p><span>焊接电压</span><strong>{{mqttLastData.weldVol}}V</strong></p>
                         </div>
                     </div>
                     <div class="border-tip flex-c">
                         <span class="border-tip-txt">预置参数</span>
                         <div class="wel-tip">
-                            <p><span>预置电流</span><strong>{{mqttLastData.presetEle}}A</strong></p>
-                            <p><span>预置电压</span><strong>{{mqttLastData.presetVol}}V</strong></p>
+                            <p><span>预置电流</span><strong>{{mqttLastData.initialEle}}A</strong></p>
+                            <p><span>预置电压</span><strong>{{mqttLastData.initialVol}}V</strong></p>
                         </div>
                     </div>
                     <div
@@ -158,7 +158,7 @@
                                     焊接时长：
                                 </el-col>
                                 <el-col :span="12">
-                                    瞬时功率：{{mqttLastData.electricity*mqttLastData.voltage}}
+                                    瞬时功率：{{mqttLastData.weldEle*mqttLastData.weldVol}}
                                 </el-col>
                             </el-row>
                         </div>
