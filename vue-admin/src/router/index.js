@@ -52,10 +52,13 @@ export const constantRoutes = [
     path: '/redirect',
     component: Layout,
     hidden: true,
-    children: [
-      {
+    children: [      {
+        
         path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
+        component: () => import('@/views/redirect/index'),
+        meta:{
+          noCache:true
+        }
       }
     ]
   },
@@ -112,7 +115,7 @@ export const asyncRoutes = [
   {
     path: '/per',
     component: Layout,
-    redirect: 'page',
+    redirect: '/per/page',
     alwaysShow: true,
     name: 'Per',
     meta: {
@@ -137,7 +140,8 @@ export const asyncRoutes = [
         name: 'DirectivePermission',
         meta: {
           title: '生产设备管理',
-          mark:'102'
+          mark:'102',
+          noCache:true
         }
       },
       {
@@ -155,7 +159,7 @@ export const asyncRoutes = [
   {
     path: '/pro',
     component: Layout,
-    redirect: 'pa',
+    redirect: '/pro/pa',
     alwaysShow: true,
     name: 'Permission',
     meta: {
@@ -170,7 +174,8 @@ export const asyncRoutes = [
         name: 'tech',
         meta: {
           title: '工艺管理',
-          mark:'201'
+          mark:'201',
+          noCache:true
         }
       },
       // {
@@ -196,7 +201,7 @@ export const asyncRoutes = [
   {
     path: '/cha',
     component: Layout,
-    redirect: 'welderManagement',
+    redirect: '/cha/welderManagement',
     alwaysShow: true,
     name: 'Charts',
     meta: {
@@ -211,7 +216,8 @@ export const asyncRoutes = [
         name: 'welderManagement',
         meta: {
           title: '焊工管理',
-          mark:'301'
+          mark:'301',
+          noCache:true
         }
       },
       {
@@ -220,6 +226,7 @@ export const asyncRoutes = [
         name: 'KeyboardChart',
         meta: {
           title: '任务工单管理',
+          noCache:true,
           mark:'302'}
       }
     ]
@@ -227,7 +234,7 @@ export const asyncRoutes = [
   {
     path: '/table',
     component: Layout,
-    redirect: 'welder-history-line',
+    redirect: '/table/welder-history-line',
     alwaysShow: true,
     name: 'Table',
     meta: {
@@ -280,6 +287,7 @@ export const asyncRoutes = [
         name: 'teamDataStat',
         meta: {
           title: '班组生产数据统计',
+          noCache: true,
           mark:'504'}
       },
       {
@@ -288,6 +296,7 @@ export const asyncRoutes = [
         name: 'personnelProduction',
         meta: {
           title: '人员生产数据统计',
+          noCache: true,
           mark:'501'
         }
       },
@@ -297,6 +306,7 @@ export const asyncRoutes = [
         name: 'workpieceProduction',
         meta: {
           title: '工件生产数据统计',
+          noCache: true,
           mark:'502'
          }
       },
@@ -306,7 +316,8 @@ export const asyncRoutes = [
         name: 'equProduct',
         meta: {
           title: '设备生产数据统计',
-          mark:'503'
+          mark:'503',
+          noCache: true
          }
       },
       {
@@ -315,7 +326,8 @@ export const asyncRoutes = [
         name: 'taskDetail',
         meta: {
           title: '生产任务详情',
-          mark:'505'
+          mark:'505',
+          noCache: true
         }
       },
       // {
@@ -442,7 +454,8 @@ export const asyncRoutes = [
         name: 'logList',
         meta: {
           mark:'801',
-          title: '日志列表' }
+          title: '日志列表',
+          noCache: true }
       }
     ]
   },
@@ -464,7 +477,8 @@ export const asyncRoutes = [
         name: 'realTime',
         meta: {
           mark:'901',
-          title: '实时监测' }
+          title: '实时监测',
+          noCache: true }
       },
       {
         path: 'real-time-area',
@@ -472,7 +486,8 @@ export const asyncRoutes = [
         name: 'realTimeArea',
         meta: {
           mark:'902',
-          title: '实时监测2' }
+          title: '实时监测2',
+          noCache: true }
       } ,
       {
         path: 'real-time-area-detail',

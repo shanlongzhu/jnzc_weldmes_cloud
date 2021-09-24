@@ -36,7 +36,7 @@ export default {
                 label: {
                     normal: {
                         position: 'start',
-                        formatter: '{c}A 实时数据'
+                        formatter: '{c}V 实时数据'
                     }
                 },
                 name: '实时数据',
@@ -54,7 +54,7 @@ export default {
         init (arr) {
             let v = arr.map(item => item.voltage);
             let t = arr.map(item => item.weldTime);
-
+    
             this.option.series[0].data = v;
             this.option.xAxis.data = t;
 
@@ -138,7 +138,7 @@ export default {
                 type: 'value',
                 boundaryGap: [0, '100%'],
                 min: 0,
-                max: 100,
+                max: 220,
                 splitLine: {
                     show: false
                 }
