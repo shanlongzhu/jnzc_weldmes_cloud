@@ -100,7 +100,6 @@
         #{machineWeldInfo.ipPath},#{machineWeldInfo.createTime},#{machineWeldInfo.area},#{machineWeldInfo.bay})
     </insert>
 
-
     <select id="getById" resultMap="welder">
       SELECT
         m.id,
@@ -248,14 +247,16 @@
     </select>
 
     <!--查询焊机列表(是否绑定了任务)-->
-    <select id="selectMachineWeldInfosNoPage" resultMap="welder">
-        select w.taskFlag,w.id,w.weld_no,w.create_time,w.weld_kind,w.dept_id,w.weld_cid,w.weld_status,w.sx_model,w.weld_firm,
-        w.is_network,gather_no,w.value_name,w.value_names,w.value_namess,w.value_namesss,w.`name`,w.weld_ip,w.area,w.bay,
-        w.areaStr,w.bayStr
-        from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no,
-        sxm.create_time,sxm.weld_kind,sxm.dept_id,sxm.weld_cid,sxm.weld_status,sxm.sx_model,sxm.weld_firm,
-        null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name,
-        d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,s.`name`,sxm.weld_ip,
+    <select id="selectMachineWeldInfosNoPage" resultType="com.gw.entities.MachineWeldInfo">
+        select w.taskFlag,w.id,w.machine_no machineNo,w.create_time createTime,w.type,w.dept_id deptId,
+        w.g_id gId,w.status,w.model,w.firm,
+        w.is_network isNetwork,w.gather_no gatherNo,w.statusStr,w.firmStr,w.modelStr,w.areaStr,w.bayStr,
+        w.`name`,w.ip_path ipPath,w.area,w.bay,w.macFlag,w.typeStr,w.statusStr
+        from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no machine_no,
+        sxm.create_time,sxm.weld_kind type,sxm.dept_id,sxm.weld_cid g_id,sxm.weld_status status,sxm.sx_model model,
+        sxm.weld_firm firm,
+        null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
+        d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,sxm.weld_ip ip_path,
         sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag
         from machine_weldsx_info sxm
         left join sys_dictionary d on sxm.weld_kind = d.id
@@ -306,9 +307,10 @@
         </where>
         group by sxm.weld_no
         union all
-        select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,
-        m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name,
-        d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,s.`name`,m.ip_path,
+        select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,
+        m.dept_id,m.g_id,m.`status`,m.model,m.firm,
+        m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
+        d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,m.ip_path,
         m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag
         from machine_weld_info m
         left join sys_dictionary d on m.type = d.id
