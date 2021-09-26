@@ -249,6 +249,63 @@
 
     <!--查询焊机列表(是否绑定了任务)-->
     <select id="selectMachineWeldInfosNoPage" resultMap="welder">
+        select w.taskFlag,w.id,w.weld_no,w.create_time,w.weld_kind,w.dept_id,w.weld_cid,w.weld_status,w.sx_model,w.weld_firm,
+        w.is_network,gather_no,w.value_name,w.value_names,w.value_namess,w.value_namesss,w.`name`,w.weld_ip,w.area,w.bay,
+        w.areaStr,w.bayStr
+        from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no,
+        sxm.create_time,sxm.weld_kind,sxm.dept_id,sxm.weld_cid,sxm.weld_status,sxm.sx_model,sxm.weld_firm,
+        null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name,
+        d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,s.`name`,sxm.weld_ip,
+        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr
+        from machine_weldsx_info sxm
+        left join sys_dictionary d on sxm.weld_kind = d.id
+        left join sys_dictionary d1 on sxm.weld_status = d1.id
+        left join sys_dictionary d2 on sxm.weld_firm = d2.id
+        left join sys_dictionary d3 on sxm.sx_model = d3.id
+        left join sys_dictionary d4 on sxm.area = d4.id
+        left join sys_dictionary d5 on sxm.bay = d5.id
+        left join sys_dept s on sxm.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,sxm.weld_cid )
+        left join task_claim claim on sxm.id=claim.weld_id AND sxm.id IN (
+        SELECT tem.weld_id FROM (
+        SELECT weld_id,task_id from task_claim group BY weld_id,task_id order by claim_time desc
+        ) tem  GROUP BY weld_id
+        )
+        left join task_info ti on claim.task_id=ti.id and ti.`status`=51
+        <where>
+            <if test="machineNo != null and machineNo != ''">
+                and  sxm.weld_no = #{machineNo}
+            </if>
+            <if test="type != null and type != ''">
+                and  d.id = #{type}
+            </if>
+            <if test="grade != null and grade != ''">
+                and  s.id = #{grade}
+            </if>
+            <if test="status != null and status != ''">
+                and  d1.id = #{status}
+            </if>
+            <if test="firm != null and firm != ''">
+                and  d2.id = #{firm}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and  g.gather_no = #{gatherNo}
+            </if>
+            <if test="ipPath != null and ipPath != ''">
+                and  sxm.weld_ip = #{ipPath}
+            </if>
+            <if test="model != null and model != ''">
+                and  sxm.sx_model = #{model}
+            </if>
+            <if test="area != null and area != ''">
+                and  sxm.area = #{area}
+            </if>
+            <if test="bay != null and bay != ''">
+                and  sxm.bay = #{bay}
+            </if>
+        </where>
+        group by sxm.weld_no
+        union all
         select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,
         m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name,
         d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,s.`name`,m.ip_path,
@@ -263,10 +320,10 @@
         left join sys_dept s on m.dept_id = s.id
         left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
         left join task_claim claim on m.id=claim.weld_id AND m.id IN (
-             SELECT tem.weld_id FROM (
-                 SELECT weld_id,task_id from task_claim group BY weld_id,task_id order by claim_time desc
-                 ) tem  GROUP BY weld_id
-             )
+        SELECT tem.weld_id FROM (
+        SELECT weld_id,task_id from task_claim group BY weld_id,task_id order by claim_time desc
+        ) tem  GROUP BY weld_id
+        )
         left join task_info ti on claim.task_id=ti.id and ti.`status`=51
         <where>
             <if test="machineNo != null and machineNo != ''">
@@ -294,16 +351,16 @@
                 and  m.ip_path = #{ipPath}
             </if>
             <if test="model != null and model != ''">
-                and  model = #{model}
+                and  m.model = #{model}
             </if>
             <if test="area != null and area != ''">
-                and  area = #{area}
+                and  m.area = #{area}
             </if>
             <if test="bay != null and bay != ''">
-                and  bay = #{bay}
+                and  m.bay = #{bay}
             </if>
         </where>
-        group by m.machine_no
+        group by m.machine_no)w
     </select>
 
     <!--批量插入-->
