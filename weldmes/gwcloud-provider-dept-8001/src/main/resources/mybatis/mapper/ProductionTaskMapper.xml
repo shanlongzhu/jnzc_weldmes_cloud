@@ -80,18 +80,20 @@
 
     <!--生产任务详情数据报表-->
     <select id="getList" resultMap="weldStatisticsData">
-        SELECT w.welder_no,w.welder_name,m.machine_no,t.task_no,d.NAME,t.reality_starttime,t.reality_endtime,
+        SELECT p.welder_no,p.welder_name,p.machine_no,p.task_no,p.`NAME`,p.reality_starttime,p.reality_endtime,p.eleScope,p.volScope,
+        SUM(p.electricity)/2 electricity,p.volScope,SUM(p.voltage)/2 voltage,p.task_id,p.weld_id,p.welder_id
+        FROM(SELECT w.welder_no,w.welder_name,m.machine_no,t.task_no,d.NAME,t.reality_starttime,t.reality_endtime,
         CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
         CONVERT (AVG(s.electricity),DECIMAL (10,2)) electricity,CONCAT(t.volMin,'~',t.volMax) volScope,
-        CONVERT (AVG(s.voltage),DECIMAL (10,2)) voltage
+        CONVERT (AVG(s.voltage),DECIMAL (10,2)) voltage,c.weld_id,c.welder_id,c.task_id
         FROM task_claim c
         INNER JOIN welder_info w ON c.welder_id = w.id
         INNER JOIN machine_weld_info m ON c.weld_id = m.id
         INNER JOIN task_info t ON c.task_id = t.id
-        AND t.reality_starttime &gt;= #{time1}
-        AND t.reality_starttime &lt;= #{time2}
+        AND t.reality_starttime &gt;= #{time1} AND t.reality_starttime &lt;= #{time2}
         LEFT JOIN sys_dept d ON d.id = t.dept_id
-        LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId AND c.weld_id = s.machineId AND c.welder_id = s.welderId AND s.weldStatus IN (3,99)
+        LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
+        AND c.weld_id = s.machineId AND c.welder_id = s.welderId AND s.weldStatus IN (3,99)
         <where>
             <if test="welderNo!=null and welderNo!=''">
                 w.welder_no = #{welderNo}
@@ -110,6 +112,37 @@
             </if>
         </where>
         GROUP BY c.task_id,c.weld_id,c.welder_id
+        UNION ALL
+        SELECT w.welder_no,w.welder_name,m.weld_cid machine_no,t.task_no,d.NAME,t.reality_starttime,t.reality_endtime,
+        CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
+        CONVERT (AVG(sx.realityWeldEle),DECIMAL (10,2)) electricity,CONCAT(t.volMin,'~',t.volMax) volScope,
+        CONVERT (AVG(sx.realityWeldVol),DECIMAL (10,2)) voltage,c.weld_id,c.welder_id,c.task_id
+        FROM task_claim c
+        INNER JOIN welder_info w ON c.welder_id = w.id
+        INNER JOIN machine_weldsx_info m ON c.weld_id = m.id
+        INNER JOIN task_info t ON c.task_id = t.id
+        AND t.reality_starttime &gt;= #{time1} AND t.reality_starttime &lt;= #{time2}
+        LEFT JOIN sys_dept d ON d.id = t.dept_id
+        LEFT JOIN weldsx_statistics_data sx ON c.task_id = sx.taskId AND c.welder_id = sx.welderId AND sx.weldStatus NOT IN (0,3,4,6,9)
+        <where>
+            <if test="welderNo!=null and welderNo!=''">
+                w.welder_no = #{welderNo}
+            </if>
+            <if test="welderName!=null and welderName!=''">
+                and w.welder_name = #{welderName}
+            </if>
+            <if test="machineNo!=null and machineNo!=''">
+                and m.weld_no = #{machineNo}
+            </if>
+            <if test="taskNo!=null and taskNo!=''">
+                and t.task_no = #{taskNo}
+            </if>
+            <if test="name!=null and name!=''">
+                and d.NAME = #{name}
+            </if>
+        </where>
+        GROUP BY c.task_id,c.weld_id,c.welder_id) p
+        group by p.task_id,p.weld_id,p.welder_id
     </select>
 
     <!--根据部门id 查询 部门名称-->

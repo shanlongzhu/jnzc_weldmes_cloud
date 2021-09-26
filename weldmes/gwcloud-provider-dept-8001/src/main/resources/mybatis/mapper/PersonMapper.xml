@@ -57,28 +57,34 @@
 
 	<!--人员生产数据报表-->
     <select id="getList" resultMap="weldStatisticsData">
-		SELECT w.id,w.welder_name,w.welder_no,d.NAME,GROUP_CONCAT( DISTINCT s.taskNo ) taskNo,
+		SELECT p.id,p.welder_name,p.welder_no,p.NAME,p.taskNo,SUM(p.count) count,p.machineNo,SUM(p.count2) count2,
+		CONCAT(FLOOR(SUM(p.onOffTime)/3600),':',FLOOR(SUM(p.onOffTime)%3600/60),':',FLOOR(SUM(p.onOffTime)%3600%60)) onOffTime,
+		CONCAT(FLOOR(SUM(p.realWeldTime)/3600),':',FLOOR(SUM(p.realWeldTime)%3600/60),':',FLOOR(SUM(p.realWeldTime)%3600%60)) realWeldTime,
+		CONCAT(FLOOR(SUM(p.normalTime)/3600),':',FLOOR(SUM(p.normalTime)%3600/60),':',FLOOR(SUM(p.normalTime)%3600%60)) normalTime,
+		CONCAT(FLOOR(SUM(p.supergageTime)/3600),':',FLOOR(SUM(p.supergageTime)%3600/60),':',FLOOR(SUM(p.supergageTime)%3600%60)) supergageTime,
+		SUM(p.weldingEfficiency)*100 weldingEfficiency,SUM(p.standardPercentage)*100 standardPercentage,SUM(p.materialsConsumption) materialsConsumption,
+		SUM(p.powerConsumption) powerConsumption
+		FROM(SELECT w.id,w.welder_name,w.welder_no,d.NAME,GROUP_CONCAT(DISTINCT s.taskNo) taskNo,
 		COUNT(DISTINCT s.taskId) count,GROUP_CONCAT(DISTINCT s.machineNo) machineNo,
 		COUNT(DISTINCT s.machineId) count2,
-		CONCAT(FLOOR(SUM(s.weldDuration)/3600),':',FLOOR(SUM(s.weldDuration)%3600/60),':',FLOOR(SUM(s.weldDuration)%3600%60)) onOffTime,
-		CONCAT(FLOOR(SUM(s1.weldDuration)/3600),':',FLOOR(SUM(s1.weldDuration)%3600/60),':',FLOOR(SUM(s1.weldDuration)%3600%60)) realWeldTime,
-		CONCAT(FLOOR(SUM(s2.weldDuration)/3600),':',FLOOR(SUM(s2.weldDuration)%3600/60),':',FLOOR(SUM(s2.weldDuration)%3600%60)) normalTime,
-		CONCAT(FLOOR(SUM(s3.weldDuration)/3600),':',FLOOR(SUM(s3.weldDuration)%3600/60),':',FLOOR(SUM(s3.weldDuration)%3600%60)) supergageTime,
-		CONVERT (SUM(s1.weldDuration)/SUM(s.weldDuration)*100,DECIMAL(10,2)) weldingEfficiency,
-		CONVERT (SUM(s2.weldDuration)/SUM(s1.weldDuration)*100, DECIMAL(10,2)) standardPercentage,
+		SUM(s.weldDuration) onOffTime,
+		SUM(s1.weldDuration) realWeldTime,
+		SUM(s2.weldDuration) normalTime,
+		SUM(s3.weldDuration) supergageTime,
+		CONVERT (SUM(s1.weldDuration)/SUM(s.weldDuration),DECIMAL(10,2)) weldingEfficiency,
+		CONVERT (SUM(s2.weldDuration)/SUM(s1.weldDuration), DECIMAL(10,2)) standardPercentage,
 		CONVERT (sum(s.wireFeedRate * s.weldDuration)/600,DECIMAL(10,2)) materialsConsumption,
 		CONVERT (sum((s.electricity * s.voltage * s.weldDuration )/3600/1000)+(s.weldDuration-s1.weldDuration)/36000,DECIMAL(10,2)) powerConsumption
 		FROM welder_info w
 		LEFT JOIN sys_dept d ON w.dept_id = d.id
 		INNER JOIN weld_statistics_data s ON d.id = s.welderDeptId AND w.id = s.welderId
-		AND s.startTime &gt;= #{time1}
-        AND s.endTime &lt;= #{time2}
+		AND s.startTime &gt;= #{time1} AND s.endTime &lt;= #{time2}
 		LEFT JOIN weld_statistics_data s1 ON s.id = s1.id AND s1.weldStatus IN (3,5,7,99)
 		LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id AND s2.weldStatus IN (3,5,7)
 		LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id AND s3.weldStatus = 99
 		<where>
 			<if test="welderNo!=null and welderNo!=''">
-				 w.welder_no = #{welderNo}
+				w.welder_no = #{welderNo}
 			</if>
 			<if test="welderName!=null and welderName!=''">
 				and w.welder_name = #{welderName}
@@ -88,6 +94,39 @@
 			</if>
 		</where>
 		GROUP BY w.id
+		UNION ALL
+		SELECT w.id,w.welder_name,w.welder_no,d.NAME,GROUP_CONCAT(DISTINCT sx.taskNo) taskNo,
+		COUNT(DISTINCT sx.taskId) count,GROUP_CONCAT(DISTINCT sx.weldCode) machineNo,
+		COUNT(DISTINCT sx.weldCid) count2,
+		SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+		SUM(sx1.weldSuration) realWeldTime,
+		SUM(sx1.weldSuration) normalTime,
+		0 supergageTime,
+		CONVERT (SUM(sx2.weldSuration)/SUM(sx1.weldSuration),DECIMAL(10,2)) weldingEfficiency,
+		100 standardPercentage,
+		CONVERT (sum(sx2.realityWireSpeed*sx2.weldSuration)/600,DECIMAL(10,2)) materialsConsumption,
+		CONVERT (sum((sx1.realityWeldEle*sx1.realityWeldVol*sx1.weldSuration)/3600/1000)+(sx1.weldSuration-sx2.weldSuration)/36000,DECIMAL (10,2)) powerConsumption
+		FROM welder_info w
+		LEFT JOIN sys_dept d ON w.dept_id = d.id
+		INNER JOIN weldsx_statistics_data sx ON d.id = sx.welderDeptId AND w.id = sx.welderId
+		AND sx.startTime &gt;= #{time1} AND sx.endTime &lt;= #{time2}
+		LEFT JOIN machine_weldsx_info m ON m.weld_cid = sx.weldCid
+		LEFT JOIN weld_on_off_time onoff ON onoff.weld_cid = sx.weldCid
+		LEFT JOIN weldsx_statistics_data sx1 ON sx.id = sx1.id AND sx1.weldStatus NOT IN (0,3,4,6,9)
+		LEFT JOIN weldsx_statistics_data sx2 ON sx1.id = sx2.id AND sx2.weldStatus NOT IN (3,4,6,9)
+		<where>
+			<if test="welderNo!=null and welderNo!=''">
+				w.welder_no = #{welderNo}
+			</if>
+			<if test="welderName!=null and welderName!=''">
+				and w.welder_name = #{welderName}
+			</if>
+			<if test="name!=null and name!=''">
+				and d.NAME = #{name}
+			</if>
+		</where>
+		GROUP BY w.id) p
+		group by p.id
     </select>
 
 	<!--根据部门id查询部门名称-->

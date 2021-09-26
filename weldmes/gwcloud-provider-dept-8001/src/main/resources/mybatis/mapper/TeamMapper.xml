@@ -58,7 +58,9 @@
 
 
 	<select id="getList" resultType="com.gw.entities.WeldStatisticsData">
-		SELECT d.id,d.`name` deptName,
+		SELECT g.id,g.deptName,g.allCount,g.onOffCount,g.onOffTime,g.taskCount,g.realWeldOnline,g.realWeldTime,g.noTaskCount,g.noTaskMachineDetail,
+		g.equipUtilization,g.supergageTime,g.normalTime,g.weldingEfficiency,g.standardPercentage,g.materialsConsumption,g.powerConsumption,g.deptName
+		FROM(SELECT d.id,d.`name` deptName,
 		COUNT(DISTINCT m.id) allCount,
 		COUNT(DISTINCT s.machineId) onOffCount,
 		CONCAT(FLOOR(SUM(s.weldDuration)/3600),':',FLOOR(SUM(s.weldDuration)%3600/60),':',FLOOR(SUM(s.weldDuration)%3600%60)) onOffTime,
@@ -69,7 +71,7 @@
 		GROUP_CONCAT(distinct s2.machineNo) noTaskMachineDetail,
 		ROUND(COUNT(DISTINCT s.machineId)/COUNT(DISTINCT m.id),2)*100 equipUtilization,
 		CONCAT(FLOOR(SUM(s3.weldDuration)/3600),':',FLOOR(SUM(s3.weldDuration)%3600/60),':',FLOOR(SUM(s3.weldDuration)%3600%60)) supergageTime,
-		CONCAT(FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))/3600),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))%3600/60),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))%3600%60)) normalTime,
+		CONCAT(FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))/3600),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.weldDuration))%3600/60),':',FLOOR((SUM(s1.weldDuration)-SUM(s3.			  weldDuration))%3600%60)) normalTime,
 		ROUND((SUM(s1.weldDuration))/SUM(s.weldDuration),2)*100 weldingEfficiency,
 		ROUND((SUM(s1.weldDuration)-SUM(s3.weldDuration))/SUM(s1.weldDuration),2)*100 standardPercentage,
 		sum(s.wireFeedRate*s.weldDuration)/600 materialsConsumption,
@@ -86,6 +88,37 @@
 			#{id}
 		</foreach>
 		GROUP BY d.id,d.`name`
+		UNION ALL
+		SELECT d.id,d.`name` deptName,
+		COUNT(DISTINCT m.id) allCount,
+		COUNT(DISTINCT sx1.weldCid) onOffCount,
+		SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+		COUNT(DISTINCT sx1.taskId)-COUNT(DISTINCT sx2.taskId) taskCount,
+		COUNT(DISTINCT sx3.weldCid) realWeldOnline,
+		SUM(sx3.weldSuration) realWeldTime,
+		IF(SUM(sx3.weldSuration)>300,COUNT(DISTINCT sx2.weldCid),0) noTaskCount,
+		GROUP_CONCAT(distinct sx2.weldCid) noTaskMachineDetail,
+		ROUND(COUNT(DISTINCT sx.weldCid)/COUNT(DISTINCT m.id),2) equipUtilization,
+		0 supergageTime,
+		SUM(sx3.weldSuration) normalTime,
+		ROUND((SUM(sx1.weldSuration))/SUM(sx3.weldSuration),2) weldingEfficiency,
+		100 standardPercentage,
+		sum(sx3.realityWireSpeed*sx3.weldSuration)/600 materialsConsumption,
+		sum((sx3.realityWeldEle*sx3.realityWeldVol*sx3.weldSuration)/3600/1000)+(sx3.weldSuration-sx1.weldSuration)/36000 powerConsumption
+		FROM sys_dept d
+		INNER JOIN machine_weldsx_info m ON d.id = m.dept_id
+		LEFT JOIN weldsx_statistics_data sx ON m.weld_cid = sx.weldCid
+		AND sx.startTime &gt;= #{time1} AND sx.endTime &lt;= #{time2}
+		LEFT JOIN weld_on_off_time onoff ON onoff.weld_cid = sx.weldCid
+		LEFT JOIN weldsx_statistics_data sx1 ON sx.id=sx1.id  AND sx1.weldStatus NOT IN (3,4,6,9)
+		LEFT JOIN weldsx_statistics_data sx2 ON sx1.id=sx2.id  AND sx2.taskId IS NULL
+		LEFT JOIN weldsx_statistics_data sx3 ON sx1.id=sx3.id AND sx3.weldStatus NOT IN (0,3,4,6,9)
+		WHERE d.id IN
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		GROUP BY d.id,d.`name`)g
+		GROUP BY g.id,g.deptName
 	</select>
 
 </mapper>

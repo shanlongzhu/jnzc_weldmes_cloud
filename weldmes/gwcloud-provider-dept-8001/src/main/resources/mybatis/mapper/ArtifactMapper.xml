@@ -56,40 +56,70 @@
     </resultMap>
 
      <select id="getList" resultMap="weldStatisticsData">
-        SELECT t.id,t.task_name,t.task_no,d.NAME,GROUP_CONCAT( DISTINCT s.welderNo ) welderNo,
-        COUNT( DISTINCT s.welderId ) count,
-	    GROUP_CONCAT( DISTINCT s.machineNo ) machineNo,
-	    COUNT( DISTINCT s.machineId ) count2,
-        CONCAT(FLOOR(SUM(s.weldDuration)/3600),':',FLOOR(SUM(s.weldDuration)%3600/60),':',FLOOR(SUM(s.weldDuration)%3600%60)) onOffTime,
-        CONCAT(FLOOR(SUM(s1.weldDuration)/3600),':',FLOOR(SUM(s1.weldDuration)%3600/60),':',FLOOR(SUM(s1.weldDuration)%3600%60)) realWeldTime,
-        CONCAT(FLOOR(SUM(s2.weldDuration)/3600),':',FLOOR(SUM(s2.weldDuration)%3600/60),':',FLOOR(SUM(s2.weldDuration)%3600%60)) normalTime,
-        CONCAT(FLOOR(SUM(s3.weldDuration)/3600),':',FLOOR(SUM(s3.weldDuration)%3600/60),':',FLOOR(SUM(s3.weldDuration)%3600%60)) supergageTime,
-	    CONVERT ( SUM( s1.weldDuration ) / SUM( s.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) weldingEfficiency,
-	    CONVERT ( SUM( s2.weldDuration ) / SUM( s1.weldDuration ) * 100, DECIMAL ( 10, 2 ) ) standardPercentage,
-	    CONVERT ( sum( s.wireFeedRate * s.weldDuration ) / 600, DECIMAL ( 10, 2 ) ) materialsConsumption,
-	    CONVERT (sum( ( s.electricity * s.voltage * s.weldDuration ) / 3600 / 1000 ) + ( s.weldDuration - s1.weldDuration ) / 36000,
-	    DECIMAL ( 10, 2 )) powerConsumption
-        FROM task_info t
-	    LEFT JOIN sys_dept d ON t.dept_id = d.id
-	    INNER JOIN weld_statistics_data s ON d.id = s.welderDeptId
-	    AND t.id = s.taskId
-	    AND s.startTime &gt;= #{time1}
-        AND s.endTime &lt;= #{time2}
-	    LEFT JOIN weld_statistics_data s1 ON s.id = s1.id
-	    AND s1.weldStatus IN ( 3, 5, 7, 99 )
-	    LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id
-	    AND s2.weldStatus IN ( 3, 5, 7 )
-	    LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id
-	    AND s3.weldStatus = 99
-        <where>
-            <if test="taskNo!=null and taskNo!=''">
-                t.task_no = #{taskNo}
-            </if>
-            <if test="name!=null and name!=''">
-                d.NAME = #{name}
-            </if>
-        </where>
-        GROUP BY t.id
+         SELECT a.id,a.task_name,a.task_no,a.`NAME`,a.welderNo,SUM(a.count) count,a.machineNo,SUM(a.count2) count2,
+         CONCAT(FLOOR(SUM(a.onOffTime)/3600),':',FLOOR(SUM(a.onOffTime)%3600/60),':',FLOOR(SUM(a.onOffTime)%3600%60)) onOffTime,
+         CONCAT(FLOOR(SUM(a.realWeldTime)/3600),':',FLOOR(SUM(a.realWeldTime)%3600/60),':',FLOOR(SUM(a.realWeldTime)%3600%60)) realWeldTime,
+         CONCAT(FLOOR(SUM(a.normalTime)/3600),':',FLOOR(SUM(a.normalTime)%3600/60),':',FLOOR(SUM(a.normalTime)%3600%60)) normalTime,
+         CONCAT(FLOOR(SUM(a.supergageTime)/3600),':',FLOOR(SUM(a.supergageTime)%3600/60),':',FLOOR(SUM(a.supergageTime)%3600%60)) supergageTime,
+         SUM(a.weldingEfficiency)*100 weldingEfficiency,SUM(a.standardPercentage)*100 standardPercentage,SUM(a.materialsConsumption) materialsConsumption,
+         SUM(a.powerConsumption) powerConsumption
+         FROM(SELECT t.id,t.task_name,t.task_no,d.NAME,GROUP_CONCAT( DISTINCT s.welderNo ) welderNo,
+         COUNT( DISTINCT s.welderId ) count,GROUP_CONCAT(DISTINCT s.machineNo) machineNo,COUNT(DISTINCT s.machineId) count2,
+         SUM(s.weldDuration) onOffTime,SUM(s1.weldDuration) realWeldTime,
+         SUM(s2.weldDuration) normalTime,
+         SUM(s3.weldDuration) supergageTime,
+         CONVERT (SUM(s1.weldDuration)/SUM(s.weldDuration), DECIMAL (10,2)) weldingEfficiency,
+         CONVERT (SUM(s2.weldDuration)/SUM(s1.weldDuration), DECIMAL (10,2)) standardPercentage,
+         CONVERT (sum(s.wireFeedRate * s.weldDuration)/600, DECIMAL (10,2)) materialsConsumption,
+         CONVERT (sum((s.electricity * s.voltage * s.weldDuration)/3600/1000)+(s.weldDuration-s1.weldDuration)/36000,DECIMAL (10,2)) powerConsumption
+         FROM task_info t
+         LEFT JOIN sys_dept d ON t.dept_id = d.id
+         INNER JOIN weld_statistics_data s ON d.id = s.welderDeptId AND t.id = s.taskId
+         AND s.startTime &gt;= #{time1} AND s.endTime &lt;= #{time2}
+         LEFT JOIN weld_statistics_data s1 ON s.id = s1.id AND s1.weldStatus IN (3,5,7,99)
+         LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id AND s2.weldStatus IN (3,5,7)
+         LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id AND s3.weldStatus = 99
+         <where>
+             <if test="taskNo!=null and taskNo!=''">
+                 t.task_no = #{taskNo}
+             </if>
+             <if test="name!=null and name!=''">
+                 d.NAME = #{name}
+             </if>
+         </where>
+         GROUP BY t.id
+         UNION ALL
+         SELECT t.id,t.task_name,t.task_no,d.NAME,GROUP_CONCAT(DISTINCT w.welder_no) welderNo,
+         COUNT(DISTINCT sx.welderId) count,
+         GROUP_CONCAT(DISTINCT m.weld_cid) machineNo,
+         COUNT(DISTINCT m.weld_cid) count2,
+         SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+         SUM(sx1.weldSuration) realWeldTime,
+         SUM(sx1.weldSuration) normalTime,
+         0 supergageTime,
+         CONVERT (SUM(sx2.weldSuration)/SUM(sx1.weldSuration),DECIMAL(10,2)) weldingEfficiency,
+         100 standardPercentage,
+         CONVERT (sum(sx2.realityWireSpeed*sx2.weldSuration)/600,DECIMAL(10,2)) materialsConsumption,
+         CONVERT (sum((sx1.realityWeldEle*sx1.realityWeldVol*sx1.weldSuration)/3600/1000)+(sx1.weldSuration-sx2.weldSuration)/36000,DECIMAL (10,2)) powerConsumption
+         FROM task_info t
+         LEFT JOIN sys_dept d ON t.dept_id = d.id
+         INNER JOIN weldsx_statistics_data sx ON d.id = sx.welderDeptId AND t.id = sx.taskId
+         AND sx.startTime &gt;= #{time1} AND sx.endTime &lt;= #{time2}
+         LEFT JOIN welder_info w on sx.welderId = w.id
+         LEFT JOIN machine_weldsx_info m on m.weld_cid = sx.weldCid
+         LEFT JOIN weld_on_off_time onoff on onoff.weld_cid = sx.weldCid
+         LEFT JOIN weldsx_statistics_data sx1 ON sx.id = sx1.id AND sx1.weldStatus NOT IN (0,3,4,6,9)
+         LEFT JOIN weldsx_statistics_data sx2 ON sx1.id = sx2.id AND sx2.weldStatus NOT IN (3,4,6,9)
+         <where>
+             <if test="taskNo!=null and taskNo!=''">
+                 t.task_no = #{taskNo}
+             </if>
+             <if test="name!=null and name!=''">
+                 d.NAME = #{name}
+             </if>
+         </where>
+         GROUP BY t.id) a
+         group by a.id
     </select>
 
     <!--根据部门id 查询部门名称-->
