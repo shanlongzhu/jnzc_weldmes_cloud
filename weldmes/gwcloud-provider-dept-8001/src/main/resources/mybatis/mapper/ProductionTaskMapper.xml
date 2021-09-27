@@ -80,7 +80,7 @@
 
     <!--生产任务详情数据报表-->
     <select id="getList" resultMap="weldStatisticsData">
-        SELECT p.welder_no,p.welder_name,p.machine_no,p.task_no,p.`NAME`,p.reality_starttime,p.reality_endtime,p.eleScope,p.volScope,
+        SELECT p.welder_no,p.welder_name,p.machine_no,p.task_no,p.`NAME`,p.reality_starttime,p.reality_endtime,p.eleScope,
         SUM(p.electricity)/2 electricity,p.volScope,SUM(p.voltage)/2 voltage,p.task_id,p.weld_id,p.welder_id
         FROM(SELECT w.welder_no,w.welder_name,m.machine_no,t.task_no,d.NAME,t.reality_starttime,t.reality_endtime,
         CONCAT( t.eleMin, '~', t.eleMax ) eleScope,
