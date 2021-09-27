@@ -67,7 +67,7 @@
                     >
                         <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
                         <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
-                        <span>{{item.machineNo}}--{{item.machineGatherInfo.gatherNo}}</span>
+                        <span>({{item.macFlag}}) {{item.machineNo}}--{{item.gatherNo}}</span>
                     </li>
                 </ul>
 
@@ -154,6 +154,14 @@ export default {
                         this.setData(datajson);
                     }
                 }
+                //松下
+                if (topic == 'jnSxRtData') {
+                    var datajson = JSON.parse(`${message}`);
+                    if (datajson.length > 0) {
+                        //更新列表状态
+                        this.setDataSx(datajson);
+                    }
+                }
             })
         },
         //更新列表
@@ -164,7 +172,7 @@ export default {
             this.standbyArray = 0;
             this.workArray = 0;
             this.list.forEach(item => {
-                if (parseInt(v1.gatherNo) == parseInt(item.machineGatherInfo.gatherNo)) {
+                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
                     item.voltage = v1.voltage
                     item.electricity = v1.electricity
                     item.welderName = v1.welderName
@@ -175,11 +183,32 @@ export default {
             })
         },
 
+        //更新松下列表
+        setDataSx (b) {            
+            let v1 = { ...b };
+            this.list.forEach(item => {
+                if (parseInt(v1.weldCid) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.weldVol || '';
+                    item.electricity = v1.weldEle || '';
+                    item.welderName = v1.welderName || '';
+                    item.taskNo = v1.taskNo || ''
+                    item.weldStatus = v1.weldStatus;//状态
+                }
+            })
+        },
+
         //订阅主题
         doSubscribe () {
             this.client.subscribe('jnOtcV1RtData', 0, (error, res) => {
                 if (error) {
                     this.$message.error("订阅jnOtcV1RtData超时")
+                    return
+                }
+            });
+            //松下
+            this.client.subscribe('jnSxRtData', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
                     return
                 }
             })

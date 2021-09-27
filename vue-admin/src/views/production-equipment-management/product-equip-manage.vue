@@ -220,7 +220,7 @@
                     prop="machineNo"
                     label="固定资产编号"
                     align="left"
-                    min-width="100"
+                    min-width="120"
                     fixed="left"
                 >
                 <template

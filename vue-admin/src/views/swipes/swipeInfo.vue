@@ -55,7 +55,7 @@
                             >
                                 <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
                                 <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
-                                <span>{{item.machineNo}}--{{item.machineGatherInfo.gatherNo}}</span>
+                                <span>({{item.macFlag}}) {{item.machineNo}}--{{item.gatherNo}}</span>
                             </li>
                         </ul>
                     </div>
@@ -151,7 +151,6 @@ export default {
     data () {
         return {
             //mqtt
-            client2: {},
             client: {},
             options: {
                 timeout: 50,
@@ -204,33 +203,7 @@ export default {
     },
     watch: {},
     computed: {},
-    methods: {
-        //mqtt创建
-        createConnection2 () {
-            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
-            try {
-                this.client2 = mqtt.connect(connectUrl, this.options)
-            } catch (error) {
-                console.log('连接失败', error)
-            }
-            this.client2.on('connect', () => {
-                // console.log('连接成功')
-                this.doSubscribe2();
-
-            })
-            this.client2.on('error', error => {
-                console.log('连接失败', error)
-            })
-            this.client2.on('message', (topic, message) => {
-                if (topic == 'jnOtcV1RtData') {
-                    var datajson = JSON.parse(`${message}`);
-                    if (datajson.length > 0) {
-                        //更新列表状态
-                        this.setData(datajson);
-                    }
-                }
-            })
-        },
+    methods: {       
         //更新列表
         setData (arr) {
             let v1 = arr.slice(-1)[0];
@@ -239,7 +212,7 @@ export default {
             this.standbyArray = 0;
             this.workArray = 0;
             this.list.forEach(item => {
-                if (parseInt(v1.gatherNo) == parseInt(item.machineGatherInfo.gatherNo)) {
+                if (parseInt(v1.gatherNo) == parseInt(item.gatherNo)) {
                     item.voltage = v1.voltage
                     item.electricity = v1.electricity
                     item.welderName = v1.welderName
@@ -250,15 +223,21 @@ export default {
             })
         },
 
-        //订阅主题
-        doSubscribe2 () {
-            this.client2.subscribe('jnOtcV1RtData', 0, (error, res) => {
-                if (error) {
-                    this.$message.error("订阅jnOtcV1RtData超时")
-                    return
+        //更新松下列表
+        setDataSx (b) {
+            let v1 = { ...b };
+            this.list.forEach(item => {
+                if (parseInt(v1.weldCid) == parseInt(item.gatherNo)) {
+                    item.voltage = v1.weldVol || '';
+                    item.electricity = v1.weldEle || '';
+                    item.welderName = v1.welderName || '';
+                    item.taskNo = v1.taskNo || ''
+                    item.weldStatus = v1.weldStatus;//状态
                 }
             })
         },
+
+        
 
         totalNum (v) {
             switch (v) {
@@ -406,9 +385,20 @@ export default {
                 console.log('连接失败', error)
             })
             this.client.on('message', (topic, message) => {
-                if (topic == 'jnTaskClaimIssueReturn') {
-                    console.log(`${message}`)
-
+                if (topic == 'jnOtcV1RtData') {
+                    var datajson = JSON.parse(`${message}`);
+                    if (datajson.length > 0) {
+                        //更新列表状态
+                        this.setData(datajson);
+                    }
+                }
+                //松下
+                if (topic == 'jnSxRtData') {
+                    var datajson = JSON.parse(`${message}`);
+                    if (datajson.length > 0) {
+                        //更新列表状态
+                        this.setDataSx(datajson);
+                    }
                 }
             })
         },
@@ -416,7 +406,15 @@ export default {
 
         //订阅主题
         doSubscribe () {
-            this.client.subscribe('jnTaskClaimIssueReturn', 0, (error, res) => {
+            // otc
+            this.client.subscribe('jnOtcV1RtData', 0, (error, res) => {
+                if (error) {
+                    console.log('Subscribe to topics error', error)
+                    return
+                }
+            });
+            //松下
+            this.client.subscribe('jnSxRtData', 0, (error, res) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -433,7 +431,7 @@ export default {
             if (!this.curModel.hasOwnProperty('id')) {
                 return this.$message.error('请选择焊机');
             }
-            if (!this.curModel.machineGatherInfo.gatherNo) {
+            if (!this.curModel.gatherNo) {
                 return this.$message.error('选择的焊机采集序号位空！！！！！');
             }
             if (!this.selectTask.hasOwnProperty("id")) {
@@ -470,13 +468,13 @@ export default {
 
             msg['weldIp'] = "";
             msg['gatherNo'] = "";
-            if (this.curModel.sysDictionary.valueNamess == 'OTC') {
+            if (this.curModel.firmStr == 'OTC') {
                 msg['weldType'] = 0;//设备类型
-                msg['gatherNo'] = this.curModel.machineGatherInfo.gatherNo;//采集编号
+                msg['gatherNo'] = this.curModel.gatherNo;//采集编号
             }
-            if (this.curModel.sysDictionary.valueNamess == '松下') {
+            if (this.curModel.firmStr == '松下') {
                 msg['weldType'] = 1;//设备类型
-                msg['weldIp'] = this.curModel.ipPath || "";//设备IP
+                msg['weldIp'] = this.curModel.gatherNo || "";//设备IP
             }
             msg['startFlag'] = 0;//开始标记
 
@@ -484,17 +482,11 @@ export default {
             console.log(msg)
             this.addTaskClaimInfo(msg);
             this.butLoading = true;
-            //记时触发下发失败
-            this.issueTimeOut();
             this.$message({
                 message: '已发送',
                 type: 'success',
                 duration: '1000'
             });
-
-            if (this.timeout) {
-                clearTimeout(this.timeout);
-            }
             setTimeout(() => {
                 this.client.end();
                 this.$router.replace({ path: '/swipeCard' })
@@ -502,26 +494,7 @@ export default {
         },
 
 
-        //下发超时
-        issueTimeOut (n) {
-            this.timeout = setTimeout(() => {
-                this.client.unsubscribe('jnTaskClaimIssueReturn', error => {
-                    console.log("取消订阅")
-                    if (error) {
-                        console.log('取消订阅失败', error)
-                    }
-                    setTimeout(() => {
-                        this.client.end();
-                        this.$router.replace({ path: '/swipeCard' })
-                    }, 1000)
-                });
-
-                if (n) {
-                    this.$message.error("下发超时")
-                }
-                clearTimeout(this.timeout)
-            }, 5000)
-        },
+        
         backPage () {
             this.$router.go(-1);
         },
