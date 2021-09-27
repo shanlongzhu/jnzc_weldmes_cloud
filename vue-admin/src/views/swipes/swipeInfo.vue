@@ -468,11 +468,11 @@ export default {
 
             msg['weldIp'] = "";
             msg['gatherNo'] = "";
-            if (this.curModel.firmStr == 'OTC') {
+            if (this.curModel.macFlag == 'otc') {
                 msg['weldType'] = 0;//设备类型
                 msg['gatherNo'] = this.curModel.gatherNo;//采集编号
             }
-            if (this.curModel.firmStr == '松下') {
+            if (this.curModel.macFlag == 'sx') {
                 msg['weldType'] = 1;//设备类型
                 msg['weldIp'] = this.curModel.gatherNo || "";//设备IP
             }
