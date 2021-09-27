@@ -857,9 +857,9 @@ export default {
                 weldIp: [
                     { required: true, message: '不能为空', trigger: 'blur' }
                 ],
-                weldCode: [
-                    { required: true, message: '不能为空', trigger: 'blur' }
-                ],                
+                // weldCode: [
+                //     { required: true, message: '不能为空', trigger: 'blur' }
+                // ],                
                 area: [
                     { required: true, message: '不能为空', trigger: 'change' }
                 ],
