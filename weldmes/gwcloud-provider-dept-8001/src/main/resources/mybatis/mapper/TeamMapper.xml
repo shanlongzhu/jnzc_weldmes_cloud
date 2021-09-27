@@ -59,7 +59,7 @@
 
 	<select id="getList" resultType="com.gw.entities.WeldStatisticsData">
 		SELECT g.id,g.deptName,g.allCount,g.onOffCount,g.onOffTime,g.taskCount,g.realWeldOnline,g.realWeldTime,g.noTaskCount,g.noTaskMachineDetail,
-		g.equipUtilization,g.supergageTime,g.normalTime,g.weldingEfficiency,g.standardPercentage,g.materialsConsumption,g.powerConsumption,g.deptName
+		g.equipUtilization,g.supergageTime,g.normalTime,g.weldingEfficiency,g.standardPercentage,g.materialsConsumption,g.powerConsumption
 		FROM(SELECT d.id,d.`name` deptName,
 		COUNT(DISTINCT m.id) allCount,
 		COUNT(DISTINCT s.machineId) onOffCount,
