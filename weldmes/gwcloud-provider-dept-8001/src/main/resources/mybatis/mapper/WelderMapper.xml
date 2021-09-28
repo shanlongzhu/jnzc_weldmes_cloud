@@ -251,7 +251,7 @@
         select w.taskFlag,w.id,w.machine_no machineNo,w.create_time createTime,w.type,w.dept_id deptId,
         w.g_id gId,w.status,w.model,w.firm,
         w.is_network isNetwork,w.gather_no gatherNo,w.statusStr,w.firmStr,w.modelStr,w.areaStr,w.bayStr,
-        w.`name`,w.ip_path ipPath,w.area,w.bay,w.macFlag,w.typeStr,w.statusStr
+        w.`name`,w.ip_path ipPath,w.area,w.bay,w.macFlag,w.typeStr
         from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no machine_no,
         sxm.create_time,sxm.weld_kind type,sxm.dept_id,sxm.weld_cid g_id,sxm.weld_status status,sxm.sx_model model,
         sxm.weld_firm firm,
