@@ -11,11 +11,13 @@ import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.db.WeldModel;
 import com.shth.das.pojo.jnotc.*;
+import com.shth.das.processdb.DBCreateMethod;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,6 +27,7 @@ import java.util.*;
 /**
  * 江南项目数据解析类
  */
+@Component
 @Slf4j
 public class JnOtcRtDataProtocol {
 
@@ -127,6 +130,11 @@ public class JnOtcRtDataProtocol {
                 if (CommonUtils.isNotEmpty(list)) {
                     //添加到OTC阻塞队列（通过定时任务存储）;offer:当阻塞队列满了，则不再增加
                     list.forEach(CommonQueue.OTC_LINKED_BLOCKING_QUEUE::offer);
+                    //判断是否启用ProcessDB，true：添加到队列中
+                    if (CommonFunction.isEnableProcessDB()) {
+                        //添加到实时数据库的阻塞队列
+                        list.forEach(new DBCreateMethod()::addOtcRtDataToProcessDbQueue);
+                    }
                 }
             }
         }

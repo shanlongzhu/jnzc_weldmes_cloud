@@ -2,6 +2,7 @@ package com.shth.das.job;
 
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Queues;
+import com.processdb.driver.record.RecordData;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonList;
@@ -9,6 +10,7 @@ import com.shth.das.common.CommonMap;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
+import com.shth.das.processdb.DBCreateMethod;
 import com.shth.das.sys.rtdata.service.OtcRtDataService;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.*;
@@ -30,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -254,7 +257,7 @@ public class ScheduledTask {
                     otcRtDataService.insertRtDataList(jnRtDataDbList);
                 }
             } catch (Exception e) {
-                log.error("3秒执行一次OTC设备实时数据存DB异常：", e);
+                log.error("3秒执行一次OTC设备实时数据存MySQLDB异常：", e);
             } finally {
                 otcLinkedBlockingQueue.clear();
             }
@@ -277,7 +280,7 @@ public class ScheduledTask {
                     sxRtDataService.insertSxRtDataList(sxRtDataList);
                 }
             } catch (Exception e) {
-                log.error("3秒执行一次松下设备实时数据存DB异常：", e);
+                log.error("3秒执行一次松下设备实时数据存MySQLDB异常：", e);
             } finally {
                 sxLinkedBlockingQueue.clear();
             }
@@ -305,6 +308,29 @@ public class ScheduledTask {
     public void scheduled9() {
         //打印系统运行状况
         OshiSystemInfo.getSystemInfoAll();
+    }
+
+    /**
+     * 3秒执行一次
+     * 任务：读取实时数据队列并存储到ProcessDB实时数据库中
+     */
+    @Scheduled(fixedRate = 1000 * 3)
+    @Async
+    public void scheduled10() {
+        if (CommonFunction.isEnableOtcFunction() && CommonFunction.isEnableProcessDB()) {
+            LinkedBlockingQueue<RecordData> otcProcessDbQueues = CommonQueue.OTC_ADD_PROCESS_DB_QUEUE;
+            try {
+                Vector<RecordData> vector = new Vector<>();
+                while (!otcProcessDbQueues.isEmpty()) {
+                    Queues.drain(otcProcessDbQueues, vector, 2000, Duration.ofMillis(0));
+                }
+                DBCreateMethod.addPointData(vector);
+            } catch (Exception e) {
+                log.error("3秒执行一次OTC设备实时数据存ProcessDB异常：", e);
+            } finally {
+                otcProcessDbQueues.clear();
+            }
+        }
     }
 
 }

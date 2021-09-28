@@ -1,5 +1,6 @@
 package com.shth.das.common;
 
+import com.processdb.driver.record.RecordData;
 import com.shth.das.pojo.db.OtcMachineQueue;
 import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
@@ -14,6 +15,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @create: 2021-08-04
  */
 public class CommonQueue {
+
+    /**
+     * OTC阻塞队列存储实时数据，并定时同步ProcessDB
+     */
+    public static final LinkedBlockingQueue<RecordData> OTC_ADD_PROCESS_DB_QUEUE = new LinkedBlockingQueue<>(20000);
 
     /**
      * 阻塞队列存储实时数据，并定时同步到MySQL数据库

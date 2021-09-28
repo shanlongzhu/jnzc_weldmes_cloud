@@ -20,6 +20,16 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
     <dependencies>
+        <!-- 添加ProcessDB依赖包 -->
+        <dependency>
+            <groupId>com.processdb</groupId>
+            <artifactId>ProcessDBDriver</artifactId>
+            <version>2.0</version>
+            <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ProcessDBDriver2.0.jar</systemPath>
+        </dependency>
+        <!-- 添加web依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

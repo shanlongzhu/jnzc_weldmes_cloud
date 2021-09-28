@@ -63,6 +63,25 @@ public class CommonFunction {
      */
     private static boolean enableSxFunction = true;
 
+    /**
+     * 配置是否启用ProcessDB（true：启用）
+     */
+    private static boolean enableProcessDB = true;
+
+    /**
+     * 实时数据库名
+     */
+    private static String processDbName;
+    /**
+     * 实时数据库OTC表名
+     */
+    private static String processDbOtcTableName;
+    /**
+     * 实时数据库松下表名
+     */
+    private static String processDbSxTableName;
+
+
     @Value("${otcNettyServer.port}")
     private void setOtcPort(int port) {
         otcPort = port;
@@ -168,5 +187,41 @@ public class CommonFunction {
     @Value("${enableSxFunction}")
     private void setEnableSxFunction(boolean enableSxFunction) {
         CommonFunction.enableSxFunction = enableSxFunction;
+    }
+
+    public static String getProcessDbName() {
+        return processDbName;
+    }
+
+    @Value("${processDB.config.dbName}")
+    private void setProcessDbName(String processDbName) {
+        CommonFunction.processDbName = processDbName;
+    }
+
+    public static String getProcessDbOtcTableName() {
+        return processDbOtcTableName;
+    }
+
+    @Value("${processDB.config.otcTableName}")
+    private void setProcessDbOtcTableName(String processDbOtcTableName) {
+        CommonFunction.processDbOtcTableName = processDbOtcTableName;
+    }
+
+    public static String getProcessDbSxTableName() {
+        return processDbSxTableName;
+    }
+
+    @Value("${processDB.config.sxTableName}")
+    private void setProcessDbSxTableName(String processDbSxTableName) {
+        CommonFunction.processDbSxTableName = processDbSxTableName;
+    }
+
+    public static boolean isEnableProcessDB() {
+        return enableProcessDB;
+    }
+
+    @Value("${enableProcessDB}")
+    private void setEnableProcessDB(boolean enableProcessDB) {
+        CommonFunction.enableProcessDB = enableProcessDB;
     }
 }

@@ -109,3 +109,19 @@ logging:
 # 指定输出的日志文件名（不指定路径默认和项目同路径，没有会自动新建）
   file:
     name: D:\jn-das-log\jndas.log
+
+# 配置是否启用ProcessDB（true：启用）
+enableProcessDB: false
+
+# processdb实时数据库配置
+processDB:
+  connectName: jnzcrtdb_account
+  hostName: 127.0.0.1
+  hostPort: 8301
+  userName: root
+  password: root
+  config:
+    dbName: JNZCRTDB
+    otcTableName: OTC
+    sxTableName: SX
+

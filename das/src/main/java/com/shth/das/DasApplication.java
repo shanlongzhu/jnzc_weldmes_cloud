@@ -4,6 +4,8 @@ import com.shth.das.common.CommonFunction;
 import com.shth.das.job.PowerBootJob;
 import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.netty.NettyServer;
+import com.shth.das.processdb.DBCreateConnect;
+import com.shth.das.processdb.DBCreateMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +29,10 @@ public class DasApplication implements CommandLineRunner {
     private NettyServer nettyServer;
     @Autowired
     private PowerBootJob powerBootJob;
+    @Autowired
+    private DBCreateConnect dbCreateConnect;
+    @Autowired
+    private DBCreateMethod dbCreateMethod;
 
     //启动时执行任务
     @Override
@@ -39,6 +45,13 @@ public class DasApplication implements CommandLineRunner {
         if (CommonFunction.isEnableOtcFunction()) {
             //OTC（松下）服务端启动
             nettyServer.start(CommonFunction.getOtcPort());
+        }
+        //判断是否启用ProcessDB实时数据库功能
+        if (CommonFunction.isEnableProcessDB()) {
+            //创建Processdb连接
+            dbCreateConnect.start();
+            //创建Processdb的库，表
+            dbCreateMethod.addDbaseTablePoint();
         }
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
