@@ -720,25 +720,36 @@ public class DispatchServiceImpl implements DispatchService{
                 }
 
                 //任务编号
-                taskInfo.setTaskNo((obs[0].toString()));
+                if(!ObjectUtils.isEmpty(obs[0])){
+
+                    taskInfo.setTaskNo((obs[0].toString()));
+                }else{
+
+                    taskInfo.setTaskNo("");
+                }
 
                 String valueName = (String) obs[1];
 
-                //通过任务等级获取 该任务等级的主键Id
-                Long taskGradeId = dispatchDao.queryTaskGradeIdByValueName(valueName);
+                if(!ObjectUtils.isEmpty(valueName)){
 
-                //任务等级
-                taskInfo.setGrade(taskGradeId);
+                    //通过任务等级获取 该任务等级的主键Id
+                    Long taskGradeId = dispatchDao.queryTaskGradeIdByValueName(valueName);
+                    //任务等级
+                    taskInfo.setGrade(taskGradeId);
+                }
 
                 String deptName = (String) obs[2];
 
-                //根据班组名 得到对应班组Id
-                Long deptId = dispatchDao.queryDeptIdByWorkArea(deptName);
+                if(!ObjectUtils.isEmpty(deptName)){
 
-                //所属班组
-                taskInfo.setDeptId(deptId);
+                    //根据班组名 得到对应班组Id
+                    Long deptId = dispatchDao.queryDeptIdByWorkArea(deptName);
 
-                SimpleDateFormat sdf = DateTimeUtil.sdf;
+                    //所属班组
+                    taskInfo.setDeptId(deptId);
+                }
+
+                //SimpleDateFormat sdf = DateTimeUtil.sdf;
 
                 if(!ObjectUtils.isEmpty(obs[3])){
 
