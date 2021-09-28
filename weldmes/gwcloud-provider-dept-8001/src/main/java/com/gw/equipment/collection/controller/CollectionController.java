@@ -261,7 +261,7 @@ public class CollectionController {
 
                 machineGatherInfo.setMacPath((String) obs[5]);
 
-                if(!ObjectUtils.isEmpty(obs[6].toString())){
+                if(!ObjectUtils.isEmpty(obs[6])){
 
                     machineGatherInfo.setCreateTime(obs[6].toString());
                 }

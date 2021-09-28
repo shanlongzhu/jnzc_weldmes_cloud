@@ -184,7 +184,7 @@
     </select>
 
     <select id="getGid" resultType="java.lang.Long">
-        select id from machine_gather_info where gather_no=#{machineNo}
+        select id from machine_gather_info where gather_no=#{machineNo} limit 1
     </select>
 
     <select id="getModelId" resultType="java.lang.Byte">
