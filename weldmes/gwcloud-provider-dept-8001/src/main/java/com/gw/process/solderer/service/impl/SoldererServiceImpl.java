@@ -54,6 +54,7 @@ public class SoldererServiceImpl implements SoldererService {
 
     @Override
     public Byte getCertificationId(String certification) {
+
         return soldererDao.getCertificationId(certification);
     }
 

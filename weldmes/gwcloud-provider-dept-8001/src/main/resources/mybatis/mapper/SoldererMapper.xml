@@ -94,25 +94,17 @@
     </select>
 
     <select id="getCertificationId" resultType="java.lang.Byte">
-         select id from sys_dictionary where value_name=#{certification}
+         select id from sys_dictionary where value_name = #{certification}
     </select>
 
     <select id="getDeptId" resultType="java.lang.Long">
-        select id from sys_dept where name=#{deptName}
+        select id from sys_dept where name=#{deptName} limit 1
     </select>
 
-    <insert id="save">
+    <insert id="save" parameterType="com.gw.entities.WelderInfo">
         insert into welder_info(welder_no,welder_name,cellphone,rank,certification,dept_id,remarks)
         values (#{welderInfo.welderNo},#{welderInfo.welderName},#{welderInfo.cellphone},
                 #{welderInfo.rank},#{welderInfo.certification},#{welderInfo.deptId},#{welderInfo.remarks})
-        ON DUPLICATE KEY UPDATE
-         welder_no = #{welderInfo.welderNo},
-         welder_name = #{welderInfo.welderName},
-         cellphone = #{welderInfo.status},
-         rank = #{welderInfo.rank},
-         certification = #{welderInfo.certification},
-         dept_id = #{welderInfo.deptId},
-         remarks = #{welderInfo.remarks}
     </insert>
 
     <!--获取历史曲线中焊工id、姓名以及编号-->

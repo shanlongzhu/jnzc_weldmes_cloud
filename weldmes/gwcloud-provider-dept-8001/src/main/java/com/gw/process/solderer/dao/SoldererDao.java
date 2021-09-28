@@ -25,7 +25,7 @@ public interface SoldererDao {
 
     Long getDeptId(String deptName);
 
-    void save(WelderInfo welderInfo);
+    void save(@Param("welderInfo")WelderInfo welderInfo);
 
     /**
      * @Date 2021/7/13 18:01

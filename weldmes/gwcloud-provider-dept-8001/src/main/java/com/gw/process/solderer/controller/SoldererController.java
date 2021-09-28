@@ -217,24 +217,41 @@ public class SoldererController {
                         continue;
                     }
                     Object value= ExcelUtils.getValue(cell);
+
                     obs[j]=value;
 
                 }
-                WelderInfo welderInfo=new WelderInfo();
+
+                WelderInfo welderInfo = new WelderInfo();
+
                 welderInfo.setWelderName((String) obs[0]);
-                welderInfo.setWelderNo((String) obs[1]);
+
+                welderInfo.setWelderNo((obs[1].toString()));
+
                 welderInfo.setCellphone((String) obs[2]);
-                String rank=(String) obs[3];
+
+                String rank = (String) obs[3];
+
                 Byte rankId=soldererService.getRankId(rank);
+
                 welderInfo.setRank(rankId);
+
                 String certification=(String) obs[4];
-                Byte certificationId=soldererService.getCertificationId(certification);
+
+                Byte certificationId = soldererService.getCertificationId(certification);
+
                 welderInfo.setCertification(certificationId);
+
                 String deptName=(String) obs[5];
+
                 Long deptId=soldererService.getDeptId(deptName);
+
                 welderInfo.setDeptId(deptId);
+
                 welderInfo.setRemarks((String) obs[6]);
+
                 welderInfoArrayList.add(welderInfo);
+
             }
             soldererService.importExcel(welderInfoArrayList);
             result.setMsg("导入成功！");
