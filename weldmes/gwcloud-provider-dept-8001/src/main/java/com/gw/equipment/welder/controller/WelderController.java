@@ -4,6 +4,7 @@ package com.gw.equipment.welder.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ConstantInfo;
+import com.gw.common.DateTimeUtil;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.entities.MachineWeldInfo;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.nio.cs.ext.IBM037;
+
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -136,6 +139,7 @@ public class WelderController {
 
             MachineWeldInfo machineWeldInfo=list.get(i);
 
+            //固定资产编号
             Cell getMachineNoCell=row.createCell(0);
 
             if (ObjectUtils.isEmpty(machineWeldInfo.getMachineNo())){
@@ -144,14 +148,16 @@ public class WelderController {
             }
             getMachineNoCell.setCellValue(machineWeldInfo.getMachineNo());
 
-            Cell valueNameCell=row.createCell(1);
+            //设备类型
+            Cell typeStrCell=row.createCell(1);
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueName())){
+            if (ObjectUtils.isEmpty(machineWeldInfo.getTypeStr())){
 
-                machineWeldInfo.getSysDictionary().setValueName("");
+                machineWeldInfo.setTypeStr("");
             }
-            valueNameCell.setCellValue(machineWeldInfo.getSysDictionary().getValueName());
+            typeStrCell.setCellValue(machineWeldInfo.getTypeStr());
 
+            //入厂时间
             Cell createTimeCell=row.createCell(2);
 
             if (ObjectUtils.isEmpty(machineWeldInfo.getCreateTime())){
@@ -160,54 +166,79 @@ public class WelderController {
             }
             createTimeCell.setCellValue(machineWeldInfo.getCreateTime());
 
-            Cell nameCell=row.createCell(3);
+            //所属项目
+            Cell deptNameCell = row.createCell(3);
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDept().getName())){
+            if (ObjectUtils.isEmpty(machineWeldInfo.getDeptName())){
 
-                machineWeldInfo.getSysDept().setName("");
+                machineWeldInfo.setDeptName("");
             }
-            nameCell.setCellValue(machineWeldInfo.getSysDept().getName());
+            deptNameCell.setCellValue(machineWeldInfo.getDeptName());
 
-            Cell getValueNamesCell=row.createCell(4);
+            //状态
+            Cell statusStrCell = row.createCell(4);
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNames())){
+            if (ObjectUtils.isEmpty(machineWeldInfo.getStatusStr())){
 
-                machineWeldInfo.getSysDictionary().setValueNames("");
+                machineWeldInfo.setStatusStr("");
             }
-            getValueNamesCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNames());
+            statusStrCell.setCellValue(machineWeldInfo.getStatusStr());
 
-            Cell getValueNamessCell=row.createCell(5);
+            //厂家
+            Cell firmNameCell=row.createCell(5);
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNamess())){
+            if (ObjectUtils.isEmpty(machineWeldInfo.getFirmStr())){
 
-                machineWeldInfo.getSysDictionary().setValueNamess("");
+                machineWeldInfo.setFirmStr("");
             }
-            getValueNamessCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamess());
+            firmNameCell.setCellValue(machineWeldInfo.getFirmStr());
 
+            //是否在网
             Cell getIsNetworkCell=row.createCell(6);
-            getIsNetworkCell.setCellValue(machineWeldInfo.getIsNetwork()==0?"是":"否");
+            getIsNetworkCell.setCellValue(machineWeldInfo.getIsNetwork() ==0 ?"是":"否");
 
+            //采集序号
             Cell getGatherNoCell=row.createCell(7);
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getMachineGatherInfo().getGatherNo())){
+            if (ObjectUtils.isEmpty(machineWeldInfo.getGatherNo())){
 
-                machineWeldInfo.getMachineGatherInfo().setGatherNo("");
+                machineWeldInfo.setGatherNo("");
             }
-            getGatherNoCell.setCellValue(machineWeldInfo.getMachineGatherInfo().getGatherNo());
+            getGatherNoCell.setCellValue(machineWeldInfo.getGatherNo());
 
-            Cell positionCell=row.createCell(8);
-            positionCell.setCellValue("");
+            //位置
+            Cell positionCell = row.createCell(8);
 
+            if(ObjectUtils.isEmpty(machineWeldInfo.getAreaStr())){
+
+                machineWeldInfo.setAreaStr("");
+            }
+
+            if(ObjectUtils.isEmpty(machineWeldInfo.getBayStr())){
+
+                machineWeldInfo.setBayStr("");
+            }
+
+            positionCell.setCellValue(machineWeldInfo.getAreaStr()+machineWeldInfo.getBayStr());
+
+            //ip地址
             Cell ipPathCell=row.createCell(9);
-            ipPathCell.setCellValue("");
 
-            Cell getValueNamesssCell=row.createCell(10);
+            if(ObjectUtils.isEmpty(machineWeldInfo.getIpPath())){
 
-            if (ObjectUtils.isEmpty(machineWeldInfo.getSysDictionary().getValueNamesss())){
-
-                machineWeldInfo.getSysDictionary().setValueNamesss("");
+                machineWeldInfo.setIpPath("");
             }
-            getValueNamesssCell.setCellValue(machineWeldInfo.getSysDictionary().getValueNamesss());
+
+            ipPathCell.setCellValue(machineWeldInfo.getIpPath());
+
+            //设备型号
+            Cell modelNameCell = row.createCell(10);
+
+            if (ObjectUtils.isEmpty(machineWeldInfo.getModelStr())){
+
+                machineWeldInfo.setModelStr("");
+            }
+            modelNameCell.setCellValue(machineWeldInfo.getModelStr());
 
         }
         try {
@@ -241,7 +272,7 @@ public class WelderController {
 
             int lastCellNums = firstRow.getLastCellNum();
 
-            List<MachineWeldInfo> machineWeldInfoArrayList=new ArrayList<>();
+            List<MachineWeldInfo> machineWeldInfoArrayList = new ArrayList<>();
 
             for (int i = 1; i <=lastRowNum ; i++) {
 
@@ -269,7 +300,10 @@ public class WelderController {
 
                 String str = obs[0].toString();
 
-                str = str.substring(0,str.indexOf("."));
+                if(str.indexOf(".") > 0){
+
+                    str = str.substring(0,str.indexOf("."));
+                }
 
                 machineWeldInfo.setMachineNo(str);
 
@@ -279,7 +313,12 @@ public class WelderController {
 
                 machineWeldInfo.setType(id);
 
-                machineWeldInfo.setCreateTime((String) obs[2]);
+                if(!ObjectUtils.isEmpty(obs[2])){
+
+                    String time = DateTimeUtil.getRightTimeFormat(obs[2].toString());
+
+                    machineWeldInfo.setCreateTime(time);
+                }
 
                 String deptName=(String) obs[3];
 
@@ -318,7 +357,10 @@ public class WelderController {
 
                 for (int j = 0; j < machineNos.length ; j++) {
 
-                    str = machineNos[j].substring(0,machineNos[j].indexOf("."));
+                    if(machineNos[j].indexOf(".") > 0){
+
+                        str = machineNos[j].substring(0,machineNos[j].indexOf("."));
+                    }
 
                     String a = String.valueOf(welderService.getGid(str));
 
@@ -345,30 +387,36 @@ public class WelderController {
 
                 machineWeldInfo.setModel(modelId);
 
-                String area = (String) obs[11];
+                //String areaAndBay = (String) obs[8];
 
-                if(!ObjectUtils.isEmpty(area)){
+                /*if(!ObjectUtils.isEmpty(areaAndBay) && areaAndBay.length() >4){
 
-                    Long areaId = welderService.getTypeId(area,ConstantInfo.AREA_FLAG).longValue();
+                    String area = areaAndBay.substring(0,areaAndBay.length()-2);
 
-                    if (!ObjectUtils.isEmpty(areaId)){
+                    String bay = areaAndBay.substring(areaAndBay.length()-2);
 
-                        machineWeldInfo.setArea(areaId);
+                    if(!ObjectUtils.isEmpty(area)){
+
+                        Long areaId = welderService.getTypeId(area,ConstantInfo.AREA_FLAG).longValue();
+
+                        if (!ObjectUtils.isEmpty(areaId)){
+
+                            machineWeldInfo.setArea(areaId);
+                        }
                     }
 
-                }
+                    if(!ObjectUtils.isEmpty(bay)) {
 
-                String bay = (String) obs[12];
+                        Long bayId = welderService.getTypeId(bay,ConstantInfo.BAY_FLAG).longValue();
 
-                if (!ObjectUtils.isEmpty(bay)){
+                        if (!ObjectUtils.isEmpty(bayId)){
 
-                    Long bayId = welderService.getTypeId(bay,ConstantInfo.BAY_FLAG).longValue();
-
-                    if (!ObjectUtils.isEmpty(bayId)){
-
-                        machineWeldInfo.setBay(bayId);
+                            machineWeldInfo.setBay(bayId);
+                        }
                     }
-                }
+
+
+                }*/
 
                 //把对象放到list
                 machineWeldInfoArrayList.add(machineWeldInfo);
