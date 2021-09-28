@@ -1,4 +1,5 @@
 package com.gw.entities;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,10 @@ import java.sql.Timestamp;
 @Data
 @Accessors(chain=true)
 public class MachineWeldInfo implements Serializable {
+
+
     private long id;
+
     private String machineNo;
     private Byte status;
     private Byte type;
