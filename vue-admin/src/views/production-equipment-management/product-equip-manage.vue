@@ -230,18 +230,15 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="deptName"
+                    prop="modelStr"
                     label="设备类型"
                     align="left"
-                    min-width="80"
+                    min-width="120"
                 >
                 <template
                         slot="header"
                     >
                         <span>设备类型</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueName}}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -252,7 +249,7 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
+                    prop="deptName"
                     label="所属项目"
                     align="left"
                     min-width="120"
@@ -262,9 +259,6 @@
                     >
                         <span>所属项目</span><span class="red-star">*</span>
                     </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDept.name}}
-                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="ipPath"
@@ -273,7 +267,7 @@
                     min-width="60"
                 >
                     <template slot-scope="scope">
-                        <span :class="{'green':scope.row.sysDictionary.valueNames=='启用','waring':scope.row.sysDictionary.valueNames=='维修','error':scope.row.sysDictionary.valueNames=='报废'}">{{scope.row.sysDictionary.valueNames}}</span>
+                        <span :class="{'green':scope.row.statusStr=='启用','waring':scope.row.statusStr=='维修','error':scope.row.statusStr=='报废'}">{{scope.row.statusStr}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -288,7 +282,7 @@
                         <span>厂家</span><span class="red-star">*</span>
                     </template>
                     <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNamess}}
+                        {{scope.row.firmStr}}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -305,7 +299,7 @@
                     prop="gatherNo"
                     label="采集序号"
                     align="left"
-                    min-width="150"
+                    min-width="100"
                     show-overflow-tooltip
                 >
                     <template
@@ -314,7 +308,7 @@
                         <span>采集序号</span><span class="red-star">*</span>
                     </template>
                     <template slot-scope="scope">
-                        {{scope.row.machineGatherInfo.gatherNo}}
+                        {{scope.row.gatherNo}}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -350,7 +344,7 @@
 
                 </el-table-column>
                 <el-table-column
-                    prop="createTime"
+                    prop="modelStr"
                     label="设备型号"
                     align="left"
                     min-width="120"
@@ -359,9 +353,6 @@
                         slot="header"
                     >
                         <span>设备型号</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNamesss}}
                     </template>
                 </el-table-column>
                 <el-table-column
