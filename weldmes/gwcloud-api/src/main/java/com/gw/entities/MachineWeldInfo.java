@@ -20,23 +20,37 @@ public class MachineWeldInfo implements Serializable {
     private long id;
 
     private String machineNo;
+
     private Byte status;
+
     private Byte type;
+
     private Byte firm;
+
     private Byte model;
+
     private long deptId;
+
     private String gId;
+
     private long isNetwork;
+
     private Timestamp productionDate;
+
     private String ipPath;
+
     private String createBy;
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private String createTime;
+
     private String lastUpdateBy;
+
     private Timestamp lastUpdateTime;
+
     private SysDictionary sysDictionary;
+
     private SysDept sysDept;
+
     private MachineGatherInfo machineGatherInfo;
 
     /**
