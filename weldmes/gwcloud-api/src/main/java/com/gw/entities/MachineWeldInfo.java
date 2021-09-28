@@ -90,4 +90,10 @@ public class MachineWeldInfo implements Serializable {
      */
     private String macFlag;
 
+    /**
+     * 所属项目
+     */
+    private String deptName;
+
+
 }
