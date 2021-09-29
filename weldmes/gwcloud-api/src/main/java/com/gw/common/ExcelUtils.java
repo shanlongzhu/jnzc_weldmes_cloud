@@ -18,7 +18,8 @@ public class ExcelUtils {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     value = cell.getDateCellValue();
                 } else {
-                    value = cell.getNumericCellValue();
+
+                    value = (int)cell.getNumericCellValue();
                 }
                 break;
         }
