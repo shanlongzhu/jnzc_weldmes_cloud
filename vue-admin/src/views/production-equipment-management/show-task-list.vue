@@ -222,6 +222,7 @@
                     label="工艺备注"
                     align="left"
                     width="150"
+                    show-overflow-tooltip
                 />
                 <el-table-column
                     label="操 作"

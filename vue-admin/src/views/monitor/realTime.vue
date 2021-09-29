@@ -316,11 +316,7 @@ export default {
             //统计
             for (let b of arr) {
                 let isThat = this.list.filter(item => parseInt(b.gatherNo) == parseInt(item.gatherNo));
-                if (this.searchObj.id != 1) {
-                    if (isThat.length > 0) {
-                        this.totalNum(b);
-                    }
-                } else {
+                if (isThat.length > 0) {
                     this.totalNum(b);
                 }
             }
@@ -340,11 +336,7 @@ export default {
         setDataSx (b) {
             //统计
             let isThat = this.list.filter(item => parseInt(b.weldCid) == parseInt(item.gatherNo));
-            if (this.searchObj.id != 1) {
-                if (isThat.length > 0) {
-                    this.totalNum(b);
-                }
-            } else {
+            if (isThat.length > 0) {
                 this.totalNum(b);
             }
             let v1 = { ...b };
@@ -446,7 +438,7 @@ export default {
                     if (this.lineData.length > 20) {
                         this.lineData.shift();
                     }
-                    this.mqttLastData.voltage = this.mqttLastData.realityWeldVol/10;
+                    this.mqttLastData.voltage = this.mqttLastData.realityWeldVol / 10;
                     this.mqttLastData.electricity = this.mqttLastData.realityWeldEle;
                     this.lineData.push(this.mqttLastData);
                     this.$refs.lineComEChild.init(this.lineData);
