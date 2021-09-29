@@ -320,25 +320,28 @@ public class WelderController {
                     machineWeldInfo.setCreateTime(time);
                 }
 
-                String deptName=(String) obs[3];
+                String deptName = (String) obs[3];
 
-                Long deptId=welderService.getDeptId(deptName);
+                Long deptId = welderService.getDeptId(deptName);
 
-                machineWeldInfo.setDeptId(deptId);
+                if(!ObjectUtils.isEmpty(deptId)){
 
-                String status=(String) obs[4];
+                    machineWeldInfo.setDeptId(deptId);
+                }
 
-                Byte statusId= welderService.getStatusId(status);
+                String status = (String) obs[4];
+
+                Byte statusId = welderService.getStatusId(status);
 
                 machineWeldInfo.setStatus(statusId);
 
-                String firm=(String) obs[5];
+                String firm = (String) obs[5];
 
-                Byte firmId=welderService.getFirmId(firm);
+                Byte firmId = welderService.getFirmId(firm);
 
                 machineWeldInfo.setFirm(firmId);
 
-                String isNetWork=(String) obs[6];
+                String isNetWork = (String) obs[6];
 
                 if(isNetWork.equals("是")){
 
