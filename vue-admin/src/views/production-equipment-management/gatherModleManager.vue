@@ -5,7 +5,7 @@
     >
         <div class="top-con flex-n">
             <div class="con-w">
-                <span>编号：</span>
+                <span>采集编号：</span>
                 <el-input
                     size="small"
                     class="w150"
@@ -98,7 +98,7 @@
                     <template
                         slot="header"
                     >
-                        <span>编号</span><span class="red-star">*</span>
+                        <span>采集编号</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -222,7 +222,7 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="编号"
+                    label="采集编号"
                     prop="gatherNo"
                 >
                     <el-input

@@ -5,7 +5,7 @@
     >
         <div class="top-con flex-n">
             <div class="con-w">
-                <span>编号：</span>
+                <span>设备编号：</span>
                 <el-input
                     size="small"
                     class="w150"
@@ -95,7 +95,7 @@
                 </el-select>
             </div>
             <div class="con-w">
-                <span>采集序号：</span>
+                <span>采集编号：</span>
                 <el-input
                     size="small"
                     class="w150"
@@ -218,7 +218,7 @@
                 />
                 <el-table-column
                     prop="machineNo"
-                    label="固定资产编号"
+                    label="设备编号"
                     align="left"
                     min-width="120"
                     fixed="left"
@@ -226,7 +226,7 @@
                 <template
                         slot="header"
                     >
-                        <span>固定资产编号</span><span class="red-star">*</span>
+                        <span>设备编号</span><span class="red-star">*</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -297,7 +297,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="gatherNo"
-                    label="采集序号"
+                    label="采集编号"
                     align="left"
                     min-width="100"
                     show-overflow-tooltip
@@ -305,7 +305,7 @@
                     <template
                         slot="header"
                     >
-                        <span>采集序号</span><span class="red-star">*</span>
+                        <span>采集编号</span><span class="red-star">*</span>
                     </template>
                     <template slot-scope="scope">
                         {{scope.row.gatherNo}}
@@ -421,7 +421,7 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="固定资产编号"
+                    label="设备编号"
                     prop="machineNo"
                 >
                     <el-input
@@ -508,7 +508,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item
-                    label="采集序号"
+                    label="采集编号"
                     prop="gid"
                 >
                     <el-select
