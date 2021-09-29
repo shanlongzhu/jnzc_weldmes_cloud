@@ -390,9 +390,9 @@ public class WelderController {
 
                 machineWeldInfo.setModel(modelId);
 
-                //String areaAndBay = (String) obs[8];
+                String areaAndBay = (String) obs[8];
 
-                /*if(!ObjectUtils.isEmpty(areaAndBay) && areaAndBay.length() >4){
+                if(!ObjectUtils.isEmpty(areaAndBay) && areaAndBay.length() >4){
 
                     String area = areaAndBay.substring(0,areaAndBay.length()-2);
 
@@ -419,7 +419,7 @@ public class WelderController {
                     }
 
 
-                }*/
+                }
 
                 //把对象放到list
                 machineWeldInfoArrayList.add(machineWeldInfo);
