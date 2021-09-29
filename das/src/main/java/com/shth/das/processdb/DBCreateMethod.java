@@ -304,6 +304,10 @@ public class DBCreateMethod {
             pointInfo.setIOType(ConstantValue.IO_TYPE_INPUT);//io类型
             pointInfo.setBottomScale(0.0F);//量程低限
             pointInfo.setTopScale(200.0F);//量程高限
+            pointInfo.setArchived(ConstantValue.POINT_ARCHIVED_YES);//设置存入历史库
+            //pointInfo.setCompress(ConstantValue.POINT_COMPRESS_DEAD);//采用死区压缩算法
+            //pointInfo.setDevType(ConstantValue.POINT_DEVTYPE_PERCENT);//选择按百分比进行判断是否被压缩
+            //pointInfo.setDeviation(0.05f);//压缩死区大小，这和上一行强相关，如果选择百分百压缩，表示变换率在0.05%变化之内会被丢弃掉
             final int add = dbTable.add(pointInfo);
             if (add != 0) {
                 log.error("添加点：{} 失败,错误码：{}", pointName, add);
