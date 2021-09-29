@@ -13,6 +13,7 @@ import com.processdb.driver.record.RecordData;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
+import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,12 +47,31 @@ public class DBCreateMethod {
         //存储电流的点
         final DBPoint eleDbPoint = getPointByGatherNo(data.getGatherNo(), "ELE");
         if (null != eleDbPoint) {
-            setRecordData(eleDbPoint, data.getElectricity().floatValue(), data.getWeldTime());
+            setOtcRecordData(eleDbPoint, data.getElectricity().floatValue(), data.getWeldTime());
         }
         //存储电压的点
         final DBPoint volDbPoint = getPointByGatherNo(data.getGatherNo(), "VOL");
         if (null != volDbPoint) {
-            setRecordData(volDbPoint, data.getVoltage().floatValue(), data.getWeldTime());
+            setOtcRecordData(volDbPoint, data.getVoltage().floatValue(), data.getWeldTime());
+        }
+    }
+
+    /**
+     * 添加松下实时数据到ProcessDB的阻塞队列
+     *
+     * @param data 松下实时数据
+     */
+    public void addSxRtDataToProcessDbQueue(SxRtDataDb data) {
+        final String weldCid = Integer.valueOf(data.getWeldCid()).toString();
+        //根据设备CID获取电流点对象
+        final DBPoint eleDbPoint = getPointByWeldCid(weldCid, "ELE");
+        if (null != eleDbPoint) {
+            setSxRecordData(eleDbPoint, data.getRealityWeldEle().floatValue(), data.getWeldTime());
+        }
+        //根据设备CID获取电压点对象
+        final DBPoint volDbPoint = getPointByWeldCid(weldCid, "VOL");
+        if (null != volDbPoint) {
+            setSxRecordData(volDbPoint, data.getRealityWeldVol().floatValue(), data.getWeldTime());
         }
     }
 
@@ -62,7 +82,7 @@ public class DBCreateMethod {
      * @param value    值
      * @param weldTime 时间
      */
-    private void setRecordData(DBPoint dbPoint, float value, String weldTime) {
+    private void setOtcRecordData(DBPoint dbPoint, float value, String weldTime) {
         if (null != dbPoint) {
             RecordData recordData = new RecordData();
             //指定点的ID
@@ -76,6 +96,30 @@ public class DBCreateMethod {
             //质量
             recordData.setQuality((short) 0);
             CommonQueue.OTC_ADD_PROCESS_DB_QUEUE.offer(recordData);
+        }
+    }
+
+    /**
+     * 对象赋值
+     *
+     * @param dbPoint  点对象
+     * @param value    值
+     * @param weldTime 时间
+     */
+    private void setSxRecordData(DBPoint dbPoint, float value, String weldTime) {
+        if (null != dbPoint) {
+            RecordData recordData = new RecordData();
+            //指定点的ID
+            recordData.setPointId(dbPoint.getPointId());
+            //标签类型
+            recordData.setTagType(dbPoint.getTagType());
+            //电压
+            recordData.setFloat32(value);
+            //时间
+            recordData.setTimeStamp(getDateFormat(weldTime));
+            //质量（默认0：良好）
+            recordData.setQuality((short) 0);
+            CommonQueue.SX_ADD_PROCESS_DB_QUEUE.offer(recordData);
         }
     }
 
@@ -116,13 +160,13 @@ public class DBCreateMethod {
             DBase dBase = DBCreateConnect.getDbConnect().getDBaseByName(processDbName);
             if (null == dBase) {
                 //添加库
-                dBase = addDataBase(DBCreateConnect.getDbRoot(), CommonFunction.getProcessDbName());
+                dBase = addDataBase(DBCreateConnect.getDbRoot(), processDbName);
             }
             //根据表名获取表对象
             DBTable dbTable = dBase.getDBTableByName(processDbOtcTableName);
             if (null == dbTable) {
                 //添加表
-                dbTable = addTable(dBase, CommonFunction.getProcessDbOtcTableName());
+                dbTable = addTable(dBase, processDbOtcTableName);
             }
             //根据点名获取点对象
             final DBPoint dbPoint = dbTable.getPointByName(pointName);
@@ -136,7 +180,45 @@ public class DBCreateMethod {
     }
 
     /**
-     * 添加库，表，点
+     * 根据松下设备CID查询点对象
+     *
+     * @param weldCid 设备CID
+     * @return DBPoint
+     */
+    public DBPoint getPointByWeldCid(String weldCid, String pointType) {
+        if (StringUtils.isNotBlank(weldCid)) {
+            weldCid = CommonUtils.stringLengthJoint(weldCid, 4);
+            //点名
+            String pointName = "SX_" + weldCid + "_" + pointType;
+            //库名
+            final String processDbName = CommonFunction.getProcessDbName();
+            //松下表名
+            final String processDbSxTableName = CommonFunction.getProcessDbSxTableName();
+            //根据库名获取库对象
+            DBase dBase = DBCreateConnect.getDbConnect().getDBaseByName(processDbName);
+            if (null == dBase) {
+                //添加库
+                dBase = addDataBase(DBCreateConnect.getDbRoot(), processDbName);
+            }
+            //根据表名获取表对象
+            DBTable dbTable = dBase.getDBTableByName(processDbSxTableName);
+            if (null == dbTable) {
+                //添加表
+                dbTable = addTable(dBase, processDbSxTableName);
+            }
+            //根据点名获取点对象
+            final DBPoint dbPoint = dbTable.getPointByName(pointName);
+            if (null != dbPoint) {
+                return dbPoint;
+            }
+            //添加并返回点
+            return addPoint(dbTable, pointName);
+        }
+        return null;
+    }
+
+    /**
+     * 添加库，表
      */
     public void addDbaseTablePoint() {
         final DBRoot dbRoot = DBCreateConnect.getDbRoot();
@@ -215,7 +297,7 @@ public class DBCreateMethod {
                 return dbPoint;
             }
             PointInfo pointInfo = new PointInfo();
-            pointInfo.setPointName(pointName);
+            pointInfo.setPointName(pointName);//点名
             pointInfo.setPointType(ConstantValue.POINT_PHY);//采样点（点类型）
             pointInfo.setUnit("N/A");//单位
             pointInfo.setDataType(ConstantValue.TAG_TYPE_FLOAT32);//数据类型

@@ -22,6 +22,11 @@ public class CommonQueue {
     public static final LinkedBlockingQueue<RecordData> OTC_ADD_PROCESS_DB_QUEUE = new LinkedBlockingQueue<>(20000);
 
     /**
+     * 松下阻塞队列存储实时数据，并定时同步ProcessDB
+     */
+    public static final LinkedBlockingQueue<RecordData> SX_ADD_PROCESS_DB_QUEUE = new LinkedBlockingQueue<>(20000);
+
+    /**
      * 阻塞队列存储实时数据，并定时同步到MySQL数据库
      */
     public static final LinkedBlockingQueue<JNRtDataDB> OTC_LINKED_BLOCKING_QUEUE = new LinkedBlockingQueue<>(10000);

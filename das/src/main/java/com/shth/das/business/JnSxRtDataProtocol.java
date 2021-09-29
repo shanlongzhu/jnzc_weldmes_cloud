@@ -9,6 +9,7 @@ import com.shth.das.pojo.db.SxMachineQueue;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import com.shth.das.pojo.jnsx.*;
+import com.shth.das.processdb.DBCreateMethod;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
@@ -513,6 +514,8 @@ public class JnSxRtDataProtocol {
                 }
                 //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
                 CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
+                //添加实时数据到松下的队列，并定时存储到ProcessDB
+                new DBCreateMethod().addSxRtDataToProcessDbQueue(sxRtDataDb);
             }
         }
     }

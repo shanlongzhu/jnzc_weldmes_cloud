@@ -324,11 +324,36 @@ public class ScheduledTask {
                 while (!otcProcessDbQueues.isEmpty()) {
                     Queues.drain(otcProcessDbQueues, vector, 2000, Duration.ofMillis(0));
                 }
+                //添加OTC实时数据数据到ProcessDB
                 DBCreateMethod.addPointData(vector);
             } catch (Exception e) {
                 log.error("3秒执行一次OTC设备实时数据存ProcessDB异常：", e);
             } finally {
                 otcProcessDbQueues.clear();
+            }
+        }
+    }
+
+    /**
+     * 3秒执行一次
+     * 任务：读取实时数据队列并存储到ProcessDB实时数据库中
+     */
+    @Scheduled(fixedRate = 1000 * 3)
+    @Async
+    public void scheduled11() {
+        if (CommonFunction.isEnableSxFunction() && CommonFunction.isEnableProcessDB()) {
+            LinkedBlockingQueue<RecordData> sxProcessDbQueues = CommonQueue.SX_ADD_PROCESS_DB_QUEUE;
+            try {
+                Vector<RecordData> vector = new Vector<>();
+                while (!sxProcessDbQueues.isEmpty()) {
+                    Queues.drain(sxProcessDbQueues, vector, 2000, Duration.ofMillis(0));
+                }
+                //添加松下实时数据数据到ProcessDB
+                DBCreateMethod.addPointData(vector);
+            } catch (Exception e) {
+                log.error("3秒执行一次松下设备实时数据存ProcessDB异常：", e);
+            } finally {
+                sxProcessDbQueues.clear();
             }
         }
     }
