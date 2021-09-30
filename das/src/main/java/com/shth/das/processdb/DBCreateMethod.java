@@ -137,7 +137,7 @@ public class DBCreateMethod {
                 log.error("时间转换异常：", e);
             }
         }
-        return null;
+        return new Date();
     }
 
     /**
