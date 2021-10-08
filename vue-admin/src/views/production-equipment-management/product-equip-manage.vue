@@ -171,25 +171,25 @@
                 <el-button
                     v-has="'bind'"
                     size="small"
-                    icon="el-icon-document-remove"
+                    icon="el-icon-link"
                     @click="bindMichFun"
                 >设备绑定</el-button>
             </div>
-            <div class="con-w">
+            <!-- <div class="con-w">
                 <el-button
                     v-has="'bind'"
                     size="small"
                     icon="el-icon-document-remove"
                     @click="bindAreaFun"
                 >区间绑定</el-button>
-            </div>
+            </div> -->
             <div class="con-w">
                 <el-button
                     v-has="'bind'"
                     size="small"
-                    icon="el-icon-document-remove"
+                    icon="el-icon-connection"
                     @click="bindAreaFun2"
-                >区间绑定2</el-button>
+                >部门区间绑定</el-button>
             </div>
 
         </div>
@@ -282,7 +282,7 @@
                         <span>厂家</span><span class="red-star">*</span>
                     </template>
                     <template slot-scope="scope">
-                        {{scope.row.firmStr}}
+                        {{scope.row.firmStr}} 
                     </template>
                 </el-table-column>
                 <el-table-column
