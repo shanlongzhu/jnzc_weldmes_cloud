@@ -169,7 +169,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxStatusData.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxStatusData), message, 0);
                 }
             }
         }
@@ -195,7 +195,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessClaimReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5ProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5ProcessClaimReturn), message, 0);
                 }
             }
             //松下GL5系列工艺下发返回
@@ -209,7 +209,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5ProcessIssueReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5ProcessIssueReturn), message, 0);
                 }
             }
             //松下GL5系列工艺删除返回
@@ -223,7 +223,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxProcessDeleteReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5ProcessDeleteReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5ProcessDeleteReturn), message, 0);
                 }
             }
             //松下GL5系列焊机通道【通道设定返回、通道读取返回】
@@ -237,7 +237,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxWeldChannelSetReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5WeldChannelSetOrReadReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5WeldChannelSetOrReadReturn), message, 0);
                 }
             }
         }
@@ -263,7 +263,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxCO2ProcessClaimReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5CO2ProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5CO2ProcessClaimReturn), message, 0);
                 }
             }
         }
@@ -289,7 +289,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxTIGProcessClaimReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxGL5TIGProcessClaimReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5TIGProcessClaimReturn), message, 0);
                 }
             }
         }
@@ -337,7 +337,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxStatusDataUi);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxStatusData.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxStatusData), message, 0);
                 }
             }
         }
@@ -363,7 +363,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxChannelParamReply);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxFR2OrAT3ChannelParamReply.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxFR2OrAT3ChannelParamReply), message, 0);
                 }
             }
         }
@@ -384,7 +384,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxChannelParamReplyHave);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxFR2ChannelParamReplyHave.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxFR2ChannelParamReplyHave), message, 0);
                 }
             }
         }
@@ -410,7 +410,7 @@ public class JnSxRtDataProtocol {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(at3ParamQueryReturn);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(UpTopicEnum.jnSxAT3ParamQueryReturn.name(), message, 0);
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxAT3ParamQueryReturn), message, 0);
                 }
             }
         }
@@ -444,7 +444,7 @@ public class JnSxRtDataProtocol {
                 //实体类转JSON字符串
                 String message = JSON.toJSONString(sxRtDataUi);
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(UpTopicEnum.jnSxRtData.name(), message, 0);
+                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxRtData), message, 0);
             }
         }
         //松下焊机实时数据存数据库
@@ -1428,7 +1428,7 @@ public class JnSxRtDataProtocol {
             //实体类转JSON字符串
             String message = JSON.toJSONString(sxRtDataUi);
             //通过mqtt发送到服务端
-            EmqMqttClient.publishMessage(UpTopicEnum.jnSxRtData.name(), message, 0);
+            EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxRtData), message, 0);
         });
     }
 

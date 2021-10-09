@@ -1,6 +1,7 @@
 package com.shth.das.mqtt;
 
 import com.shth.das.common.DownTopicEnum;
+import com.shth.das.common.GainTopicName;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -82,29 +83,29 @@ public class EmqMqttClient {
      */
     private static void batchSubTopic() {
         //任务领取下发
-        subTopic(DownTopicEnum.jnTaskClaimIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.TaskClaimIssue));
         //OTC1.0工艺下发
-        subTopic(DownTopicEnum.jnOtcV1ProcessIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessIssue));
         //OTC1.0工艺索取
-        subTopic(DownTopicEnum.jnOtcV1ProcessClaim.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessClaim));
         //OTC1.0密码下发
-        subTopic(DownTopicEnum.jnOtcV1PasswordIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1PasswordIssue));
         //OTC1.0控制命令下发
-        subTopic(DownTopicEnum.jnOtcV1CommandIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1CommandIssue));
         //松下GL5系列CO2焊机工艺下发
-        subTopic(DownTopicEnum.jnSxGl5Co2ProcessIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5Co2ProcessIssue));
         //松下GL5系列TIG焊机工艺下发
-        subTopic(DownTopicEnum.jnSxGl5TigProcessIssue.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5TigProcessIssue));
         //松下GL5系列【通道设定、通道读取】
-        subTopic(DownTopicEnum.jnSxGl5WeldChannelSet.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5WeldChannelSet));
         //松下GL5系列【工艺索取、工艺删除】
-        subTopic(DownTopicEnum.jnSxGl5ProcessClaim.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5ProcessClaim));
         //松下【FR2、AT3】系列【通道参数查询、通道参数删除】
-        subTopic(DownTopicEnum.jnSxFr2ChannelParamQuery.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamQuery));
         //松下FR2系列【通道参数下载】
-        subTopic(DownTopicEnum.jnSxFr2ChannelParamDownload.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamDownload));
         //松下AT3系列【通道参数下载】
-        subTopic(DownTopicEnum.jnSxAt3ParamDownload.name());
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxAt3ParamDownload));
     }
 
     /**
