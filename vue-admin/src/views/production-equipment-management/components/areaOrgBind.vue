@@ -115,6 +115,7 @@ export default {
         init () {
             this.getDicFun();
             this.areaId = '';
+            this.departmentId = '';
             this.machvisable = true;
             this.getUserTreeFun();
         },
