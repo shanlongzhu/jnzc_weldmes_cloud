@@ -32,11 +32,18 @@ public class ArtifactController {
 
     //工件生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String taskNo,Long deptId) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              String time1, String time2,String taskNo,Long deptId) {
+
         String name=artifactService.getName(deptId);
-        PageHelper.startPage(pn, 10);
+
+        PageHelper.startPage(pn, size);
+
         List<WeldStatisticsData> list = artifactService.getList(time1, time2,taskNo,name);
-        PageInfo page = new PageInfo(list, 5);
+
+        PageInfo page = new PageInfo(list, 10);
+
         return HttpResult.ok(page);
     }
 

@@ -40,14 +40,15 @@ public class HistoricalCurveController {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @RequestMapping(value = "getHistoryInfos",method = RequestMethod.GET)
-    public HttpResult getHistoryCurveInfos(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String startTime, String endTime,
-                              Long taskId,Long welderId,Long weldMachineId){
+    public HttpResult getHistoryCurveInfos(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                                           @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                           String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId){
 
-        PageHelper.startPage(pn, 10);
+        PageHelper.startPage(pn, size);
 
         List<RtData> list = historicalCurveService.getHistoryCurveInfos(startTime,endTime,taskId,welderId,weldMachineId);
 
-        PageInfo page = new PageInfo(list, 5);
+        PageInfo page = new PageInfo(list, 10);
 
         return HttpResult.ok(page);
     }

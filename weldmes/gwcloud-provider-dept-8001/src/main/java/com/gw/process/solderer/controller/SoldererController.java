@@ -42,12 +42,17 @@ public class SoldererController {
 
     //列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,String welderName,String welderNo,Integer rate,
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              String welderName,String welderNo,Integer rate,
                               Integer talent,Integer grade) {
 
-        PageHelper.startPage(pn, 10);
+        PageHelper.startPage(pn, size);
+
         List<WelderInfo> list = soldererService.getList(welderName,welderNo,rate,talent,grade);
-        PageInfo page = new PageInfo(list, 5);
+
+        PageInfo page = new PageInfo(list, 10);
+
         return HttpResult.ok(page);
     }
 
@@ -55,7 +60,9 @@ public class SoldererController {
     @GetMapping(value = "noPage")
     public HttpResult getListNoPage(String welderName,String welderNo,Integer rate,
                               Integer talent,Integer grade) {
+
         List<WelderInfo> list = soldererService.getList(welderName,welderNo,rate,talent,grade);
+
         return HttpResult.ok(list);
     }
 

@@ -36,10 +36,11 @@ public class CollectionController {
 
     //列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Integer grade, Integer gatherNo) {
-        PageHelper.startPage(pn, 10);
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,@RequestParam(value = "size", defaultValue = "10") Integer size,
+                              Integer grade, Integer gatherNo) {
+        PageHelper.startPage(pn, size);
         List<MachineGatherInfo> list = collectionService.getList(grade, gatherNo);
-        PageInfo page = new PageInfo(list, 5);
+        PageInfo page = new PageInfo(list, 10);
 
         return HttpResult.ok(page);
     }

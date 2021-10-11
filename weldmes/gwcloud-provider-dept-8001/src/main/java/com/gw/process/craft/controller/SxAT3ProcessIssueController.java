@@ -36,7 +36,7 @@ public class SxAT3ProcessIssueController {
 
         List<SxAT3ProcessIssue> list = sxAT3ProcessIssueService.getSxAT3ProcessIssueInfos(wpsLibraryId);
 
-        PageInfo page=new PageInfo(list,5);
+        PageInfo page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }

@@ -83,7 +83,9 @@ public class DispatchController {
      * @Params
      */
     @RequestMapping(value = "task/list")
-    public HttpResult queryTaskListController(@RequestParam(value="pn",defaultValue = "1") Integer pn,Integer grade,Integer taskStatus){
+    public HttpResult queryTaskListController(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                                              @RequestParam(value="size",defaultValue = "10") Integer size,
+                                              Integer grade,Integer taskStatus){
 
         List<Integer> gradIds = new ArrayList<>();
 
@@ -94,7 +96,7 @@ public class DispatchController {
 
         }
 
-        PageHelper.startPage(pn,10);
+        PageHelper.startPage(pn,size);
 
         //获取任务列表
         List<TaskInfo> taskInfos = dispatchService.queryTaskList(gradIds,taskStatus);

@@ -42,7 +42,7 @@ public class MachineWeldsxController {
         //松下设备列表查询
         List<MachineWeldsxInfo> list = machineWeldsxService.getMachineWeldsxInfos(equipType);
 
-        PageInfo page = new PageInfo(list,5);
+        PageInfo page = new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }

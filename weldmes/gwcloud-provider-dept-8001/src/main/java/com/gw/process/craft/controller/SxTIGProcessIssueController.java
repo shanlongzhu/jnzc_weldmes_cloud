@@ -35,7 +35,7 @@ public class SxTIGProcessIssueController {
 
         List<SxTIGProcessIssue> list = sxTIGProcessIssueService.getSxTIGProcessIssueInfos(wpsLibraryId);
 
-        PageInfo page=new PageInfo(list,5);
+        PageInfo page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }

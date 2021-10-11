@@ -35,7 +35,7 @@ public class SxCO2ProcessIssueController {
 
         List<SxCO2ProcessIssue> list = sxCO2ProcessIssueService.getSxCO2ProcessIssueInfos(wpsLibraryId);
 
-        PageInfo page=new PageInfo(list,5);
+        PageInfo page=new PageInfo(list,10);
 
         return HttpResult.ok(page);
     }

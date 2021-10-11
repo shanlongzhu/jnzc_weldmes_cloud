@@ -42,11 +42,16 @@ public class WelderController {
     //列表展示
     @GetMapping
     public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                              @RequestParam(value="size",defaultValue = "10") Integer size,
                               String machineNo,Integer type,Integer grade,Integer status,
                               Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
-        PageHelper.startPage(pn,10);
+
+        PageHelper.startPage(pn,size);
+
         List<MachineWeldInfo> list=welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
-        PageInfo page=new PageInfo(list,5);
+
+        PageInfo page=new PageInfo(list,10);
+
         return HttpResult.ok(page);
     }
 

@@ -26,8 +26,8 @@ public class LibraryController {
 
     //列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn){
-        PageHelper.startPage(pn,10);
+    public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,@RequestParam(value="size",defaultValue = "10") Integer size){
+        PageHelper.startPage(pn,size);
         List<WpsLibrary> list=libraryService.getList();
         PageInfo page=new PageInfo(list,5);
         return HttpResult.ok(page);

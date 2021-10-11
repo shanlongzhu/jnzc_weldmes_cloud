@@ -30,10 +30,16 @@ public class WeldTaskController {
 
     //焊机任务表数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Long areaId ,Long teamId,String time1, String time2,Long status) {
-        PageHelper.startPage(pn, 10);
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              Long areaId ,Long teamId,String time1, String time2,Long status) {
+
+        PageHelper.startPage(pn, size);
+
         List<WeldStatisticsData> list = weldTaskService.getList(areaId,teamId,time1, time2,status);
-        PageInfo page = new PageInfo(list, 5);
+
+        PageInfo page = new PageInfo(list, 10);
+
         return HttpResult.ok(page);
     }
 

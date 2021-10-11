@@ -27,11 +27,19 @@ public class ProductionTaskController {
 
     //生产任务详情数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,String time1, String time2,String welderNo,String welderName,String machineNo,String taskNo,Long deptId) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              String time1, String time2,String welderNo,String welderName,
+                              String machineNo,String taskNo,Long deptId) {
+
         String name=productionTaskService.getName(deptId);
-        PageHelper.startPage(pn, 10);
+
+        PageHelper.startPage(pn, size);
+
         List<WeldStatisticsData> list = productionTaskService.getList(time1, time2,welderNo,welderName,machineNo,taskNo,name);
+
         PageInfo page = new PageInfo(list, 5);
+
         return HttpResult.ok(page);
     }
 

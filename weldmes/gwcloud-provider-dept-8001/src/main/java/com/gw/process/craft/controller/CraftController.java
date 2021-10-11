@@ -26,7 +26,7 @@ public class CraftController {
                               @RequestParam(value="pageSize",defaultValue = "10") Integer pageSize,Long id){
         PageHelper.startPage(pn,pageSize);
         List<WpsNorm> list=craftService.getList(id);
-        PageInfo page=new PageInfo(list,5);
+        PageInfo page=new PageInfo(list,10);
         return HttpResult.ok(page);
     }
 

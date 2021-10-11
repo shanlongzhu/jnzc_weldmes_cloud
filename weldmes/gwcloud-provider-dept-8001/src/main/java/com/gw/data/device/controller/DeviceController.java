@@ -30,11 +30,18 @@ public class DeviceController {
 
     //设备生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String machineNo,Long deptId) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              String time1, String time2,String machineNo,Long deptId) {
+
         String name=deviceService.getName(deptId);
-        PageHelper.startPage(pn, 10);
+
+        PageHelper.startPage(pn, size);
+
         List<WeldStatisticsData> list = deviceService.getList(time1,time2,machineNo,name);
+
         PageInfo page = new PageInfo(list, 5);
+
         return HttpResult.ok(page);
     }
 

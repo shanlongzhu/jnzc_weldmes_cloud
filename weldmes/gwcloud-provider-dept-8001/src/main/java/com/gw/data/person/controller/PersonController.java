@@ -30,11 +30,18 @@ public class PersonController {
 
     //人员生产数据列表展示
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn, String time1, String time2,String welderNo,String welderName,Long deptId) {
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                              String time1, String time2,String welderNo,String welderName,Long deptId) {
+
         String name=personService.getDeptId(deptId);
-        PageHelper.startPage(pn, 10);
+
+        PageHelper.startPage(pn, size);
+
         List<WeldStatisticsData> list = personService.getList(time1,time2,welderNo,welderName,name);
-        PageInfo page = new PageInfo(list, 5);
+
+        PageInfo page = new PageInfo(list, 10);
+
         return HttpResult.ok(page);
     }
 
