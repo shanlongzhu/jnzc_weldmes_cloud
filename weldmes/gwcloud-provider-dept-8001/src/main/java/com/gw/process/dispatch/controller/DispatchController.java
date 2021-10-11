@@ -1,10 +1,13 @@
 package com.gw.process.dispatch.controller;
 
 
+import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ConstantInfo;
 import com.gw.common.HttpResult;
+import com.gw.config.DownExcel;
+import com.gw.config.ExcelListener;
 import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.service.DispatchService;
@@ -20,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -249,10 +254,11 @@ public class DispatchController {
      * @Description 文件导入接口
      * @Params
      */
-    @RequestMapping(value = "task/importExcel",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    public HttpResult importExcelController(@RequestParam("file") MultipartFile file){
+    @RequestMapping(value = "task/importExcel",method = RequestMethod.POST)
+    public HttpResult importExcelController(@RequestParam MultipartFile file) throws IOException {
 
-        dispatchService.importExcel(file);
+        EasyExcel.read(file.getInputStream(), TaskInfo.class, new ExcelListener(dispatchDao)).sheet().doRead();
+        //dispatchService.importExcel(file);
 
         return HttpResult.ok("Excel导入成功");
     }
@@ -263,9 +269,21 @@ public class DispatchController {
      * @Params
      */
     @RequestMapping(value = "task/exportExcel")
-    public HttpResult exportExcelController(HttpServletResponse response,Integer grade,Integer taskStatus){
+    public HttpResult exportExcelController(HttpServletResponse response,Integer grade,Integer taskStatus) throws IllegalAccessException, IOException, InstantiationException {
 
-        dispatchService.exportExcel(response,grade,taskStatus);
+        //设置Excel文件名
+        String title = URLEncoder.encode("派工任务数据", "UTF-8");
+
+        //设置sheet表格名
+        String sheetName = "派工任务";
+
+        //获取任务列表
+        List<TaskInfo> list = dispatchDao.queryTaskList(grade,taskStatus);
+
+        //导出为Excel
+        DownExcel.download(response,TaskInfo.class,list,sheetName,title);
+
+        //dispatchService.exportExcel(response,grade,taskStatus);
 
         return HttpResult.ok("Excel导出成功");
     }

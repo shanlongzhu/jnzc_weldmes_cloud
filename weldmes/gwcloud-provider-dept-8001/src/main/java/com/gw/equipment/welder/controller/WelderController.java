@@ -298,14 +298,17 @@ public class WelderController {
                 //把从excel中拿出来的数据封装到 对象中
                 MachineWeldInfo machineWeldInfo=new MachineWeldInfo();
 
-                String str = obs[0].toString();
+                if(!ObjectUtils.isEmpty(obs[0])){
 
-                if(str.indexOf(".") > 0){
+                    String str = obs[0].toString();
 
-                    str = str.substring(0,str.indexOf("."));
+                    if(str.indexOf(".") > 0){
+
+                        str = str.substring(0,str.indexOf("."));
+                    }
+
+                    machineWeldInfo.setMachineNo(str);
                 }
-
-                machineWeldInfo.setMachineNo(str);
 
                 String type=(String) obs[1];
 
@@ -343,42 +346,50 @@ public class WelderController {
 
                 String isNetWork = (String) obs[6];
 
-                if(isNetWork.equals("是")){
+                if(!ObjectUtils.isEmpty(isNetWork)){
 
-                    machineWeldInfo.setIsNetwork(0);
-                }else {
+                    if(isNetWork.equals("是")){
 
-                    machineWeldInfo.setIsNetwork(1);
+                        machineWeldInfo.setIsNetwork(0);
+                    }else {
+
+                        machineWeldInfo.setIsNetwork(1);
+                    }
                 }
 
-                String machineNo = obs[7].toString();
+                if(!ObjectUtils.isEmpty(obs[7])){
 
-                //将采集序号转成字符串数组
-                String [] machineNos = machineNo.split(",");
+                    String machineNo = obs[7].toString();
 
-                List<String> list = new ArrayList<>();
+                    //将采集序号转成字符串数组
+                    String [] machineNos = machineNo.split(",");
 
-                for (int j = 0; j < machineNos.length ; j++) {
+                    List<String> list = new ArrayList<>();
 
-                    if(machineNos[j].indexOf(".") > 0){
+                    for (int j = 0; j < machineNos.length ; j++) {
 
-                        str = machineNos[j].substring(0,machineNos[j].indexOf("."));
+                        String machineNoStr = null;
+
+                        if(machineNos[j].indexOf(".") > 0){
+
+                            machineNoStr = machineNos[j].substring(0,machineNos[j].indexOf("."));
+                        }
+
+                        String a = String.valueOf(welderService.getGid(machineNoStr));
+
+                        list.add(a);
                     }
 
-                    String a = String.valueOf(welderService.getGid(str));
+                    StringBuffer sb = new StringBuffer();
 
-                    list.add(a);
+                    for(int k = 0; k < list.size(); k++){
+
+                        sb. append(list.get(k)).append(",");
+                    }
+                    String s = sb.toString().substring(0,sb.length()-1);
+
+                    machineWeldInfo.setGId(s);
                 }
-
-                StringBuffer sb = new StringBuffer();
-
-                for(int k = 0; k < list.size(); k++){
-
-                    sb. append(list.get(k)).append(",");
-                }
-               String s = sb.toString().substring(0,sb.length()-1);
-
-                machineWeldInfo.setGId(s);
 
                 String ip = (String) obs[9];
 
