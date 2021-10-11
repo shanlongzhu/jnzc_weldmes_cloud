@@ -30,9 +30,10 @@ public class SysLogController {
      * @Params
      */
     @RequestMapping(value = "sysLog/getSysLogInfos",method = RequestMethod.GET)
-    public HttpResult getSysLogInfo(@RequestParam(value="pn",defaultValue = "1") Integer pn){
+    public HttpResult getSysLogInfo(@RequestParam(value="pn",defaultValue = "1") Integer pn,
+                                    @RequestParam(value = "size", defaultValue = "10") Integer size){
 
-        PageHelper.startPage(pn,10);
+        PageHelper.startPage(pn,size);
 
         List<SysLog> list = sysLogService.getSysLogInfos();
 
