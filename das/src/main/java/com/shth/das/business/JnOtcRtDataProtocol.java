@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 江南项目数据解析类
@@ -437,7 +438,9 @@ public class JnOtcRtDataProtocol {
                             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                                 for (WeldModel weld : weldList) {
                                     //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                    if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
+                                    final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
+                                            map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
+                                    if (CommonUtils.isNotEmpty(weld.getGatherNo()) && gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
                                         data.setMachineId(weld.getId());
                                         data.setMachineNo(weld.getMachineNo());
                                         data.setMachineDeptId(weld.getDeptId());
@@ -781,8 +784,9 @@ public class JnOtcRtDataProtocol {
             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
                 for (WeldModel weld : weldList) {
                     if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                        if (Arrays.asList(weld.getGatherNo().split(",")).contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
-//                    if (gatherNo.equals(Integer.valueOf(weld.getGatherNo()).toString())) {
+                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
+                                map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
+                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
                             return weld.getId();
                         }
                     }
