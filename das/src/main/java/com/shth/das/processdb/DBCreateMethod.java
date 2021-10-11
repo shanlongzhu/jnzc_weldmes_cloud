@@ -40,6 +40,8 @@ public class DBCreateMethod {
     @Value("${processDB.config.sxTableName}")
     private String sxTableName;
 
+    static ThreadLocal<SimpleDateFormat> dateFormatThreadLocal = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
     /**
      * 添加OTC实时数据到ProcessDB的阻塞队列中
      */
@@ -129,10 +131,10 @@ public class DBCreateMethod {
      * @param dateTime 时间
      * @return Date
      */
-    private static Date getDateFormat(String dateTime) {
+    private Date getDateFormat(String dateTime) {
         if (StringUtils.isNotBlank(dateTime)) {
             try {
-                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+                return dateFormatThreadLocal.get().parse(dateTime);
             } catch (Exception e) {
                 log.error("时间转换异常：", e);
             }

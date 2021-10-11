@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JnOtcRtDataProtocol {
 
+    private final DBCreateMethod dbCreateMethod = new DBCreateMethod();
+
     /**
      * OTC设备刷卡启用设备功能
      */
@@ -134,7 +136,7 @@ public class JnOtcRtDataProtocol {
                     //判断是否启用ProcessDB，true：添加到队列中
                     if (CommonFunction.isEnableProcessDB()) {
                         //添加到实时数据库的阻塞队列
-                        list.forEach(new DBCreateMethod()::addOtcRtDataToProcessDbQueue);
+                        list.forEach(dbCreateMethod::addOtcRtDataToProcessDbQueue);
                     }
                 }
             }
