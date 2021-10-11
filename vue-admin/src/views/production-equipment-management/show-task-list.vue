@@ -153,7 +153,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="welderName"
-                    label="焊工姓名"
+                    label="焊工编号"
                     align="left"
                     width="130"
                 />

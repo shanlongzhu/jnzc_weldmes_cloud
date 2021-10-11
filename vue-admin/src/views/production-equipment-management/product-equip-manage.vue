@@ -230,7 +230,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="modelStr"
+                    prop="typeStr"
                     label="设备类型"
                     align="left"
                     min-width="120"

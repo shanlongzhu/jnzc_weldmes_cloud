@@ -24,21 +24,17 @@
           <span style="font-size:14px; margin-left:10px">欢迎：{{user.user.userName}}</span>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <!--<router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>-->
+          <el-dropdown-item @click.native="changePwdFun">修改密码</el-dropdown-item>
+          <el-dropdown-item  @click.native="editUserInfoFun">设置</el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出系统</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <changePwd ref="changePwd"></changePwd>
+    <userInfo ref="userInfo"></userInfo>
   </div>
 </template>
 
@@ -52,6 +48,9 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import { getTaskInfos } from '../../api/user'
 
+import changePwd from '@/layout/components/Settings/changePwd'
+import userInfo from '@/layout/components/Settings/userInfo'
+
 export default {
   components: {
     Breadcrumb,
@@ -59,7 +58,9 @@ export default {
     ErrorLog,
     Screenfull,
     SizeSelect,
-    Search
+    Search,
+    changePwd,
+    userInfo
   },
   computed: {
     ...mapGetters([
@@ -76,6 +77,12 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    changePwdFun(){
+      this.$refs.changePwd.init();
+    },
+    editUserInfoFun(){
+      this.$refs.userInfo.init();
     }
   },
   data() {
