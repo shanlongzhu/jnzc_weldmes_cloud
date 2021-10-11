@@ -227,10 +227,10 @@
 
             </vxe-table>
         </el-dialog>
-
     </div>
 
     <!-- <canvas id="cvs" style="width:100%;height:100%">当前浏览器不支持canvas</canvas> -->
+    
 </template>
 
 <script>
@@ -297,33 +297,36 @@ export default {
             option: {},
         }
     },
-    watch: {},
+    watch: {
+
+    },
     computed: {
+
         offnum () {
             return ((this.list.length || 0) - (this.workArray.length + this.standbyArray.length + this.warnArray.length)) || 0
         },
 
         //关机百分比
-        offnumPer () { 
-            let newNum = isNaN(this.offnum / this.list.length)?0:this.offnum / this.list.length;                     
+        offnumPer () {
+            let newNum = isNaN(this.offnum / this.list.length) ? 0 : this.offnum / this.list.length;
             return (newNum * 100).toFixed(1);
         },
 
         //故障百分比
         warnArrayPer () {
-            let newNum = isNaN(this.warnArray.length / this.list.length)?0:this.warnArray.length / this.list.length;
+            let newNum = isNaN(this.warnArray.length / this.list.length) ? 0 : this.warnArray.length / this.list.length;
             return (newNum * 100).toFixed(1);
         },
 
         //待机百分比
         standbyArrayPer () {
-            let newNum = isNaN(this.standbyArray.length / this.list.length)?0:this.standbyArray.length / this.list.length;
+            let newNum = isNaN(this.standbyArray.length / this.list.length) ? 0 : this.standbyArray.length / this.list.length;
             return (newNum * 100).toFixed(1);
         },
 
         //工作百分比
         workArrayPer () {
-            let newNum = isNaN(this.workArray.length / this.list.length)?0:this.workArray.length / this.list.length;
+            let newNum = isNaN(this.workArray.length / this.list.length) ? 0 : this.workArray.length / this.list.length;
             return (newNum * 100).toFixed(1);
         }
 
@@ -425,11 +428,11 @@ export default {
                 this.list = (data || []).map(item => {
                     let objItem = { ...item };
                     return objItem;
-                });                
+                });
                 this.myChart.clear();
                 this.myChart2.clear();
                 this.myChart3.clear();
-                this.setPieData();                
+                this.setPieData();
             }
         },
 
@@ -494,11 +497,11 @@ export default {
                     this.setWarnArray(v);
                     break;
             }
-            this.setPieData();            
+            this.setPieData();
         },
 
         //设置饼图值
-        setPieData(){
+        setPieData () {
             this.option.series[1].data[0].value = this.list.length || 0;
             this.option.series[0].data = [
                 { value: this.workArrayPer, name: '工作' },
@@ -739,7 +742,6 @@ export default {
 // .btn-box3{
 //     background: #000;
 // }
-
 
 .btn-box .btn-box-inner {
     width: 100%;

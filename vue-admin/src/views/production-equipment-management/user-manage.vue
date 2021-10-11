@@ -24,7 +24,7 @@
             >
                 <div class="top-con flex-n">
                     <div class="con-w">
-                        <span>用户名：</span>
+                        <span>帐号：</span>
                         <el-input
                             size="small"
                             class="w100"
@@ -32,7 +32,7 @@
                         ></el-input>
                     </div>
                     <div class="con-w">
-                        <span>登录名：</span>
+                        <span>昵称：</span>
                         <el-input
                             size="small"
                             class="w100"
@@ -97,24 +97,24 @@
                         ></vxe-table-column>
                         <vxe-table-column
                             field="name"
-                            title="用户名"
+                            title="帐号"
                             width="100"
                         >
                             <template
                         slot="header"
                     >
-                        <span>用户名</span><span class="red-star">*</span>
+                        <span>帐号</span><span class="red-star">*</span>
                     </template>
                         </vxe-table-column>
                         <vxe-table-column
                             field="loginName"
-                            title="登录名"
+                            title="昵称"
                             width="120"
                         >
                             <template
                         slot="header"
                     >
-                        <span>登录名</span><span class="red-star">*</span>
+                        <span>昵称</span><span class="red-star">*</span>
                     </template>
                         </vxe-table-column>
                         <vxe-table-column
@@ -225,7 +225,7 @@
                 class="demo-ruleForm"
             >
                 <el-form-item
-                    label="用户名"
+                    label="帐号"
                     prop="name"
                 >
                     <el-input
@@ -234,7 +234,7 @@
                     ></el-input>
                 </el-form-item>
                 <el-form-item
-                    label="登录名"
+                    label="昵称"
                     prop="loginName"
                 >
                     <el-input
