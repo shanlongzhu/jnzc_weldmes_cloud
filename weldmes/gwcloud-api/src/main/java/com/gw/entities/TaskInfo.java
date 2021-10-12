@@ -47,7 +47,7 @@ public class TaskInfo {
     private String deptName;
 
     /**
-     * 焊工姓名
+     * 焊工姓名表示的是焊工编号
      */
     @ExcelProperty(value = "焊工姓名",index = 3)
     private String welderName;
