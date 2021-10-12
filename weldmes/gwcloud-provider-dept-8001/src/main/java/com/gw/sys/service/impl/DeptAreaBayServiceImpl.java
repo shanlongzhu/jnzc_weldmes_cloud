@@ -1,6 +1,6 @@
 package com.gw.sys.service.impl;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.DeptAreaBayInfo;
 import com.gw.sys.dao.DeptAreaBayDao;
 import com.gw.sys.service.DeptAreaBayService;
@@ -28,10 +28,10 @@ public class DeptAreaBayServiceImpl implements DeptAreaBayService {
     @Override
     public void deptTOAreaAndBay(DeptAreaBayInfo deptAreaBayInfo) {
 
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
-        deptAreaBayDao.insertDeptTOAreaAndBay(deptAreaBayInfo.getDeptId(),deptAreaBayInfo.getAreaId(),
-                deptAreaBayInfo.getBayIds(),time);
+        deptAreaBayDao.insertDeptTOAreaAndBay(deptAreaBayInfo.getDeptId(), deptAreaBayInfo.getAreaId(),
+                deptAreaBayInfo.getBayIds(), time);
 
     }
 
@@ -54,7 +54,7 @@ public class DeptAreaBayServiceImpl implements DeptAreaBayService {
     @Override
     public List<DeptAreaBayInfo> getDeptTOAreaAndBay(Long deptId, Long areaId) {
 
-        List<DeptAreaBayInfo> list = deptAreaBayDao.selectDeptAreaBayInfos(deptId,areaId);
+        List<DeptAreaBayInfo> list = deptAreaBayDao.selectDeptAreaBayInfos(deptId, areaId);
 
         return list;
     }

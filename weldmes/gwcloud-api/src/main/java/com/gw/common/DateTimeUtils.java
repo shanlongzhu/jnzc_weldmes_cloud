@@ -31,6 +31,26 @@ public class DateTimeUtils {
     }
 
     /**
+     * 获取当前系统时间的第二天时间
+     * 格式：yyyy-MM-dd HH:mm:ss
+     *
+     * @return 时间
+     */
+    public static String getNowSecondDateTime() {
+        return LocalDateTime.now().plusDays(1).format(DEFAULT_DATETIME);
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param dateTime yyyy-MM-dd HH:mm:ss
+     * @return String
+     */
+    public static String getDateTimeFormat(String dateTime) {
+        return LocalDateTime.parse(dateTime).format(DEFAULT_DATETIME);
+    }
+
+    /**
      * 获取当前系统日期
      *
      * @return 时间
@@ -50,7 +70,7 @@ public class DateTimeUtils {
     }
 
     /**
-     * 获取当前时间的第二天时间
+     * 获取当前时间的第二天日期
      *
      * @param formatter
      * @return

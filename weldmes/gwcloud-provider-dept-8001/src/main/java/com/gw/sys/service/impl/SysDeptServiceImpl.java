@@ -1,17 +1,15 @@
 package com.gw.sys.service.impl;
 
 import com.gw.common.ConstantInfo;
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.SysDept;
 import com.gw.entities.UserLoginInfo;
-import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.service.SysDeptService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/6/4 10:12
- * @Description  组织机构管理业务层
+ * @Description 组织机构管理业务层
  * @Params
  */
 @Service
@@ -31,7 +29,7 @@ public class SysDeptServiceImpl implements SysDeptService {
     /**
      * @Date 2021/7/8 16:38
      * @Description 查询组织机构信息列表
-     * @Params  id 部门id
+     * @Params id 部门id
      */
     @Override
     public List<SysDept> getDeptInfos(Long id) {
@@ -72,7 +70,7 @@ public class SysDeptServiceImpl implements SysDeptService {
     @Override
     public void updateDeptInfo(SysDept sysDept) {
 
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         sysDept.setLastUpdateTime(time);
 
@@ -99,7 +97,7 @@ public class SysDeptServiceImpl implements SysDeptService {
     @Override
     public void addDeptInfo(SysDept sysDept) {
 
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         sysDept.setCreateTime(time);
 
@@ -109,7 +107,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 
     /**
      * @Date 2021/7/13 13:28
-     * @Description  根据部门id以及部门名称筛选信息列表
+     * @Description 根据部门id以及部门名称筛选信息列表
      * @Params id 部门id   name  部门名称
      */
     @Override
@@ -121,9 +119,8 @@ public class SysDeptServiceImpl implements SysDeptService {
         List<SysDept> list = new ArrayList<>();
 
         //根据父级id进行筛选
-        for (SysDept deptInfo : deptInfos)
-        {
-            if(deptInfo.getParentId() == id){
+        for (SysDept deptInfo : deptInfos) {
+            if (deptInfo.getParentId() == id) {
 
                 list.add(deptInfo);
 
@@ -144,7 +141,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         Subject currentUser = SecurityUtils.getSubject();
 
         //获取到当前用户
-        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
+        UserLoginInfo userLoginInfo = (UserLoginInfo) currentUser.getPrincipal();
 
         //获取到当前用户所属的机构信息
         SysDept sysDept = sysDeptDao.selectWorkAreaDeptInfo(userLoginInfo.getDeptId());
@@ -152,7 +149,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         List<SysDept> deptInfos = new ArrayList<>();
 
         //用户为一级机构(集团)
-        if(sysDept.getParentId() == ConstantInfo.GROUP_FLAG){
+        if (sysDept.getParentId() == ConstantInfo.GROUP_FLAG) {
 
             deptInfos = sysDeptDao.selectWorkAreaSysDeptInfo();
 
@@ -160,7 +157,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         }
 
         //用户为二级机构(制造部)
-        if(sysDept.getParentId() == ConstantInfo.MANUFACTUR_FLAG){
+        if (sysDept.getParentId() == ConstantInfo.MANUFACTUR_FLAG) {
 
             deptInfos = sysDeptDao.selectDeptInfosByParentId(sysDept.getParentId());
 

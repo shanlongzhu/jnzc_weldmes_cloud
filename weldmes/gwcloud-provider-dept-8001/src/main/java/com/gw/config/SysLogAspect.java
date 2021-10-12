@@ -1,6 +1,6 @@
 package com.gw.config;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.ApiInfo;
 import com.gw.entities.SysLog;
 import com.gw.entities.UserLoginInfo;
@@ -10,12 +10,16 @@ import lombok.extern.log4j.Log4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +28,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/7/9 10:06
- * @Description  日志切面类
+ * @Description 日志切面类
  */
 @Aspect
 @Log4j
@@ -69,10 +73,11 @@ public class SysLogAspect {
 
     //声明一个切点
     @Pointcut("execution(public * com.gw.*.*.controller.*.*(..)) || execution(public * com.gw.*.controller.*.*(..))")
-    private void aspect(){}
+    private void aspect() {
+    }
 
     @Before("aspect()")
-    public void before(JoinPoint joinPoint) throws NoSuchMethodException{
+    public void before(JoinPoint joinPoint) throws NoSuchMethodException {
 
         //开始访问的时间
         startTime = System.currentTimeMillis();
@@ -98,38 +103,38 @@ public class SysLogAspect {
     }
 
     @AfterReturning(pointcut = "aspect()")
-    public void methodAfterReturning(){
+    public void methodAfterReturning() {
 
         Long endTime = System.currentTimeMillis();
 
         //执行时长
-        Double time = (endTime-startTime)/1000.0;
+        Double time = (endTime - startTime) / 1000.0;
 
         SysLog sysLog = new SysLog();
 
         //获取当前用户
         Subject currentUser = SecurityUtils.getSubject();
 
-        UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+        UserLoginInfo subject = (UserLoginInfo) currentUser.getPrincipal();
 
-        if(!ObjectUtils.isEmpty(subject)){
+        if (!ObjectUtils.isEmpty(subject)) {
 
             //用户名
             sysLog.setUserName(subject.getUserName());
         }
 
         //用户操作
-        switch(methodWays){
-            case "GET" :
+        switch (methodWays) {
+            case "GET":
                 sysLog.setOperation("查询");
                 break;
-            case "POST" :
+            case "POST":
                 sysLog.setOperation("新增");
                 break;
-            case "PUT" :
+            case "PUT":
                 sysLog.setOperation("修改");
                 break;
-            case "DELETE" :
+            case "DELETE":
                 sysLog.setOperation("删除");
                 break;
         }
@@ -146,7 +151,7 @@ public class SysLogAspect {
         sysLog.setMethod(requestMethodUrl);
 
         //入库时间
-        String createTime = DateTimeUtil.getCurrentTime();
+        String createTime = DateTimeUtils.getNowDateTime();
 
         sysLog.setCreateTime(createTime);
 
@@ -157,7 +162,7 @@ public class SysLogAspect {
         for (ApiInfo apiInfo : apiInfos) {
 
             //调用接口路径与接口信息列表进行匹配
-            if(apiInfo.getApiName().equals(interfaceName)){
+            if (apiInfo.getApiName().equals(interfaceName)) {
 
                 //菜单模块
                 sysLog.setMenuModel(apiInfo.getMenuOperation());

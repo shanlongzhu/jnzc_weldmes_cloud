@@ -1,10 +1,10 @@
 package com.gw.equipment.welder.service.impl;
 
-import com.gw.common.DateTimeUtil;
-import com.gw.entities.*;
+import com.gw.common.DateTimeUtils;
+import com.gw.entities.MachineWeldInfo;
+import com.gw.entities.SysDept;
 import com.gw.equipment.welder.dao.WelderDao;
 import com.gw.equipment.welder.service.WelderService;
-
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
 import com.gw.sys.dao.SysDeptDao;
@@ -32,10 +32,10 @@ public class WelderServiceImpl implements WelderService {
 
 
     @Override
-    public List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
-                                         Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay) {
+    public List<MachineWeldInfo> getList(String machineNo, Integer type, Integer grade, Integer status,
+                                         Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
 
-        List<MachineWeldInfo> list = welderDao.selectMachineWeldInfos(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+        List<MachineWeldInfo> list = welderDao.selectMachineWeldInfos(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
 
         return list;
     }
@@ -62,8 +62,8 @@ public class WelderServiceImpl implements WelderService {
     }
 
     @Override
-    public Byte getTypeId(String type,String dictionaryType) {
-        return welderDao.getTypeId(type,dictionaryType);
+    public Byte getTypeId(String type, String dictionaryType) {
+        return welderDao.getTypeId(type, dictionaryType);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class WelderServiceImpl implements WelderService {
 
     /**
      * @Date 2021/7/29 13:20
-     * @Description  根据部门id查询设备信息列表
+     * @Description 根据部门id查询设备信息列表
      * @Params id 部门id
      */
     @Override
@@ -131,7 +131,7 @@ public class WelderServiceImpl implements WelderService {
 
         List<MachineWeldInfo> list = new ArrayList<>();
 
-        if (ObjectUtils.isEmpty(sysDeptInfos)){
+        if (ObjectUtils.isEmpty(sysDeptInfos)) {
 
             //当前部门id为班组层级  查询该班组下的设备信息列表
             deptIds.add(id);
@@ -142,7 +142,7 @@ public class WelderServiceImpl implements WelderService {
             return list;
         }
 
-        do{
+        do {
 
             List<SysDept> nextSysDeptInfos = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class WelderServiceImpl implements WelderService {
                 nextSysDeptInfos.addAll(sysDeptList);
             }
 
-            if (ObjectUtils.isEmpty(nextSysDeptInfos)){
+            if (ObjectUtils.isEmpty(nextSysDeptInfos)) {
 
                 //当前部门id为班组层级  查询该班组下的设备信息列表
                 for (SysDept sysDept : sysDeptInfos) {
@@ -173,7 +173,7 @@ public class WelderServiceImpl implements WelderService {
 
             sysDeptInfos = nextSysDeptInfos;
 
-        }while(!ObjectUtils.isEmpty(sysDeptInfos));
+        } while (!ObjectUtils.isEmpty(sysDeptInfos));
 
         return list;
     }
@@ -187,17 +187,17 @@ public class WelderServiceImpl implements WelderService {
     public List<MachineWeldInfo> getStatusOfMachineWeldInfos(String machineNo, Integer type, Integer grade, Integer status, Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
 
         //获取当天早上7点的时间
-        String time1 = DateTimeUtil.getCurrentTime();
+        String time1 = DateTimeUtils.getNowDateTime();
 
-        time1 = time1.split(" ")[0]+" 07:00:00";
+        time1 = time1.split(" ")[0] + " 07:00:00";
 
         //获取次日当前系统时间
-        String time2 = DateTimeUtil.getTomorrowTime();
+        String time2 = DateTimeUtils.getNowSecondDateTime();
 
-        time2 = time2.split(" ")[0]+" 07:00:00";
+        time2 = time2.split(" ")[0] + " 07:00:00";
 
-        List<MachineWeldInfo> list = welderDao.getStatusOfMachineWeldInfos(machineNo,type,grade,status,firm,isNetwork,
-                gatherNo,ipPath,model,area,bay,time1,time2);
+        List<MachineWeldInfo> list = welderDao.getStatusOfMachineWeldInfos(machineNo, type, grade, status, firm, isNetwork,
+                gatherNo, ipPath, model, area, bay, time1, time2);
 
         return list;
     }

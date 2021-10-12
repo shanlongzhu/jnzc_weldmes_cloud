@@ -1,15 +1,12 @@
 package com.gw.equipment.collection.service.impl;
 
 
-
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.MachineGatherInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 
@@ -20,8 +17,8 @@ public class CollectionServiceImpl implements CollectionService {
     private CollectionDao collectionDao;
 
     @Override
-    public List<MachineGatherInfo> getList(Integer grade,Integer gatherNo) {
-        List<MachineGatherInfo> list=collectionDao.getList(grade,gatherNo);
+    public List<MachineGatherInfo> getList(Integer grade, Integer gatherNo) {
+        List<MachineGatherInfo> list = collectionDao.getList(grade, gatherNo);
         return list;
 
     }
@@ -30,7 +27,7 @@ public class CollectionServiceImpl implements CollectionService {
     public void addCollection(MachineGatherInfo machineGatherInfo) {
 
         //获取当前时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         machineGatherInfo.setCreateTime(time);
 
@@ -46,7 +43,7 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public List<MachineGatherInfo> getById(Long id) {
 
-        List<MachineGatherInfo> list=collectionDao.getById(id);
+        List<MachineGatherInfo> list = collectionDao.getById(id);
         return list;
     }
 
@@ -65,25 +62,25 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public Long getDeptId(String name) {
-        Long id=collectionDao.getDeptId(name);
+        Long id = collectionDao.getDeptId(name);
         return id;
     }
 
     @Override
     public Integer getStatus(String valueName) {
-        Integer status=collectionDao.getStatus(valueName);
+        Integer status = collectionDao.getStatus(valueName);
         return status;
     }
 
     @Override
     public Integer getProtocol(String valueNames) {
-        Integer protocol=collectionDao.getProtocol(valueNames);
+        Integer protocol = collectionDao.getProtocol(valueNames);
         return protocol;
     }
 
     /**
      * @Date 2021/7/1 9:05
-     * @Description  获取采集序号列表
+     * @Description 获取采集序号列表
      * @Params
      */
     @Override

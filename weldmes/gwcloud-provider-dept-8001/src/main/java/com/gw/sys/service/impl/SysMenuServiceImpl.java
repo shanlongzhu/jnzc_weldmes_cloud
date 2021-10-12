@@ -1,8 +1,6 @@
 package com.gw.sys.service.impl;
 
-import com.gw.common.ConstantInfo;
-import com.gw.common.DateTimeUtil;
-import com.gw.entities.SysDept;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.SysMenuInfo;
 import com.gw.entities.UserLoginInfo;
 import com.gw.sys.dao.SysMenuDao;
@@ -37,7 +35,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     public void addMuenOrButtonInfo(SysMenuInfo menuAndButtonInfo) {
 
         //获取当前时间
-        String createTime = DateTimeUtil.getCurrentTime();
+        String createTime = DateTimeUtils.getNowDateTime();
 
         menuAndButtonInfo.setCreateTime(createTime);
 
@@ -134,7 +132,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     public void updateMenuOrButtonInfo(SysMenuInfo menuAndButtonInfo) {
 
         //获取系统当前时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         menuAndButtonInfo.setLastUpdateTime(time);
 

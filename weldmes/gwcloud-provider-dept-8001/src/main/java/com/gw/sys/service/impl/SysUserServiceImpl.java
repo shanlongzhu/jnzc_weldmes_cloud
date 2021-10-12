@@ -1,8 +1,11 @@
 package com.gw.sys.service.impl;
 
 
-import com.gw.common.DateTimeUtil;
-import com.gw.entities.*;
+import com.gw.common.DateTimeUtils;
+import com.gw.entities.SysDept;
+import com.gw.entities.SysUser;
+import com.gw.entities.SysUserRole;
+import com.gw.entities.UserLoginInfo;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.dao.SysUserDao;
@@ -22,7 +25,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/6/4 10:12
- * @Description  用户业务实现层
+ * @Description 用户业务实现层
  * @Params
  */
 @Service
@@ -43,7 +46,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * @Date 2021/7/7 10:40
-     * @Description  获取集团班组树状图信息
+     * @Description 获取集团班组树状图信息
      * @Params
      */
     @Override
@@ -52,7 +55,7 @@ public class SysUserServiceImpl implements SysUserService {
         Subject currentUser = SecurityUtils.getSubject();
 
         //获取到当前用户
-        UserLoginInfo userLoginInfo = (UserLoginInfo)currentUser.getPrincipal();
+        UserLoginInfo userLoginInfo = (UserLoginInfo) currentUser.getPrincipal();
 
         //获取到当前用户所属的机构信息
         SysDept sysDeptInfo = dispatchDao.queryDeptNameListById(userLoginInfo.getDeptId());
@@ -70,8 +73,8 @@ public class SysUserServiceImpl implements SysUserService {
      * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @Override
-    public List<SysUser> getUserInfosByDeptId(Long deptId,String userName,
-                                              String loginName,String mobile,Long roleId) {
+    public List<SysUser> getUserInfosByDeptId(Long deptId, String userName,
+                                              String loginName, String mobile, Long roleId) {
 
         List<SysUser> sysUsers = new ArrayList<>();
 
@@ -82,14 +85,14 @@ public class SysUserServiceImpl implements SysUserService {
         //根据用户部门id、查询该部门下所有的下级部门信息
         List<SysDept> list = dispatchDao.queryGradeList(deptId);
 
-        if(list.size() == 0){
+        if (list.size() == 0) {
 
-            sysUsers = sysUserDao.selectUserInfosByDeptId(ids,userName,loginName,mobile,roleId);
+            sysUsers = sysUserDao.selectUserInfosByDeptId(ids, userName, loginName, mobile, roleId);
 
             return sysUsers;
         }
 
-        do{
+        do {
             List<SysDept> nextSysDeptInfos = new ArrayList<>();
 
             for (SysDept sysDeptInfo : list) {
@@ -103,9 +106,9 @@ public class SysUserServiceImpl implements SysUserService {
 
             }
 
-            if (ObjectUtils.isEmpty(nextSysDeptInfos)){
+            if (ObjectUtils.isEmpty(nextSysDeptInfos)) {
 
-                sysUsers = sysUserDao.selectUserInfosByDeptId(ids,userName,loginName,mobile,roleId);
+                sysUsers = sysUserDao.selectUserInfosByDeptId(ids, userName, loginName, mobile, roleId);
 
                 return sysUsers;
             }
@@ -114,7 +117,7 @@ public class SysUserServiceImpl implements SysUserService {
 
             list = nextSysDeptInfos;
 
-        }while(!ObjectUtils.isEmpty(list));
+        } while (!ObjectUtils.isEmpty(list));
 
         return sysUsers;
     }
@@ -144,7 +147,7 @@ public class SysUserServiceImpl implements SysUserService {
         SysUserRole sysUserRole = new SysUserRole();
 
         //获取当前系统时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         sysUser.setLastUpdateTime(time);
 
@@ -156,7 +159,7 @@ public class SysUserServiceImpl implements SysUserService {
 
         SysUser userInfo = sysUserDao.selectUserInfosById(sysUser.getId());
 
-        if(!userInfo.getPassword().equals(sysUser.getPassword())){
+        if (!userInfo.getPassword().equals(sysUser.getPassword())) {
 
             String newPwdMD5 = DigestUtils.md5Hex(sysUser.getPassword());
 
@@ -180,7 +183,7 @@ public class SysUserServiceImpl implements SysUserService {
     public void delUserInfoById(Long id) {
 
         //获取当前系统时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         SysUser sysUser = new SysUser();
 
@@ -205,7 +208,7 @@ public class SysUserServiceImpl implements SysUserService {
     public void addUserInfo(SysUser sysUser) {
 
         //获取当前系统时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         //将时间放入用户信息
         sysUser.setCreateTime(time);
@@ -246,7 +249,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * @Date 2021/7/31 13:52
-     * @Description  递归查询部门树状信息
+     * @Description 递归查询部门树状信息
      * @Params department 当前用户所在的部门信息
      */
     private List<SysDept> getDepartmentList(SysDept sysDeptInfo) {
@@ -254,11 +257,11 @@ public class SysUserServiceImpl implements SysUserService {
         //查询用户所在部门的下级部门信息
         List<SysDept> sysDeptInfos = dispatchDao.queryGradeList(sysDeptInfo.getId());
 
-        if (!ObjectUtils.isEmpty(sysDeptInfos)){
+        if (!ObjectUtils.isEmpty(sysDeptInfos)) {
 
             for (SysDept sysDeptInfoTemp : sysDeptInfos) {
 
-                List<SysDept> nextSysDeptInfos =getDepartmentList(sysDeptInfoTemp);
+                List<SysDept> nextSysDeptInfos = getDepartmentList(sysDeptInfoTemp);
 
                 sysDeptInfoTemp.setList(nextSysDeptInfos);
 

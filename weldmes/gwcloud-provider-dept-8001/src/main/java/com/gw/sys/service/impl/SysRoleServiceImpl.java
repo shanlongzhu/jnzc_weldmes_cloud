@@ -1,6 +1,6 @@
 package com.gw.sys.service.impl;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.ManageRoleMenuInfo;
 import com.gw.entities.SysRole;
 import com.gw.entities.UserLoginInfo;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/7/5 10:12
- * @Description  角色业务实现层
+ * @Description 角色业务实现层
  * @Params
  */
 @Service
@@ -42,20 +42,20 @@ public class SysRoleServiceImpl implements SysRoleService {
     /**
      * @Date 2021/7/6 12:51
      * @Description 新增角色信息
-     * @Params  sysRole 角色信息
+     * @Params sysRole 角色信息
      */
     @Override
     public void addRoleInfo(SysRole sysRole) {
 
         //获取系统当前时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         sysRole.setCreateTime(time);
 
         //获取到当前用户
         Subject currentUser = SecurityUtils.getSubject();
 
-        UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
+        UserLoginInfo userInfo = (UserLoginInfo) currentUser.getPrincipal();
 
         sysRole.setCreateBy(userInfo.getUserName());
 
@@ -79,18 +79,18 @@ public class SysRoleServiceImpl implements SysRoleService {
     /**
      * @Date 2021/7/6 11:18
      * @Description 修改角色信息
-     * @Params  sysRole 角色信息
+     * @Params sysRole 角色信息
      */
     @Override
     public void updateRoleInfo(SysRole sysRole) {
 
         //获取系统当前时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         //获取到当前用户
         Subject currentUser = SecurityUtils.getSubject();
 
-        UserLoginInfo userInfo = (UserLoginInfo)currentUser.getPrincipal();
+        UserLoginInfo userInfo = (UserLoginInfo) currentUser.getPrincipal();
 
         sysRole.setCreateBy(userInfo.getUserName());
 
@@ -102,7 +102,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     /**
      * @Date 2021/7/6 11:18
      * @Description 根据id删除角色信息
-     * @Params  id 角色id
+     * @Params id 角色id
      */
     @Override
     public void delRoleInfoById(Long id) {
@@ -113,7 +113,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     /**
      * @Date 2021/7/7 11:50
      * @Description 给角色添加权限
-     * @Params  manageRoleMenuInfo 角色的菜单权限信息
+     * @Params manageRoleMenuInfo 角色的菜单权限信息
      */
     @Override
     public void addRoleMenuInfo(ManageRoleMenuInfo manageRoleMenuInfo) {
@@ -123,9 +123,9 @@ public class SysRoleServiceImpl implements SysRoleService {
 
         for (Long menuId : manageRoleMenuInfo.getMenuIds()) {
 
-            String time = DateTimeUtil.getCurrentTime();
+            String time = DateTimeUtils.getNowDateTime();
 
-            userRolesAndPerDao.insertRoleMenuInfo(manageRoleMenuInfo.getRoleId(),menuId,time);
+            userRolesAndPerDao.insertRoleMenuInfo(manageRoleMenuInfo.getRoleId(), menuId, time);
         }
     }
 }

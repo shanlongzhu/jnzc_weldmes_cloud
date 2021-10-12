@@ -1,12 +1,11 @@
 package com.gw.process.craft.service.impl;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.SysDictionary;
 import com.gw.entities.WpsLibrary;
 import com.gw.process.craft.dao.LibraryDao;
 import com.gw.process.craft.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -25,10 +24,10 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public int addLibrary(WpsLibrary wpsLibrary){
+    public int addLibrary(WpsLibrary wpsLibrary) {
 
         //获取当前时间
-        String createTime = DateTimeUtil.getCurrentTime();
+        String createTime = DateTimeUtils.getNowDateTime();
         wpsLibrary.setCreateTime(createTime);
         return libraryDao.addLibrary(wpsLibrary);
     }
@@ -67,8 +66,8 @@ public class LibraryServiceImpl implements LibraryService {
 
     /**
      * @Date 2021/7/1 14:17
-     * @Description  查询关联区域的跨间信息
-     * @Params  id 区域字典表id
+     * @Description 查询关联区域的跨间信息
+     * @Params id 区域字典表id
      */
     @Override
     public List<SysDictionary> getBayInfoByAreaById(Long id) {
@@ -79,7 +78,7 @@ public class LibraryServiceImpl implements LibraryService {
         //通过 字典表区域id 查询 跨间描述 value_name
         List<SysDictionary> list = new ArrayList<>();
 
-        if(!ObjectUtils.isEmpty(ids)){
+        if (!ObjectUtils.isEmpty(ids)) {
 
             list = libraryDao.queryMachineInfoByDictionaryId(ids);
         }

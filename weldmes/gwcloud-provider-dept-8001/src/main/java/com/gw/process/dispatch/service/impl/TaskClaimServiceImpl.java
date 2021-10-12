@@ -1,8 +1,11 @@
 package com.gw.process.dispatch.service.impl;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.common.DictionaryEnum;
-import com.gw.entities.*;
+import com.gw.entities.TaskClaim;
+import com.gw.entities.TaskInfo;
+import com.gw.entities.WeldClaimTaskInfo;
+import com.gw.entities.WelderInfo;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
@@ -42,11 +45,11 @@ public class TaskClaimServiceImpl implements TaskClaimService {
     public WeldClaimTaskInfo getWeldClaimTaskInfo(Long weldeId) {
 
         //根据焊机id查询焊机任务绑定信息列表
-        List<TaskClaim> taskClaims =taskClaimDao.selectTaskClaimInfoById(weldeId);
+        List<TaskClaim> taskClaims = taskClaimDao.selectTaskClaimInfoById(weldeId);
 
         WeldClaimTaskInfo weldClaimTaskInfo = new WeldClaimTaskInfo();
 
-        if(!ObjectUtils.isEmpty(taskClaims)){
+        if (!ObjectUtils.isEmpty(taskClaims)) {
 
             //根据焊机任务绑定信息查询具体绑定信息
             weldClaimTaskInfo = taskClaimDao.selectWeldClaimTaskInfoByTaskClaim(taskClaims.get(0));
@@ -57,7 +60,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
 
     /**
      * @Date 2021/7/19 16:14
-     * @Description  根据焊工id查询任务工单信息列表
+     * @Description 根据焊工id查询任务工单信息列表
      * @Params welderId 焊工id
      */
     @Override
@@ -89,7 +92,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
     public void addTaskClaimInfo(TaskClaim taskClaim) {
 
         //获取当前时间
-        String time = DateTimeUtil.getCurrentTime();
+        String time = DateTimeUtils.getNowDateTime();
 
         taskClaim.setClaimTime(time);
 
@@ -99,7 +102,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
         //判断任务表中该数据的实际开始时间是否为空
         TaskInfo taskInfo = dispatchDao.queryTaskInfoById(taskClaim.getTaskId());
 
-        if(ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
+        if (ObjectUtils.isEmpty(taskInfo.getRealityStarttime())) {
 
             taskInfo.setRealityStarttime(taskClaim.getClaimTime());
         }

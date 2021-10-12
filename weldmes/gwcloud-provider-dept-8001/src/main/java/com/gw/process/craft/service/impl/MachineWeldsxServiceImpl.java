@@ -1,12 +1,11 @@
 package com.gw.process.craft.service.impl;
 
-import com.gw.common.DateTimeUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.MachineWeldsxInfo;
 import com.gw.process.craft.dao.MachineWeldsxDao;
 import com.gw.process.craft.service.MachineWeldsxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class MachineWeldsxServiceImpl implements MachineWeldsxService {
     public void addMachineWeldsxInfo(MachineWeldsxInfo machineWeldsxInfo) {
 
         //获取当前系统时间
-        String createTime = DateTimeUtil.getCurrentTime();
+        String createTime = DateTimeUtils.getNowDateTime();
 
         machineWeldsxInfo.setCreateTime(createTime);
 
