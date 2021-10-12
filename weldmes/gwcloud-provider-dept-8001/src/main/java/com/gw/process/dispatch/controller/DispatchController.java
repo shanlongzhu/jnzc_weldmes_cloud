@@ -7,7 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.ConstantInfo;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
-import com.gw.config.ExcelListener;
+import com.gw.config.TaskExcelListener;
 import com.gw.entities.*;
 import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.service.DispatchService;
@@ -259,8 +259,7 @@ public class DispatchController {
     @RequestMapping(value = "task/importExcel",method = RequestMethod.POST)
     public HttpResult importExcelController(@RequestParam MultipartFile file) throws IOException {
 
-        EasyExcel.read(file.getInputStream(), TaskInfo.class, new ExcelListener(dispatchDao)).sheet().doRead();
-        //dispatchService.importExcel(file);
+        EasyExcel.read(file.getInputStream(), TaskInfo.class, new TaskExcelListener(dispatchService)).sheet().doRead();
 
         return HttpResult.ok("Excel导入成功");
     }
@@ -284,8 +283,6 @@ public class DispatchController {
 
         //导出为Excel
         DownExcel.download(response,TaskInfo.class,list,sheetName,title);
-
-        //dispatchService.exportExcel(response,grade,taskStatus);
 
         return HttpResult.ok("Excel导出成功");
     }

@@ -10,6 +10,7 @@ import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.DispatchService;
 
+import com.gw.process.solderer.dao.SoldererDao;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -44,6 +45,9 @@ public class DispatchServiceImpl implements DispatchService{
 
     @Autowired
     TaskClaimDao taskClaimDao;
+
+    @Autowired
+    SoldererDao soldererDao;
 
 
     /**
@@ -295,66 +299,58 @@ public class DispatchServiceImpl implements DispatchService{
     }
 
     /**
-     * @Date 2021/5/28 17:39
-     * @Description 数据导入excel
-     * @Params
-     */
-    @Override
-    public void exportExcel(HttpServletResponse response,Integer grade,Integer taskStatus) {
-
-        //获取任务列表
-        List<TaskInfo> list = dispatchDao.queryTaskList(grade,taskStatus);
-
-        Workbook workbook = new XSSFWorkbook();
-
-        Sheet sheet = workbook.createSheet("派工任务数据");
-
-        String[] titles = {"任务编号","任务等级","所属班组","计划开始时间","计划结束时间","实际开始时间","实际结束时间","任务评价","评价等级"};
-
-        Row row = sheet.createRow(0);
-
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(titles[i]);
-        }
-        for (int i = 0; i < list.size() ; i++) {
-
-            row = sheet.createRow(i+1);
-
-            TaskInfo taskInfo = list.get(i);
-
-            //将实体类中的信息遍历导入Excel
-            forEachTaskInfoToCell(row,taskInfo);
-
-        }
-
-        try {
-            String fileName = URLEncoder.encode("派工任务数据.xlsx","UTF-8");
-
-            response.setContentType("application/octet-stream");
-
-            response.setHeader("content-disposition","attachment;filename="+fileName);
-
-            response.setHeader("filename",fileName);
-
-            workbook.write(response.getOutputStream());
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-    }
-
-    /**
      * @Date 2021/5/31 9:42
      * @Description 将Excel中的数据导入
      * @Params
      */
     @Override
-    public void importExcel(MultipartFile uploadFile) {
+    public TaskInfo importExcel(TaskInfo data) {
 
-        //导入数据库
-        importExcelMethod(uploadFile);
+        //任务等级
+        if(!ObjectUtils.isEmpty(data.getGradeIdToStr())){
+
+            Long gradeId = dispatchDao.queryTaskGradeIdByValueName(data.getGradeIdToStr());
+
+            if(!ObjectUtils.isEmpty(gradeId)){
+
+                data.setGrade(gradeId);
+            }
+        }
+
+        //所属班组
+        if(!ObjectUtils.isEmpty(data.getDeptName())){
+
+            Long deptId = dispatchDao.queryDeptIdByWorkArea(data.getDeptName());
+
+            if(!ObjectUtils.isEmpty(deptId)){
+
+                data.setDeptId(deptId);
+            }
+        }
+
+        //焊工id
+        if(!ObjectUtils.isEmpty(data.getWelderName())){
+
+            Long welderId = soldererDao.selectWelderInfoByWelderNo(data.getWelderName());
+
+            if(!ObjectUtils.isEmpty(welderId)){
+
+                data.setWelderId(welderId);
+            }
+        }
+
+        //评价等级
+        if(!ObjectUtils.isEmpty(data.getEvaluateStarsIdToStr())){
+
+            Long evaluateStarsId = dispatchDao.queryTaskGradeIdByValueName(data.getEvaluateStarsIdToStr());
+
+            if(!ObjectUtils.isEmpty(evaluateStarsId)){
+
+                data.setWelderId(evaluateStarsId);
+            }
+        }
+
+        return data;
 
     }
 
@@ -426,73 +422,6 @@ public class DispatchServiceImpl implements DispatchService{
     }
 
     /**
-     * @Date 2021/6/1 16:10
-     * @Description 工人刷卡领取任务后, 需要记录工人领取时间及一些其他信息到 task_claim 表
-     *              然后task_info表中 该 任务信息状态 变更为 进行中
-     * @Params
-     */
-    @Override
-    public HttpResult updateTaskStatusAndInsertInfo(TaskClaim taskClaimInfo) {
-
-        //焊工刷卡领取任务后  首先根据 任务id 判断 该焊工可否领取此任务
-
-        //通过任务id 获取该条任务信息
-        TaskInfo taskInfo = dispatchDao.queryTaskInfoById(taskClaimInfo.getTaskId());
-
-        //通过任务信息的 焊工id 和 组织id 判断焊工是否可以领取该任务
-        if (!ObjectUtils.isEmpty(taskInfo)){
-
-            //当该条任务信息只存在 部门id 时
-            if(ObjectUtils.isEmpty(taskInfo.getWelderId()) && !ObjectUtils.isEmpty(taskInfo.getDeptId())){
-
-                //通过 taskClaimInfo中的组织Id 获取到该组织下所有的焊工Id
-                List<Long> welderIds = welderDao.getDeptIdByWelderId(taskInfo.getDeptId());
-
-                if(!ObjectUtils.isEmpty(welderIds)){
-
-                    for (Long welderId:welderIds) {
-                        if(welderId == taskClaimInfo.getWelderId()){
-
-                            updateTaskInfoAndAddTaskClaimInfo(taskInfo,taskClaimInfo);
-
-                            return HttpResult.ok("领取成功！");
-                        }
-
-                        return HttpResult.ok("领取失败,当前焊工无法领取此任务！");
-                    }
-                }
-
-            }
-
-            //当该条任务信息存在 焊工id 时
-            if(!ObjectUtils.isEmpty(taskInfo.getWelderId())){
-
-                //判断焊工Id是否一致
-                if(taskClaimInfo.getWelderId() == taskInfo.getWelderId()){
-
-                    updateTaskInfoAndAddTaskClaimInfo(taskInfo,taskClaimInfo);
-
-                    return HttpResult.ok("领取成功！");
-
-                }
-
-                return HttpResult.ok("领取失败,当前焊工无法领取此任务！");
-            }
-
-            //当任务信息中无 焊工id 和 组织id 时
-            if(ObjectUtils.isEmpty(taskInfo.getWelderId()) && ObjectUtils.isEmpty(taskInfo.getDeptId())){
-
-                updateTaskInfoAndAddTaskClaimInfo(taskInfo,taskClaimInfo);
-
-                return HttpResult.ok("领取成功！");
-            }
-
-        }
-
-        return HttpResult.ok("领取失败,暂无该任务信息！");
-    }
-
-    /**
      * @Date 2021/7/13 17:33
      * @Description  获取历史曲线中任务id,编号列表
      * @Params
@@ -552,285 +481,15 @@ public class DispatchServiceImpl implements DispatchService{
     }
 
     /**
-     * @Date 2021/7/13 17:33
-     * @Description  将任务信息遍历到Excel单元格中
+     * @Date 2021/10/11 18:37
+     * @Description 批量插入数据
      * @Params
      */
-    public void forEachTaskInfoToCell(Row row,TaskInfo taskInfo){
+    @Override
+    public void addTaskInfos(List<TaskInfo> list) {
 
-        //将 任务编号 字段值插入单元格
-        Cell getTaskNoCell = row.createCell(0);
+        dispatchDao.addTaskInfoList(list);
 
-        if (ObjectUtils.isEmpty(taskInfo.getTaskNo())){
-
-            taskInfo.setTaskNo("");
-        }
-        getTaskNoCell.setCellValue(taskInfo.getTaskNo());
-
-        //将 任务等级 字段值插入单元格
-        Cell getTaskGradeCell = row.createCell(1);
-
-        if (ObjectUtils.isEmpty(taskInfo.getGradeIdToStr())){
-
-            taskInfo.setGradeIdToStr("");
-        }
-        getTaskGradeCell.setCellValue(taskInfo.getGradeIdToStr());
-
-        //将 所属班组 字段值插入单元格
-        Cell getTaskGradeNameCell = row.createCell(2);
-
-        if (ObjectUtils.isEmpty(taskInfo.getDeptName())){
-
-            taskInfo.setDeptName("");
-        }
-        getTaskGradeNameCell.setCellValue(taskInfo.getDeptName());
-
-        //将 计划开始时间 字段值插入单元格
-        Cell getPlanStartTimeCell = row.createCell(3);
-
-        if (ObjectUtils.isEmpty(taskInfo.getPlanStarttime())){
-
-            taskInfo.setPlanStarttime("");
-        }
-        getPlanStartTimeCell.setCellValue(taskInfo.getPlanStarttime());
-
-        //将 计划结束时间 字段值插入单元格
-        Cell getPlanEndTimeCell = row.createCell(4);
-
-        if (ObjectUtils.isEmpty(taskInfo.getPlanEndtime())){
-
-            taskInfo.setPlanEndtime("");
-        }
-        getPlanEndTimeCell.setCellValue(taskInfo.getPlanEndtime());
-
-        //将 实际开始时间 字段值插入单元格
-        Cell getRealityStartTimeCell = row.createCell(5);
-
-        if (ObjectUtils.isEmpty(taskInfo.getRealityStarttime())){
-
-            taskInfo.setRealityStarttime("");
-        }
-        getRealityStartTimeCell.setCellValue(taskInfo.getRealityStarttime());
-
-        //将 实际结束时间 字段值插入单元格
-        Cell getRealityEndTimeCell = row.createCell(6);
-
-        if (ObjectUtils.isEmpty(taskInfo.getRealityEndtime())){
-
-            taskInfo.setRealityEndtime("");
-        }
-        getRealityEndTimeCell.setCellValue(taskInfo.getRealityEndtime());
-
-        //将 任务评价 字段值插入单元格
-        Cell evaluateContent = row.createCell(7);
-
-        if (ObjectUtils.isEmpty(taskInfo.getEvaluateContent())){
-
-            taskInfo.setEvaluateContent("");
-        }
-        evaluateContent.setCellValue(taskInfo.getEvaluateContent());
-
-        //将 评价等级 字段值插入单元格
-        Cell evaluateStars = row.createCell(8);
-
-        if (ObjectUtils.isEmpty(taskInfo.getEvaluateStarsIdToStr())){
-
-            taskInfo.setEvaluateStarsIdToStr("");
-        }
-        evaluateStars.setCellValue(taskInfo.getEvaluateStarsIdToStr());
-    }
-
-    /**
-     * @Date 2021/7/13 17:33
-     * @Description  进行 taskClaim表 入库操作,修改任务状态
-     * @Params
-     */
-    public void updateTaskInfoAndAddTaskClaimInfo(TaskInfo taskInfo,TaskClaim taskClaimInfo){
-
-        //进行 taskClaim表 入库操作
-        dispatchDao.addTaskClaimInfo(taskClaimInfo);
-
-        taskInfo.setWelderId(taskInfo.getWelderId());
-
-        taskInfo.setDeptId(taskInfo.getDeptId());
-
-        taskInfo.setStatusStr(DictionaryEnum.TASK_STATUS_NO_GET.getValueName());
-
-        //修改任务状态
-        dispatchDao.updateTaskInfo(taskInfo);
-
-    }
-
-    /**
-     * @Date 2021/7/13 17:33
-     * @Description  遍历Excel中的信息到list中,导入数据库
-     * @Params
-     */
-    public void importExcelMethod(MultipartFile uploadFile){
-        try {
-            //workbook excel
-            Workbook workbook = new XSSFWorkbook(uploadFile.getInputStream());
-
-            //获取excel的第一个sheet
-            Sheet sheet = workbook.getSheetAt(0);
-
-            int firstRowNum = sheet.getFirstRowNum();
-
-            //获取最后一行的下标
-            int lastRowNum = sheet.getLastRowNum();
-
-            Row firstRow = sheet.getRow(firstRowNum);
-
-            int lastCellNums = firstRow.getLastCellNum();
-
-            List<TaskInfo> taskInfos = new ArrayList<>();
-
-            for (int i = 1; i <= lastRowNum ; i++) {
-
-                //获取第i行
-                Row row = sheet.getRow(i);
-
-                Object[] obs = new Object[lastCellNums];
-
-                //Excel中一条完整的 任务信息 存储到 obs 里
-                for (int j = 0; j <lastCellNums ; j++) {
-
-                    //获取第i行的 第j个 单元格
-                    Cell cell = row.getCell(j);
-
-                    if(row.getCell(j)==null){
-                        continue;
-                    }
-
-                    //拿到单元格的 value值
-                    Object value = ExcelUtils.getValue(cell);
-
-                    obs[j] = value;
-
-                }
-
-                //把从excel中拿出来的数据封装到 对象中
-                TaskInfo taskInfo = new TaskInfo();
-
-                if(obs[0] instanceof Double){
-
-                    int index = obs[0].toString().indexOf(".");
-
-                    obs[0] = obs[0].toString().substring(0,index);
-                }
-
-                //任务编号
-                if(!ObjectUtils.isEmpty(obs[0])){
-
-                    taskInfo.setTaskNo((obs[0].toString()));
-                }else{
-
-                    taskInfo.setTaskNo("");
-                }
-
-                String valueName = (String) obs[1];
-
-                if(!ObjectUtils.isEmpty(valueName)){
-
-                    //通过任务等级获取 该任务等级的主键Id
-                    Long taskGradeId = dispatchDao.queryTaskGradeIdByValueName(valueName);
-                    //任务等级
-                    taskInfo.setGrade(taskGradeId);
-                }
-
-                String deptName = (String) obs[2];
-
-                if(!ObjectUtils.isEmpty(deptName)){
-
-                    //根据班组名 得到对应班组Id
-                    Long deptId = dispatchDao.queryDeptIdByWorkArea(deptName);
-
-                    //所属班组
-                    taskInfo.setDeptId(deptId);
-                }
-
-                //SimpleDateFormat sdf = DateTimeUtil.sdf;
-
-                if(!ObjectUtils.isEmpty(obs[3])){
-
-                    String planStartTime = DateTimeUtil.getRightTimeFormat(obs[3].toString());
-
-                    if(!ObjectUtils.isEmpty(planStartTime)){
-
-                        //计划开始时间
-                        taskInfo.setPlanStarttime(planStartTime);
-                    }
-
-                }
-
-                if (!ObjectUtils.isEmpty(obs[4])){
-
-                    String planEndTime = DateTimeUtil.getRightTimeFormat(obs[4].toString());
-
-                    if(!ObjectUtils.isEmpty(planEndTime)){
-
-                        //计划结束时间
-                        taskInfo.setPlanEndtime(planEndTime);
-                    }
-
-                }
-
-                if (!ObjectUtils.isEmpty(obs[5])){
-
-                    String realityStarttime = DateTimeUtil.getRightTimeFormat(obs[5].toString());
-
-                    if(!ObjectUtils.isEmpty(realityStarttime)){
-
-                        //实际开始时间
-                        taskInfo.setRealityStarttime(realityStarttime);
-                    }
-
-                }
-
-                if (!ObjectUtils.isEmpty(obs[6])){
-
-                    String realityEndTime = DateTimeUtil.getRightTimeFormat(obs[6].toString());
-
-                    if(!ObjectUtils.isEmpty(realityEndTime)){
-
-                        //实际结束时间
-                        taskInfo.setRealityEndtime(realityEndTime);
-                    }
-
-                }
-
-                String evaluateContent = (String) obs[7];
-
-                if(!ObjectUtils.isEmpty(evaluateContent)){
-
-                    //任务评价
-                    taskInfo.setEvaluateContent(evaluateContent);
-                }
-
-                //评价星级
-                String evaluateStars = (String) obs[8];
-
-                if(!ObjectUtils.isEmpty(evaluateStars)){
-
-                    //根据评价星级 获取到星级Id
-                    Long evaluateStarsId = dispatchDao.queryTaskGradeIdByValueName(evaluateStars);
-
-                    taskInfo.setEvaluateStars(evaluateStarsId);
-                }
-
-                //把对象放到list
-                taskInfos.add(taskInfo);
-            }
-
-            //导入数据库
-            dispatchDao.addTaskInfoList(taskInfos);
-
-            HttpResult.ok("导入成功！");
-
-        }catch (Exception e){
-            e.printStackTrace();
-            HttpResult.error("导入失败！");
-        }
     }
 
     /**

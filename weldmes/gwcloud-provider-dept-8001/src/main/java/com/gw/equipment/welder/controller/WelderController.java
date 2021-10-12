@@ -373,14 +373,13 @@ public class WelderController {
 
                     for (int j = 0; j < machineNos.length ; j++) {
 
-                        String machineNoStr = null;
-
                         if(machineNos[j].indexOf(".") > 0){
 
-                            machineNoStr = machineNos[j].substring(0,machineNos[j].indexOf("."));
+                            machineNos[j] = machineNos[j].substring(0,machineNos[j].indexOf("."));
+
                         }
 
-                        String a = String.valueOf(welderService.getGid(machineNoStr));
+                        String a = String.valueOf(welderService.getGid(machineNos[j]));
 
                         list.add(a);
                     }
@@ -389,52 +388,55 @@ public class WelderController {
 
                     for(int k = 0; k < list.size(); k++){
 
-                        sb. append(list.get(k)).append(",");
+                        sb.append(list.get(k)).append(",");
                     }
                     String s = sb.toString().substring(0,sb.length()-1);
 
                     machineWeldInfo.setGId(s);
                 }
 
-                String ip = (String) obs[9];
+                //区域
+                String area = (String) obs[8];
 
-                machineWeldInfo.setIpPath(ip);
+                if(!ObjectUtils.isEmpty(area)){
 
-                String model = (String) obs[10];
+                    Long areaId = welderService.getTypeId(area,ConstantInfo.AREA_FLAG).longValue();
 
-                Byte modelId=welderService.getModelId(model);
+                    if (!ObjectUtils.isEmpty(areaId)){
 
-                machineWeldInfo.setModel(modelId);
-
-                String areaAndBay = (String) obs[8];
-
-                if(!ObjectUtils.isEmpty(areaAndBay) && areaAndBay.length() >4){
-
-                    String area = areaAndBay.substring(0,areaAndBay.length()-2);
-
-                    String bay = areaAndBay.substring(areaAndBay.length()-2);
-
-                    if(!ObjectUtils.isEmpty(area)){
-
-                        Long areaId = welderService.getTypeId(area,ConstantInfo.AREA_FLAG).longValue();
-
-                        if (!ObjectUtils.isEmpty(areaId)){
-
-                            machineWeldInfo.setArea(areaId);
-                        }
+                        machineWeldInfo.setArea(areaId);
                     }
+                }
 
-                    if(!ObjectUtils.isEmpty(bay)) {
+                String bay = (String) obs[9];
 
-                        Long bayId = welderService.getTypeId(bay,ConstantInfo.BAY_FLAG).longValue();
+                if(!ObjectUtils.isEmpty(bay)) {
 
-                        if (!ObjectUtils.isEmpty(bayId)){
+                    Long bayId = welderService.getTypeId(bay,ConstantInfo.BAY_FLAG).longValue();
 
-                            machineWeldInfo.setBay(bayId);
-                        }
+                    if (!ObjectUtils.isEmpty(bayId)){
+
+                        machineWeldInfo.setBay(bayId);
                     }
+                }
 
+                if(!ObjectUtils.isEmpty(obs[10])){
 
+                    String ip = (String) obs[10];
+
+                    machineWeldInfo.setIpPath(ip);
+                }
+
+                if(!ObjectUtils.isEmpty(obs[11])){
+
+                    String model = (String) obs[11];
+
+                    Byte modelId = welderService.getModelId(model);
+
+                    if(!ObjectUtils.isEmpty(modelId)){
+
+                        machineWeldInfo.setModel(modelId);
+                    }
                 }
 
                 //把对象放到list

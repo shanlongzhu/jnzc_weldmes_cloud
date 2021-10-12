@@ -117,4 +117,9 @@
         select (1) from welder_info where welder_no = #{WelderNo} and id != #{id}
     </select>
 
+    <!--根据焊工编号 查询 焊工信息-->
+    <select id="selectWelderInfoByWelderNo" parameterType="String" resultType="Long">
+        select id from welder_info where welder_no = #{WelderNo}
+    </select>
+
 </mapper>

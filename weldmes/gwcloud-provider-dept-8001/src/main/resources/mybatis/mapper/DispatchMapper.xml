@@ -43,7 +43,7 @@
 
     <!--按条件 获取任务列表-->
     <select id="queryTaskList" resultMap="taskList">
-        select if(welder_info.welder_name is null,'此任务暂未分配',welder_info.welder_name) welderName,
+        select if(welder_info.welder_no is null,'此任务暂未分配',welder_info.welder_no) welderName,
                task.id,task.task_no,dictionaryTemp.value_name gradeStr,
                dept.name,deptWork.name workSpace,task.plan_starttime,task.plan_endtime,
                task.reality_starttime,task.reality_endtime,

@@ -40,4 +40,11 @@ public interface SoldererDao {
      * @Params
      */
     public Integer judgeWelderNoYesOrNo(@Param("WelderNo") String WelderNo,@Param("id")Long id);
+
+    /**
+     * @Date 2021/10/11 17:46
+     * @Description 根据焊工编号 查询 焊工信息
+     * @Params
+     */
+    public Long selectWelderInfoByWelderNo(@Param("WelderNo") String WelderNo);
 }

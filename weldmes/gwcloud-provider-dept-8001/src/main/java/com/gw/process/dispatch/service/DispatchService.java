@@ -93,18 +93,11 @@ public interface DispatchService {
     public List<GatherAndFirmInfo> taskStatusChange(TaskInfo taskInfo);
 
     /**
-     * @Date 2021/5/28 17:38
-     * @Description 导出Excel
-     * @Params  grade班组id      taskStatus任务状态id
-     */
-    public void exportExcel(HttpServletResponse response,Integer grade,Integer taskStatus);
-
-    /**
      * @Date 2021/5/31 9:41
      * @Description 导入Excel
      * @Params
      */
-    public void importExcel(MultipartFile uploadFile);
+    public TaskInfo importExcel(TaskInfo data);
 
     /**
      * @Date 2021/6/1 9:52
@@ -121,12 +114,6 @@ public interface DispatchService {
      */
     public Map<String,Object> getWorkSpaceAndGradeInfo(String username,String password);
 
-    /**
-     * @Date 2021/6/1 16:08
-     * @Description
-     * @Params
-     */
-    public HttpResult updateTaskStatusAndInsertInfo(TaskClaim taskClaimInfo);
 
     /**
      * @Date 2021/7/13 17:33
@@ -141,4 +128,11 @@ public interface DispatchService {
      * @Params
      */
     public List<Integer> getGradeIds(Integer gradeId);
+
+    /**
+     * @Date 2021/10/12 10:33
+     * @Description 批量插入数据
+     * @Params
+     */
+    public void addTaskInfos(List<TaskInfo> list);
 }
