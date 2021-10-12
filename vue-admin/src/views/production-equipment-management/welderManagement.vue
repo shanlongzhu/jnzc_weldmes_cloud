@@ -164,28 +164,22 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="rank"
+                    prop="rankStr"
                     label="级别"
                     align="left"
                     min-width="120"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueName}}
-                    </template>
                 </el-table-column>
 
                 <el-table-column
-                    prop="macPath"
+                    prop="certificationStr"
                     label="资质"
                     align="left"
                     min-width="120"
                 >
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNames}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="createTime"
+                    prop="deptName"
                     label="部门"
                     align="left"
                     min-width="170"
@@ -194,9 +188,6 @@
                         slot="header"
                     >
                         <span>部门</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDept.name}}
                     </template>
                 </el-table-column>
                 <el-table-column
