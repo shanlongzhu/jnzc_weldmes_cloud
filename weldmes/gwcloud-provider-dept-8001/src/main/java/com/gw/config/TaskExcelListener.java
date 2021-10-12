@@ -16,11 +16,6 @@ public class TaskExcelListener extends AnalysisEventListener<TaskInfo> {
 
     DispatchService dispatchService;
 
-    /**
-     * 每隔10条存储数据库,然后清理list 方便内存回收
-     */
-    private static final int BATCH_COUNT = 10;
-
     List<TaskInfo> list = new ArrayList();
 
     @Override
@@ -30,19 +25,16 @@ public class TaskExcelListener extends AnalysisEventListener<TaskInfo> {
 
         list.add(taskInfo);
 
-        if(list.size() == BATCH_COUNT){
-
-            dispatchService.addTaskInfos(list);
-
-            //存储完成 清理 list
-            list.clear();
-
-        }
 
     }
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+
+        dispatchService.addTaskInfos(list);
+
+        //存储完成 清理 list
+        list.clear();
 
     }
 
