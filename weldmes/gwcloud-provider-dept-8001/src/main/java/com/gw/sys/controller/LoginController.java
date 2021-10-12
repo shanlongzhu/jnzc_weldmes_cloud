@@ -62,7 +62,7 @@ public class LoginController {
                 subject.getUserName().equals(username) &&
                 subject.getPassWord().equals(newPwdMD5)){
 
-            throw new Exception("当前用户已登录,请更换用户重新登录");
+            throw new RuntimeException("当前用户已登录,请更换用户重新登录");
         }
 
         //当前用户 未登录 时 进行登录认证

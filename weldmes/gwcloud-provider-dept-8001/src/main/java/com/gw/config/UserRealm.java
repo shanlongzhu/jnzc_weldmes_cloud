@@ -94,7 +94,7 @@ public class UserRealm extends AuthorizingRealm {
 
         if(ObjectUtils.isEmpty(roleNames)){
 
-            throw new Exception("用户角色不存在,登陆失败");
+            throw new RuntimeException("用户角色不存在,登陆失败");
         }
 
         UserLoginInfo userLoginInfo = new UserLoginInfo();
