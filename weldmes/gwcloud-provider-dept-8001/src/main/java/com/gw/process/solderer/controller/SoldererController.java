@@ -4,8 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
-import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
 import com.gw.process.solderer.dao.SoldererDao;
 import com.gw.process.solderer.service.SoldererService;
@@ -40,7 +38,11 @@ public class SoldererController {
     @Autowired
     private SoldererDao soldererDao;
 
-    //列表展示
+    /**
+     * @Date 2021/10/12 15:22
+     * @Description 焊工列表查询
+     * @Params
+     */
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
@@ -56,7 +58,11 @@ public class SoldererController {
         return HttpResult.ok(page);
     }
 
-    //无分页列表展示
+    /**
+     * @Date 2021/10/12 15:22
+     * @Description 焊工列表查询 - 无分页
+     * @Params
+     */
     @GetMapping(value = "noPage")
     public HttpResult getListNoPage(String welderName,String welderNo,Integer rate,
                               Integer talent,Integer grade) {
@@ -66,7 +72,11 @@ public class SoldererController {
         return HttpResult.ok(list);
     }
 
-    //新增焊工信息
+    /**
+     * @Date 2021/10/12 15:23
+     * @Description 新增焊工信息
+     * @Params
+     */
     @PostMapping
     public HttpResult addSolderer(@RequestBody WelderInfo welderInfo) {
 
@@ -82,14 +92,22 @@ public class SoldererController {
         return HttpResult.ok("新增成功");
     }
 
-    //修改前先查询
+    /**
+     * @Date 2021/10/12 15:24
+     * @Description 根据焊工id 查询焊工信息
+     * @Params
+     */
     @GetMapping("{id}")
     public HttpResult getById(@PathVariable Long id) {
         List<WelderInfo> list = soldererService.getById(id);
         return HttpResult.ok(list);
     }
 
-    //修改焊工信息
+    /**
+     * @Date 2021/10/12 15:24
+     * @Description 修改焊工信息
+     * @Params
+     */
     @PutMapping
     public HttpResult updateSolderer(@RequestBody WelderInfo welderInfo) {
 
@@ -106,7 +124,11 @@ public class SoldererController {
 
     }
 
-    //删除焊工信息
+    /**
+     * @Date 2021/10/12 15:24
+     * @Description 删除焊工信息
+     * @Params
+     */
     @DeleteMapping
     public HttpResult deleteSolderer(Long id) {
 
@@ -115,7 +137,11 @@ public class SoldererController {
         return HttpResult.ok("删除成功");
     }
 
-    //导出Excel
+    /**
+     * @Date 2021/10/12 15:24
+     * @Description Excel导出
+     * @Params
+     */
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String welderName,String welderNo,Integer rate,
                                   Integer talent,Integer grade){
@@ -203,7 +229,11 @@ public class SoldererController {
         return result;
     }
 
-    //导入
+    /**
+     * @Date 2021/10/12 15:25
+     * @Description excel导入
+     * @Params
+     */
     @PostMapping(value = "importExcel",produces = "application/json;charset=UTF-8")
     public HttpResult importExcel(@RequestParam("file")MultipartFile file){
         HttpResult result=new HttpResult();
@@ -284,7 +314,7 @@ public class SoldererController {
 
     /**
      * @Date 2021/8/5 15:41
-     * @Description 直接新增信息
+     * @Description 新增或更新焊工信息
      * @Params
      */
     @RequestMapping("judgeAfterAddWelderInfo")

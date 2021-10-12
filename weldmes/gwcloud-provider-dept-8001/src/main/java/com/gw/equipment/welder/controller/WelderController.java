@@ -9,7 +9,6 @@ import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.welder.service.WelderService;
-import com.gw.sys.dao.SysDictionaryDao;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.nio.cs.ext.IBM037;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
@@ -28,7 +26,7 @@ import java.util.List;
 
 /**
  * @Date 2021/6/30 16:50
- * @Description 生产设备控制器
+ * @Description 焊机控制器
  * @Params
  */
 @CrossOrigin
@@ -39,7 +37,11 @@ public class WelderController {
     @Autowired
     private WelderService welderService;
 
-    //列表展示
+    /**
+     * @Date 2021/10/12 15:27
+     * @Description 焊机列表查询
+     * @Params
+     */
     @GetMapping
     public HttpResult getList(@RequestParam(value="pn",defaultValue = "1") Integer pn,
                               @RequestParam(value="size",defaultValue = "10") Integer size,
@@ -55,16 +57,25 @@ public class WelderController {
         return HttpResult.ok(page);
     }
 
-    //列表展示
+    /**
+     * @Date 2021/10/12 15:27
+     * @Description 焊机是否绑定任务列表查询
+     * @Params
+     */
     @RequestMapping("welderInfosNoPage")
     public HttpResult getListNoPage(String machineNo,Integer type,Integer grade,Integer status,
                               Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
 
-        List<MachineWeldInfo> list=welderService.getList(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+        List<MachineWeldInfo> list=welderService.getStatusOfMachineWeldInfos(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
 
         return HttpResult.ok(list);
     }
-    //新增焊机信息
+
+    /**
+     * @Date 2021/10/12 15:28
+     * @Description 新增焊机信息
+     * @Params
+     */
     @PostMapping
     public HttpResult addWelder(@RequestBody MachineWeldInfo machineWeldInfo){
         try {
@@ -81,7 +92,11 @@ public class WelderController {
         }
     }
 
-    //修改前先查询
+    /**
+     * @Date 2021/10/12 15:28
+     * @Description 根据焊机id 查询信息
+     * @Params
+     */
     @GetMapping("{id}")
     public HttpResult getById(@PathVariable Long id){
         List<MachineWeldInfo> list=welderService.getById(id);
@@ -89,7 +104,11 @@ public class WelderController {
 
     }
 
-    //修改信息
+    /**
+     * @Date 2021/10/12 15:28
+     * @Description 修改焊机信息
+     * @Params
+     */
     @PutMapping
     public HttpResult updateWelder(@RequestBody MachineWeldInfo machineWeldInfo){
         try {
@@ -106,7 +125,11 @@ public class WelderController {
         }
     }
 
-    //删除信息
+    /**
+     * @Date 2021/10/12 15:28
+     * @Description 删除焊机信息
+     * @Params
+     */
     @DeleteMapping
     public HttpResult deleteWelder(Long id){
         try {
@@ -124,7 +147,11 @@ public class WelderController {
 
     }
 
-    //导出Excel
+    /**
+     * @Date 2021/10/12 15:29
+     * @Description 导出Excel
+     * @Params
+     */
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String machineNo,Integer type,Integer grade,Integer status,
                                   Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay){
@@ -258,7 +285,11 @@ public class WelderController {
         return result;
     }
 
-    //导入
+    /**
+     * @Date 2021/10/12 15:29
+     * @Description 导入Excel
+     * @Params
+     */
     @PostMapping(value = "importExcel",produces = "application/json;charset=UTF-8")
     public HttpResult importExcel(@RequestParam("file")MultipartFile file){
 

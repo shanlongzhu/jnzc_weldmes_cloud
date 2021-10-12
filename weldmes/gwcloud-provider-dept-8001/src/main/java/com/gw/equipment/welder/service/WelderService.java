@@ -4,10 +4,26 @@ import com.gw.entities.MachineWeldInfo;
 
 import java.util.List;
 
+/**
+ * @Date 2021/10/12 15:31
+ * @Description 焊机业务层
+ * @Params
+ */
 public interface WelderService {
+
+    /**
+     * @Date 2021/10/12 15:32
+     * @Description 焊机信息列表查询
+     * @Params
+     */
     List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
                                   Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay);
 
+    /**
+     * @Date 2021/10/12 15:32
+     * @Description 新增焊机信息
+     * @Params
+     */
     int addWelder(MachineWeldInfo machineWeldInfo);
 
     List<MachineWeldInfo> getById(Long id);
@@ -17,7 +33,6 @@ public interface WelderService {
     int deleteWelder(Long id);
 
     Byte getTypeId(String type,String dictionaryType);
-
 
     Long getDeptId(String deptName);
 
@@ -44,5 +59,14 @@ public interface WelderService {
      * @Params id 部门id
      */
     public List<MachineWeldInfo> getWeldInfos(Long id);
+
+    /**
+     * @Date 2021/10/12 15:34
+     * @Description 焊机是否绑定任务列表查询
+     * @Params
+     */
+    public List<MachineWeldInfo> getStatusOfMachineWeldInfos(String machineNo,Integer type,Integer grade,Integer status,
+                                                             Integer firm,Long isNetwork,String gatherNo,String ipPath,
+                                                             Integer model,Integer area,Integer bay);
 
 }

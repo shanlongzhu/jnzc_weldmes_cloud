@@ -1,17 +1,15 @@
 package com.gw.equipment.welder.service.impl;
 
-
-import com.gw.common.ConstantInfo;
+import com.gw.common.DateTimeUtil;
 import com.gw.entities.*;
 import com.gw.equipment.welder.dao.WelderDao;
 import com.gw.equipment.welder.service.WelderService;
-import com.gw.process.dispatch.dao.DispatchDao;
+
 import com.gw.process.dispatch.dao.TaskClaimDao;
 import com.gw.process.dispatch.service.TaskClaimService;
 import com.gw.sys.dao.SysDeptDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class WelderServiceImpl implements WelderService {
     public List<MachineWeldInfo> getList(String machineNo,Integer type,Integer grade,Integer status,
                                          Integer firm,Long isNetwork,String gatherNo,String ipPath,Integer model,Integer area,Integer bay) {
 
-        List<MachineWeldInfo> list = welderDao.selectMachineWeldInfosNoPage(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
+        List<MachineWeldInfo> list = welderDao.selectMachineWeldInfos(machineNo,type,grade,status,firm,isNetwork,gatherNo,ipPath,model,area,bay);
 
         return list;
     }
@@ -176,6 +174,30 @@ public class WelderServiceImpl implements WelderService {
             sysDeptInfos = nextSysDeptInfos;
 
         }while(!ObjectUtils.isEmpty(sysDeptInfos));
+
+        return list;
+    }
+
+    /**
+     * @Date 2021/10/12 15:35
+     * @Description 焊机是否绑定任务列表查询
+     * @Params
+     */
+    @Override
+    public List<MachineWeldInfo> getStatusOfMachineWeldInfos(String machineNo, Integer type, Integer grade, Integer status, Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
+
+        //获取当天早上7点的时间
+        String time1 = DateTimeUtil.getCurrentTime();
+
+        time1 = time1.split(" ")[0]+" 07:00:00";
+
+        //获取次日当前系统时间
+        String time2 = DateTimeUtil.getTomorrowTime();
+
+        time2 = time2.split(" ")[0]+" 07:00:00";
+
+        List<MachineWeldInfo> list = welderDao.getStatusOfMachineWeldInfos(machineNo,type,grade,status,firm,isNetwork,
+                gatherNo,ipPath,model,area,bay,time1,time2);
 
         return list;
     }

@@ -11,18 +11,6 @@ import java.util.List;
 public interface WelderDao {
 
     /**
-     * @Date 2021/10/11 17:34
-     * @Description 焊工信息列表展示
-     * @Params
-     */
-    List<MachineWeldInfo> getList(@Param("machineNo")String machineNo,@Param("type")Integer type,
-                                  @Param("grade")Integer grade,@Param("status")Integer status,
-                                  @Param("firm")Integer firm,@Param("isNetwork")Long isNetwork,
-                                  @Param("gatherNo")String gatherNo,@Param("ipPath")String ipPath,
-                                  @Param("model")Integer model,@Param("area")Integer area,@Param("bay")Integer bay);
-
-
-    /**
      * @Date 2021/10/11 17:35
      * @Description 添加焊工信息
      * @Params
@@ -98,10 +86,10 @@ public interface WelderDao {
 
     /**
      * @Date 2021/8/12 18:22
-     * @Description 查询焊机列表(是否绑定了任务)
+     * @Description 查询焊机列表
      * @Params
      */
-    public List<MachineWeldInfo> selectMachineWeldInfosNoPage(@Param("machineNo")String machineNo,@Param("type")Integer type,
+    public List<MachineWeldInfo> selectMachineWeldInfos(@Param("machineNo")String machineNo,@Param("type")Integer type,
                                                               @Param("grade")Integer grade,@Param("status")Integer status,
                                                               @Param("firm")Integer firm,@Param("isNetwork")Long isNetwork,
                                                               @Param("gatherNo")String gatherNo,@Param("ipPath")String ipPath,
@@ -113,6 +101,19 @@ public interface WelderDao {
      * @Params
      */
     public void insertMachineWeldInfoByGroup(@Param("machineWeldInfos")List<MachineWeldInfo> machineWeldInfos);
+
+    /**
+     * @Date 2021/10/12 15:40
+     * @Description 焊机是否绑定任务列表查询
+     * @Params
+     */
+    public List<MachineWeldInfo> getStatusOfMachineWeldInfos(@Param("machineNo")String machineNo,@Param("type")Integer type,
+                                                              @Param("grade")Integer grade,@Param("status")Integer status,
+                                                              @Param("firm")Integer firm,@Param("isNetwork")Long isNetwork,
+                                                              @Param("gatherNo")String gatherNo,@Param("ipPath")String ipPath,
+                                                              @Param("model")Integer model,@Param("area")Integer area,
+                                                             @Param("bay")Integer bay,@Param("time1")String time1,
+                                                             @Param("time2")String time2);
 
 
 

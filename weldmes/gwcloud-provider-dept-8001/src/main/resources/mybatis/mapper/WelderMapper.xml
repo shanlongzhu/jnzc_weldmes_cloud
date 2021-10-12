@@ -42,7 +42,7 @@
         </association>
     </resultMap>
 
-    <select id="getList" resultMap="welder">
+    <!--<select id="getList" resultMap="welder">
         SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,m.is_network,
         GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,d.value_name,d1.value_name value_names,d2.value_name value_namess,
         d3.value_name value_namesss,s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
@@ -91,7 +91,7 @@
             </if>
         </where>
         group by m.machine_no
-    </select>
+    </select>-->
 
     <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
         insert into machine_weld_info(machine_no,type,dept_id,firm,g_id,model,is_Network,status,ip_path,create_time,area,bay)
@@ -246,8 +246,8 @@
         GROUP BY m.machine_no)
     </select>
 
-    <!--查询焊机列表(是否绑定了任务)-->
-    <select id="selectMachineWeldInfosNoPage" resultType="com.gw.entities.MachineWeldInfo">
+    <!--查询焊机列表-->
+    <select id="selectMachineWeldInfos" resultType="com.gw.entities.MachineWeldInfo">
         select w.taskFlag,w.id,w.machine_no machineNo,w.create_time createTime,w.type,w.dept_id deptId,
         w.g_id gId,w.status,w.model,w.firm,
         w.is_network isNetwork,w.gather_no gatherNo,w.statusStr,w.firmStr,w.modelStr,w.areaStr,w.bayStr,
@@ -373,4 +373,124 @@
             (#{item.machineNo},#{item.type},#{item.deptId},#{item.status},#{item.firm},#{item.isNetwork},#{item.gId},#{item.model},#{item.createTime},#{item.ipPath},#{item.area},#{item.bay})
         </foreach>
     </insert>
+
+    <!--焊机是否绑定任务列表查询-->
+    <select id="getStatusOfMachineWeldInfos" resultType="com.gw.entities.MachineWeldInfo">
+        select w.taskFlag,w.id,w.machine_no machineNo,w.create_time createTime,w.type,w.dept_id deptId,
+        w.g_id gId,w.status,w.model,w.firm,
+        w.is_network isNetwork,w.gather_no gatherNo,w.statusStr,w.firmStr,w.modelStr,w.areaStr,w.bayStr,
+        w.`name`,w.ip_path ipPath,w.area,w.bay,w.macFlag,w.typeStr,w.deptName
+        from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no machine_no,
+        sxm.create_time,sxm.weld_kind type,sxm.dept_id,sxm.weld_cid g_id,sxm.weld_status status,sxm.sx_model model,
+        sxm.weld_firm firm,
+        null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
+        d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,sxm.weld_ip ip_path,
+        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag,s.name deptName
+        from machine_weldsx_info sxm
+        left join sys_dictionary d on sxm.weld_kind = d.id
+        left join sys_dictionary d1 on sxm.weld_status = d1.id
+        left join sys_dictionary d2 on sxm.weld_firm = d2.id
+        left join sys_dictionary d3 on sxm.sx_model = d3.id
+        left join sys_dictionary d4 on sxm.area = d4.id
+        left join sys_dictionary d5 on sxm.bay = d5.id
+        left join sys_dept s on sxm.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,sxm.weld_cid )
+        left join task_claim claim on sxm.id = claim.weld_id and claim.claim_time &gt;= #{time1}
+                                   and claim.claim_time &lt;= #{time2}
+                                   and sxm.id in (select tem.weld_id
+                                                  from (select weld_id,task_id from task_claim group by weld_id,task_id order by claim_time desc) tem
+                                                  group by weld_id)
+        left join task_info ti on claim.task_id=ti.id and ti.`status`=51
+        <where>
+            <if test="machineNo != null and machineNo != ''">
+                and  sxm.weld_no = #{machineNo}
+            </if>
+            <if test="type != null and type != ''">
+                and  d.id = #{type}
+            </if>
+            <if test="grade != null and grade != ''">
+                and  s.id = #{grade}
+            </if>
+            <if test="status != null and status != ''">
+                and  d1.id = #{status}
+            </if>
+            <if test="firm != null and firm != ''">
+                and  d2.id = #{firm}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and  g.gather_no = #{gatherNo}
+            </if>
+            <if test="ipPath != null and ipPath != ''">
+                and  sxm.weld_ip = #{ipPath}
+            </if>
+            <if test="model != null and model != ''">
+                and  sxm.sx_model = #{model}
+            </if>
+            <if test="area != null and area != ''">
+                and  sxm.area = #{area}
+            </if>
+            <if test="bay != null and bay != ''">
+                and  sxm.bay = #{bay}
+            </if>
+        </where>
+        group by sxm.weld_no
+        union all
+        select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,
+        m.dept_id,m.g_id,m.`status`,m.model,m.firm,
+        m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
+        d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,m.ip_path,
+        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag,s.name deptName
+        from machine_weld_info m
+        left join sys_dictionary d on m.type = d.id
+        left join sys_dictionary d1 on m.`status` = d1.id
+        left join sys_dictionary d2 on m.firm = d2.id
+        left join sys_dictionary d3 on m.model = d3.id
+        left join sys_dictionary d4 on m.area = d4.id
+        left join sys_dictionary d5 on m.bay = d5.id
+        left join sys_dept s on m.dept_id = s.id
+        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,m.g_id )
+        left join task_claim claim on m.id=claim.weld_id and claim.claim_time &gt;= #{time1}
+                                   and claim.claim_time &lt;= #{time2}
+                                   and m.id in (select tem.weld_id
+                                                from (select weld_id,task_id from task_claim group by weld_id,task_id order by claim_time desc) tem
+                                                group by weld_id)
+        left join task_info ti on claim.task_id=ti.id and ti.`status`=51
+        <where>
+            <if test="machineNo != null and machineNo != ''">
+                and  m.machine_no = #{machineNo}
+            </if>
+            <if test="type != null and type != ''">
+                and  d.id = #{type}
+            </if>
+            <if test="grade != null and grade != ''">
+                and  s.id = #{grade}
+            </if>
+            <if test="status != null and status != ''">
+                and  d1.id = #{status}
+            </if>
+            <if test="firm != null and firm != ''">
+                and  d2.id = #{firm}
+            </if>
+            <if test="isNetwork != null">
+                and  m.is_network = #{isNetwork}
+            </if>
+            <if test="gatherNo != null and gatherNo != ''">
+                and  g.gather_no = #{gatherNo}
+            </if>
+            <if test="ipPath != null and ipPath != ''">
+                and  m.ip_path = #{ipPath}
+            </if>
+            <if test="model != null and model != ''">
+                and  m.model = #{model}
+            </if>
+            <if test="area != null and area != ''">
+                and  m.area = #{area}
+            </if>
+            <if test="bay != null and bay != ''">
+                and  m.bay = #{bay}
+            </if>
+        </where>
+        group by m.machine_no)w
+    </select>
+
 </mapper>
