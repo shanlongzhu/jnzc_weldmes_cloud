@@ -17,6 +17,7 @@ import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -440,13 +441,15 @@ public class JnOtcRtDataProtocol {
                             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
                                 for (WeldModel weld : weldList) {
                                     //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                    final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
-                                            map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
-                                    if (CommonUtils.isNotEmpty(weld.getGatherNo()) && gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
-                                        data.setMachineId(weld.getId());
-                                        data.setMachineNo(weld.getMachineNo());
-                                        data.setMachineDeptId(weld.getDeptId());
-                                        break;
+                                    if (StringUtils.isNotBlank(weld.getGatherNo())) {
+                                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
+                                                map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
+                                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
+                                            data.setMachineId(weld.getId());
+                                            data.setMachineNo(weld.getMachineNo());
+                                            data.setMachineDeptId(weld.getDeptId());
+                                            break;
+                                        }
                                     }
                                 }
                             }
