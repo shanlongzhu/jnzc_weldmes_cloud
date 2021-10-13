@@ -3,20 +3,12 @@ package com.gw.process.solderer.controller;
 import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
 import com.gw.config.SolderExcelListener;
-import com.gw.config.TaskExcelListener;
-import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
 import com.gw.process.solderer.dao.SoldererDao;
 import com.gw.process.solderer.service.SoldererService;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -179,67 +170,6 @@ public class SoldererController {
         EasyExcel.read(file.getInputStream(), WelderInfo.class, new SolderExcelListener(soldererService)).sheet().doRead();
 
         return HttpResult.ok("Excel导入成功");
-        /*HttpResult result=new HttpResult();
-        try {
-            Workbook workbook=new XSSFWorkbook(file.getInputStream());
-            Sheet sheet=workbook.getSheetAt(0);
-            int firstRowNum = sheet.getFirstRowNum();
-            int lastRowNum=sheet.getLastRowNum();
-            Row firstRow = sheet.getRow(firstRowNum);
-            int lastCellNums = firstRow.getLastCellNum();
-            List<WelderInfo> welderInfoArrayList=new ArrayList<>();
-            for (int i = 1; i <=lastRowNum ; i++) {
-                Row row=sheet.getRow(i);
-                Object[] obs=new Object[lastCellNums];
-                for (int j = 0; j <lastCellNums ; j++) {
-                    Cell cell=row.getCell(j);
-                    if(row.getCell(j)==null){
-                        continue;
-                    }
-                    Object value= ExcelUtils.getValue(cell);
-
-                    obs[j]=value;
-
-                }
-
-                WelderInfo welderInfo = new WelderInfo();
-
-                welderInfo.setWelderName((String) obs[0]);
-
-                welderInfo.setWelderNo((obs[1].toString()));
-
-                welderInfo.setCellphone((String) obs[2]);
-
-                String rank = (String) obs[3];
-
-                Byte rankId=soldererService.getRankId(rank);
-
-                welderInfo.setRank(rankId);
-
-                String certification=(String) obs[4];
-
-                Byte certificationId = soldererService.getCertificationId(certification);
-
-                welderInfo.setCertification(certificationId);
-
-                String deptName=(String) obs[5];
-
-                Long deptId=soldererService.getDeptId(deptName);
-
-                welderInfo.setDeptId(deptId);
-
-                welderInfo.setRemarks((String) obs[6]);
-
-                welderInfoArrayList.add(welderInfo);
-
-            }
-            soldererService.importExcel(welderInfoArrayList);
-            result.setMsg("导入成功！");
-        }catch (Exception e){
-            e.printStackTrace();
-            result.setMsg("导入失败！");
-        }
-        return  result;*/
     }
 
     /**
