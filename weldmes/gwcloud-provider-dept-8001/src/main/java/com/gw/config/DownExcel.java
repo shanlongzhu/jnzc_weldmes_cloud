@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/9/28 11:17
- * @Description
+ * @Description 导出excel工具类
  */
 public class DownExcel {
     public static void download(HttpServletResponse response, Class t, List list, String sheetName, String title) throws IOException, IllegalAccessException,InstantiationException {

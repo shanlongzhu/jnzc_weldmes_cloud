@@ -18,10 +18,18 @@ public class SoldererServiceImpl implements SoldererService {
     @Autowired
     private SoldererDao soldererDao;
 
+    /**
+     * @Date 2021/10/12 17:30
+     * @Description 焊工列表查询
+     * @Params
+     */
     @Override
     public List<WelderInfo> getList(String welderName,String welderNo,Integer rate,
                                     Integer talent,Integer grade) {
-        return soldererDao.getList(welderName,welderNo,rate,talent,grade);
+
+        List<WelderInfo> list = soldererDao.getList(welderName,welderNo,rate,talent,grade);
+
+        return list;
     }
 
     @Override

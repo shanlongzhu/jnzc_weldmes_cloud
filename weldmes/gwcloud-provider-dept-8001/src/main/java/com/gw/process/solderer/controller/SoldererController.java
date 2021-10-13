@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
+import com.gw.config.DownExcel;
+import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
 import com.gw.process.solderer.dao.SoldererDao;
 import com.gw.process.solderer.service.SoldererService;
@@ -17,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,89 +147,21 @@ public class SoldererController {
      */
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response,String welderName,String welderNo,Integer rate,
-                                  Integer talent,Integer grade){
-        HttpResult result=new HttpResult();
+                                  Integer talent,Integer grade) throws IllegalAccessException, IOException, InstantiationException {
+
+        //设置Excel文件名
+        String title = URLEncoder.encode("焊工管理数据", "UTF-8");
+
+        //设置sheet表格名
+        String sheetName = "焊工信息";
+
+        //获取任务列表
         List<WelderInfo> list = soldererService.getList(welderName,welderNo,rate,talent,grade);
-        Workbook workbook=new XSSFWorkbook();
-        Sheet sheet=workbook.createSheet("焊工管理数据");
-        String[] titles={"姓名","编号","手机","级别","资质","部门","备注"};
-        Row row=sheet.createRow(0);
-        for (int i = 0; i <titles.length ; i++) {
-            Cell cell=row.createCell(i);
-            cell.setCellValue(titles[i]);
-        }
-        for (int i = 0; i <list.size() ; i++) {
 
-            row=sheet.createRow(i+1);
+        //导出为Excel
+        DownExcel.download(response,WelderInfo.class,list,sheetName,title);
 
-            WelderInfo welderInfo=list.get(i);
-
-            Cell getWelderNameCell=row.createCell(0);
-
-            if (ObjectUtils.isEmpty(welderInfo.getWelderName())){
-
-                welderInfo.setWelderName("");
-            }
-            getWelderNameCell.setCellValue(welderInfo.getWelderName());
-
-            Cell WelderNoCell=row.createCell(1);
-
-            if (ObjectUtils.isEmpty(welderInfo.getWelderNo())){
-
-                welderInfo.setWelderNo("");
-            }
-            WelderNoCell.setCellValue(welderInfo.getWelderNo());
-
-            Cell cellphoneCell=row.createCell(2);
-
-            if (ObjectUtils.isEmpty(welderInfo.getCellphone())){
-
-                welderInfo.setCellphone("");
-            }
-            cellphoneCell.setCellValue(welderInfo.getCellphone());
-
-            Cell rankCell=row.createCell(3);
-
-            if (ObjectUtils.isEmpty(welderInfo.getSysDictionary().getValueName())){
-
-                welderInfo.getSysDictionary().setValueName("");
-            }
-            rankCell.setCellValue(welderInfo.getSysDictionary().getValueName());
-
-            Cell certificationCell=row.createCell(4);
-
-            if (ObjectUtils.isEmpty(welderInfo.getSysDictionary().getValueNames())){
-
-                welderInfo.getSysDictionary().setValueNames("");
-            }
-            certificationCell.setCellValue(welderInfo.getSysDictionary().getValueNames());
-
-            Cell getDeptNameCell=row.createCell(5);
-
-            if (ObjectUtils.isEmpty(welderInfo.getSysDept().getName())){
-
-                welderInfo.getSysDept().setName("");
-            }
-            getDeptNameCell.setCellValue(welderInfo.getSysDept().getName());
-
-            Cell getRemarksCell=row.createCell(6);
-
-            if (ObjectUtils.isEmpty(welderInfo.getRemarks())){
-
-                welderInfo.setRemarks("");
-            }
-            getRemarksCell.setCellValue(welderInfo.getRemarks());
-        }
-        try {
-            String fileName= URLEncoder.encode("焊工管理.xlsx","UTF-8");
-            response.setContentType("application/octet-stream");
-            response.setHeader("content-disposition","attachment;filename="+fileName);
-            response.setHeader("filename",fileName);
-            workbook.write(response.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+        return HttpResult.ok("Excel导出成功");
     }
 
     /**
