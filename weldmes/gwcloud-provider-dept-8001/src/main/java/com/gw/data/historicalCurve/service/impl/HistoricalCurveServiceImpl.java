@@ -5,7 +5,6 @@ import com.gw.data.historicalCurve.dao.HistoricalCurveDao;
 import com.gw.data.historicalCurve.service.HistoricalCurveService;
 import com.gw.entities.RtData;
 import com.gw.entities.TableInfo;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -40,6 +39,8 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
                     tableInfo.setTaskId(taskId);
                     tableInfo.setWelderId(welderId);
                     tableInfo.setWeldMachineId(weldMachineId);
+                    tableInfo.setStartTime(startTime);
+                    tableInfo.setEndTime(endTime);
                     tableInfoList.add(tableInfo);
                 });
                 //返回第一张表的数据
@@ -149,9 +150,7 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
     @Override
     public List<RtData> getHistoryCurveInfos(String startTime, String endTime, Long taskId, Long welderId, Long weldMachineId) {
 
-        List<RtData> list = historicalCurveDao.selectHistoryCurveInfos(startTime, endTime, taskId, welderId, weldMachineId);
-
-        return list;
+        return historicalCurveDao.selectHistoryCurveInfos(startTime, endTime, taskId, welderId, weldMachineId);
     }
 
     /**
@@ -160,9 +159,9 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
      * @Params
      */
     @Override
-    public Map<String, Object> getHistoryCurveInfoByTableName(String tableName, Long taskId, Long welderId, Long weldMachineId) {
+    public Map<String, Object> getHistoryCurveInfoByTableName(TableInfo tableInfo) {
 
-        List<RtData> list = historicalCurveDao.getHistoryCurveByTableName(tableName, taskId, welderId, weldMachineId);
+        List<RtData> list = historicalCurveDao.getHistoryCurveByTableName(tableInfo);
 
         Map<String, Object> map = new HashMap<>();
 

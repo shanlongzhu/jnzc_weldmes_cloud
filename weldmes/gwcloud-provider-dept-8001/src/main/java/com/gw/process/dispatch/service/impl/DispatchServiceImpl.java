@@ -289,7 +289,7 @@ public class DispatchServiceImpl implements DispatchService {
 
     /**
      * @Date 2021/5/31 9:42
-     * @Description 任务信息码值转换
+     * @Description 将Excel中的数据导入
      * @Params
      */
     @Override
@@ -416,11 +416,9 @@ public class DispatchServiceImpl implements DispatchService {
      * @Params
      */
     @Override
-    public List<TaskInfo> getIdAndTaskNoOfTaskInfos() {
+    public List<TaskInfo> getIdAndTaskNoOfTaskInfos(List<Integer> taskStatus) {
 
-        List<TaskInfo> list = dispatchDao.selectIdAndTaskNoOfTaskInfos();
-
-        return list;
+        return dispatchDao.selectIdAndTaskNoOfTaskInfos(taskStatus);
     }
 
     /**

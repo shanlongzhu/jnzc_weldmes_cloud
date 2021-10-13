@@ -17,4 +17,8 @@ public class TableInfo {
     private Long welderId;
 
     private Long weldMachineId;
+
+    private String startTime;
+
+    private String endTime;
 }

@@ -215,7 +215,8 @@
 
     <!--task_claim表 入库操作-->
     <insert id="addTaskClaimInfo" parameterType="com.gw.entities.TaskClaim">
-        insert into task_claim(welder_id,task_id,weld_id,claim_time) values (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},#{taskClaimInfo.weldId},NOW())
+        insert into task_claim(welder_id,task_id,weld_id,weld_type,claim_time) values
+        (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},#{taskClaimInfo.weldId},#{taskClaimInfo.weldType},NOW())
     </insert>
 
     <!--获取所有任务状态为 进行中 的任务编号-->
@@ -229,7 +230,18 @@
     </select>
 
     <!--获取历史曲线中任务id,编号列表-->
-    <select id="selectIdAndTaskNoOfTaskInfos" resultType="com.gw.entities.TaskInfo">
-        select id,task_no from task_info where status = 41
+    <select id="selectIdAndTaskNoOfTaskInfos" resultType="com.gw.entities.TaskInfo" parameterType="java.util.List">
+        select id,task_no from task_info
+        <where>
+            <if test="list != null and list.size() > 0">
+                and status in
+                <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="list == null or list.size() == 0">
+                and status in (41,51,52)
+            </if>
+        </where>
     </select>
 </mapper>

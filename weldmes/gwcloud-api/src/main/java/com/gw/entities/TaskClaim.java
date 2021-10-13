@@ -29,9 +29,13 @@ public class TaskClaim implements Serializable {
     private Long weldId;
 
     /**
+     * 焊机类型(默认0:otc,1:松下)
+     */
+    private int weldType;
+
+    /**
      * 领取时间
      */
     private String claimTime;
-
 
 }

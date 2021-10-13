@@ -51,6 +51,7 @@
             <result property="welderId" column="welder_id"></result>
             <result property="taskId" column="task_id"></result>
             <result property="weldId" column="weld_id"></result>
+            <result property="weldType" column="weld_type"></result>
         </association>
         <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
             <id property="id" column="id"></id>

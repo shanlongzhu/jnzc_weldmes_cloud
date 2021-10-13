@@ -1,6 +1,7 @@
 package com.gw.data.historicalCurve.service;
 
 import com.gw.entities.RtData;
+import com.gw.entities.TableInfo;
 import com.gw.entities.TaskClaim;
 
 import java.text.ParseException;
@@ -28,6 +29,6 @@ public interface HistoricalCurveService {
      * @Description  根据表名 查询 焊机历史曲线
      * @Params
      */
-    public Map<String,Object> getHistoryCurveInfoByTableName(String tableName,Long taskId,Long welderId,Long weldMachineId);
+    public Map<String,Object> getHistoryCurveInfoByTableName(TableInfo tableInfo);
 
 }

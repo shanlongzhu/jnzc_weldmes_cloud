@@ -18,13 +18,14 @@
         <result property="welderId" column="welder_id"></result>
         <result property="taskId" column="task_id"></result>
         <result property="weldId" column="weld_id"></result>
+        <result property="weldType" column="weld_type"></result>
         <result property="claimTime" column="claim_time"></result>
     </resultMap>
 
     <!--根据焊机id查询最新一条任务绑定信息-->
-    <select id="selectTaskClaimInfoById" parameterType="Long" resultMap="TaskClaimMap">
-        select id,welder_id,task_id,weld_id from task_claim
-        where weld_id = #{id}
+    <select id="selectTaskClaimInfoById" resultMap="TaskClaimMap">
+        select id,welder_id,task_id,weld_id,weld_type from task_claim
+        where weld_id = #{id} and weld_type = #{weldType}
         order by claim_time desc
     </select>
 
@@ -38,7 +39,7 @@
         left join machine_weld_info machine on claim.weld_id = machine.id
         left join sys_dictionary dictionary on machine.type = dictionary.id
         left join sys_dept dept on welder.dept_id = dept.id
-        where claim.id = #{taskClaim.id}
+        where claim.id = #{taskClaim.id} and claim.weld_type = #{taskClaim.weldType}
     </select>
 
     <!--根据焊工id查询任务工单信息列表-->
@@ -53,9 +54,9 @@
 
     <!--task_claim表 入库操作-->
     <insert id="insertTaskClaimInfo" parameterType="com.gw.entities.TaskClaim">
-        insert into task_claim(welder_id,task_id,weld_id,claim_time)
+        insert into task_claim(welder_id,task_id,weld_id,weld_type,claim_time)
         values (#{taskClaimInfo.welderId},#{taskClaimInfo.taskId},
-        #{taskClaimInfo.weldId},NOW())
+        #{taskClaimInfo.weldId},#{taskClaimInfo.weldType},NOW())
     </insert>
 
     <!--根据任务状态查询任务信息-->

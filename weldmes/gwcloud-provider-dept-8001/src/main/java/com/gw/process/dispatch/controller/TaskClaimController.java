@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * @Author zhanghan
  * @Date 2021/7/19 14:49
- * @Description  任务认领控制器
+ * @Description 任务认领控制器
  */
 @CrossOrigin
 @RestController
@@ -24,26 +24,27 @@ public class TaskClaimController {
 
     @Autowired
     TaskClaimService taskClaimService;
+
     /**
      * @Date 2021/7/19 14:50
      * @Description 通过焊机id查询焊机任务绑定信息
      * @Params weldeId 焊机id
      */
     @RequestMapping(value = "taskClaim/getWeldClaimTaskInfoById")
-    public HttpResult getWeldClaimTaskInfoById(Long weldeId){
+    public HttpResult getWeldClaimTaskInfoById(Long weldeId, int weldType) {
 
-        WeldClaimTaskInfo weldClaimTaskInfo = taskClaimService.getWeldClaimTaskInfo(weldeId);
+        WeldClaimTaskInfo weldClaimTaskInfo = taskClaimService.getWeldClaimTaskInfo(weldeId, weldType);
 
         return HttpResult.ok(weldClaimTaskInfo);
     }
 
     /**
      * @Date 2021/7/19 16:14
-     * @Description  根据焊工id查询任务工单信息列表
+     * @Description 根据焊工id查询任务工单信息列表
      * @Params welderId 焊工id
      */
     @RequestMapping(value = "taskClaim/getTaskInfoByWelderId")
-    public HttpResult getTaskInfoByWelderId(Long welderId){
+    public HttpResult getTaskInfoByWelderId(Long welderId) {
 
         Set<TaskInfo> list = taskClaimService.getTaskInfoByWelderId(welderId);
 
@@ -52,11 +53,11 @@ public class TaskClaimController {
 
     /**
      * @Date 2021/7/22 14:32
-     * @Description  插入焊机任务绑定信息
+     * @Description 插入焊机任务绑定信息
      * @Params
      */
     @RequestMapping(value = "taskClaim/addTaskClaimInfo")
-    public HttpResult addTaskClaimInfo(@RequestBody TaskClaim taskClaim){
+    public HttpResult addTaskClaimInfo(@RequestBody TaskClaim taskClaim) {
 
         taskClaimService.addTaskClaimInfo(taskClaim);
 
