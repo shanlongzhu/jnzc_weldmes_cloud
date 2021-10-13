@@ -1,117 +1,182 @@
 package com.gw.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+@Data
+@ColumnWidth(12)
 @AllArgsConstructor
 @NoArgsConstructor//生成一个无参构造函数
-@Data
-@Accessors(chain=true)
 public class MachineWeldInfo implements Serializable {
 
-
+    /**
+     * 主键
+     */
+    @ExcelIgnore
     private long id;
 
+    /**
+     * 设备编号/固定资产编号
+     */
+    @ColumnWidth(20)
+    @ExcelProperty(value = "固定资产编号",index = 0)
     private String machineNo;
 
-    private Byte status;
-
-    private Byte type;
-
-    private Byte firm;
-
-    private Byte model;
-
-    private long deptId;
-
-    private String gId;
-
-    private long isNetwork;
-
-    private Timestamp productionDate;
-
-    private String ipPath;
-
-    private String createBy;
-
-    private String createTime;
-
-    private String lastUpdateBy;
-
-    private Timestamp lastUpdateTime;
-
-    private SysDictionary sysDictionary;
-
-    private SysDept sysDept;
-
-    private MachineGatherInfo machineGatherInfo;
-
     /**
-     * 区域(字典)
+     * 设备类型
      */
-    private Long area;
-
-    /**
-     * 区域
-     */
-    private String areaStr;
-
-    /**
-     * 跨间(字典)
-     */
-    private Long bay;
-
-    /**
-     * 跨间
-     */
-    private String bayStr;
-
-    /**
-     * 绑定任务标识
-     */
-    private int taskFlag;
-
-    /**
-     * 类型名称
-     */
+    @ExcelProperty(value = "设备类型",index = 1)
     private String typeStr;
 
     /**
-     * 设备状态名称
+     * 生产日期
      */
-    private String statusStr;
-
-    /**
-     * 厂商名称
-     */
-    private String firmStr;
-
-    /**
-     * 型号名称
-     */
-    private String modelStr;
-
-    /**
-     * 采集编号
-     */
-    private String gatherNo;
-
-    /**
-     * 设备标识
-     */
-    private String macFlag;
+    @ExcelProperty(value = "入厂时间",index = 2)
+    private Timestamp productionDate;
 
     /**
      * 所属项目
      */
+    @ExcelProperty(value = "所属项目",index = 3)
     private String deptName;
+
+    /**
+     * 设备状态
+     */
+    @ExcelProperty(value = "状态",index = 4)
+    private String statusStr;
+
+    /**
+     * 厂家
+     */
+    @ExcelProperty(value = "厂家",index = 5)
+    private String firmStr;
+
+    /**
+     * 是否联网（0：是 1：否）
+     */
+    @ExcelProperty(value = "是否在网",index = 6,converter = IsNetworkConverter.class)
+    private Long isNetwork;
+
+    /**
+     * 采集编号
+     */
+    @ExcelProperty(value = "采集编号",index = 7)
+    private String gatherNo;
+
+    /**
+     * 区域
+     */
+    @ExcelProperty(value = "区域",index = 8)
+    private String areaStr;
+
+    /**
+     * 跨间
+     */
+    @ExcelProperty(value = "跨间",index = 9)
+    private String bayStr;
+
+    /**
+     * ip地址
+     */
+    @ExcelProperty(value = "IP地址",index = 10)
+    private String ipPath;
+
+    /**
+     * 设备型号
+     */
+    @ExcelProperty(value = "设备型号",index = 11)
+    private String modelStr;
+
+    /**
+     * 设备状态 字典
+     */
+    @ExcelIgnore
+    private Byte status;
+
+    /**
+     * 类型 字典
+     */
+    @ExcelIgnore
+    private Byte type;
+
+    /**
+     * 厂商 字典
+     */
+    @ExcelIgnore
+    private Byte firm;
+
+    /**
+     * 型号 字典
+     */
+    @ExcelIgnore
+    private Byte model;
+
+    /**
+     * 部门机构 字典
+     */
+    @ExcelIgnore
+    private long deptId;
+
+    /**
+     * 采集id
+     */
+    @ExcelIgnore
+    private String gId;
+
+    /**
+     * 创建人
+     */
+    @ExcelIgnore
+    private String createBy;
+
+    /**
+     * 创建时间
+     */
+    @ExcelIgnore
+    private String createTime;
+
+    /**
+     * 更新人
+     */
+    @ExcelIgnore
+    private String lastUpdateBy;
+
+    /**
+     * 更新时间
+     */
+    @ExcelIgnore
+    private Timestamp lastUpdateTime;
+
+    /**
+     * 区域(字典)
+     */
+    @ExcelIgnore
+    private Long area;
+
+    /**
+     * 跨间(字典)
+     */
+    @ExcelIgnore
+    private Long bay;
+
+    /**
+     * 绑定任务标识
+     */
+    @ExcelIgnore
+    private int taskFlag;
+
+    /**
+     * 设备标识
+     */
+    @ExcelIgnore
+    private String macFlag;
 
 
 }
