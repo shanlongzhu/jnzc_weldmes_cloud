@@ -4,10 +4,11 @@ import qs from "qs";
 
 //****历史曲线**** */
 //获取任务编号列表
-export function getTaskArr() {
+export function getTaskArr(data = []) {
   return request({
     url: "/task/historyTaskInfos",
-    method: "get"
+    method: "post",
+    data
   });
 }
 

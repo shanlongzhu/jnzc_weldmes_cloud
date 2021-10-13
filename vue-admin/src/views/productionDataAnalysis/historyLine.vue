@@ -5,6 +5,25 @@
     >
         <div class="history-top flex-c">
             <div class="top-con flex-n">
+              <div class="con-w">
+                <span>任务状态：</span>
+                <el-select
+                  v-model="taskStatusId"
+                  placeholder="请选择"
+                  clearable
+                  style="width:150px"
+                  @change="changeTaskStatus"
+                  multiple
+                  collapse-tags
+                >
+                  <el-option
+                    v-for="item in taskStatusArr"
+                    :key="item.id"
+                    :label="item.valueName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </div>
                 <div class="con-w">
                     <span>任务编号：</span>
                     <el-select
@@ -183,6 +202,7 @@
 <script>
 import moment from 'moment'
 import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData, getHistoryRepeat } from '_api/productionDataAnalysis/productionDataAnalysisApi'
+import { getDictionaries} from '_api/productionProcess/process'
 // import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
 import LineComE from './components/lineComE.vue';
@@ -194,6 +214,7 @@ export default {
             list: [],
             startTime: moment(new Date()).startOf('day'),//时间
             endTime: moment(new Date()).endOf('day'),//时间
+            taskStatusId:[],//任务状态
             searchObj: {
                 taskId: '',//任务编号
                 welderId: '',//焊工ID
@@ -204,7 +225,8 @@ export default {
             total: 0,
             pageSize:10,
             loading: false,
-
+            //任务状态
+            taskStatusArr:[],
             //任务编号下拉数据
             taskArr: [],
             //焊工下拉数据
@@ -248,8 +270,21 @@ export default {
         this.getTaskListFun();
         this.getWelderListFun();
         this.getWeldingListFun();
+        this.getDicFun();
     },
     methods: {
+      //获取数据字典
+      async getDicFun () {
+        let { data, code } = await getDictionaries({ "types": ["12"] });
+        if (code == 200) {
+          this.taskStatusArr = data['12'] || []
+        }
+      },
+      //设置任务状态
+      changeTaskStatus(v){
+        this.searchObj.taskId = '';
+        this.getTaskListFun(v);
+      },
 
         zoomFun () {
             this.dialogVisible = true;
@@ -319,8 +354,8 @@ export default {
         },
 
         //获取任务编号
-        async getTaskListFun () {
-            let { data, code } = await getTaskArr();
+        async getTaskListFun (req) {
+            let { data, code } = await getTaskArr(req);
             if (code == 200) {
                 this.taskArr = data || [];
             }
@@ -341,6 +376,8 @@ export default {
         },
         //选择任务数据
         async currentChangeEvent ({ row }) {
+            this.surIndex = 0;
+
             this.curveReq.taskId = row.taskId;
             this.curveReq.welderId = row.welderId;
             this.curveReq.weldMachineId = row.machineId;
