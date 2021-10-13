@@ -203,7 +203,7 @@ export default {
     },
     watch: {},
     computed: {},
-    methods: {       
+    methods: {
         //更新列表
         setData (arr) {
             let v1 = arr.slice(-1)[0];
@@ -237,7 +237,7 @@ export default {
             })
         },
 
-        
+
 
         totalNum (v) {
             switch (v) {
@@ -358,7 +358,8 @@ export default {
         async handlerItem (item) {
             this.curModel = item;
             this.infoLoading = true;
-            let { data, code } = await getWeldClaimTaskInfoById({ weldeId: item.id });
+            //0：代表otc ，1：松下
+            let { data, code } = await getWeldClaimTaskInfoById({ weldeId: item.id,weldType:item.macFlag=='otc'?0:1 });
             this.infoLoading = false;
             if (code == 200) {
                 this.taskInfo = data || {};
@@ -494,7 +495,7 @@ export default {
         },
 
 
-        
+
         backPage () {
             this.$router.go(-1);
         },
@@ -503,7 +504,9 @@ export default {
             let req = {
                 welderId: data.welderId,
                 taskId: data.taskId,
-                weldId: data.machineId
+                weldId: data.machineId,
+                weldType:this.curModel.macFlag=='otc'?0:1//0：代表otc ，1：松下
+
             }
             let { code } = await addTaskClaimInfo(req);
             if (code == 200) {
