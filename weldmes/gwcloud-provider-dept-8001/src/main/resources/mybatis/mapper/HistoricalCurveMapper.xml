@@ -7,19 +7,20 @@
     <select id="getList" resultType="com.gw.entities.RtData">
         select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage
         from ${tableName} tableInfo
-        where tableInfo.weldTime &gt;= #{startTime}
-        <if test="endTime != null and endTime != ''">
-            and tableInfo.weldTime &lt;= #{endTime}
-        </if>
-        <if test="taskId != null and taskId != ''">
-            and tableInfo.taskId = #{taskId}
-        </if>
-        <if test="welderId != null and welderId != ''">
-            and tableInfo.welderId = #{welderId}
-        </if>
-        <if test="weldMachineId != null and weldMachineId != ''">
-            and tableInfo.machineId = #{weldMachineId}
-        </if>
+        <where>
+            <if test="startTime!= null and startTime != '' and endTime != null and endTime != ''">
+                and tableInfo.weldTime between #{startTime} and #{endTime}
+            </if>
+            <if test="taskId != null and taskId != ''">
+                and tableInfo.taskId = #{taskId}
+            </if>
+            <if test="welderId != null and welderId != ''">
+                and tableInfo.welderId = #{welderId}
+            </if>
+            <if test="weldMachineId != null and weldMachineId != ''">
+                and tableInfo.machineId = #{weldMachineId}
+            </if>
+        </where>
     </select>
 
     <!--焊机历史曲线信息列表-->
@@ -67,10 +68,13 @@
     </select>
 
     <!--焊机历史曲线-->
-    <select id="getHistoryCurveByTableName" resultType="com.gw.entities.RtData">
+    <select id="getHistoryCurveByTableName" resultType="com.gw.entities.RtData" parameterType="com.gw.entities.TableInfo">
         select tableInfo.weldTime,tableInfo.electricity,tableInfo.voltage
         from ${tableName} tableInfo
         <where>
+            <if test="startTime!= null and startTime != '' and endTime != null and endTime != ''">
+                and tableInfo.weldTime between #{startTime} and #{endTime}
+            </if>
             <if test="taskId != null and taskId != ''">
                 and tableInfo.taskId = #{taskId}
             </if>

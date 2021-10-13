@@ -42,10 +42,10 @@ public class TaskClaimServiceImpl implements TaskClaimService {
      * @Params id 焊机id
      */
     @Override
-    public WeldClaimTaskInfo getWeldClaimTaskInfo(Long weldeId) {
+    public WeldClaimTaskInfo getWeldClaimTaskInfo(Long weldeId, int weldType) {
 
         //根据焊机id查询焊机任务绑定信息列表
-        List<TaskClaim> taskClaims = taskClaimDao.selectTaskClaimInfoById(weldeId);
+        List<TaskClaim> taskClaims = taskClaimDao.selectTaskClaimInfoById(weldeId, weldType);
 
         WeldClaimTaskInfo weldClaimTaskInfo = new WeldClaimTaskInfo();
 

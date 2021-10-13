@@ -20,7 +20,7 @@ public interface TaskClaimService {
      * @Description 根据焊机id查询焊机任务绑定信息
      * @Params weldeId 焊机id
      */
-    public WeldClaimTaskInfo getWeldClaimTaskInfo(Long weldeId);
+    public WeldClaimTaskInfo getWeldClaimTaskInfo(Long weldeId,int weldType);
 
     /**
      * @Date 2021/7/19 16:14

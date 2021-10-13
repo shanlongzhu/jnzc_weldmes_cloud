@@ -61,8 +61,7 @@ public class HistoricalCurveController {
     @RequestMapping(value = "HistoricalCurveByTableName")
     public HttpResult getList(@RequestBody TableInfo tableInfo){
 
-        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableInfo.getTableName(),
-                tableInfo.getTaskId(),tableInfo.getWelderId(),tableInfo.getWeldMachineId());
+        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableInfo);
 
         return HttpResult.ok(map);
     }

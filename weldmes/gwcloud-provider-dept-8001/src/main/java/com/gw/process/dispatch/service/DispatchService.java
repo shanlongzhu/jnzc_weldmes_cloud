@@ -1,10 +1,9 @@
 package com.gw.process.dispatch.service;
 
-import com.gw.common.HttpResult;
-import com.gw.entities.*;
-import org.springframework.web.multipart.MultipartFile;
+import com.gw.entities.GatherAndFirmInfo;
+import com.gw.entities.IdListVO;
+import com.gw.entities.TaskInfo;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -18,23 +17,23 @@ public interface DispatchService {
     /**
      * @Date 2021/5/27 11:25
      * @Description 获取任务列表
-     * @Params  grade班组id      taskStatus任务状态id
+     * @Params grade班组id      taskStatus任务状态id
      */
-    public List<TaskInfo> queryTaskList(List<Integer> grade,Integer taskStatus);
+    public List<TaskInfo> queryTaskList(List<Integer> grade, Integer taskStatus);
 
     /**
      * @Date 2021/5/27 11:25
-     * @Description 通过用户名和密码获取作业区列表,另外完成对任务状态、作业区所属班组的获取
+     * @Description 通过用户名和密码获取作业区列表, 另外完成对任务状态、作业区所属班组的获取
      * @Params userName 用户名 , passWord 密码
      */
-    public Map<String,Object> queryConditionsList(String userName, String passWord);
+    public Map<String, Object> queryConditionsList(String userName, String passWord);
 
     /**
      * @Date 2021/5/28 11:16
      * @Description 获取任务等级信息 供前端新增任务时，根据任务等级列表选择不同的任务等级
      * @Params
      */
-    public Map<String,Object> queryTaskRateList();
+    public Map<String, Object> queryTaskRateList();
 
     /**
      * @Date 2021/5/28 11:24
@@ -46,7 +45,7 @@ public interface DispatchService {
     /**
      * @Date 2021/5/28 11:44
      * @Description 根据任务表主键查询任务信息
-     * @Params  id 任务表主键
+     * @Params id 任务表主键
      */
     public TaskInfo queryTaskInfoById(Long id);
 
@@ -80,8 +79,8 @@ public interface DispatchService {
 
     /**
      * @Date 2021/5/28 13:21
-     * @Description 批量修改任务状态,将状态修改为已完成 即 批量完成
-     * @Params  idList  任务主键列表
+     * @Description 批量修改任务状态, 将状态修改为已完成 即 批量完成
+     * @Params idList  任务主键列表
      */
     public void updateTaskInfoStatusByIdList(List<Long> idList);
 
@@ -94,7 +93,7 @@ public interface DispatchService {
 
     /**
      * @Date 2021/5/31 9:41
-     * @Description 任务信息码值转换
+     * @Description 导入Excel
      * @Params
      */
     public TaskInfo importExcel(TaskInfo data);
@@ -104,23 +103,23 @@ public interface DispatchService {
      * @Description 评论信息插入
      * @Params id 任务Id   comments 评论信息
      */
-    public void insertComments(Long id,String comments,int start);
+    public void insertComments(Long id, String comments, int start);
 
 
     /**
      * @Date 2021/6/29 9:45
-     * @Description  用户为管理员，查询所有的区以及区下班组
+     * @Description 用户为管理员，查询所有的区以及区下班组
      * @Params username  用户名   password 密码
      */
-    public Map<String,Object> getWorkSpaceAndGradeInfo(String username,String password);
+    public Map<String, Object> getWorkSpaceAndGradeInfo(String username, String password);
 
 
     /**
      * @Date 2021/7/13 17:33
-     * @Description  获取历史曲线中任务id,编号列表
+     * @Description 获取历史曲线中任务id, 编号列表
      * @Params
      */
-    public List<TaskInfo> getIdAndTaskNoOfTaskInfos();
+    public List<TaskInfo> getIdAndTaskNoOfTaskInfos(List<Integer> taskStatus);
 
     /**
      * @Date 2021/8/11 15:50
