@@ -27,20 +27,40 @@ public interface SoldererService {
      */
     void addSolderer(WelderInfo welderInfo);
 
+    /**
+     * @Date 2021/10/13 10:27
+     * @Description 根据id查询焊工信息
+     * @Params
+     */
     List<WelderInfo> getById(Long id);
 
+    /**
+     * @Date 2021/10/13 10:24
+     * @Description 修改焊工信息
+     * @Params
+     */
     void updateSolderer(WelderInfo welderInfo);
 
+    /**
+     * @Date 2021/10/13 10:24
+     * @Description 删除焊工信息
+     * @Params
+     */
     void deleteSolderer(Long id);
 
-
-    Byte getRankId(String rank);
-
-    Byte getCertificationId(String certification);
-
+    /**
+     * @Date 2021/10/13 10:28
+     * @Description 根据部门名称查询部门id
+     * @Params
+     */
     Long getDeptId(String deptName);
 
-    void importExcel(List<WelderInfo> welderInfoArrayList);
+    /**
+     * @Date 2021/10/13 10:11
+     * @Description 对焊工信息进行码值转换
+     * @Params
+     */
+    WelderInfo importExcel(WelderInfo data);
 
     /**
      * @Date 2021/7/13 18:01
@@ -48,4 +68,11 @@ public interface SoldererService {
      * @Params
      */
     public Set<WelderInfo> getHistoryWelderInfos();
+
+    /**
+     * @Date 2021/10/13 10:29
+     * @Description 焊工信息批量插入
+     * @Params
+     */
+    public void addWelderInfos(List<WelderInfo> list);
 }

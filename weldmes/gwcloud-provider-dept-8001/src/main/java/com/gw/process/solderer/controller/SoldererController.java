@@ -1,10 +1,13 @@
 package com.gw.process.solderer.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
+import com.gw.config.SolderExcelListener;
+import com.gw.config.TaskExcelListener;
 import com.gw.entities.TaskInfo;
 import com.gw.entities.WelderInfo;
 import com.gw.process.solderer.dao.SoldererDao;
@@ -67,8 +70,7 @@ public class SoldererController {
      * @Params
      */
     @GetMapping(value = "noPage")
-    public HttpResult getListNoPage(String welderName,String welderNo,Integer rate,
-                              Integer talent,Integer grade) {
+    public HttpResult getListNoPage(String welderName,String welderNo,Integer rate, Integer talent,Integer grade) {
 
         List<WelderInfo> list = soldererService.getList(welderName,welderNo,rate,talent,grade);
 
@@ -102,7 +104,9 @@ public class SoldererController {
      */
     @GetMapping("{id}")
     public HttpResult getById(@PathVariable Long id) {
+
         List<WelderInfo> list = soldererService.getById(id);
+
         return HttpResult.ok(list);
     }
 
@@ -169,9 +173,13 @@ public class SoldererController {
      * @Description excel导入
      * @Params
      */
-    @PostMapping(value = "importExcel",produces = "application/json;charset=UTF-8")
-    public HttpResult importExcel(@RequestParam("file")MultipartFile file){
-        HttpResult result=new HttpResult();
+    @PostMapping(value = "importExcel")
+    public HttpResult importExcel(@RequestParam("file")MultipartFile file) throws IOException {
+
+        EasyExcel.read(file.getInputStream(), WelderInfo.class, new SolderExcelListener(soldererService)).sheet().doRead();
+
+        return HttpResult.ok("Excel导入成功");
+        /*HttpResult result=new HttpResult();
         try {
             Workbook workbook=new XSSFWorkbook(file.getInputStream());
             Sheet sheet=workbook.getSheetAt(0);
@@ -231,7 +239,7 @@ public class SoldererController {
             e.printStackTrace();
             result.setMsg("导入失败！");
         }
-        return  result;
+        return  result;*/
     }
 
     /**

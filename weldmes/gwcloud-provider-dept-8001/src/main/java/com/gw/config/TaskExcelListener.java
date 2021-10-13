@@ -10,10 +10,11 @@ import java.util.List;
 /**
  * @Author zhanghan
  * @Date 2021/10/9 15:33
- * @Description
+ * @Description 派工任务Excel导入监听器
  */
 public class TaskExcelListener extends AnalysisEventListener<TaskInfo> {
 
+    //不使用Spring的依赖注入
     DispatchService dispatchService;
 
     List<TaskInfo> list = new ArrayList();
@@ -21,8 +22,10 @@ public class TaskExcelListener extends AnalysisEventListener<TaskInfo> {
     @Override
     public void invoke(TaskInfo data, AnalysisContext analysisContext) {
 
+        //将每条信息进行码值转换
         TaskInfo taskInfo = dispatchService.importExcel(data);
 
+        //存储到列表
         list.add(taskInfo);
 
 
@@ -31,9 +34,10 @@ public class TaskExcelListener extends AnalysisEventListener<TaskInfo> {
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
 
+        //进行批量入库
         dispatchService.addTaskInfos(list);
 
-        //存储完成 清理 list
+        //入库完成 清理 list
         list.clear();
 
     }

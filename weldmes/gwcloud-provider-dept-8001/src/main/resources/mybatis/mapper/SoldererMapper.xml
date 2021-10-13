@@ -116,4 +116,14 @@
         select id from welder_info where welder_no = #{WelderNo}
     </select>
 
+    <!--焊工信息批量插入-->
+    <insert id="insertWelderInfos" parameterType="ArrayList">
+        insert into welder_info(welder_no,welder_name,cellphone,rank,certification,dept_id,remarks)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.welderNo},#{item.welderName},#{item.cellphone},#{item.rank},
+            #{item.certification},#{item.deptId},#{item.remarks})
+        </foreach>
+    </insert>
+
 </mapper>
