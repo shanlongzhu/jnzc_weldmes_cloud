@@ -16,7 +16,7 @@
                 style="width:60px;margin-right:10px"
                 v-model="max"
                 :min="min"
-                :max="62"
+                :max="35"
                 placeholder=""
                 :controls="false"
             ></el-input-number>
@@ -46,7 +46,7 @@ export default {
             myChart: {},
             option: {},
             min: 12,
-            max: 50,
+            max: 35,
         }
     },
     watch: {
@@ -141,7 +141,7 @@ export default {
                 type: 'value',
                 boundaryGap: [0, '100%'],
                 min: 0,
-                max: 62,
+                max: 40,
                 splitLine: {
                     show: false
                 }

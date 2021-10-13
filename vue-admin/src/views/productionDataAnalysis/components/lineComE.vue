@@ -16,7 +16,7 @@
                 style="width:60px;margin-right:10px"
                 v-model="max"
                 :min="min"
-                :max="700"
+                :max="250"
                 placeholder=""
                 :controls="false"
             ></el-input-number>
@@ -43,7 +43,7 @@ export default {
             myChart: {},
             option: {},
             min: 30,
-            max: 550,
+            max: 250,
         }
     },
     watch: {
@@ -92,7 +92,7 @@ export default {
             this.option.visualMap.pieces[1].lte = this.max;
             this.option.visualMap.pieces[2].gt = this.max;
             this.myChart.setOption(this.option);
-            
+
         }
     },
     created () {
@@ -137,7 +137,7 @@ export default {
                 type: 'value',
                 boundaryGap: [0, '100%'],
                 min: 0,
-                max: 700,
+                max: 300,
                 splitLine: {
                     show: false
                 }
