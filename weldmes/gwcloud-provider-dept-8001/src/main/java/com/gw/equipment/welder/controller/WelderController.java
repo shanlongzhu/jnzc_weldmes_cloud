@@ -7,6 +7,7 @@ import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtils;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
+import com.gw.config.DownExcel;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.welder.service.WelderService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -78,17 +79,16 @@ public class WelderController {
      */
     @PostMapping
     public HttpResult addWelder(@RequestBody MachineWeldInfo machineWeldInfo) {
+
         try {
-            HttpResult result = new HttpResult();
-            int i = welderService.addWelder(machineWeldInfo);
-            if (i > 0) {
-                result.setMsg("新增成功！");
-            } else {
-                result.setMsg("新增失败！");
-            }
-            return result;
+
+            welderService.addWelder(machineWeldInfo);
+
+            return HttpResult.ok("新增成功!");
+
         } catch (Exception e) {
-            return HttpResult.error();
+
+            return HttpResult.error("新增失败!");
         }
     }
 
@@ -99,7 +99,9 @@ public class WelderController {
      */
     @GetMapping("{id}")
     public HttpResult getById(@PathVariable Long id) {
+
         List<MachineWeldInfo> list = welderService.getById(id);
+
         return HttpResult.ok(list);
 
     }
@@ -111,17 +113,15 @@ public class WelderController {
      */
     @PutMapping
     public HttpResult updateWelder(@RequestBody MachineWeldInfo machineWeldInfo) {
+
         try {
-            HttpResult result = new HttpResult();
-            int i = welderService.updateWelder(machineWeldInfo);
-            if (i > 0) {
-                result.setMsg("修改成功！");
-            } else {
-                result.setMsg("修改失败！");
-            }
-            return result;
+
+            welderService.updateWelder(machineWeldInfo);
+
+            return HttpResult.ok("修改成功!");
         } catch (Exception e) {
-            return HttpResult.error();
+
+            return HttpResult.error("修改失败!");
         }
     }
 
@@ -132,17 +132,16 @@ public class WelderController {
      */
     @DeleteMapping
     public HttpResult deleteWelder(Long id) {
+
         try {
-            HttpResult result = new HttpResult();
-            int i = welderService.deleteWelder(id);
-            if (i > 0) {
-                result.setMsg("删除成功！");
-            } else {
-                result.setMsg("删除失败！");
-            }
-            return result;
+
+            welderService.deleteWelder(id);
+
+            return HttpResult.ok("删除成功!");
+
         } catch (Exception e) {
-            return HttpResult.error();
+
+            return HttpResult.error("删除失败!");
         }
 
     }
@@ -154,135 +153,29 @@ public class WelderController {
      */
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response, String machineNo, Integer type, Integer grade, Integer status,
-                                  Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
-        HttpResult result = new HttpResult();
-        List<MachineWeldInfo> list = welderService.getList(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("焊机设备数据");
-        String[] titles = {"固定资产编号", "设备类型", "入厂时间", "所属项目", "状态", "厂家", "是否在网", "采集序号", "位置", "ip地址", "设备型号"};
-        Row row = sheet.createRow(0);
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(titles[i]);
-        }
-        for (int i = 0; i < list.size(); i++) {
+                                  Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay){
 
-            row = sheet.createRow(i + 1);
-
-            MachineWeldInfo machineWeldInfo = list.get(i);
-
-            //固定资产编号
-            Cell getMachineNoCell = row.createCell(0);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getMachineNo())) {
-
-                machineWeldInfo.setMachineNo("");
-            }
-            getMachineNoCell.setCellValue(machineWeldInfo.getMachineNo());
-
-            //设备类型
-            Cell typeStrCell = row.createCell(1);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getTypeStr())) {
-
-                machineWeldInfo.setTypeStr("");
-            }
-            typeStrCell.setCellValue(machineWeldInfo.getTypeStr());
-
-            //入厂时间
-            Cell createTimeCell = row.createCell(2);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getCreateTime())) {
-
-                machineWeldInfo.setCreateTime("");
-            }
-            createTimeCell.setCellValue(machineWeldInfo.getCreateTime());
-
-            //所属项目
-            Cell deptNameCell = row.createCell(3);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getDeptName())) {
-
-                machineWeldInfo.setDeptName("");
-            }
-            deptNameCell.setCellValue(machineWeldInfo.getDeptName());
-
-            //状态
-            Cell statusStrCell = row.createCell(4);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getStatusStr())) {
-
-                machineWeldInfo.setStatusStr("");
-            }
-            statusStrCell.setCellValue(machineWeldInfo.getStatusStr());
-
-            //厂家
-            Cell firmNameCell = row.createCell(5);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getFirmStr())) {
-
-                machineWeldInfo.setFirmStr("");
-            }
-            firmNameCell.setCellValue(machineWeldInfo.getFirmStr());
-
-            //是否在网
-            Cell getIsNetworkCell = row.createCell(6);
-            getIsNetworkCell.setCellValue(machineWeldInfo.getIsNetwork() == 0 ? "是" : "否");
-
-            //采集序号
-            Cell getGatherNoCell = row.createCell(7);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getGatherNo())) {
-
-                machineWeldInfo.setGatherNo("");
-            }
-            getGatherNoCell.setCellValue(machineWeldInfo.getGatherNo());
-
-            //位置
-            Cell positionCell = row.createCell(8);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getAreaStr())) {
-
-                machineWeldInfo.setAreaStr("");
-            }
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getBayStr())) {
-
-                machineWeldInfo.setBayStr("");
-            }
-
-            positionCell.setCellValue(machineWeldInfo.getAreaStr() + machineWeldInfo.getBayStr());
-
-            //ip地址
-            Cell ipPathCell = row.createCell(9);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getIpPath())) {
-
-                machineWeldInfo.setIpPath("");
-            }
-
-            ipPathCell.setCellValue(machineWeldInfo.getIpPath());
-
-            //设备型号
-            Cell modelNameCell = row.createCell(10);
-
-            if (ObjectUtils.isEmpty(machineWeldInfo.getModelStr())) {
-
-                machineWeldInfo.setModelStr("");
-            }
-            modelNameCell.setCellValue(machineWeldInfo.getModelStr());
-
-        }
         try {
-            String fileName = URLEncoder.encode("焊机设备管理.xlsx", "UTF-8");
-            response.setContentType("application/octet-stream");
-            response.setHeader("content-disposition", "attachment;filename=" + fileName);
-            response.setHeader("filename", fileName);
-            workbook.write(response.getOutputStream());
+
+            //设置Excel文件名
+            String title = URLEncoder.encode("焊机设备管理", "UTF-8");
+
+            //设置sheet表格名
+            String sheetName = "焊机设备数据";
+
+            //获取任务列表
+            List<MachineWeldInfo> list = welderService.getList(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
+
+            //导出为Excel
+            DownExcel.download(response,MachineWeldInfo.class,list,sheetName,title);
+
+            return HttpResult.ok("Excel导出成功");
+
         } catch (Exception e) {
-            e.printStackTrace();
+
+            return HttpResult.error("Excel导出失败");
         }
-        return result;
+
     }
 
     /**
@@ -386,10 +279,10 @@ public class WelderController {
 
                     if (isNetWork.equals("是")) {
 
-                        machineWeldInfo.setIsNetwork(0);
+                        machineWeldInfo.setIsNetwork(0l);
                     } else {
 
-                        machineWeldInfo.setIsNetwork(1);
+                        machineWeldInfo.setIsNetwork(1l);
                     }
                 }
 

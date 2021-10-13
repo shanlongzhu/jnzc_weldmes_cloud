@@ -20,79 +20,9 @@
         <result property="area" column="area"></result>
         <result property="bay" column="bay"></result>
         <result property="taskFlag" column="taskFlag"></result>
-        <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
-            <id property="id" column="id"></id>
-            <result property="type" column="type"></result>
-            <result property="typeName" column="type_name"></result>
-            <result property="value" column="value"></result>
-            <result property="valueName" column="value_name"></result>
-            <result property="valueNames" column="value_names"></result>
-            <result property="remarks" column="remarks"></result>
-            <result property="valueNamess" column="value_namess"></result>
-            <result property="valueNamesss" column="value_namesss"></result>
-        </association>
-        <association property="sysDept" javaType="com.gw.entities.SysDept">
-            <id property="id" column="id"></id>
-            <result property="name" column="name"></result>
-            <result property="parentId" column="parent_id"></result>
-        </association>
-        <association property="machineGatherInfo" javaType="com.gw.entities.MachineGatherInfo">
-            <id property="id" column="id"></id>
-            <result property="gatherNo" column="gather_no"></result>
-        </association>
     </resultMap>
 
-    <!--<select id="getList" resultMap="welder">
-        SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,m.firm,m.is_network,
-        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,d.value_name,d1.value_name value_names,d2.value_name value_namess,
-        d3.value_name value_namesss,s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
-        from machine_weld_info m
-        left join sys_dictionary d on m.type = d.id
-        left join sys_dictionary d1 on m.`status` = d1.id
-        left join sys_dictionary d2 on m.firm = d2.id
-        left join sys_dictionary d3 on m.model = d3.id
-        left join sys_dictionary d4 on m.area = d4.id
-        left join sys_dictionary d5 on m.bay = d5.id
-        left join sys_dept s on m.dept_id = s.id
-        LEFT JOIN machine_gather_info ON FIND_IN_SET( machine_gather_info.id,m.g_id )
-        <where>
-            <if test="machineNo != null and machineNo != ''">
-                and  m.machine_no = #{machineNo}
-            </if>
-            <if test="type != null and type != ''">
-                and  d.id = #{type}
-            </if>
-            <if test="grade != null and grade != ''">
-                and  s.id = #{grade}
-            </if>
-            <if test="status != null and status != ''">
-                and  d1.id = #{status}
-            </if>
-            <if test="firm != null and firm != ''">
-                and  d2.id = #{firm}
-            </if>
-            <if test="isNetwork != null">
-                and  m.is_network = #{isNetwork}
-            </if>
-            <if test="gatherNo != null and gatherNo != ''">
-                and  g.gather_no = #{gatherNo}
-            </if>
-            <if test="ipPath != null and ipPath != ''">
-                and  m.ip_path = #{ipPath}
-            </if>
-            <if test="model != null and model != ''">
-                and  model = #{model}
-            </if>
-            <if test="area != null and area != ''">
-                and  area = #{area}
-            </if>
-            <if test="bay != null and bay != ''">
-                and  bay = #{bay}
-            </if>
-        </where>
-        group by m.machine_no
-    </select>-->
-
+    <!--添加焊机信息-->
     <insert id="addWelder" parameterType="com.gw.entities.MachineWeldInfo">
         insert into machine_weld_info(machine_no,type,dept_id,firm,g_id,model,is_Network,status,ip_path,create_time,area,bay)
         values (#{machineWeldInfo.machineNo},#{machineWeldInfo.type},#{machineWeldInfo.deptId},#{machineWeldInfo.firm},
@@ -100,31 +30,13 @@
         #{machineWeldInfo.ipPath},#{machineWeldInfo.createTime},#{machineWeldInfo.area},#{machineWeldInfo.bay})
     </insert>
 
+    <!--根据id查询焊机信息-->
     <select id="getById" resultMap="welder">
-      SELECT
-        m.id,
-        m.machine_no,
-        m.create_time,
-        m.type,
-        m.dept_id,
-        m.g_id,
-        m.`status`,
-        m.model,
-        m.firm,
-        m.is_network,
-        GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
-        d.value_name,
-        d1.value_name value_names,
-        d2.value_name value_namess,
-        d3.value_name value_namesss,
-        s.`name`,
-        m.ip_path,
-        m.area,
-		m.bay,
-        d4.value_name areaStr,
-        d5.value_name bayStr
-        from
-        machine_weld_info m
+      SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,m.model,
+        m.firm,m.is_network,GROUP_CONCAT( machine_gather_info.gather_no ) gather_no,
+        d.value_name,d1.value_name value_names,d2.value_name value_namess,d3.value_name value_namesss,
+        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr
+        from machine_weld_info m
         left join sys_dictionary d on m.type = d.id
         left join sys_dictionary d1 on m.`status` = d1.id
         left join sys_dictionary d2 on m.firm = d2.id
@@ -138,6 +50,7 @@
         m.machine_no
     </select>
 
+    <!--修改焊机信息-->
     <update id="updateWelder" parameterType="com.gw.entities.MachineWeldInfo">
         update machine_weld_info
         <trim prefix="set" suffixOverrides=",">
@@ -157,6 +70,7 @@
         where id=#{machineWeldInfo.id}
     </update>
 
+    <!--删除焊机信息-->
     <delete id="deleteWelder">
         delete from machine_weld_info where id=#{id}
     </delete>
