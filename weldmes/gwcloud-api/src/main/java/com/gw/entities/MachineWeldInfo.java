@@ -128,7 +128,7 @@ public class MachineWeldInfo implements Serializable {
      * 采集id
      */
     @ExcelIgnore
-    private String gId;
+    private Long gId;
 
     /**
      * 创建人

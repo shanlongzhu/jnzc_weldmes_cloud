@@ -30,12 +30,12 @@ public class IsNetworkConverter implements Converter<Long> {
     @Override
     public Long convertToJavaData(CellData cellData, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
 
-        return "是".equals(cellData.getStringValue()) ? 0L : 1L;
+        return "是".equals(cellData.getStringValue()) ? 0l : 1l;
     }
 
     @Override
     public CellData convertToExcelData(Long value, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
 
-        return new CellData(value.equals(0L) ? "是" : "否");
+        return new CellData(value.toString().equals("0") ? "是" : "否");
     }
 }
