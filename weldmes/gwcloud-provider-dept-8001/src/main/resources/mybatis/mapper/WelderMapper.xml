@@ -281,10 +281,12 @@
 
     <!--批量插入-->
     <insert id="insertMachineWeldInfoByGroup">
-        insert into machine_weld_info(`machine_no`,`type`,dept_id,status,firm,is_netWork,g_id,model,create_time,ip_path,area,bay)
+        insert into machine_weld_info(`machine_no`,`type`,dept_id,status,firm,is_netWork,g_id,
+        model,ip_path,area,bay,create_time)
         values
-        <foreach collection="machineWeldInfos" item="item" index="index" separator=",">
-            (#{item.machineNo},#{item.type},#{item.deptId},#{item.status},#{item.firm},#{item.isNetwork},#{item.gId},#{item.model},#{item.createTime},#{item.ipPath},#{item.area},#{item.bay})
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.machineNo},#{item.type},#{item.deptId},#{item.status},#{item.firm},#{item.isNetwork},
+            #{item.gId},#{item.model},#{item.ipPath},#{item.area},#{item.bay},NOW())
         </foreach>
     </insert>
 

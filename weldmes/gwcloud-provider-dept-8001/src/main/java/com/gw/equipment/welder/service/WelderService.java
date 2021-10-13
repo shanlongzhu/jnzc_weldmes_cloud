@@ -24,27 +24,42 @@ public interface WelderService {
      * @Description 新增焊机信息
      * @Params
      */
-    int addWelder(MachineWeldInfo machineWeldInfo);
+    void addWelder(MachineWeldInfo machineWeldInfo);
 
+    /**
+     * @Date 2021/10/13 17:17
+     * @Description 根据焊机id 查询焊机信息
+     * @Params
+     */
     List<MachineWeldInfo> getById(Long id);
 
-    int updateWelder(MachineWeldInfo machineWeldInfo);
+    /**
+     * @Date 2021/10/13 17:18
+     * @Description 修改焊机信息
+     * @Params
+     */
+    void updateWelder(MachineWeldInfo machineWeldInfo);
 
-    int deleteWelder(Long id);
+    /**
+     * @Date 2021/10/13 17:18
+     * @Description 删除焊机信息
+     * @Params
+     */
+    void deleteWelder(Long id);
 
-    Byte getTypeId(String type,String dictionaryType);
-
+    /**
+     * @Date 2021/10/13 17:18
+     * @Description 根据部门名称查询部门id
+     * @Params
+     */
     Long getDeptId(String deptName);
 
-    Byte getStatusId(String status);
-
-    Byte getFirmId(String firm);
-
-    Long getGid(String machineNo);
-
-    Byte getModelId(String model);
-
-    void importExcel(List<MachineWeldInfo> machineWeldInfoArrayList);
+    /**
+     * @Date 2021/10/13 16:44
+     * @Description 对焊机信息进行码值转换
+     * @Params
+     */
+    MachineWeldInfo importExcel(MachineWeldInfo machineWeldInfos);
 
     /**
      * @Date 2021/7/13 18:01
@@ -68,5 +83,12 @@ public interface WelderService {
     public List<MachineWeldInfo> getStatusOfMachineWeldInfos(String machineNo,Integer type,Integer grade,Integer status,
                                                              Integer firm,Long isNetwork,String gatherNo,String ipPath,
                                                              Integer model,Integer area,Integer bay);
+
+    /**
+     * @Date 2021/10/13 17:15
+     * @Description 批量插入焊机信息
+     * @Params
+     */
+    public void addMachineWeldInfos(List<MachineWeldInfo> list);
 
 }

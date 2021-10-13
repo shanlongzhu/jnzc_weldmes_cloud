@@ -100,7 +100,7 @@ public interface WelderDao {
      * @Description 批量插入
      * @Params
      */
-    public void insertMachineWeldInfoByGroup(@Param("machineWeldInfos")List<MachineWeldInfo> machineWeldInfos);
+    public void insertMachineWeldInfoByGroup(@Param("list")List<MachineWeldInfo> list);
 
     /**
      * @Date 2021/10/12 15:40

@@ -1,6 +1,7 @@
 package com.gw.equipment.welder.controller;
 
 
+import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ConstantInfo;
@@ -8,7 +9,10 @@ import com.gw.common.DateTimeUtils;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
+import com.gw.config.SolderExcelListener;
+import com.gw.config.WelderExcelListener;
 import com.gw.entities.MachineWeldInfo;
+import com.gw.entities.WelderInfo;
 import com.gw.equipment.welder.service.WelderService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -183,195 +187,18 @@ public class WelderController {
      * @Description 导入Excel
      * @Params
      */
-    @PostMapping(value = "importExcel", produces = "application/json;charset=UTF-8")
+    @PostMapping(value = "importExcel")
     public HttpResult importExcel(@RequestParam("file") MultipartFile file) {
 
-        try {
-            //workbook excel
-            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        try{
 
-            //获取excel的第一个sheet
-            Sheet sheet = workbook.getSheetAt(0);
+            EasyExcel.read(file.getInputStream(), MachineWeldInfo.class, new WelderExcelListener(welderService)).sheet().doRead();
 
-            int firstRowNum = sheet.getFirstRowNum();
+            return HttpResult.ok("Excel导入成功");
 
-            int lastRowNum = sheet.getLastRowNum();
+        }catch (Exception e) {
 
-            Row firstRow = sheet.getRow(firstRowNum);
-
-            int lastCellNums = firstRow.getLastCellNum();
-
-            List<MachineWeldInfo> machineWeldInfoArrayList = new ArrayList<>();
-
-            for (int i = 1; i <= lastRowNum; i++) {
-
-                //获取第i行
-                Row row = sheet.getRow(i);
-
-                Object[] obs = new Object[lastCellNums];
-
-                for (int j = 0; j < lastCellNums; j++) {
-
-                    //获取第i行的 第j个 单元格
-                    Cell cell = row.getCell(j);
-
-                    if (row.getCell(j) == null) {
-                        continue;
-                    }
-
-                    //拿到单元格的 value值
-                    Object value = ExcelUtils.getValue(cell);
-
-                    obs[j] = value;
-                }
-                //把从excel中拿出来的数据封装到 对象中
-                MachineWeldInfo machineWeldInfo = new MachineWeldInfo();
-
-                if (!ObjectUtils.isEmpty(obs[0])) {
-
-                    String str = obs[0].toString();
-
-                    if (str.indexOf(".") > 0) {
-
-                        str = str.substring(0, str.indexOf("."));
-                    }
-
-                    machineWeldInfo.setMachineNo(str);
-                }
-
-                String type = (String) obs[1];
-
-                Byte id = welderService.getTypeId(type, ConstantInfo.DICTIONARY_WELD_TYPE_FLAG);
-
-                machineWeldInfo.setType(id);
-
-                if (!ObjectUtils.isEmpty(obs[2])) {
-
-                    String time = DateTimeUtils.getDateTimeFormat(obs[2].toString());
-
-                    machineWeldInfo.setCreateTime(time);
-                }
-
-                String deptName = (String) obs[3];
-
-                Long deptId = welderService.getDeptId(deptName);
-
-                if (!ObjectUtils.isEmpty(deptId)) {
-
-                    machineWeldInfo.setDeptId(deptId);
-                }
-
-                String status = (String) obs[4];
-
-                Byte statusId = welderService.getStatusId(status);
-
-                machineWeldInfo.setStatus(statusId);
-
-                String firm = (String) obs[5];
-
-                Byte firmId = welderService.getFirmId(firm);
-
-                machineWeldInfo.setFirm(firmId);
-
-                String isNetWork = (String) obs[6];
-
-                if (!ObjectUtils.isEmpty(isNetWork)) {
-
-                    if (isNetWork.equals("是")) {
-
-                        machineWeldInfo.setIsNetwork(0l);
-                    } else {
-
-                        machineWeldInfo.setIsNetwork(1l);
-                    }
-                }
-
-                if (!ObjectUtils.isEmpty(obs[7])) {
-
-                    String machineNo = obs[7].toString();
-
-                    //将采集序号转成字符串数组
-                    String[] machineNos = machineNo.split(",");
-
-                    List<String> list = new ArrayList<>();
-
-                    for (int j = 0; j < machineNos.length; j++) {
-
-                        if (machineNos[j].indexOf(".") > 0) {
-
-                            machineNos[j] = machineNos[j].substring(0, machineNos[j].indexOf("."));
-
-                        }
-
-                        String a = String.valueOf(welderService.getGid(machineNos[j]));
-
-                        list.add(a);
-                    }
-
-                    StringBuffer sb = new StringBuffer();
-
-                    for (int k = 0; k < list.size(); k++) {
-
-                        sb.append(list.get(k)).append(",");
-                    }
-                    String s = sb.toString().substring(0, sb.length() - 1);
-
-                    machineWeldInfo.setGId(s);
-                }
-
-                //区域
-                String area = (String) obs[8];
-
-                if (!ObjectUtils.isEmpty(area)) {
-
-                    Long areaId = welderService.getTypeId(area, ConstantInfo.AREA_FLAG).longValue();
-
-                    if (!ObjectUtils.isEmpty(areaId)) {
-
-                        machineWeldInfo.setArea(areaId);
-                    }
-                }
-
-                String bay = (String) obs[9];
-
-                if (!ObjectUtils.isEmpty(bay)) {
-
-                    Long bayId = welderService.getTypeId(bay, ConstantInfo.BAY_FLAG).longValue();
-
-                    if (!ObjectUtils.isEmpty(bayId)) {
-
-                        machineWeldInfo.setBay(bayId);
-                    }
-                }
-
-                if (!ObjectUtils.isEmpty(obs[10])) {
-
-                    String ip = (String) obs[10];
-
-                    machineWeldInfo.setIpPath(ip);
-                }
-
-                if (!ObjectUtils.isEmpty(obs[11])) {
-
-                    String model = (String) obs[11];
-
-                    Byte modelId = welderService.getModelId(model);
-
-                    if (!ObjectUtils.isEmpty(modelId)) {
-
-                        machineWeldInfo.setModel(modelId);
-                    }
-                }
-
-                //把对象放到list
-                machineWeldInfoArrayList.add(machineWeldInfo);
-            }
-            //保存
-            welderService.importExcel(machineWeldInfoArrayList);
-            return HttpResult.ok("导入成功！");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return HttpResult.error("导入失败！");
+            return HttpResult.error("Excel导入失败");
         }
     }
 

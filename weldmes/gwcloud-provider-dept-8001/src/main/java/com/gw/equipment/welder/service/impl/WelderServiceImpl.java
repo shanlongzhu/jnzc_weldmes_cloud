@@ -1,5 +1,6 @@
 package com.gw.equipment.welder.service.impl;
 
+import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtils;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.entities.SysDept;
@@ -31,6 +32,11 @@ public class WelderServiceImpl implements WelderService {
     SysDeptDao sysDeptDao;
 
 
+    /**
+     * @Date 2021/10/13 17:18
+     * @Description 焊机信息列表查询
+     * @Params
+     */
     @Override
     public List<MachineWeldInfo> getList(String machineNo, Integer type, Integer grade, Integer status,
                                          Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
@@ -40,30 +46,51 @@ public class WelderServiceImpl implements WelderService {
         return list;
     }
 
+    /**
+     * @Date 2021/10/13 17:19
+     * @Description 添加焊机信息
+     * @Params
+     */
     @Override
-    public int addWelder(MachineWeldInfo machineWeldInfo) {
-        return welderDao.addWelder(machineWeldInfo);
+    public void addWelder(MachineWeldInfo machineWeldInfo) {
+
+        welderDao.addWelder(machineWeldInfo);
 
     }
 
+    /**
+     * @Date 2021/10/13 17:21
+     * @Description 根据焊机id 查询 焊机信息
+     * @Params
+     */
     @Override
     public List<MachineWeldInfo> getById(Long id) {
-        return welderDao.getById(id);
+
+        List<MachineWeldInfo> list = welderDao.getById(id);
+
+        return list;
     }
 
+    /**
+     * @Date 2021/10/13 17:21
+     * @Description 修改焊机信息
+     * @Params
+     */
     @Override
-    public int updateWelder(MachineWeldInfo machineWeldInfo) {
-        return welderDao.updateWelder(machineWeldInfo);
+    public void updateWelder(MachineWeldInfo machineWeldInfo) {
+
+        welderDao.updateWelder(machineWeldInfo);
     }
 
+    /**
+     * @Date 2021/10/13 17:21
+     * @Description 删除焊机信息
+     * @Params
+     */
     @Override
-    public int deleteWelder(Long id) {
-        return welderDao.deleteWelder(id);
-    }
+    public void deleteWelder(Long id) {
 
-    @Override
-    public Byte getTypeId(String type, String dictionaryType) {
-        return welderDao.getTypeId(type, dictionaryType);
+        welderDao.deleteWelder(id);
     }
 
     @Override
@@ -71,35 +98,103 @@ public class WelderServiceImpl implements WelderService {
         return welderDao.getDeptId(deptName);
     }
 
-    @Override
-    public Byte getStatusId(String status) {
-        return welderDao.getStatusId(status);
-    }
-
-    @Override
-    public Byte getFirmId(String firm) {
-        return welderDao.getFirmId(firm);
-    }
-
-    @Override
-    public Long getGid(String machineNo) {
-        return welderDao.getGid(machineNo);
-    }
-
-    @Override
-    public Byte getModelId(String model) {
-        return welderDao.getModelId(model);
-    }
-
     /**
      * @Date 2021/8/18 17:43
-     * @Description 批量插入数据
+     * @Description 对焊机信息进行码值转换
      * @Params
      */
     @Override
-    public void importExcel(List<MachineWeldInfo> machineWeldInfoArrayList) {
+    public MachineWeldInfo importExcel(MachineWeldInfo data) {
 
-        welderDao.insertMachineWeldInfoByGroup(machineWeldInfoArrayList);
+        //设备状态
+        if (!ObjectUtils.isEmpty(data.getStatusStr())) {
+
+            Byte statusId = welderDao.getStatusId(data.getStatusStr());
+
+            if (!ObjectUtils.isEmpty(statusId)) {
+
+                data.setStatus(statusId);
+            }
+        }
+
+        //设备类型
+        if (!ObjectUtils.isEmpty(data.getTypeStr())) {
+
+            Byte typeId = welderDao.getTypeId(data.getTypeStr(), ConstantInfo.DICTIONARY_WELD_TYPE_FLAG);
+
+            if (!ObjectUtils.isEmpty(typeId)) {
+
+                data.setType(typeId);
+            }
+        }
+
+        //厂商
+        if (!ObjectUtils.isEmpty(data.getFirmStr())) {
+
+            Byte firmId = welderDao.getFirmId(data.getFirmStr());
+
+            if (!ObjectUtils.isEmpty(firmId)) {
+
+                data.setFirm(firmId);
+            }
+        }
+
+        //设备型号
+        if (!ObjectUtils.isEmpty(data.getModelStr())) {
+
+            Byte modelId = welderDao.getModelId(data.getModelStr());
+
+            if (!ObjectUtils.isEmpty(modelId)) {
+
+                data.setModel(modelId);
+            }
+        }
+
+        //机构ID
+        if (!ObjectUtils.isEmpty(data.getDeptName())) {
+
+            Long deptId = welderDao.getDeptId(data.getDeptName());
+
+            if (!ObjectUtils.isEmpty(deptId)) {
+
+                data.setDeptId(deptId);
+            }
+        }
+
+        //采集序号
+        if (!ObjectUtils.isEmpty(data.getGatherNo())) {
+
+            Long gatherId = welderDao.getGid(data.getGatherNo());
+
+            if (!ObjectUtils.isEmpty(gatherId)) {
+
+                data.setGId(gatherId);
+            }
+        }
+
+        //区域
+        if (!ObjectUtils.isEmpty(data.getAreaStr())) {
+
+            Long areaId = welderDao.getTypeId(data.getAreaStr(), ConstantInfo.AREA_FLAG).longValue();
+
+            if (!ObjectUtils.isEmpty(areaId)) {
+
+                data.setArea(areaId);
+            }
+        }
+
+        //跨间
+        if (!ObjectUtils.isEmpty(data.getBayStr())) {
+
+            Long bayId = welderDao.getTypeId(data.getBayStr(), ConstantInfo.BAY_FLAG).longValue();
+
+            if (!ObjectUtils.isEmpty(bayId)) {
+
+                data.setBay(bayId);
+            }
+        }
+
+        return data;
 
     }
 
@@ -200,6 +295,18 @@ public class WelderServiceImpl implements WelderService {
                 gatherNo, ipPath, model, area, bay, time1, time2);
 
         return list;
+    }
+
+    /**
+     * @Date 2021/10/13 17:16
+     * @Description 批量插入焊机信息
+     * @Params
+     */
+    @Override
+    public void addMachineWeldInfos(List<MachineWeldInfo> list) {
+
+        welderDao.insertMachineWeldInfoByGroup(list);
+
     }
 
 }
