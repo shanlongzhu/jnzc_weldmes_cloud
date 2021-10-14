@@ -1,31 +1,19 @@
 package com.gw.equipment.collection.controller;
-
 import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
-
 import com.gw.config.CollectionExcelListener;
 import com.gw.config.DownExcel;
-import com.gw.config.WelderExcelListener;
 import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -136,7 +124,7 @@ public class CollectionController {
 
     /**
      * @Date 2021/10/14 9:28
-     * @Description 导出excel
+     * @Description excel导出
      * @Params
      */
     @GetMapping(value = "excel")
@@ -164,7 +152,11 @@ public class CollectionController {
         }
     }
 
-    //导入
+    /**
+     * @Date 2021/10/14 13:51
+     * @Description excel导入
+     * @Params
+     */
     @PostMapping(value = "importExcel")
     public HttpResult importExcel(@RequestParam("file") MultipartFile file) {
 
@@ -178,97 +170,6 @@ public class CollectionController {
 
             return HttpResult.error("Excel导入失败");
         }
-
-        /*try {
-
-            //workbook excel
-            Workbook workbook = new XSSFWorkbook(file.getInputStream());
-
-            //获取excel的第一个sheet
-            Sheet sheet = workbook.getSheetAt(0);
-            int firstRowNum = sheet.getFirstRowNum();
-
-            int lastRowNum = sheet.getLastRowNum();
-            Row firstRow = sheet.getRow(firstRowNum);
-
-            int lastCellNums = firstRow.getLastCellNum();
-            List<MachineGatherInfo> machineGatherInfoList = new ArrayList<>();
-
-            for (int i = 1; i <= lastRowNum; i++) {
-
-                //获取第i行
-                Row row = sheet.getRow(i);
-
-                Object[] obs = new Object[lastCellNums];
-
-                for (int j = 0; j < lastCellNums; j++) {
-
-                    //获取第i行的 第j个单元格
-                    Cell cell = row.getCell(j);
-
-                    if (row.getCell(j) == null) {
-
-                        continue;
-                    }
-
-                    //拿到单元格的 value值
-                    Object value = ExcelUtils.getValue(cell);
-
-                    obs[j] = value;
-                }
-
-                //把从excel中拿出来的数据封装到对象中
-                MachineGatherInfo machineGatherInfo = new MachineGatherInfo();
-
-                String str = obs[0].toString();
-
-                if(str.indexOf(".") > 0){
-
-                    str = str.substring(0,str.indexOf("."));
-
-                    machineGatherInfo.setGatherNo(str);
-                }
-
-                machineGatherInfo.setGatherNo(str);
-
-                String name = (String) obs[1];
-
-                Long id = collectionService.getDeptId(name);
-
-                machineGatherInfo.setDeptId(id);
-                String valueName = (String) obs[2];
-
-                Integer status = collectionService.getStatus(valueName);
-                machineGatherInfo.setStatus(status);
-
-                *//*String valueNames = (String) obs[3];
-                Integer protocol = collectionService.getProtocol(valueNames);*//*
-
-                //machineGatherInfo.setProtocol(protocol);
-                machineGatherInfo.setIpPath((String) obs[4]);
-
-                machineGatherInfo.setMacPath((String) obs[5]);
-
-                if(!ObjectUtils.isEmpty(obs[6])){
-
-                    machineGatherInfo.setCreateTime(obs[6].toString());
-                }
-
-                //把对象放到list
-                machineGatherInfoList.add(machineGatherInfo);
-
-            }
-            //保存
-            collectionService.importExcel(machineGatherInfoList);
-
-            return HttpResult.ok("导入成功！");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            return HttpResult.error("导入失败！");
-        }*/
     }
 
     /**

@@ -16,6 +16,11 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Date 2021/10/14 13:55
+ * @Description 焊机管理业务实现层
+ * @Params
+ */
 @Service
 public class WelderServiceImpl implements WelderService {
 
@@ -95,7 +100,10 @@ public class WelderServiceImpl implements WelderService {
 
     @Override
     public Long getDeptId(String deptName) {
-        return welderDao.getDeptId(deptName);
+
+        Long deptId = welderDao.getDeptId(deptName);
+
+        return deptId;
     }
 
     /**
