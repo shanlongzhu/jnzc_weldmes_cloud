@@ -55,7 +55,7 @@ public interface CollectionDao {
      * @Description 批量 插入/修改 采集信息、excel导入数据库  采集编号不存在-新增 存在-更新
      * @Params
      */
-    void addOrUpdateMachineGatherInfos(@Param("machineGatherInfos")List<MachineGatherInfo> machineGatherInfos);
+    void addOrUpdateMachineGatherInfos(@Param("machineGatherInfo")MachineGatherInfo machineGatherInfo);
 
     /**
      * @Date 2021/10/14 9:59

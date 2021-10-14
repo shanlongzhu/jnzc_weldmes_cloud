@@ -72,6 +72,6 @@ public interface CollectionService {
      * @Description 批量插入采集信息
      * @Params
      */
-    public void addMachineGatherInfos(List<MachineGatherInfo> list);
+    public void addMachineGatherInfos(MachineGatherInfo machineGatherInfo);
 
 }

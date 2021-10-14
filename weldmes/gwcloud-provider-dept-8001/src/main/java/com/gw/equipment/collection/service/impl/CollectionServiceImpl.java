@@ -164,9 +164,9 @@ public class CollectionServiceImpl implements CollectionService {
      * @Params
      */
     @Override
-    public void addMachineGatherInfos(List<MachineGatherInfo> list) {
+    public void addMachineGatherInfos(MachineGatherInfo machineGatherInfo) {
 
-        collectionDao.addOrUpdateMachineGatherInfos(list);
+        collectionDao.addOrUpdateMachineGatherInfos(machineGatherInfo);
 
     }
 
