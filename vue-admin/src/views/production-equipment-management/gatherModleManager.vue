@@ -112,12 +112,9 @@
                     >
                         <span>所属项目</span><span class="red-star">*</span>
                     </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDept.name}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
+                    prop="statusStr"
                     label="状态"
                     align="left"
                     min-width="100"
@@ -127,12 +124,9 @@
                     >
                         <span>状态</span><span class="red-star">*</span>
                     </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueName}}
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="welderName"
+                    prop="protocolStr"
                     label="通讯协议"
                     align="left"
                     min-width="100"
@@ -141,9 +135,6 @@
                         slot="header"
                     >
                         <span>通讯协议</span><span class="red-star">*</span>
-                    </template>
-                    <template slot-scope="scope">
-                        {{scope.row.sysDictionary.valueNames}}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -159,7 +150,7 @@
                     min-width="100"
                 />
                 <el-table-column
-                    prop="createTime"
+                    prop="productionDate"
                     label="出厂时间"
                     align="left"
                     min-width="170"
