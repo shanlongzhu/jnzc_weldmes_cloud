@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 
+import com.gw.config.DownExcel;
 import com.gw.entities.MachineGatherInfo;
+import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,6 +25,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Date 2021/10/14 9:26
+ * @Description 采集模块控制器
+ * @Params
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "collection")
@@ -34,7 +41,11 @@ public class CollectionController {
     @Autowired
     private CollectionDao collectionDao;
 
-    //列表展示
+    /**
+     * @Date 2021/10/14 9:27
+     * @Description 采集信息列表查询
+     * @Params
+     */
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,@RequestParam(value = "size", defaultValue = "10") Integer size,
                               Integer grade, Integer gatherNo) {
@@ -46,7 +57,11 @@ public class CollectionController {
     }
 
 
-    //新增信息
+    /**
+     * @Date 2021/10/14 9:27
+     * @Description 新增采集信息
+     * @Params
+     */
     @PostMapping
     public HttpResult addCollection(@RequestBody MachineGatherInfo machineGatherInfo) {
 
@@ -63,7 +78,11 @@ public class CollectionController {
         return HttpResult.ok("新增成功");
     }
 
-    //删除信息
+    /**
+     * @Date 2021/10/14 9:27
+     * @Description 删除采集信息
+     * @Params
+     */
     @DeleteMapping
     public HttpResult deleteCollection(Long id) {
 
@@ -73,7 +92,11 @@ public class CollectionController {
 
     }
 
-    //修改前先查询
+    /**
+     * @Date 2021/10/14 9:28
+     * @Description 根据id查询采集信息
+     * @Params
+     */
     @GetMapping("{id}")
     public HttpResult getById(@PathVariable Long id) {
 
@@ -82,7 +105,11 @@ public class CollectionController {
         return HttpResult.ok(list);
     }
 
-    //修改信息
+    /**
+     * @Date 2021/10/14 9:28
+     * @Description 修改采集信息
+     * @Params
+     */
     @PutMapping
     public HttpResult updateCollection(@RequestBody MachineGatherInfo machineGatherInfo){
 
@@ -100,92 +127,34 @@ public class CollectionController {
     }
 
 
-    //导出Excel
+    /**
+     * @Date 2021/10/14 9:28
+     * @Description 导出excel
+     * @Params
+     */
     @GetMapping(value = "excel")
     public HttpResult exportExcel(HttpServletResponse response, Integer grade, Integer gatherNo) {
-        HttpResult result = new HttpResult();
-        List<MachineGatherInfo> list = collectionService.getList(grade, gatherNo);
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("采集数据");
-        String[] titles = {"采集模块编号", "所属项目", "采集模块状态", "采集模块通讯协议", "采集模块IP地址", "采集模块MAC地址", "采集模块出厂时间"};
-        Row row = sheet.createRow(0);
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(titles[i]);
-        }
-        for (int i = 0; i < list.size(); i++) {
 
-            row = sheet.createRow(i + 1);
-
-            MachineGatherInfo machineGatherInfo = list.get(i);
-
-            Cell getGatherNoCell = row.createCell(0);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getGatherNo())){
-
-                machineGatherInfo.setGatherNo("");
-            }
-            getGatherNoCell.setCellValue(machineGatherInfo.getGatherNo());
-
-            Cell nameCell = row.createCell(1);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDept().getName())){
-
-                machineGatherInfo.getSysDept().setName("");
-            }
-            nameCell.setCellValue(machineGatherInfo.getSysDept().getName());
-
-            Cell valueNameCell = row.createCell(2);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDictionary().getValueName())){
-
-                machineGatherInfo.getSysDictionary().setValueName("");
-            }
-            valueNameCell.setCellValue(machineGatherInfo.getSysDictionary().getValueName());
-
-            Cell valuesNameCell = row.createCell(3);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getSysDictionary().getValueNames())){
-
-                machineGatherInfo.getSysDictionary().setValueNames("");
-            }
-            valuesNameCell.setCellValue(machineGatherInfo.getSysDictionary().getValueNames());
-
-            Cell ipPathCell = row.createCell(4);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getIpPath())){
-
-                machineGatherInfo.setIpPath("");
-            }
-            ipPathCell.setCellValue(machineGatherInfo.getIpPath());
-
-            Cell macPathCell = row.createCell(5);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getMacPath())){
-
-                machineGatherInfo.setMacPath("");
-            }
-            macPathCell.setCellValue(machineGatherInfo.getMacPath());
-
-            Cell createTimeCell = row.createCell(6);
-
-            if (ObjectUtils.isEmpty(machineGatherInfo.getCreateTime())){
-
-                machineGatherInfo.setCreateTime("");
-            }
-            createTimeCell.setCellValue(machineGatherInfo.getCreateTime());
-
-        }
         try {
-            String fileName = URLEncoder.encode("采集模块管理.xlsx", "UTF-8");
-            response.setContentType("application/octet-stream");
-            response.setHeader("content-disposition", "attachment;filename=" + fileName);
-            response.setHeader("filename", fileName);
-            workbook.write(response.getOutputStream());
+
+            //设置Excel文件名
+            String title = URLEncoder.encode("采集模块管理", "UTF-8");
+
+            //设置sheet表格名
+            String sheetName = "采集数据";
+
+            //获取任务列表
+            List<MachineGatherInfo> list = collectionService.getList(grade, gatherNo);
+
+            //导出为Excel
+            DownExcel.download(response,MachineGatherInfo.class,list,sheetName,title);
+
+            return HttpResult.ok("Excel导出成功");
+
         } catch (Exception e) {
-            e.printStackTrace();
+
+            return HttpResult.error("Excel导出失败");
         }
-        return result;
     }
 
     //导入
@@ -254,10 +223,10 @@ public class CollectionController {
                 Integer status = collectionService.getStatus(valueName);
                 machineGatherInfo.setStatus(status);
 
-                String valueNames = (String) obs[3];
-                Integer protocol = collectionService.getProtocol(valueNames);
+                /*String valueNames = (String) obs[3];
+                Integer protocol = collectionService.getProtocol(valueNames);*/
 
-                machineGatherInfo.setProtocol(protocol);
+                //machineGatherInfo.setProtocol(protocol);
                 machineGatherInfo.setIpPath((String) obs[4]);
 
                 machineGatherInfo.setMacPath((String) obs[5]);

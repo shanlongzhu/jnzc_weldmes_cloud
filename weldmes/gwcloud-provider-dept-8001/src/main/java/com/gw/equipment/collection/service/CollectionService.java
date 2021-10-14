@@ -1,7 +1,6 @@
 package com.gw.equipment.collection.service;
 
 import com.gw.entities.MachineGatherInfo;
-import com.gw.entities.MachineWeldInfo;
 
 import java.util.List;
 
@@ -22,8 +21,6 @@ public interface CollectionService {
 
 
     Integer getStatus(String valueName);
-
-    Integer getProtocol(String valueNames);
 
     /**
      * @Date 2021/7/1 9:04

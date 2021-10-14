@@ -10,19 +10,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @Date 2021/10/14 9:53
+ * @Description 采集模块业务实现层
+ * @Params
+ */
 @Service
 public class CollectionServiceImpl implements CollectionService {
 
     @Autowired
     private CollectionDao collectionDao;
 
+    /**
+     * @Date 2021/10/14 9:53
+     * @Description 采集模块列表查询
+     * @Params
+     */
     @Override
     public List<MachineGatherInfo> getList(Integer grade, Integer gatherNo) {
+
         List<MachineGatherInfo> list = collectionDao.getList(grade, gatherNo);
+
         return list;
 
     }
 
+    /**
+     * @Date 2021/10/14 9:54
+     * @Description 添加采集信息
+     * @Params
+     */
     @Override
     public void addCollection(MachineGatherInfo machineGatherInfo) {
 
@@ -34,12 +51,22 @@ public class CollectionServiceImpl implements CollectionService {
         collectionDao.addCollection(machineGatherInfo);
     }
 
+    /**
+     * @Date 2021/10/14 9:54
+     * @Description 删除采集信息
+     * @Params
+     */
     @Override
     public void deleteCollection(long id) {
 
         collectionDao.deleteCollection(id);
     }
 
+    /**
+     * @Date 2021/10/14 9:54
+     * @Description 根据id 查询 采集信息
+     * @Params
+     */
     @Override
     public List<MachineGatherInfo> getById(Long id) {
 
@@ -47,12 +74,22 @@ public class CollectionServiceImpl implements CollectionService {
         return list;
     }
 
+    /**
+     * @Date 2021/10/14 9:54
+     * @Description 修改采集信息
+     * @Params
+     */
     @Override
     public void updateCollection(MachineGatherInfo machineGatherInfo) {
 
         collectionDao.updateCollection(machineGatherInfo);
     }
 
+    /**
+     * @Date 2021/10/14 9:55
+     * @Description 采集信息码值转换
+     * @Params
+     */
     @Override
     public void importExcel(List<MachineGatherInfo> machineGatherInfoList) {
         for (MachineGatherInfo machineGatherInfo : machineGatherInfoList) {
@@ -60,6 +97,11 @@ public class CollectionServiceImpl implements CollectionService {
         }
     }
 
+    /**
+     * @Date 2021/10/14 9:55
+     * @Description 根据部门名称查询 部门id
+     * @Params
+     */
     @Override
     public Long getDeptId(String name) {
         Long id = collectionDao.getDeptId(name);
@@ -72,11 +114,6 @@ public class CollectionServiceImpl implements CollectionService {
         return status;
     }
 
-    @Override
-    public Integer getProtocol(String valueNames) {
-        Integer protocol = collectionDao.getProtocol(valueNames);
-        return protocol;
-    }
 
     /**
      * @Date 2021/7/1 9:05

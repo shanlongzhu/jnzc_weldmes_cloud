@@ -1,32 +1,18 @@
 package com.gw.equipment.welder.controller;
 
-
 import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.gw.common.ConstantInfo;
-import com.gw.common.DateTimeUtils;
-import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
-import com.gw.config.SolderExcelListener;
 import com.gw.config.WelderExcelListener;
 import com.gw.entities.MachineWeldInfo;
-import com.gw.entities.WelderInfo;
 import com.gw.equipment.welder.service.WelderService;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

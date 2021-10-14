@@ -17,32 +17,16 @@
         <result property="createTime" column="create_time"></result>
         <result property="lastUpdateBy" column="lastUpdate_by"></result>
         <result property="lastUpdateTime" column="lastUpdate_time"></result>
-      <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
-            <id property="id" column="id"></id>
-            <result property="type" column="type"></result>
-            <result property="typeName" column="type_name"></result>
-            <result property="value" column="value"></result>
-            <result property="valueName" column="value_name"></result>
-          <result property="valueNames" column="value_names"></result>
-            <result property="remarks" column="remarks"></result>
-        </association>
-        <association property="sysDept" javaType="com.gw.entities.SysDept">
-            <id property="id" column="id"></id>
-            <result property="name" column="name"></result>
-            <result property="parentId" column="parent_id"></result>
-        </association>
     </resultMap>
 
+    <!--查询采集信息列表-->
     <select id="getList" resultMap="collection">
-        select
-	        m.id,m.gather_no,m.dept_id,m.ip_path,
-	        m.mac_path,m.create_time,m.`status`,
-	        m.protocol,d.type,d.value_name,dic.`value`,
-	        dic.value_name value_names,s.`name`
+        select m.id,m.gather_no,m.ip_path,m.mac_path,m.production_date,
+        dept.`name` deptName,dic.value_name statusStr,dic1.value_name protocolStr
         from machine_gather_info m
-	    left join sys_dictionary d on m.status = d.id
-	    left join sys_dictionary dic on m.protocol = dic.id
-	    left join sys_dept s on m.dept_id=s.id
+	    left join sys_dictionary dic on m.status = dic.id
+	    left join sys_dictionary dic1 on m.protocol = dic1.id
+	    left join sys_dept dept on m.dept_id = dept.id
         <where>
             <if test="grade != null and grade != ''">
                 and m.dept_id = #{grade}
@@ -68,16 +52,19 @@
          last_update_time = #{machineGatherInfo.createTime}
     </insert>
 
+    <!--删除采集信息-->
     <delete id="deleteCollection">
         delete from machine_gather_info where id=#{id}
     </delete>
 
+    <!--根据id查询采集信息-->
     <select id="getById" resultType="com.gw.entities.MachineGatherInfo">
         select id,gather_no,dept_id,`status`,protocol,ip_path,mac_path,create_time
         from machine_gather_info
         where id =#{id}
     </select>
 
+    <!--修改采集信息-->
     <update id="updateCollection" parameterType="com.gw.entities.MachineGatherInfo">
         update machine_gather_info
         <trim prefix="set" suffixOverrides=",">
@@ -86,8 +73,9 @@
             <if test="machineGatherInfo.status != null and machineGatherInfo.status !=''">status=#{machineGatherInfo.status},</if>
             <if test="machineGatherInfo.protocol != null and machineGatherInfo.protocol !=''">protocol=#{machineGatherInfo.protocol},</if>
             <if test="machineGatherInfo.createTime != null and machineGatherInfo.createTime !=''">create_time=#{machineGatherInfo.createTime},</if>
-            ip_path=#{machineGatherInfo.ipPath},
-            mac_path=#{machineGatherInfo.macPath},
+            ip_path = #{machineGatherInfo.ipPath},
+            mac_path = #{machineGatherInfo.macPath},
+            last_update_time = NOW()
         </trim>
         where id=#{machineGatherInfo.id}
     </update>
@@ -113,10 +101,6 @@
 
     <select id="getStatus" resultType="java.lang.Integer">
         select id from sys_dictionary where value_name=#{valueName}
-    </select>
-
-    <select id="getProtocol" resultType="java.lang.Integer">
-        select id from sys_dictionary where value_name=#{valueNames}
     </select>
 
     <!--获取采集序号列表-->
