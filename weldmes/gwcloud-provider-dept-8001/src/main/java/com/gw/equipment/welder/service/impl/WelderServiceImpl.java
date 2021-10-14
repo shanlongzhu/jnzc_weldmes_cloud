@@ -183,9 +183,11 @@ public class WelderServiceImpl implements WelderService {
         //区域
         if (!ObjectUtils.isEmpty(data.getAreaStr())) {
 
-            Long areaId = welderDao.getTypeId(data.getAreaStr(), ConstantInfo.AREA_FLAG).longValue();
+            Byte area = welderDao.getTypeId(data.getAreaStr(), ConstantInfo.AREA_FLAG);
 
-            if (!ObjectUtils.isEmpty(areaId)) {
+            if(!ObjectUtils.isEmpty(area)){
+
+                Long areaId = area.longValue();
 
                 data.setArea(areaId);
             }
@@ -194,11 +196,11 @@ public class WelderServiceImpl implements WelderService {
         //跨间
         if (!ObjectUtils.isEmpty(data.getBayStr())) {
 
-            Long bayId = welderDao.getTypeId(data.getBayStr(), ConstantInfo.BAY_FLAG).longValue();
+            Byte bay = welderDao.getTypeId(data.getBayStr(), ConstantInfo.BAY_FLAG);
 
-            if (!ObjectUtils.isEmpty(bayId)) {
+            if (!ObjectUtils.isEmpty(bay)) {
 
-                data.setBay(bayId);
+                data.setBay(bay.longValue());
             }
         }
 

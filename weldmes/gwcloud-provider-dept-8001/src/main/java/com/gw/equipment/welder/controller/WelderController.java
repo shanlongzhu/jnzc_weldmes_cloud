@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -174,18 +175,13 @@ public class WelderController {
      * @Params
      */
     @PostMapping(value = "importExcel")
-    public HttpResult importExcel(@RequestParam("file") MultipartFile file) {
+    public HttpResult importExcel(@RequestParam("file") MultipartFile file) throws IOException {
 
-        try{
 
-            EasyExcel.read(file.getInputStream(), MachineWeldInfo.class, new WelderExcelListener(welderService)).sheet().doRead();
+        EasyExcel.read(file.getInputStream(), MachineWeldInfo.class, new WelderExcelListener(welderService)).sheet().doRead();
 
-            return HttpResult.ok("Excel导入成功");
+        return HttpResult.ok("Excel导入成功");
 
-        }catch (Exception e) {
-
-            return HttpResult.error("Excel导入失败");
-        }
     }
 
     /**
