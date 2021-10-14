@@ -3,16 +3,17 @@ package com.gw.entities;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * @Date 2021/10/14 17:51
+ * @Description 焊机信息实体类
+ * @Params
+ */
 @Data
 @ColumnWidth(12)
-@AllArgsConstructor
-@NoArgsConstructor//生成一个无参构造函数
 public class MachineWeldInfo implements Serializable {
 
     /**
