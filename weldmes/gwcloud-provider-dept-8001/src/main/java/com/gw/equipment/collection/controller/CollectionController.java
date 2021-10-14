@@ -1,11 +1,14 @@
 package com.gw.equipment.collection.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gw.common.ExcelUtils;
 import com.gw.common.HttpResult;
 
+import com.gw.config.CollectionExcelListener;
 import com.gw.config.DownExcel;
+import com.gw.config.WelderExcelListener;
 import com.gw.entities.MachineGatherInfo;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.collection.dao.CollectionDao;
@@ -47,10 +50,14 @@ public class CollectionController {
      * @Params
      */
     @GetMapping
-    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,@RequestParam(value = "size", defaultValue = "10") Integer size,
+    public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
+                              @RequestParam(value = "size", defaultValue = "10") Integer size,
                               Integer grade, Integer gatherNo) {
+
         PageHelper.startPage(pn, size);
+
         List<MachineGatherInfo> list = collectionService.getList(grade, gatherNo);
+
         PageInfo page = new PageInfo(list, 10);
 
         return HttpResult.ok(page);
@@ -158,10 +165,21 @@ public class CollectionController {
     }
 
     //导入
-    @PostMapping(value = "importExcel", produces = "application/json;charset=UTF-8")
+    @PostMapping(value = "importExcel")
     public HttpResult importExcel(@RequestParam("file") MultipartFile file) {
 
-        try {
+        try{
+
+            EasyExcel.read(file.getInputStream(), MachineGatherInfo.class, new CollectionExcelListener(collectionService)).sheet().doRead();
+
+            return HttpResult.ok("Excel导入成功");
+
+        }catch (Exception e) {
+
+            return HttpResult.error("Excel导入失败");
+        }
+
+        /*try {
 
             //workbook excel
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -223,8 +241,8 @@ public class CollectionController {
                 Integer status = collectionService.getStatus(valueName);
                 machineGatherInfo.setStatus(status);
 
-                /*String valueNames = (String) obs[3];
-                Integer protocol = collectionService.getProtocol(valueNames);*/
+                *//*String valueNames = (String) obs[3];
+                Integer protocol = collectionService.getProtocol(valueNames);*//*
 
                 //machineGatherInfo.setProtocol(protocol);
                 machineGatherInfo.setIpPath((String) obs[4]);
@@ -250,7 +268,7 @@ public class CollectionController {
             e.printStackTrace();
 
             return HttpResult.error("导入失败！");
-        }
+        }*/
     }
 
     /**

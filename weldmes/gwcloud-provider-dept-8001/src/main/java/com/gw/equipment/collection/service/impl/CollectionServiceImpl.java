@@ -7,6 +7,7 @@ import com.gw.equipment.collection.dao.CollectionDao;
 import com.gw.equipment.collection.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -71,6 +72,7 @@ public class CollectionServiceImpl implements CollectionService {
     public List<MachineGatherInfo> getById(Long id) {
 
         List<MachineGatherInfo> list = collectionDao.getById(id);
+
         return list;
     }
 
@@ -91,10 +93,43 @@ public class CollectionServiceImpl implements CollectionService {
      * @Params
      */
     @Override
-    public void importExcel(List<MachineGatherInfo> machineGatherInfoList) {
-        for (MachineGatherInfo machineGatherInfo : machineGatherInfoList) {
-            collectionDao.save(machineGatherInfo);
+    public MachineGatherInfo importExcel(MachineGatherInfo data) {
+
+        //所属项目
+        if(!ObjectUtils.isEmpty(data.getDeptName())){
+
+            Long deptId = collectionDao.getDeptId(data.getDeptName());
+
+            if(!ObjectUtils.isEmpty(deptId)){
+
+                data.setDeptId(deptId);
+            }
         }
+
+        //状态
+        if(!ObjectUtils.isEmpty(data.getStatusStr())){
+
+            Integer status = collectionDao.getStatus(data.getStatusStr());
+
+            if(!ObjectUtils.isEmpty(status)){
+
+                data.setStatus(status);
+            }
+        }
+
+        //协议
+        if(!ObjectUtils.isEmpty(data.getProtocolStr())){
+
+            Integer protocol = collectionDao.getStatus(data.getProtocolStr());
+
+            if(!ObjectUtils.isEmpty(protocol)){
+
+                data.setProtocol(protocol);
+            }
+        }
+
+        return data;
+
     }
 
     /**
@@ -104,16 +139,11 @@ public class CollectionServiceImpl implements CollectionService {
      */
     @Override
     public Long getDeptId(String name) {
-        Long id = collectionDao.getDeptId(name);
-        return id;
-    }
 
-    @Override
-    public Integer getStatus(String valueName) {
-        Integer status = collectionDao.getStatus(valueName);
-        return status;
-    }
+        Long deptId = collectionDao.getDeptId(name);
 
+        return deptId;
+    }
 
     /**
      * @Date 2021/7/1 9:05
@@ -126,6 +156,18 @@ public class CollectionServiceImpl implements CollectionService {
         List<MachineGatherInfo> list = collectionDao.queryGatherNos();
 
         return list;
+    }
+
+    /**
+     * @Date 2021/10/14 11:05
+     * @Description 批量插入采集信息
+     * @Params
+     */
+    @Override
+    public void addMachineGatherInfos(List<MachineGatherInfo> list) {
+
+        collectionDao.addOrUpdateMachineGatherInfos(list);
+
     }
 
 }

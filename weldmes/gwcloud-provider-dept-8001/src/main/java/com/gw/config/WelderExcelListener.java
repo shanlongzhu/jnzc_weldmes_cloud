@@ -3,7 +3,6 @@ package com.gw.config;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.gw.entities.MachineWeldInfo;
-import com.gw.entities.WelderInfo;
 import com.gw.equipment.welder.service.WelderService;
 
 import java.util.ArrayList;
