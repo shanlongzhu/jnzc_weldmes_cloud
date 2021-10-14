@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,9 +59,11 @@ public class WelderController {
     public HttpResult getListNoPage(String machineNo, Integer type, Integer grade, Integer status,
                                     Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
 
-        List<MachineWeldInfo> list = welderService.getStatusOfMachineWeldInfos(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
+        //TODO 重写SQL
+//        List<MachineWeldInfo> list = welderService.getStatusOfMachineWeldInfos(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
 
-        return HttpResult.ok(list);
+//        return HttpResult.ok(list);
+        return HttpResult.ok(new ArrayList<MachineWeldInfo>());
     }
 
     /**

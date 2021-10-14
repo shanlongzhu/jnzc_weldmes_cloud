@@ -26,10 +26,10 @@ public class HistoricalCurveController {
      * @Description 焊机历史曲线
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
-    @GetMapping
-    public HttpResult getList(String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId) throws ParseException {
+    @PostMapping
+    public HttpResult getList(@RequestBody TableInfo tableInfo) {
 
-        Map<String,Object> map = historicalCurveService.getList(startTime,endTime,taskId,welderId,weldMachineId);
+        Map<String, Object> map = historicalCurveService.getList(tableInfo);
 
         return HttpResult.ok(map);
     }
@@ -39,14 +39,14 @@ public class HistoricalCurveController {
      * @Description 焊机历史曲线信息列表
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
-    @RequestMapping(value = "getHistoryInfos",method = RequestMethod.GET)
+    @RequestMapping(value = "getHistoryInfos", method = RequestMethod.POST)
     public HttpResult getHistoryCurveInfos(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
                                            @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                           String startTime, String endTime,Long taskId,Long welderId,Long weldMachineId){
+                                           @RequestBody TableInfo tableInfo) {
 
         PageHelper.startPage(pn, size);
 
-        List<RtData> list = historicalCurveService.getHistoryCurveInfos(startTime,endTime,taskId,welderId,weldMachineId);
+        List<RtData> list = historicalCurveService.getHistoryCurveInfos(tableInfo);
 
         PageInfo page = new PageInfo(list, 10);
 
@@ -55,13 +55,13 @@ public class HistoricalCurveController {
 
     /**
      * @Date 2021/7/15 17:46
-     * @Description  根据表名 查询 焊机历史曲线
+     * @Description 根据表名 查询 焊机历史曲线
      * @Params
      */
     @RequestMapping(value = "HistoricalCurveByTableName")
-    public HttpResult getList(@RequestBody TableInfo tableInfo){
+    public HttpResult getHistoricalCurveByTableName(@RequestBody TableInfo tableInfo) {
 
-        Map<String,Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableInfo);
+        Map<String, Object> map = historicalCurveService.getHistoryCurveInfoByTableName(tableInfo);
 
         return HttpResult.ok(map);
     }

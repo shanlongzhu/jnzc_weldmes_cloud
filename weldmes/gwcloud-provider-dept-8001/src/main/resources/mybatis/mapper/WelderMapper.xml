@@ -116,7 +116,9 @@
 
     <!--获取历史曲线中焊机id以及设备编号-->
     <select id="selectIdAndMachineNoOfWelderInfos" resultType="com.gw.entities.MachineWeldInfo">
-        select id,machine_no machineNo from machine_weld_info
+        select id,machine_no machineNo,0 macFlag from machine_weld_info
+        UNION ALL
+        select id,weld_cid machineNo,1 macFlag from machine_weldsx_info
     </select>
 
     <!--根据 部门id列表 查询设备信息列表-->
@@ -125,7 +127,7 @@
         sxm.sx_model model,sxm.weld_firm firm,NULL is_network,
         sxm.weld_cid gatherNo,d.value_name typeStr,d1.value_name statusStr,
         d2.value_name firmStr,sxm.weld_model modelStr,s.`name`,sxm.weld_ip,sxm.area,
-        sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag
+        sxm.bay,d4.value_name areaStr,d5.value_name bayStr,1 macFlag
         FROM machine_weldsx_info sxm
         LEFT JOIN sys_dictionary d ON sxm.equip_type = d.id
         LEFT JOIN sys_dictionary d1 ON sxm.weld_status = d1.id
@@ -143,7 +145,7 @@
         (SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,
         m.model,m.firm,m.is_network,GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,
         d.value_name typeStr,d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,
-        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag
+        s.`name`,m.ip_path,m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,0 macFlag
         FROM machine_weld_info m
         LEFT JOIN sys_dictionary d ON m.type = d.id
         LEFT JOIN sys_dictionary d1 ON m.`status` = d1.id
@@ -171,7 +173,7 @@
         sxm.weld_firm firm,
         null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
         d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,sxm.weld_ip ip_path,
-        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag,s.name deptName
+        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,1 macFlag,s.name deptName
         from machine_weldsx_info sxm
         left join sys_dictionary d on sxm.weld_kind = d.id
         left join sys_dictionary d1 on sxm.weld_status = d1.id
@@ -225,7 +227,7 @@
         m.dept_id,m.g_id,m.`status`,m.model,m.firm,
         m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
         d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,m.ip_path,
-        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag,s.name deptName
+        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,0 macFlag,s.name deptName
         from machine_weld_info m
         left join sys_dictionary d on m.type = d.id
         left join sys_dictionary d1 on m.`status` = d1.id
@@ -301,7 +303,7 @@
         sxm.weld_firm firm,
         null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
         d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,sxm.weld_ip ip_path,
-        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,'sx' macFlag,s.name deptName
+        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,1 macFlag,s.name deptName
         from machine_weldsx_info sxm
         left join sys_dictionary d on sxm.weld_kind = d.id
         left join sys_dictionary d1 on sxm.weld_status = d1.id
@@ -355,7 +357,7 @@
         m.dept_id,m.g_id,m.`status`,m.model,m.firm,
         m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
         d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,m.ip_path,
-        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,'otc' macFlag,s.name deptName
+        m.area,m.bay,d4.value_name areaStr,d5.value_name bayStr,0 macFlag,s.name deptName
         from machine_weld_info m
         left join sys_dictionary d on m.type = d.id
         left join sys_dictionary d1 on m.`status` = d1.id

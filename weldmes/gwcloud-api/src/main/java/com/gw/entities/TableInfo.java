@@ -18,6 +18,11 @@ public class TableInfo {
 
     private Long weldMachineId;
 
+    /**
+     * 焊机类型（0：OTC，1：松下）
+     */
+    private Integer weldType;
+
     private String startTime;
 
     private String endTime;

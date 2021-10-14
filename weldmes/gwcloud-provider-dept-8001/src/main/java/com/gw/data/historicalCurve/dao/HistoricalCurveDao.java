@@ -17,18 +17,14 @@ public interface HistoricalCurveDao {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @DS("slave_1")
-    List<RtData> getList(@Param("startTime") String startTime, @Param("endTime") String endTime,
-                         @Param("taskId") Long taskId, @Param("welderId") Long welderId,
-                         @Param("weldMachineId") Long weldMachineId, @Param("tableName") String tableName);
+    List<RtData> getRealTimeDataList(TableInfo tableInfo);
 
     /**
      * @Date 2021/7/14 8:57
      * @Description 焊机历史曲线信息列表
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
-    List<RtData> selectHistoryCurveInfos(@Param("startTime") String startTime, @Param("endTime") String endTime,
-                                         @Param("taskId") Long taskId, @Param("welderId") Long welderId,
-                                         @Param("weldMachineId") Long weldMachineId);
+    List<RtData> selectHistoryCurveInfos(TableInfo tableInfo);
 
     /**
      * @Date 2021/7/14 17:55
