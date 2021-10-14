@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,34 +21,105 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
     @Autowired
     private HistoricalCurveDao historicalCurveDao;
 
-    private Map<String, Object> getOtcTableNameAndData(String startTime, String endTime, Long taskId, Long welderId, Long weldMachineId) {
+    private Map<String, Object> getOtcTableNameAndData(TableInfo tableInfo) {
         Map<String, Object> map = new HashMap<>();
         List<RtData> rtDataList = new ArrayList<>();
         List<TableInfo> tableInfoList = new ArrayList<>();
-        //根据时间段获取OTC表名集合
-        final List<String> otcTableList = TableStrategy.getOtcTableByDateTime(startTime, endTime);
-        if (!ObjectUtils.isEmpty(otcTableList)) {
-            //删除数据库不存在的表
-            otcTableList.removeIf(s -> ObjectUtils.isEmpty(historicalCurveDao.tableExistYesOrNo(s)));
-            if (!otcTableList.isEmpty()) {
-                //添加存在的表到集合中并返回
-                otcTableList.forEach(tableName -> {
-                    TableInfo tableInfo = new TableInfo();
-                    tableInfo.setTableName(tableName);
-                    tableInfo.setTaskId(taskId);
-                    tableInfo.setWelderId(welderId);
-                    tableInfo.setWeldMachineId(weldMachineId);
-                    tableInfo.setStartTime(startTime);
-                    tableInfo.setEndTime(endTime);
-                    tableInfoList.add(tableInfo);
-                });
+        if (null != tableInfo) {
+            Map<Integer, List<String>> listMap = new HashMap<>();
+            //如果设备类型为空，则查询OTC和松下两个类型
+            if (tableInfo.getWeldType() == null) {
+                final List<String> otcTable = TableStrategy.getOtcTableByDateTime(tableInfo.getStartTime(), tableInfo.getEndTime());
+                if (otcTable != null && otcTable.size() > 0) {
+                    //删除数据库不存在的表
+                    otcTable.removeIf(table -> ObjectUtils.isEmpty(historicalCurveDao.tableExistYesOrNo(table)));
+                    if (otcTable.size() > 0) {
+                        listMap.put(0, otcTable);
+                    }
+                }
+                final List<String> sxTable = TableStrategy.getSxTableByDateTime(tableInfo.getStartTime(), tableInfo.getEndTime());
+                if (sxTable != null && sxTable.size() > 0) {
+                    //删除数据库不存在的表
+                    sxTable.removeIf(table -> ObjectUtils.isEmpty(historicalCurveDao.tableExistYesOrNo(table)));
+                    if (sxTable.size() > 0) {
+                        listMap.put(1, sxTable);
+                    }
+                }
+            } else {
+                //OTC设备
+                if (tableInfo.getWeldType() == 0) {
+                    //根据时间段获取OTC表名集合
+                    final List<String> otcTable = TableStrategy.getOtcTableByDateTime(tableInfo.getStartTime(), tableInfo.getEndTime());
+                    if (otcTable != null && otcTable.size() > 0) {
+                        //删除数据库不存在的表
+                        otcTable.removeIf(table -> ObjectUtils.isEmpty(historicalCurveDao.tableExistYesOrNo(table)));
+                        if (otcTable.size() > 0) {
+                            listMap.put(0, otcTable);
+                        }
+                    }
+                }
+                //松下设备
+                else {
+                    //根据时间段获取松下表名集合
+                    final List<String> sxTable = TableStrategy.getSxTableByDateTime(tableInfo.getStartTime(), tableInfo.getEndTime());
+                    if (sxTable != null && sxTable.size() > 0) {
+                        //删除数据库不存在的表
+                        sxTable.removeIf(table -> ObjectUtils.isEmpty(historicalCurveDao.tableExistYesOrNo(table)));
+                        if (sxTable.size() > 0) {
+                            listMap.put(1, sxTable);
+                        }
+                    }
+                }
+            }
+            if (listMap.size() > 0) {
+                //表名集合
+                tableInfoList = getTableInfoList(listMap, tableInfo);
+                final String tableName = tableInfoList.get(0).getTableName();
+                tableInfo.setTableName(tableName);
                 //返回第一张表的数据
-                rtDataList = historicalCurveDao.getList(startTime, endTime, taskId, welderId, weldMachineId, otcTableList.get(0));
+                rtDataList = historicalCurveDao.getRealTimeDataList(tableInfo);
             }
         }
         map.put("list", rtDataList);
         map.put("tableNames", tableInfoList);
         return map;
+    }
+
+    private List<TableInfo> getTableInfoList(Map<Integer, List<String>> listMap, TableInfo tableInfo) {
+        List<TableInfo> tableInfoList = new ArrayList<>();
+        if (listMap.size() > 0) {
+            if (listMap.containsKey(0)) {
+                final List<String> otcTables = listMap.get(0);
+                //添加存在的表到集合中并返回
+                otcTables.forEach(tableName -> {
+                    TableInfo table = new TableInfo();
+                    table.setTableName(tableName);
+                    table.setTaskId(tableInfo.getTaskId());
+                    table.setWelderId(tableInfo.getWelderId());
+                    table.setWeldMachineId(tableInfo.getWeldMachineId());
+                    table.setStartTime(tableInfo.getStartTime());
+                    table.setEndTime(tableInfo.getEndTime());
+                    table.setWeldType(0);
+                    tableInfoList.add(table);
+                });
+            }
+            if (listMap.containsKey(1)) {
+                final List<String> sxTables = listMap.get(1);
+                //添加存在的表到集合中并返回
+                sxTables.forEach(tableName -> {
+                    TableInfo table = new TableInfo();
+                    table.setTableName(tableName);
+                    table.setTaskId(tableInfo.getTaskId());
+                    table.setWelderId(tableInfo.getWelderId());
+                    table.setWeldMachineId(tableInfo.getWeldMachineId());
+                    table.setStartTime(tableInfo.getStartTime());
+                    table.setEndTime(tableInfo.getEndTime());
+                    table.setWeldType(1);
+                    tableInfoList.add(table);
+                });
+            }
+        }
+        return tableInfoList;
     }
 
     /**
@@ -58,87 +128,9 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @Override
-    public Map<String, Object> getList(String startTime, String endTime, Long taskId, Long welderId, Long weldMachineId) throws ParseException {
+    public Map<String, Object> getList(TableInfo tableInfo) {
 
-        return getOtcTableNameAndData(startTime, endTime, taskId, welderId, weldMachineId);
-
-//        Map<String, Object> map = new HashMap<>();
-//
-//        Date bigTime = null;
-//
-//        Date endTimes = null;
-//        Calendar calEnd = Calendar.getInstance();
-//        if (!ObjectUtils.isEmpty(startTime)) {
-//
-//            bigTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime + " 00:00:00");
-//        }
-//
-//        if (!ObjectUtils.isEmpty(endTime)) {
-//
-//            endTimes = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime + " 00:00:00");
-//            calEnd.setTime(endTimes);
-//        }
-//
-//        List<Date> lDate = new ArrayList<>();
-//
-//        lDate.add(bigTime);
-//
-//        Calendar calBegin = Calendar.getInstance();
-//
-//        calBegin.setTime(bigTime);
-//
-//        if (!ObjectUtils.isEmpty(endTimes)) {
-//
-//            while (endTimes.after(calBegin.getTime())) {
-//
-//                calBegin.add(Calendar.DAY_OF_MONTH, 1);
-//
-//                lDate.add(calBegin.getTime());
-//            }
-//        }
-//
-//        List<TableInfo> tableNames = new ArrayList<>();
-//        List<TableInfo> tableNamesList = new ArrayList<>();
-//
-//        //获取表名列表 并 判断表是否存在
-//        for (Date date : lDate) {
-//
-//            TableInfo tableInfo = new TableInfo();
-//
-//            String tableName = "otcrtd" + new SimpleDateFormat("yyyyMMdd").format(date);
-//
-//            Integer rows = historicalCurveDao.tableExistYesOrNo(tableName);
-//
-//            if (ObjectUtils.isEmpty(rows)) {
-//                continue;
-//            }
-//
-//            tableInfo.setTableName(tableName);
-//
-//            tableInfo.setTaskId(taskId);
-//
-//            tableInfo.setWelderId(welderId);
-//
-//            tableInfo.setWeldMachineId(weldMachineId);
-//
-//            tableNames.add(tableInfo);
-//
-//        }
-//
-//        for (int i = 0; i < tableNames.size(); i++) {
-//
-//            List<RtData> list = historicalCurveDao.getList(startTime, endTime, taskId, welderId, weldMachineId, tableNames.get(i).getTableName());
-//
-//            if (list.size() != 0) {
-//                tableNamesList.add(tableNames.get(i));
-//                map.put("list", list);
-//                continue;
-//            }
-//        }
-//
-//        map.put("tableNames", tableNamesList);
-//
-//        return map;
+        return getOtcTableNameAndData(tableInfo);
 
     }
 
@@ -148,9 +140,9 @@ public class HistoricalCurveServiceImpl implements HistoricalCurveService {
      * @Params startTime 开始时间  endTime 结束时间  taskId 任务id  welderId 焊工id  weldMachineId 焊机id
      */
     @Override
-    public List<RtData> getHistoryCurveInfos(String startTime, String endTime, Long taskId, Long welderId, Long weldMachineId) {
+    public List<RtData> getHistoryCurveInfos(TableInfo tableInfo) {
 
-        return historicalCurveDao.selectHistoryCurveInfos(startTime, endTime, taskId, welderId, weldMachineId);
+        return historicalCurveDao.selectHistoryCurveInfos(tableInfo);
     }
 
     /**

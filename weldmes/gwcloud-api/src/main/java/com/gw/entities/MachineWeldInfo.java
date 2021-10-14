@@ -173,10 +173,9 @@ public class MachineWeldInfo implements Serializable {
     private int taskFlag;
 
     /**
-     * 设备标识
+     * 设备标识（0：OTC，1：松下）
      */
     @ExcelIgnore
-    private String macFlag;
-
+    private Integer macFlag;
 
 }

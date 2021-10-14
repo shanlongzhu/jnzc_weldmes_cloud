@@ -1,5 +1,6 @@
 package com.gw.entities;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,6 +55,11 @@ public class RtData implements Serializable {
     private String taskName;
     private String taskNo;
     private String createTime;
+
+    /**
+     * 设备类型标识（0：OTC，1：松下）
+     */
+    private Integer macFlag;
 
     /**
      * 任务实际开始时间
