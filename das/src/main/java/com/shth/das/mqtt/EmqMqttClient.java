@@ -106,6 +106,8 @@ public class EmqMqttClient {
         subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamDownload));
         //松下AT3系列【通道参数下载】
         subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxAt3ParamDownload));
+        //OTC程序包路径下发
+        subTopic(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1IssueProgramPath));
     }
 
     /**

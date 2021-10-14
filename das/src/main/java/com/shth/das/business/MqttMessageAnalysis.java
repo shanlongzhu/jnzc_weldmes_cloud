@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.shth.das.codeparam.MqttParam;
 import com.shth.das.common.CommonMap;
 import com.shth.das.pojo.db.TaskClaimIssue;
-import com.shth.das.pojo.jnotc.JNCommandIssue;
-import com.shth.das.pojo.jnotc.JNPasswordIssue;
-import com.shth.das.pojo.jnotc.JNProcessClaim;
-import com.shth.das.pojo.jnotc.JNProcessIssue;
+import com.shth.das.pojo.jnotc.*;
 import com.shth.das.pojo.jnsx.*;
 import com.shth.das.util.CRC7Check;
 import com.shth.das.util.CommonUtils;
@@ -284,6 +281,24 @@ public class MqttMessageAnalysis {
                 //length：92
                 String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
+            }
+        }
+    }
+
+    /**
+     * OTC程序包路径下发
+     *
+     * @param param mqtt入参实体类
+     */
+    public void otcV1IssueProgramPath(MqttParam param) {
+        if (null != param) {
+            final String message = param.getMessage();
+            final String topic = param.getTopic();
+            final OtcV1IssueProgramPath otcV1IssueProgramPath = JSON.parseObject(message, OtcV1IssueProgramPath.class);
+            if (null != otcV1IssueProgramPath) {
+                final String gatherNo = otcV1IssueProgramPath.getGatherNo();
+                final String str = JnOtcRtDataProtocol.otcV1IssueProgramPath(otcV1IssueProgramPath);
+                otcChannelWrite(gatherNo, str, "----->OTC程序包路径下发成功", topic);
             }
         }
     }

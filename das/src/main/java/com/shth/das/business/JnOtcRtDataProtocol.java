@@ -723,6 +723,47 @@ public class JnOtcRtDataProtocol {
         return null;
     }
 
+    public static String stringTransformAscii(String value) {
+        StringBuffer sbu = new StringBuffer();
+        char[] chars = value.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (i != chars.length - 1) {
+                sbu.append((int) chars[i]).append(",");
+            } else {
+                sbu.append((int) chars[i]);
+            }
+        }
+        return sbu.toString();
+    }
+
+    /**
+     * OTC程序包路径下发
+     *
+     * @param programPath OtcV1IssueProgramPath
+     * @return String
+     */
+    public static String otcV1IssueProgramPath(OtcV1IssueProgramPath programPath) {
+        if (null != programPath) {
+            try {
+                final String head = "007E3D01010111";
+                final String gatherNo = CommonUtils.lengthJoint(programPath.getGatherNo(), 4);
+                final String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
+                //ASCII码转16进制
+                final String path = CommonUtils.convertStringToHex(programPath.getPackagePath());
+                //长度拼接
+                final String packagePath = CommonUtils.stringLengthJoint(path, 100);
+                final String foot = "007D";
+                final String str = head + gatherNo + port + packagePath + foot;
+                if (str.length() == 126) {
+                    return str.toUpperCase();
+                }
+            } catch (Exception e) {
+                log.error("OTC程序包路径下发字符串拼接异常：", e);
+            }
+        }
+        return null;
+    }
+
     /**
      * 密码返回协议解析
      *

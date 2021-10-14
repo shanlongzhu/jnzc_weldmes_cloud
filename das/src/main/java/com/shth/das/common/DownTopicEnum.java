@@ -54,7 +54,11 @@ public enum DownTopicEnum {
     /**
      * 松下AT3系列【通道参数下载】
      */
-    SxAt3ParamDownload("SxAt3ParamDownload");
+    SxAt3ParamDownload("SxAt3ParamDownload"),
+    /**
+     * OTC下发程序包路径
+     */
+    OtcV1IssueProgramPath("OtcV1IssueProgramPath");
 
     private final String value;
 

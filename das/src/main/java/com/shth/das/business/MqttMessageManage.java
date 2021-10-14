@@ -48,6 +48,8 @@ public class MqttMessageManage {
         mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamDownload), mqttMessageAnalysis::sxFr2ChannelParamDownload);
         //松下AT3系列【通道参数下载】
         mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxAt3ParamDownload), mqttMessageAnalysis::sxAt3ParamDownload);
+        //OTC程序包路径下发
+        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1IssueProgramPath), mqttMessageAnalysis::otcV1IssueProgramPath);
     }
 
     /**
