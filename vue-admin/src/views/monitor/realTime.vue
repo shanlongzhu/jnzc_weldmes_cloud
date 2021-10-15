@@ -99,7 +99,7 @@
                                 <img :src="`/swipes/${imgType(mqttLastData.typeStr)}${statusText(mqttLastData.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
-                                <p><span>设备编号：</span>{{mqttLastData.macFlag===0?'OTC':'松下'}}-{{mqttLastData.machineNo||'--'}}</p>
+                                <p><span>设备编号：</span>{{mqttLastData.macFlag===0||mqttLastData.weldType===0?'OTC':'松下'}}-{{mqttLastData.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{mqttLastData.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{mqttLastData.welderName||'--'}}</p>
                                 <p><span>焊接电流：</span>{{mqttLastData.electricity||mqttLastData.electricity===0?mqttLastData.electricity:'--'}}A</p>

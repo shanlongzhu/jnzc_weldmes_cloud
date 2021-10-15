@@ -150,17 +150,8 @@ export default {
     props: {},
     data () {
         return {
-            //mqtt
-            client: {},
-            options: {
-                timeout: 50,
-                keepAliveInterval: 60,
-                cleanSession: false,
-                useSSL: false,
-                reconnect: true,
-                clientId: "adminTest" + new Date().getTime()
-            },
-            timeout: '',
+          //mqtt
+          newClientMq: {},
 
 
             area: '',
@@ -319,7 +310,6 @@ export default {
                     objItem.taskNo = '';//任务编号
                     return objItem;
                 });
-                this.createConnection2();
 
             }
         },
@@ -370,61 +360,76 @@ export default {
             this.selectTask = row || {};
         },
 
-        //mqtt创建
-        createConnection () {
-            let connectUrl = `ws://${process.env.VUE_APP_MQTT_API}:8083/mqtt`
-            try {
-                this.client = mqtt.connect(connectUrl, this.options)
-            } catch (error) {
-                console.log('连接失败', error)
-            }
-            this.client.on('connect', () => {
-                this.doSubscribe();
-
-            })
-            this.client.on('error', error => {
-                console.log('连接失败', error)
-            })
-            this.client.on('message', (topic, message) => {
-                if (topic == 'jnOtcV1RtData') {
-                    var datajson = JSON.parse(`${message}`);
-                    if (datajson.length > 0) {
-                        //更新列表状态
-                        this.setData(datajson);
-                    }
-                }
-                //松下
-                if (topic == 'jnSxRtData') {
-                    var datajson = JSON.parse(`${message}`);
-                    if (datajson.length > 0) {
-                        //更新列表状态
-                        this.setDataSx(datajson);
-                    }
-                }
-            })
-        },
-
-
-        //订阅主题
-        doSubscribe () {
-            // otc
-            this.client.subscribe('jnOtcV1RtData', 0, (error, res) => {
-                if (error) {
-                    console.log('Subscribe to topics error', error)
-                    return
-                }
+      //mqtt创建
+      newMqtt () {
+        const PahoMQTT = require('paho-mqtt');
+        const name = new Date().getTime() + 'client';
+        this.newClientMq = new PahoMQTT.Client(`${process.env.VUE_APP_MQTT_API}`, Number(8083), name);
+        this.newClientMq.connect({
+          timeout: 50,
+          keepAliveInterval: 60,
+          cleanSession: false,
+          useSSL: false,
+          onFailure: function (e) {
+            console.log(e);
+          },
+          reconnect: true,
+          onSuccess: (res) => {
+            this.newClientMq.subscribe('jnOtcV1RtData', {
+              qos: 0,
+              onSuccess: function (e) {
+                console.log("返回主题订阅成功：jnOtcV1RtData");
+              },
+              onFailure: function (e) {
+                console.log(e);
+              }
             });
-            //松下
-            this.client.subscribe('jnSxRtData', 0, (error, res) => {
-                if (error) {
-                    console.log('Subscribe to topics error', error)
-                    return
-                }
+            this.newClientMq.subscribe('jnSxRtData', {
+              qos: 0,
+              onSuccess: function (e) {
+                console.log("返回主题订阅成功：jnSxRtData");
+              },
+              onFailure: function (e) {
+                console.log(e);
+              }
             })
-        },
+          }
+        })
+        this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
+          //otc设备实时监测
+          if (destinationName == 'jnOtcV1RtData') {
+            var datajson = JSON.parse(payloadString);
+            console.log(datajson)
+            if (datajson.length > 0) {
+              if (!this.drawer) {
+                //更新列表状态
+                this.setData(datajson);
+              } else {
+                //获取曲线数据
+                this.setLineData(datajson);
+              }
+            }
+          }
+          //sx设备实时监测
+          if (destinationName == 'jnSxRtData') {
+            var datajson = JSON.parse(payloadString);
+            console.log(datajson)
+            if (!this.drawer) {
+              //更新列表状态
+              this.setDataSx(datajson);
+            } else {
+              //获取曲线数据
+              this.setLineDataSx(datajson);
+            }
+          }
+        }
+      },
+
+
+
 
         doPublish (msg) {
-            this.client.publish('jnTaskClaimIssue', msg, 1)
+            this.newClientMq.publish('jnTaskClaimIssue', msg)
         },
 
         //任务绑定
@@ -525,7 +530,7 @@ export default {
         }, 1000)
     },
     mounted () {
-        this.createConnection();
+        this.newMqtt();
     },
 }
 </script>

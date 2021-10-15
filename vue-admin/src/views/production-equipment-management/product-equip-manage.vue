@@ -191,6 +191,14 @@
                     @click="bindAreaFun2"
                 >部门区间绑定</el-button>
             </div>
+          <div class="con-w">
+            <el-button
+              v-has="'exprot'"
+              size="small"
+              icon="el-icon-document-remove"
+              @click="upImportFun"
+            >升级导入</el-button>
+          </div>
 
         </div>
         <div
@@ -282,7 +290,7 @@
                         <span>厂家</span><span class="red-star">*</span>
                     </template>
                     <template slot-scope="scope">
-                        {{scope.row.firmStr}} 
+                        {{scope.row.firmStr}}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -606,6 +614,7 @@
         <area-bind ref="areaBind"></area-bind>
         <equipment-bind ref="equipmentBind"></equipment-bind>
         <area-org-bind ref="areaBind2"></area-org-bind>
+        <up-import ref="upImport"></up-import>
     </div>
 </template>
 
@@ -616,8 +625,9 @@ import { getToken } from '@/utils/auth'
 import areaBind from './components/areaBind.vue'
 import EquipmentBind from './components/equipmentBind.vue'
 import AreaOrgBind from './components/areaOrgBind.vue'
+import UpImport from "./components/upImport";
 export default {
-    components: { areaBind, EquipmentBind, AreaOrgBind },
+    components: {UpImport, areaBind, EquipmentBind, AreaOrgBind },
     name: 'product-equip-manage',
     data () {
         return {
@@ -799,8 +809,8 @@ export default {
                 this.$nextTick(() => {
                     this.$refs.ruleForm.resetFields();
                     this.ruleForm = data[0] || {};
-                    this.ruleForm.gid = this.ruleForm.gid.split(',').map(Number);
-                    this.gatherNos.unshift({ id: parseInt(this.ruleForm.gid), gatherNo: this.ruleForm.machineGatherInfo.gatherNo });
+                  this.ruleForm.gid = (this.ruleForm.gid+'').split(',').map(Number);
+                  this.gatherNos.unshift({ id: parseInt(this.ruleForm.gid), gatherNo: this.ruleForm.gatherNo });
                     if (this.ruleForm.firm) {
                         this.changeFirm(this.ruleForm.firm);
                     }
@@ -913,6 +923,11 @@ export default {
         bindAreaFun2 () {
             this.$refs.areaBind2.init();
         },
+
+      //导入升级
+      upImportFun(){
+        this.$refs.upImport.init();
+      }
     }
 }
 </script>
