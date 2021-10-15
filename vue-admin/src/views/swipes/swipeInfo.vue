@@ -55,7 +55,7 @@
                             >
                                 <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
                                 <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
-                                <span>({{item.macFlag}}) {{item.machineNo}}--{{item.gatherNo}}</span>
+                                <span>({{item.macFlag===0?'OTC':'松下'}}) {{item.machineNo}}--{{item.gatherNo}}</span>
                             </li>
                         </ul>
                     </div>
@@ -469,11 +469,11 @@ export default {
 
             msg['weldIp'] = "";
             msg['gatherNo'] = "";
-            if (this.curModel.macFlag == 'otc') {
+            if (this.curModel.macFlag === 0) {
                 msg['weldType'] = 0;//设备类型
                 msg['gatherNo'] = this.curModel.gatherNo;//采集编号
             }
-            if (this.curModel.macFlag == 'sx') {
+            if (this.curModel.macFlag === 1) {
                 msg['weldType'] = 1;//设备类型
                 msg['weldIp'] = this.curModel.gatherNo || "";//设备IP
             }

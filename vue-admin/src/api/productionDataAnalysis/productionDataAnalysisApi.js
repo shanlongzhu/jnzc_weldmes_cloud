@@ -29,20 +29,21 @@ export function getWeldingArr() {
 }
 
 //获取历史曲线列表
-export function getHistoryList(params = {}) {
+export function getHistoryList(params={},data={}) {
   return request({
     url: "/historicalCurve/getHistoryInfos",
-    method: "get",
-    params
+    method: "post",
+    params,
+    data
   });
 }
 
 //获取历史曲线数据
-export function getHistoryTimeData(params = {}) {
+export function getHistoryTimeData(data={}) {
   return request({
     url: "/historicalCurve",
-    method: "get",
-    params
+    method: "post",
+    data
   });
 }
 

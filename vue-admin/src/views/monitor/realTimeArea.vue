@@ -53,7 +53,7 @@
                                 <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
-                                <p><span>设备编号：</span>{{item.machineNo||'--'}}</p>
+                                <p><span>设备编号：</span>{{item.macFlag===0?'OTC':'松下'}}-{{item.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{item.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{item.welderName||'--'}}</p>
                                 <p><span>焊接电流：</span>{{item.electricity||item.electricity===0?item.electricity:'--'}}A</p>
@@ -99,7 +99,7 @@
                                 <img :src="`/swipes/${imgType(mqttLastData.typeStr)}${statusText(mqttLastData.weldStatus).imgN}.png`" />
                             </span>
                             <div class="real-con-item-txt">
-                                <p><span>设备编号：</span>{{mqttLastData.machineNo||'--'}}</p>
+                                <p><span>设备编号：</span>{{mqttLastData.macFlag===0?'OTC':'松下'}}-{{mqttLastData.machineNo||'--'}}</p>
                                 <p><span>任务编号：</span>{{mqttLastData.taskNo||'--'}}</p>
                                 <p><span>操作人员：</span>{{mqttLastData.welderName||'--'}}</p>
                                 <p><span>焊接电流：</span>{{mqttLastData.electricity||mqttLastData.electricity===0?mqttLastData.electricity:'--'}}A</p>
@@ -357,7 +357,6 @@ export default {
 
         search () {
             this.page = 1;
-            this.getList();
         },
 
         //根据部门id获取设备列表
@@ -407,7 +406,7 @@ export default {
             this.selectItem = v;
             this.mqttLastData = { ...v };
             // this.$refs.lineComEChild.echartsClear();
-            // this.$refs.lineComVChild.echartsClear();            
+            // this.$refs.lineComVChild.echartsClear();
             this.$nextTick(() => {
                 this.$refs.lineComEChild.init(this.lineData);
                 this.$refs.lineComVChild.init(this.lineData);

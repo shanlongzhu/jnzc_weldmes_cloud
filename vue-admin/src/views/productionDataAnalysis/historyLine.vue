@@ -59,20 +59,41 @@
                         </el-option>
                     </el-select>
                 </div>
+              <div class="con-w">
+                <span>焊机品牌：</span>
+                <el-select
+                  v-model="weldBrand"
+                  placeholder="请选择"
+                  clearable
+                  style="width:100px"
+                  @change="changeWeldBrand"
+                >
+                  <el-option
+                    v-for="item in manufactorArr"
+                    :key="item.value"
+                    :label="item.valueName"
+                    :value="item.value"
+                  />
+                </el-select>
+              </div>
                 <div class="con-w">
                     <span>焊机编号：</span>
                     <el-select
-                        v-model="searchObj.weldMachineId"
+                        v-model="weldMachineIdObj"
                         placeholder="请选择"
                         clearable
-                        style="width:120px"
+                        filterable
+                        style="width:140px"
                     >
                         <el-option
                             v-for="item in weldingMachineArr"
-                            :key="item.id"
+                            :key="item.macFlag+'_'+item.id"
                             :label="item.machineNo"
-                            :value="item.id"
-                        />
+                            :value="JSON.stringify(item)"
+                        >
+                          <span style="float: left">{{ item.machineNo }}</span>
+                          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.macFlag===0?'OTC':'松下' }}</span>
+                        </el-option>
                     </el-select>
                 </div>
                 <div class="con-w">
@@ -145,6 +166,15 @@
                         min-width="150"
                     >
                     </vxe-table-column>
+                  <vxe-table-column
+                    field="macFlag"
+                    title="焊机厂家"
+                    min-width="150"
+                  >
+                    <template #default="{row}">
+                      {{row.macFlag===0?'OTC':'松下'}}
+                    </template>
+                  </vxe-table-column>
 
                     <vxe-table-column
                         field="taskRealityStartTime"
@@ -215,6 +245,7 @@ export default {
             startTime: moment(new Date()).startOf('day'),//时间
             endTime: moment(new Date()).endOf('day'),//时间
             taskStatusId:[],//任务状态
+            weldBrand:'',//焊机品牌
             searchObj: {
                 taskId: '',//任务编号
                 welderId: '',//焊工ID
@@ -231,8 +262,12 @@ export default {
             taskArr: [],
             //焊工下拉数据
             welderArr: [],
+            //焊机厂家标识
+            manufactorArr:[],
             //焊机下拉数据
             weldingMachineArr: [],
+            weldingMachineArrSource:[],
+          weldMachineIdObj:'',//选中的焊机编号
             dialogVisible: false,
 
 
@@ -243,6 +278,7 @@ export default {
                 weldMachineId: '',
                 startTime: '',
                 endTime: '',
+                weldType:''
             },
             //曲线数据
             timeData: [],
@@ -266,7 +302,7 @@ export default {
     },
 
     created () {
-        this.getList();
+        // this.getList();
         this.getTaskListFun();
         this.getWelderListFun();
         this.getWeldingListFun();
@@ -275,9 +311,10 @@ export default {
     methods: {
       //获取数据字典
       async getDicFun () {
-        let { data, code } = await getDictionaries({ "types": ["12"] });
+        let { data, code } = await getDictionaries({ "types": ["12","5"] });
         if (code == 200) {
-          this.taskStatusArr = data['12'] || []
+          this.taskStatusArr = data['12'] || [];
+          this.manufactorArr = data["5"]||[];
         }
       },
       //设置任务状态
@@ -285,6 +322,8 @@ export default {
         this.searchObj.taskId = '';
         this.getTaskListFun(v);
       },
+
+      //筛选焊机编号
 
         zoomFun () {
             this.dialogVisible = true;
@@ -309,13 +348,17 @@ export default {
 
         //获取任务列表
         async getList () {
-            let req = {
-                pn: this.page,
-                size:this.pageSize,
-                startTime: this.startTime ? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
-                endTime: this.endTime ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
-                ...this.searchObj
+            let params = {
+              pn: this.page,
+              size:this.pageSize,
             }
+            let req = {
+              startTime: this.startTime ? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
+              endTime: this.endTime ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+              ...this.searchObj
+            }
+            req.weldMachineId = this.weldMachineIdObj?JSON.parse(this.weldMachineIdObj).id:null;
+            req.weldType = this.weldMachineIdObj?JSON.parse(this.weldMachineIdObj).macFlag:null;
 
             if (!req.taskId && !req.welderId && req.weldMachineId) {
                 this.$nextTick(() => {
@@ -324,13 +367,14 @@ export default {
                         welderId: req.welderId,
                         machineId: req.weldMachineId,
                         taskRealityStartTime: req.startTime,
-                        taskRealityEndTime: req.endTime
+                        taskRealityEndTime: req.endTime,
+                        weldType:req.weldType
                     }
                     this.currentChangeEvent({ row: rowObj });
                 });
             } else {
                 this.loading = true;
-                let { code, data } = await getHistoryList(req);
+                let { code, data } = await getHistoryList(params,req);
                 this.loading = false;
                 if (code == 200) {
                     this.list = data.list
@@ -367,17 +411,32 @@ export default {
                 this.welderArr = data || []
             }
         },
+
         //获取焊机列表
         async getWeldingListFun () {
             const { data, code } = await getWeldingArr();
             if (code == 200) {
                 this.weldingMachineArr = data || [];
+                this.weldingMachineArrSource = data || [];
             }
         },
+
+      changeWeldBrand(v){
+        console.log(v)
+        if(v||v===0){
+          this.weldingMachineArr = this.weldingMachineArrSource.filter(item => item.macFlag==v);
+        }else{
+          this.weldingMachineArr = [...this.weldingMachineArrSource];
+        }
+
+      },
+
+
         //选择任务数据
         async currentChangeEvent ({ row }) {
+        console.log(row.weldType)
             this.surIndex = 0;
-
+            this.curveReq.weldType = row.weldType;
             this.curveReq.taskId = row.taskId;
             this.curveReq.welderId = row.welderId;
             this.curveReq.weldMachineId = row.machineId;

@@ -16,7 +16,7 @@
                 style="width:60px;margin-right:10px"
                 v-model="max"
                 :min="min"
-                :max="35"
+                :max="40"
                 placeholder=""
                 :controls="false"
             ></el-input-number>

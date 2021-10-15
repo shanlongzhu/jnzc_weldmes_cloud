@@ -53,7 +53,7 @@ export const constantRoutes = [
     component: Layout,
     hidden: true,
     children: [      {
-        
+
         path: '/redirect/:path(.*)',
         component: () => import('@/views/redirect/index'),
         meta:{
@@ -477,7 +477,7 @@ export const asyncRoutes = [
         name: 'realTime',
         meta: {
           mark:'901',
-          title: '实时监测',
+          title: '班组实时监测',
           noCache: true }
       },
       {
@@ -486,7 +486,7 @@ export const asyncRoutes = [
         name: 'realTimeArea',
         meta: {
           mark:'902',
-          title: '实时监测2',
+          title: '跨间实时监测',
           noCache: true }
       } ,
       {
@@ -496,7 +496,7 @@ export const asyncRoutes = [
         hidden: true,
         meta: {
           mark:'903',
-          title: '实时监测3',
+          title: '跨间实时监测明细',
           activeMenu: '/example/list' ,
           noCache:true
         }

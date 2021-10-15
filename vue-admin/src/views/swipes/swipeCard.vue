@@ -67,7 +67,7 @@
                     >
                         <i class="bind-tip">{{item.taskFlag?'已绑定':'空闲'}}</i>
                         <img :src="`/swipes/${imgType(item.typeStr)}${statusText(item.weldStatus).imgN}.png`" />
-                        <span>({{item.macFlag}}) {{item.machineNo}}--{{item.gatherNo}}</span>
+                        <span>({{item.macFlag===0?'OTC':'松下'}}) {{item.machineNo}}--{{item.gatherNo}}</span>
                     </li>
                 </ul>
 
@@ -184,7 +184,7 @@ export default {
         },
 
         //更新松下列表
-        setDataSx (b) {            
+        setDataSx (b) {
             let v1 = { ...b };
             this.list.forEach(item => {
                 if (parseInt(v1.weldCid) == parseInt(item.gatherNo)) {
