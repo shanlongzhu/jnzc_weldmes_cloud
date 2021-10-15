@@ -28,7 +28,7 @@
         <log4j.version>1.2.17</log4j.version>
         <lombok.version>1.18.14</lombok.version>
         <devtools.version>1.5.9.RELEASE</devtools.version>
-
+        <easyexcel.version>2.2.6</easyexcel.version>
     </properties>
 
     <dependencyManagement>

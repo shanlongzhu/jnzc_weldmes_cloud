@@ -1,5 +1,7 @@
 package com.gw.common;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.List;
 
 public class CommonUtil {
@@ -10,10 +12,7 @@ public class CommonUtil {
      * @return
      */
     public static boolean isNotEmpty(String str){
-        if (null != str && !"".equals(str)){
-            return true;
-        }
-        return false;
+        return StringUtils.isNotBlank(str);
     }
 
     /**

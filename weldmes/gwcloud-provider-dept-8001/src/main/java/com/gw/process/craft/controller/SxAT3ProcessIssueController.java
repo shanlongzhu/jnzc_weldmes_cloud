@@ -29,14 +29,14 @@ public class SxAT3ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxAT3/getSxAT3ProcessIssueInfos", method = RequestMethod.GET)
-    public HttpResult getSxAT3ProcessIssueInfos(@RequestParam(value="pn",defaultValue = "1") Integer pn, Long wpsLibraryId,
-                                                @RequestParam(value="size",defaultValue = "10") Integer size){
+    public HttpResult getSxAT3ProcessIssueInfos(@RequestParam(value = "pn", defaultValue = "1") Integer pn, Long wpsLibraryId,
+                                                @RequestParam(value = "size", defaultValue = "10") Integer size) {
 
-        PageHelper.startPage(pn,size);
+        PageHelper.startPage(pn, size);
 
         List<SxAT3ProcessIssue> list = sxAT3ProcessIssueService.getSxAT3ProcessIssueInfos(wpsLibraryId);
 
-        PageInfo page=new PageInfo(list,10);
+        PageInfo<?> page = new PageInfo<>(list, 10);
 
         return HttpResult.ok(page);
     }
@@ -47,7 +47,7 @@ public class SxAT3ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxAT3/addSxAT3ProcessIssueInfos", method = RequestMethod.POST)
-    public HttpResult getSxAT3ProcessIssueInfos(@RequestBody SxAT3ProcessIssue sxAT3ProcessIssue){
+    public HttpResult getSxAT3ProcessIssueInfos(@RequestBody SxAT3ProcessIssue sxAT3ProcessIssue) {
 
         sxAT3ProcessIssueService.addSxAT3ProcessIssueInfo(sxAT3ProcessIssue);
 
@@ -60,7 +60,7 @@ public class SxAT3ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxAT3/getSxAT3ProcessIssueInfoById", method = RequestMethod.GET)
-    public HttpResult getSxAT3ProcessIssueInfoById(Long id){
+    public HttpResult getSxAT3ProcessIssueInfoById(Long id) {
 
         SxAT3ProcessIssue sxAT3ProcessIssue = sxAT3ProcessIssueService.getSxAT3ProcessIssueInfoById(id);
 
@@ -73,7 +73,7 @@ public class SxAT3ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxAT3/updateSxAT3ProcessIssueInfo", method = RequestMethod.PUT)
-    public HttpResult updateSxAT3ProcessIssueInfo(@RequestBody SxAT3ProcessIssue sxAT3ProcessIssue){
+    public HttpResult updateSxAT3ProcessIssueInfo(@RequestBody SxAT3ProcessIssue sxAT3ProcessIssue) {
 
         sxAT3ProcessIssueService.updateSxAT3ProcessIssueInfo(sxAT3ProcessIssue);
 
@@ -86,7 +86,7 @@ public class SxAT3ProcessIssueController {
      * @Params
      */
     @RequestMapping(value = "sxAT3/delSxAT3ProcessIssueInfo", method = RequestMethod.DELETE)
-    public HttpResult delSxAT3ProcessIssueInfo(Long id){
+    public HttpResult delSxAT3ProcessIssueInfo(Long id) {
 
         sxAT3ProcessIssueService.deleteSxAT3ProcessIssueInfo(id);
 
@@ -98,8 +98,8 @@ public class SxAT3ProcessIssueController {
      * @Description 根据 工艺库id  查询  通道号
      * @Params
      */
-    @RequestMapping(value = "sxAT3/getChannelNosById",method = RequestMethod.GET)
-    public HttpResult getSxAT3ChannelNos(Long id){
+    @RequestMapping(value = "sxAT3/getChannelNosById", method = RequestMethod.GET)
+    public HttpResult getSxAT3ChannelNos(Long id) {
 
         List<String> list = sxAT3ProcessIssueService.getChannelNos(id);
 
