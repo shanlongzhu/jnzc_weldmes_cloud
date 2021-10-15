@@ -284,7 +284,6 @@ export default {
                 //otc设备实时监测
                 if (destinationName == 'jnOtcV1RtData') {
                     var datajson = JSON.parse(payloadString);
-                    console.log(datajson)
                     if (datajson.length > 0) {
                         if (!this.drawer) {
                             //更新列表状态
@@ -298,7 +297,6 @@ export default {
                 //sx设备实时监测
                 if (destinationName == 'jnSxRtData') {
                     var datajson = JSON.parse(payloadString);
-                    console.log(datajson)
                     if (!this.drawer) {
                         //更新列表状态
                         this.setDataSx(datajson);
@@ -412,6 +410,7 @@ export default {
         },
 
         setLineData (arr) {
+          console.log(arr)
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
                 if (filterArr.length > 0) {
@@ -431,6 +430,7 @@ export default {
         },
         //sx更新曲线
         setLineDataSx (arr) {
+          console.log(arr)
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 if (parseInt(arr.weldCid) == parseInt(this.selectItem.gatherNo)) {
                     this.mqttLastData = { ...arr };
