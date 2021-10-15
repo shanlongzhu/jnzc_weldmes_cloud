@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,6 +212,51 @@ public class WelderController {
 
         PageInfo page = new PageInfo(list, 5);
         return HttpResult.ok(page);
+    }
+
+    @RequestMapping(value = "machineUpgrade")
+    public HttpResult machineUpgrade(@RequestParam("file") MultipartFile file){
+        HttpResult result =new HttpResult();
+        String property = System.getProperty("user.dir");
+        File absolutePath = new File(property);
+        File savetFile = new File(absolutePath.getParent()+"/html/"+file.getOriginalFilename());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(savetFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = file.getInputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while((len = inputStream.read(buffer)) != -1){
+                fos.write(buffer,0,len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.setMsg("false");
+            return result;
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(fos != null){
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        result.setMsg("true");
+        return result;
     }
 
 }

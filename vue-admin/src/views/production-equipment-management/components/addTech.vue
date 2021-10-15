@@ -257,7 +257,7 @@
                     style="border:1px solid #aaa"
                     class="pt10 pb10 mt10"
                 >
-                    <el-row>                        
+                    <el-row>
                         <el-col :span="8">
                             <el-form-item
                                 label="焊接电流"
@@ -315,7 +315,7 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <el-row v-if="ruleForm2.unitarySeveral==1">                        
+                    <el-row v-if="ruleForm2.unitarySeveral==1">
                         <el-col :span="8">
                             <el-form-item
                                 label="焊接电压"
@@ -804,7 +804,7 @@ export default {
             options: {
                 timeout: 50,
                 keepAliveInterval: 60,
-                cleanSession: false,
+                cleanSession: true,
                 useSSL: false,
                 reconnect: true,
                 clientId: "adminTest" + new Date().getTime()
@@ -1275,7 +1275,7 @@ export default {
                     if(this.channelNoArr.length>0){
                         this.ruleForm2.channelNo = this.channelNoArr[0].id;
                     }
-                    
+
                     Reflect.deleteProperty(this.ruleForm2, "id");
                 })
             }
@@ -1398,7 +1398,7 @@ export default {
             this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {                
+            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
                 setTimeout(() => {
                     let msg = {}
                     msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;

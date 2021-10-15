@@ -230,7 +230,7 @@
     </div>
 
     <!-- <canvas id="cvs" style="width:100%;height:100%">当前浏览器不支持canvas</canvas> -->
-    
+
 </template>
 
 <script>
@@ -443,7 +443,7 @@ export default {
             this.newClientMq.connect({
                 timeout: 50,
                 keepAliveInterval: 60,
-                cleanSession: false,
+                cleanSession: true,
                 useSSL: false,
                 onFailure: function (e) {
                     console.log(e);

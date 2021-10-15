@@ -368,7 +368,7 @@ export default {
         this.newClientMq.connect({
           timeout: 50,
           keepAliveInterval: 60,
-          cleanSession: false,
+          cleanSession: true,
           useSSL: false,
           onFailure: function (e) {
             console.log(e);
@@ -494,7 +494,7 @@ export default {
                 duration: '1000'
             });
             setTimeout(() => {
-                this.client.end();
+                // this.newClientMq.end();
                 this.$router.replace({ path: '/swipeCard' })
             }, 1000)
         },

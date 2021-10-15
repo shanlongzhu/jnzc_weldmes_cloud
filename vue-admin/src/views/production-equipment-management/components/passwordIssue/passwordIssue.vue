@@ -1,6 +1,6 @@
 <!--
  * @Descripttion: 密码下发
- * @version: 
+ * @version:
  * @Author: zhanganpeng
  * @Date: 2021-07-08 10:01:29
  * @LastEditors: zhanganpeng
@@ -242,7 +242,7 @@ export default {
             options: {
                 timeout: 50,
                 keepAliveInterval: 60,
-                cleanSession: false,
+                cleanSession: true,
                 useSSL: false,
                 reconnect: true,
                 clientId: "adminTest" + new Date().getTime()

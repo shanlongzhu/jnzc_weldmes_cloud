@@ -1472,7 +1472,7 @@ export default {
             options: {
                 timeout: 50,
                 keepAliveInterval: 60,
-                cleanSession: false,
+                cleanSession: true,
                 useSSL: false,
                 reconnect: true,
                 clientId: "adminTest" + new Date().getTime()

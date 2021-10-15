@@ -355,7 +355,7 @@ export default {
             this.newClientMq.connect({
                 timeout: 50,
                 keepAliveInterval: 60,
-                cleanSession: false,
+                cleanSession: true,
                 useSSL: false,
                 onFailure: function (e) {
                     console.log(e);
