@@ -24,9 +24,8 @@
 
     <!--查询区域信息-->
     <select id="selectAreaInfos" resultType="com.gw.entities.AreaBayInfo">
-        select dic.id areaId,dic.value_name areaBayName,area_bay.id id
+        select dic.id areaId,dic.value_name areaBayName
         from sys_dictionary dic
-        left join area_bay on dic.id = area_bay.area_id
         where dic.`type` = '16'
     </select>
 
