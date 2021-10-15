@@ -410,11 +410,11 @@ export default {
         },
 
         setLineData (arr) {
-          console.log(arr)
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.gatherNo));
                 if (filterArr.length > 0) {
                     this.mqttLastData = filterArr.slice(-1)[0];
+                  console.log(this.mqttLastData)
                     if (this.lineData.length > 15) {
                         this.lineData.shift();
                         this.lineData.shift();
@@ -430,10 +430,10 @@ export default {
         },
         //sx更新曲线
         setLineDataSx (arr) {
-          console.log(arr)
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 if (parseInt(arr.weldCid) == parseInt(this.selectItem.gatherNo)) {
                     this.mqttLastData = { ...arr };
+                  console.log(this.mqttLastData)
                     if (this.lineData.length > 20) {
                         this.lineData.shift();
                     }
