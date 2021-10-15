@@ -59,11 +59,9 @@ public class WelderController {
     public HttpResult getListNoPage(String machineNo, Integer type, Integer grade, Integer status,
                                     Integer firm, Long isNetwork, String gatherNo, String ipPath, Integer model, Integer area, Integer bay) {
 
-        //TODO 重写SQL
         List<MachineWeldInfo> list = welderService.getStatusOfMachineWeldInfos(machineNo, type, grade, status, firm, isNetwork, gatherNo, ipPath, model, area, bay);
 
         return HttpResult.ok(list);
-//        return HttpResult.ok(new ArrayList<MachineWeldInfo>());
     }
 
     /**
