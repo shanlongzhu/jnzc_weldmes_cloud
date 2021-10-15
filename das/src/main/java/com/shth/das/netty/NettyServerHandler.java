@@ -47,7 +47,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         this.otcHandlerMapping.put(24, this.jnOtcRtDataProtocol::otcIssueReturnManage);
         //OTC（1.0）索取返回协议解析
         this.otcHandlerMapping.put(112, this.jnOtcRtDataProtocol::otcClaimReturnManage);
-        //OTC（1.0）密码返回和控制命令返回
+        //OTC（1.0）密码返回和控制命令返回[新增程序包路径下发返回]
         this.otcHandlerMapping.put(22, this.jnOtcRtDataProtocol::otcPwdCmdReturnManage);
     }
 

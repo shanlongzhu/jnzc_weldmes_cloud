@@ -27,6 +27,10 @@ public enum UpTopicEnum {
      * OTC（1.0）控制命令返回
      */
     OtcV1CommandReturn("OtcV1CommandReturn"),
+    /**
+     * OTC（1.0）程序包路径下发返回
+     */
+    OtcV1ProgramPathIssueReturn("OtcV1ProgramPathIssueReturn"),
 
 
     /**

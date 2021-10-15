@@ -264,6 +264,15 @@ public class JnOtcRtDataProtocol {
                     }
                 }
             }
+            //程序包路径下发返回
+            if (map.containsKey("OtcV1ProgramPathIssueReturn")) {
+                final OtcV1ProgramPathIssueReturn pathIssueReturn = (OtcV1ProgramPathIssueReturn) map.get("OtcV1ProgramPathIssueReturn");
+                if (null != pathIssueReturn) {
+                    final String message = JSON.toJSONString(pathIssueReturn);
+                    //通过mqtt发送到服务端
+                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProgramPathIssueReturn), message, 0);
+                }
+            }
         }
     }
 
@@ -812,6 +821,27 @@ public class JnOtcRtDataProtocol {
                 return jnLockMachineReturn;
             } catch (Exception e) {
                 log.error("锁焊机和解锁焊机指令返回协议解析异常：", e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * OTCv1程序包路径下发返回解析
+     *
+     * @param str 16进制字符串
+     * @return 程序包路径下发返回实体类
+     */
+    public OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn(String str) {
+        if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
+            try {
+                OtcV1ProgramPathIssueReturn pathIssueReturn = new OtcV1ProgramPathIssueReturn();
+                pathIssueReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
+                pathIssueReturn.setStatus(Integer.valueOf(str.substring(16, 18), 16));
+                return pathIssueReturn;
+            } catch (Exception e) {
+                log.error("OTCv1程序包路径下发返回解析异常：", e);
                 return null;
             }
         }

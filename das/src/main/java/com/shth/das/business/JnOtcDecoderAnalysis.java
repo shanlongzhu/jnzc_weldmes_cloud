@@ -34,7 +34,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
         this.decoderMapping.put(24, this::otcIssueReturnAnalysis);
         //OTC（1.0）索取返回协议解析
         this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
-        //OTC（1.0）密码返回和控制命令返回
+        //OTC（1.0）密码返回和控制命令返回[新增包路径下发返回]
         this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
     }
 
@@ -138,14 +138,14 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
                 }
             }
             //控制命令返回
-            if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+            else if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JNCommandReturn commandReturn = this.jnOtcRtDataProtocol.jnCommandReturnAnalysis(str);
                 if (null != commandReturn) {
                     map.put("JNCommandReturn", commandReturn);
                 }
             }
             //锁焊机指令返回
-            if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+            else if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put("JnLockMachineReturn", jnLockMachineReturn);
@@ -156,6 +156,13 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
                 final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put("JnLockMachineReturn", jnLockMachineReturn);
+                }
+            }
+            //程序包路径下发返回
+            else if ("7E".equals(str.substring(0, 2)) && "11".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+                final OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = this.jnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
+                if (null != otcV1ProgramPathIssueReturn) {
+                    map.put("OtcV1ProgramPathIssueReturn", otcV1ProgramPathIssueReturn);
                 }
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
