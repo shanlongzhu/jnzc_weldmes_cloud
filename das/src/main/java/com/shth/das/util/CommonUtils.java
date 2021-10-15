@@ -17,7 +17,7 @@ public class CommonUtils {
      * @return Integer
      */
     public static Integer dataAnalysis(String str, int[] startByte) {
-        if (startByte.length > 0) {
+        if (StringUtils.isNotBlank(str) && startByte.length > 0) {
             for (int byt : startByte) {
                 if ((byt + 1) * 2 > str.length()) {
                     //数组下标越界，返回0，不处理
@@ -57,13 +57,16 @@ public class CommonUtils {
      * @return String
      */
     public static String strTo16(String s) {
-        StringBuilder str = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            int ch = s.charAt(i);
-            String s4 = Integer.toHexString(ch);
-            str.append(s4);
+        if (StringUtils.isNotBlank(s)) {
+            StringBuilder str = new StringBuilder();
+            for (int i = 0; i < s.length(); i++) {
+                int ch = s.charAt(i);
+                String s4 = Integer.toHexString(ch);
+                str.append(s4);
+            }
+            return str.toString();
         }
-        return str.toString();
+        return null;
     }
 
     /**
@@ -157,14 +160,17 @@ public class CommonUtils {
      * @return byte数组
      */
     public static byte[] hexStringToByte(String hex) {
-        int len = (hex.length() / 2);
-        byte[] result = new byte[len];
-        char[] achar = hex.toCharArray();
-        for (int i = 0; i < len; i++) {
-            int pos = i * 2;
-            result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+        if (StringUtils.isNotBlank(hex)) {
+            int len = (hex.length() / 2);
+            byte[] result = new byte[len];
+            char[] achar = hex.toCharArray();
+            for (int i = 0; i < len; i++) {
+                int pos = i * 2;
+                result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+            }
+            return result;
         }
-        return result;
+        return new byte[0];
     }
 
     private static byte toByte(char c) {
@@ -178,12 +184,15 @@ public class CommonUtils {
      * @return 16进制
      */
     public static String convertStringToHex(String str) {
-        char[] chars = str.toCharArray();
-        StringBuilder hex = new StringBuilder();
-        for (char aChar : chars) {
-            hex.append(Integer.toHexString(aChar));
+        if (StringUtils.isNotBlank(str)) {
+            char[] chars = str.toCharArray();
+            StringBuilder hex = new StringBuilder();
+            for (char aChar : chars) {
+                hex.append(Integer.toHexString(aChar));
+            }
+            return hex.toString();
         }
-        return hex.toString();
+        return null;
     }
 
     /**
@@ -193,13 +202,16 @@ public class CommonUtils {
      * @return ASCII码
      */
     public static String convertHexToString(String hex) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < hex.length() - 1; i += 2) {
-            String output = hex.substring(i, (i + 2));
-            int decimal = Integer.parseInt(output, 16);
-            sb.append((char) decimal);
+        if (StringUtils.isNotBlank(hex)) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hex.length() - 1; i += 2) {
+                String output = hex.substring(i, (i + 2));
+                int decimal = Integer.parseInt(output, 16);
+                sb.append((char) decimal);
+            }
+            return sb.toString();
         }
-        return sb.toString();
+        return null;
     }
 
     /**
