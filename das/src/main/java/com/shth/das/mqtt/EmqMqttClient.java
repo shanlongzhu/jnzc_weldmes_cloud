@@ -11,6 +11,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * mq客户端，连接emq服务器，订阅和发送消息
  */
@@ -122,7 +124,7 @@ public class EmqMqttClient {
             if (null != mqttClient && mqttClient.isConnected()) {
                 MqttMessage mqttMessage = new MqttMessage();
                 mqttMessage.setQos(qos);
-                mqttMessage.setPayload(message.getBytes());
+                mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
                 mqttMessage.setRetained(false);
                 mqttClient.publish(topic, mqttMessage);
             } else {

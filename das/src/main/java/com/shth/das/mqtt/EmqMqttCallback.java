@@ -8,6 +8,8 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * mqtt消息回调
  */
@@ -36,9 +38,13 @@ public class EmqMqttCallback implements MqttCallback {
      */
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) {
-        log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload()));
         try {
-            String message = new String(mqttMessage.getPayload());
+            log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload(),"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        try {
+            String message = new String(mqttMessage.getPayload(),"UTF-8");
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> new MqttMessageManage().mqttMessageManage(topic, message));
         } catch (Exception e) {
             log.error("MQTT客户端消息回调-数据接收处理异常：", e);
