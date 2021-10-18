@@ -73,7 +73,7 @@ public class PersonController {
             List<WeldStatisticsDataPerson> list = personService.getList(time1,time2,welderNo,welderName,name);
 
             //导出为Excel
-            DownExcel.download(response,WeldStatisticsDataTeam.class,list,sheetName,title);
+            DownExcel.download(response,WeldStatisticsDataPerson.class,list,sheetName,title);
 
             return HttpResult.ok("Excel导出成功");
 
