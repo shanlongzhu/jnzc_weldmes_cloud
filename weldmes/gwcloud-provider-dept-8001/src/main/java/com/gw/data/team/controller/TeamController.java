@@ -12,6 +12,11 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/**
+ * @Date 2021/10/18 15:01
+ * @Description 班组报表控制器类
+ * @Params
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "team")
