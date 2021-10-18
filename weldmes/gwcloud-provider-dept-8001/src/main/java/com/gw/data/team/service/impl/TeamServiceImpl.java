@@ -4,7 +4,6 @@ import com.gw.common.DateTimeUtils;
 import com.gw.data.team.dao.TeamDao;
 import com.gw.data.team.service.TeamService;
 import com.gw.entities.SysDept;
-import com.gw.entities.WeldStatisticsData;
 import com.gw.entities.WeldStatisticsDataTeam;
 import com.gw.sys.dao.SysDeptDao;
 import org.springframework.beans.factory.annotation.Autowired;
