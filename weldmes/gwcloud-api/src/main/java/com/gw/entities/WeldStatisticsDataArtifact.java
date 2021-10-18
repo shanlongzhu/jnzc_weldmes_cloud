@@ -9,108 +9,84 @@ import java.math.BigDecimal;
 
 /**
  * @Author zhanghan
- * @Date 2021/10/18 9:51
- * @Description 班组报表实体类
+ * @Date 2021/10/18 14:01
+ * @Description 工件生产报表数据实体类
  */
 @Data
 @ColumnWidth(20)
-public class WeldStatisticsDataTeam {
+public class WeldStatisticsDataArtifact {
 
     /**
-     * 所属班组
+     * 任务编号
      */
-    @ExcelProperty(value = "所属班组",index = 0)
+    @ExcelProperty(value = "任务编号",index = 0)
+    private String taskNo;
+
+    /**
+     * 班组
+     */
+    @ExcelProperty(value = "班组",index = 1)
     private String deptName;
 
     /**
-     * 设备总数
+     * 参与人员数
      */
-    @ExcelProperty(value = "设备总数",index = 1)
-    private Long allCount;
+    @ExcelProperty(value = "参与人员数",index = 2)
+    private String welderNum;
 
     /**
-     * 开机设备数
+     * 使用设备数
      */
-    @ExcelProperty(value = "开机设备数",index = 2)
-    private Long onOffCount;
-
-    /**
-     * 实焊设备数
-     */
-    @ExcelProperty(value = "实焊设备数",index = 3)
-    private Long realWeldOnline;
-
-    /**
-     * 未绑定设备数
-     */
-    @ExcelProperty(value = "未绑定设备数",index = 4)
-    private Long noTaskCount;
-
-    /**
-     * 设备利用率
-     */
-    @ExcelProperty(value = "设备利用率",index = 5)
-    private Double equipUtilization;
-
-    /**
-     * 焊接任务数
-     */
-    @ExcelProperty(value = "焊接任务数",index = 6)
-    private Long taskCount;
-
-    /**
-     * 焊接时间
-     */
-    @ExcelProperty(value = "焊接时间",index = 7)
-    private String realWeldTime;
+    @ExcelProperty(value = "使用设备数",index = 3)
+    private String machineNum;
 
     /**
      * 工作时间
      */
-    @ExcelProperty(value = "工作时间",index = 8)
+    @ExcelProperty(value = "工作时间",index = 4)
     private String onOffTime;
 
     /**
-     * 正常焊接时间
+     * 焊接时间
      */
-    @ExcelProperty(value = "正常焊接时间",index = 9)
+    @ExcelProperty(value = "焊接时间",index = 5)
+    private String realWeldTime;
+
+    /**
+     * 正常时间
+     */
+    @ExcelProperty(value = "正常时间",index = 6)
     private String normalTime;
 
     /**
      * 焊接效率
      */
-    @ExcelProperty(value = "焊接效率",index = 10)
+    @ExcelProperty(value = "焊接效率",index = 7)
     private Double weldingEfficiency;
 
     /**
      * 超规范时间
      */
-    @ExcelProperty(value = "超规范时间",index = 11)
+    @ExcelProperty(value = "超规范时间",index = 8)
     private String supergageTime;
 
     /**
      * 规范符合率
      */
-    @ExcelProperty(value = "规范符合率",index = 12)
+    @ExcelProperty(value = "规范符合率",index = 9)
     private Double standardPercentage;
 
     /**
      * 焊材消耗
      */
-    @ExcelProperty(value = "焊材消耗",index = 13)
+    @ExcelProperty(value = "焊材消耗",index = 10)
     private Double materialsConsumption;
 
     /**
      * 电能消耗
      */
-    @ExcelProperty(value = "电能消耗",index = 14)
+    @ExcelProperty(value = "电能消耗",index = 11)
     private Double powerConsumption;
-
-    /**
-     * 未绑定设备编号
-     */
-    @ExcelIgnore
-    private String noTaskMachineDetail;
 
     /**
      * 主键
@@ -207,12 +183,6 @@ public class WeldStatisticsDataTeam {
      */
     @ExcelIgnore
     private String taskName;
-
-    /**
-     * 任务编号
-     */
-    @ExcelIgnore
-    private String taskNo;
 
     /**
      * 创建时间
