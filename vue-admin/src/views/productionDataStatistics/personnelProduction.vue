@@ -101,9 +101,6 @@
                     title="焊工姓名"
                     min-width="100"
                 >
-                    <template #default={row}>
-                        {{row.welderInfo.welderName}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="welderNo"
@@ -111,29 +108,23 @@
                     min-width="100"
                     fixed="left"
                 >
-                    <template #default={row}>
-                        {{row.welderInfo.welderNo}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
-                    field="name"
+                    field="deptName"
                     title="班组"
                     min-width="100"
                 >
-                    <template #default={row}>
-                        {{row.sysDept.name}}
-                    </template>
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="count"
+                    field="taskCount"
                     title="焊接任务数"
                     min-width="100"
                 >
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="count2"
+                    field="useMachineCount"
                     title="使用设备数"
                     min-width="100"
                 >

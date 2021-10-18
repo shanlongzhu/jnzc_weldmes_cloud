@@ -91,31 +91,25 @@
                     title="设备编号"
                     min-width="100"
                 >
-                    <template #default={row}>
-                        {{row.machineWeldInfo.machineNo}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
-                    field="name"
+                    field="deptName"
                     title="班组"
                     min-width="100"
                 >
-                    <template #default={row}>
-                        {{row.sysDept.name}}
-                    </template>
-                </vxe-table-column>                
+                </vxe-table-column>
                 <vxe-table-column
-                    field="count"
+                    field="welderNum"
                     title="使用人员数"
                     min-width="100"
                 >
                 </vxe-table-column>
                 <vxe-table-column
-                    field="count2"
+                    field="taskCount"
                     title="焊接任务数"
                     min-width="100"
                 ></vxe-table-column>
-                
+
 
                 <vxe-table-column
                     field="onOffTime"
@@ -146,7 +140,7 @@
                     title="超规范时间"
                     width="100"
                 >
-                </vxe-table-column>             
+                </vxe-table-column>
                 <vxe-table-column
                     field="standardPercentage"
                     title="规范符合率"
@@ -164,7 +158,7 @@
                     title="电能消耗"
                     width="100"
                 >
-                </vxe-table-column>           
+                </vxe-table-column>
             </vxe-table>
         </div>
         <el-pagination
@@ -185,8 +179,8 @@
             width="400"
         >
             {{layerCon}}
-        </el-dialog>        
-        
+        </el-dialog>
+
     </div>
 </template>
 
@@ -239,7 +233,7 @@ export default {
                 value: 'id',
                 children: 'list'
             },
-            
+
         }
     },
 
