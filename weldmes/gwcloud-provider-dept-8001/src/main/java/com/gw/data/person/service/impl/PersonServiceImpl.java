@@ -22,7 +22,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<WeldStatisticsDataPerson> getList(String time1, String time2, String welderNo, String welderName, String name) {
 
-        List<WeldStatisticsDataPerson> list = personDao.getList(time1,time2,welderNo,welderName,name);;
+        List<WeldStatisticsDataPerson> list = personDao.getList(time1,time2,welderNo,welderName,name);
 
         return list;
     }
