@@ -3,7 +3,7 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gw.data.team.dao.TeamDao">
 
-	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsData">
+	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsDataTeam">
 		<id property="id"  column="id"></id>
 		<result property="weldModel" column="weldModel"></result>
 		<result property="gatherNo" column="gatherNo"></result>
@@ -29,35 +29,10 @@
 		<result property="wireFeedRate" column="wireFeedRate"></result>
 		<result property="wireDiameter" column="wireDiameter"></result>
 		<result property="wireMaterialsGases" column="wireMaterialsGases"></result>
-		<result property="count" column="count"></result>
-		<result property="count2" column="count2"></result>
-		<result property="count3" column="count3"></result>
-		<result property="count4" column="count4"></result>
-		<result property="count5" column="count5"></result>
-		<result property="utilization" column="utilization"></result>
-		<result property="time" column="time"></result>
-		<result property="time2" column="time2"></result>
-		<result property="utilization2" column="utilization2"></result>
-		<association property="sysDept" javaType="com.gw.entities.SysDept">
-			<id property="id" column="id"></id>
-			<result property="name" column="name"></result>
-		</association>
-		<association property="machineWeldInfo" javaType="com.gw.entities.MachineWeldInfo">
-			<id property="id"  column="id"></id>
-			<result property="machineNo" column="machine_no"></result>
-			<result property="status" column="status"></result>
-			<result property="type" column="type"></result>
-			<result property="firm" column="firm"></result>
-			<result property="model" column="model"></result>
-			<result property="deptId" column="dept_id"></result>
-			<result property="gId" column="g_id"></result>
-			<result property="isNetwork" column="is_network"></result>
-			<result property="createTime" column="create_time"></result>
-		</association>
 	</resultMap>
 
 
-	<select id="getList" resultType="com.gw.entities.WeldStatisticsData">
+	<select id="getList" resultType="com.gw.entities.WeldStatisticsDataTeam">
 		SELECT g.id,g.deptName,g.allCount,g.onOffCount,g.onOffTime,g.taskCount,g.realWeldOnline,g.realWeldTime,g.noTaskCount,g.noTaskMachineDetail,
 		g.equipUtilization,g.supergageTime,g.normalTime,g.weldingEfficiency,g.standardPercentage,g.materialsConsumption,g.powerConsumption
 		FROM(SELECT d.id,d.`name` deptName,

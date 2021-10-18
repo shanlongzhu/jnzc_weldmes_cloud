@@ -102,13 +102,9 @@
 
     <!--获取采集序号列表-->
     <select id="queryGatherNos" resultMap="collection">
-    select
-	machine_gather_info.id,
-	machine_gather_info.gather_no
-    from
-	machine_gather_info
-    where
-	NOT FIND_IN_SET( machine_gather_info.id, ( select GROUP_CONCAT( g_id ) from machine_weld_info ) )
+    select machine_gather_info.id, machine_gather_info.gather_no
+    from machine_gather_info
+    /*where NOT FIND_IN_SET( machine_gather_info.id, ( select GROUP_CONCAT( g_id ) from machine_weld_info ) )*/
     </select>
 
     <!--判断采集编号是否存在-->
