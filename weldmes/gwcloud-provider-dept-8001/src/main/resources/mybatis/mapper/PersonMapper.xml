@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gw.data.person.dao.PersonDao">
-	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsData">
+	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsDataPerson">
 		<id property="id"  column="id"></id>
 		<result property="weldModel" column="weldModel"></result>
 		<result property="gatherNo" column="gatherNo"></result>
@@ -28,42 +28,20 @@
 		<result property="wireFeedRate" column="wireFeedRate"></result>
 		<result property="wireDiameter" column="wireDiameter"></result>
 		<result property="wireMaterialsGases" column="wireMaterialsGases"></result>
-		<result property="count" column="count"></result>
-		<result property="count2" column="count2"></result>
-		<result property="count3" column="count3"></result>
-		<result property="count4" column="count4"></result>
-		<result property="count5" column="count5"></result>
-		<result property="weldingEfficiency" column="weldingEfficiency"></result>
-		<result property="onOffTime" column="onOffTime"></result>
-		<result property="realWeldTime" column="realWeldTime"></result>
-		<result property="normalTime" column="normalTime"></result>
-		<result property="supergageTime" column="supergageTime"></result>
-		<result property="standardPercentage" column="standardPercentage"></result>
-		<result property="materialsConsumption" column="materialsConsumption"></result>
-		<result property="powerConsumption" column="powerConsumption"></result>
-		<result property="time" column="time"></result>
-		<result property="time2" column="time2"></result>
-		<association property="sysDept" javaType="com.gw.entities.SysDept">
-			<id property="id" column="id"></id>
-			<result property="name" column="name"></result>
-			<result property="parentId" column="parent_id"></result>
-		</association>
-        <association property="welderInfo" javaType="com.gw.entities.WelderInfo">
-        <id property="id"  column="id"></id>
-        <result property="welderName" column="welder_name"></result>
-        <result property="welderNo" column="welder_no"></result>
-        </association>
     </resultMap>
 
 	<!--人员生产数据报表-->
-    <select id="getList" resultMap="weldStatisticsData">
-		SELECT p.id,p.welder_name,p.welder_no,p.NAME,p.taskNo,SUM(p.count) count,p.machineNo,SUM(p.count2) count2,
+    <select id="getList" resultType="com.gw.entities.WeldStatisticsDataPerson">
+		SELECT p.id,p.welder_name welderName,p.welder_no welderNo,p.NAME deptName,
+		p.taskNo,SUM(p.count) taskCount,p.machineNo,SUM(p.count2) useMachineCount,
 		CONCAT(FLOOR(SUM(p.onOffTime)/3600),':',FLOOR(SUM(p.onOffTime)%3600/60),':',FLOOR(SUM(p.onOffTime)%3600%60)) onOffTime,
 		CONCAT(FLOOR(SUM(p.realWeldTime)/3600),':',FLOOR(SUM(p.realWeldTime)%3600/60),':',FLOOR(SUM(p.realWeldTime)%3600%60)) realWeldTime,
 		CONCAT(FLOOR(SUM(p.normalTime)/3600),':',FLOOR(SUM(p.normalTime)%3600/60),':',FLOOR(SUM(p.normalTime)%3600%60)) normalTime,
 		CONCAT(FLOOR(SUM(p.supergageTime)/3600),':',FLOOR(SUM(p.supergageTime)%3600/60),':',FLOOR(SUM(p.supergageTime)%3600%60)) supergageTime,
-		SUM(p.weldingEfficiency)*100 weldingEfficiency,SUM(p.standardPercentage)*100 standardPercentage,SUM(p.materialsConsumption) materialsConsumption,
-		SUM(p.powerConsumption) powerConsumption
+		p.weldingEfficiency*100 weldingEfficiency,
+		p.standardPercentage*100 standardPercentage,
+		p.materialsConsumption materialsConsumption,
+		p.powerConsumption powerConsumption
 		FROM(SELECT w.id,w.welder_name,w.welder_no,d.NAME,GROUP_CONCAT(DISTINCT s.taskNo) taskNo,
 		COUNT(DISTINCT s.taskId) count,GROUP_CONCAT(DISTINCT s.machineNo) machineNo,
 		COUNT(DISTINCT s.machineId) count2,
@@ -130,7 +108,7 @@
     </select>
 
 	<!--根据部门id查询部门名称-->
-	<select id="getDeptId" resultType="java.lang.String">
+	<select id="getDeptName" resultType="java.lang.String">
 		select name from sys_dept where id=#{deptId}
 	</select>
 </mapper>
