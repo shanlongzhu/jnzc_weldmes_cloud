@@ -137,7 +137,7 @@ public class DbHistoryQuery {
                 final PointHistory pointHistory = new PointHistory(dbPoint, startDate, endDate, interval, ConstantValue.HIS_VALUE_SAMPLE);
                 final int pointHistoryById = dbHistoryDataDao.requestPointHistoryById(pointHistory);
                 if (pointHistoryById != 0) {
-                    throw new RuntimeException("查询ProcessDB历史数据为空：" + pointHistoryById);
+                    System.out.println("查询ProcessDB历史数据为空：" + pointHistoryById);
                 }
                 return pointHistory.getSampleRecordSet();
             }
