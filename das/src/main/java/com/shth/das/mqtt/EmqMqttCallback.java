@@ -39,12 +39,12 @@ public class EmqMqttCallback implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) {
         try {
-            log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload(),"UTF-8"));
+            log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload(), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("EmqMqttCallback编码格式转换异常：", e);
         }
         try {
-            String message = new String(mqttMessage.getPayload(),"UTF-8");
+            String message = new String(mqttMessage.getPayload(), "UTF-8");
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> new MqttMessageManage().mqttMessageManage(topic, message));
         } catch (Exception e) {
             log.error("MQTT客户端消息回调-数据接收处理异常：", e);

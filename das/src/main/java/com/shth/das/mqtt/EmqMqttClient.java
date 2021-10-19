@@ -125,6 +125,7 @@ public class EmqMqttClient {
                 MqttMessage mqttMessage = new MqttMessage();
                 mqttMessage.setQos(qos);
                 mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
+                //重连后不接受MQ服务的最新消息（只接收连接后的消息）
                 mqttMessage.setRetained(false);
                 mqttClient.publish(topic, mqttMessage);
             } else {
