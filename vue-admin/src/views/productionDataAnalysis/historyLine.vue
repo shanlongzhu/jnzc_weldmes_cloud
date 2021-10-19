@@ -30,7 +30,8 @@
                         v-model="searchObj.taskId"
                         placeholder="请选择"
                         clearable
-                        style="width:120px"
+                        filterable
+                        style="width:200px"
                     >
                         <el-option
                             v-for="item in taskArr"
@@ -46,7 +47,8 @@
                         v-model="searchObj.welderId"
                         placeholder="请选择"
                         clearable
-                        style="width:120px"
+                        filterable
+                        style="width:150px"
                     >
                         <el-option
                             v-for="item in welderArr"
@@ -121,6 +123,7 @@
                     </el-date-picker>
                 </div>
                 <div class="con-w">
+                    <el-input size="small" style="width: 50px;display: none" v-model="dataSource"></el-input>
                     <el-button
                         size="small"
                         icon="el-icon-search"
@@ -297,7 +300,8 @@ export default {
                 disabledDate: (time) => {
                     return time.getTime() < moment(this.startTime).toDate().getTime();
                 }
-            }
+            },
+          dataSource:2,
         }
     },
 
@@ -363,11 +367,11 @@ export default {
             if (!req.taskId && !req.welderId && req.weldMachineId) {
                 this.$nextTick(() => {
                     let rowObj = {
-                        // taskId: req.taskId,
-                        // welderId: req.welderId,
-                        weldMachineId: req.weldMachineId,
-                        startTime: req.startTime,
-                        endTime: req.endTime,
+                        taskId: req.taskId,
+                        welderId: req.welderId,
+                        machineId: req.weldMachineId,
+                        taskRealityStartTime: req.startTime,
+                        taskRealityEndTime: req.endTime,
                         weldType:req.weldType
                     }
                     this.currentChangeEvent({ row: rowObj });
@@ -434,7 +438,6 @@ export default {
 
         //选择任务数据
         async currentChangeEvent ({ row }) {
-        console.log(row.weldType)
             this.surIndex = 0;
             this.curveReq.weldType = row.weldType;
             this.curveReq.taskId = row.taskId;
@@ -448,24 +451,43 @@ export default {
             this.getHistoryCurve();
         },
         async getHistoryCurve () {
-            let req = {
+            if(this.dataSource==2){
+              //ProcessDb
+              let req = {
+                weldMachineId:this.curveReq.weldMachineId,
+                startTime:this.curveReq.startTime,
+                endTime:this.curveReq.endTime,
+                weldType:this.curveReq.weldType
+              }
+              let {code,data} = await getProcessDbHistoryData(req);
+              if(code==200){
+                this.timeData = data.otcHistoryList.map(item => item.weldTime);
+                this.voltageData = data.otcHistoryList.map(item => item.voltage);
+                this.electricityData = data.otcHistoryList.map(item => item.electricity);
+                this.$refs.lineCom2.init(this.voltageData, this.timeData);
+                this.$refs.lineComE.init(this.electricityData, this.timeData);
+              }
+            }else{
+              //原数据源
+              let req = {
                 ...this.curveReq
-            }
-            let { data, code } = await getProcessDbHistoryData(req);
-            if (code == 200) {
+              }
+              let { data, code } = await getHistoryTimeData(req);
+              if (code == 200) {
                 this.surplusTable = data.tableNames || [];
                 this.timeData = (data.list || []).filter(item => item.weldTime).map(item => item.weldTime);
                 this.voltageData = (data.list || []).filter(item => item.voltage || item.voltage === 0).map((item, index) => {
-                    return item.voltage
+                  return item.voltage
                 });
 
                 this.electricityData = (data.list || []).filter(item => item.electricity || item.electricity === 0).map(item => {
-                    return item.electricity;
+                  return item.electricity;
                 });
 
                 this.$refs.lineCom2.init(this.voltageData, this.timeData);
                 this.$refs.lineComE.init(this.electricityData, this.timeData);
                 this.repeatFun();
+              }
             }
         },
         async repeatFun () {
