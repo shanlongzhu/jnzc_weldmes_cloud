@@ -27,4 +27,24 @@ public class CommonUtil {
         return false;
     }
 
+    /**
+     * 字符串长度拼接
+     *
+     * @param str    要拼接的字符串
+     * @param length 要拼接的长度
+     * @return 返回拼接好的字符串
+     */
+    public static String stringLengthJoint(String str, int length) {
+        if (isNotEmpty(str)) {
+            if (str.length() < length) {
+                StringBuilder stringBuilder = new StringBuilder(str);
+                for (int i = 0; i < (length - str.length()); i++) {
+                    stringBuilder.insert(0, "0");
+                }
+                str = stringBuilder.toString();
+            }
+        }
+        return str;
+    }
+
 }

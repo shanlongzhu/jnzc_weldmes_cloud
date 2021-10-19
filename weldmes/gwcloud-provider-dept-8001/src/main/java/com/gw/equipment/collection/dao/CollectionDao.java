@@ -85,4 +85,12 @@ public interface CollectionDao {
      */
     public Integer judgeGatherNoYesOrNo(@Param("GatherNo") String GatherNo,@Param("id") Long id);
 
+    /**
+     * 根据焊机ID查询采集编号
+     *
+     * @param weldId 焊机ID
+     * @return 采集编号集合
+     */
+    List<MachineGatherInfo> getGatherNoByWeldId(@Param("weldId") Long weldId);
+
 }

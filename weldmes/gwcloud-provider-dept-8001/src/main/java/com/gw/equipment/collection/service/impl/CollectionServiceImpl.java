@@ -170,4 +170,9 @@ public class CollectionServiceImpl implements CollectionService {
 
     }
 
+    @Override
+    public List<MachineGatherInfo> getGatherNoByWeldId(Long weldId) {
+        return collectionDao.getGatherNoByWeldId(weldId);
+    }
+
 }

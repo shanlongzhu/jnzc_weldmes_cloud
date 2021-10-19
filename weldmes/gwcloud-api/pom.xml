@@ -12,6 +12,15 @@
     <artifactId>gwcloud-api</artifactId>
 
     <dependencies><!-- 当前Module需要用到的jar包，按自己需求添加，如果父类已经包含了，可以不用写版本号 -->
+        <!-- 添加ProcessDB依赖包 -->
+        <dependency>
+            <groupId>com.processdb</groupId>
+            <artifactId>ProcessDBDriver</artifactId>
+            <version>2.0</version>
+            <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/ProcessDBDriver2.0.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -70,5 +79,16 @@
 
     <build>
         <finalName>gwcloud-api</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.5.0</version>
+                <configuration>
+                    <!-- 添加自定义jar需要设置true -->
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

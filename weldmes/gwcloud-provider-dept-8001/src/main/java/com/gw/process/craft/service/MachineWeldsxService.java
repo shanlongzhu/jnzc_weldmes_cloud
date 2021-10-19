@@ -45,4 +45,11 @@ public interface MachineWeldsxService {
      * @Params
      */
     public void delMachineWeldsxInfo(Long id);
+
+    /**
+     * 根据ID查询设备CID
+     *
+     * @return MachineWeldsxInfo
+     */
+    MachineWeldsxInfo getSxWeldCidById(Long id);
 }

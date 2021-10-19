@@ -74,4 +74,12 @@ public interface CollectionService {
      */
     public void addMachineGatherInfos(MachineGatherInfo machineGatherInfo);
 
+    /**
+     * 根据焊机ID查询采集编号
+     *
+     * @param weldId 焊机ID
+     * @return 采集编号集合
+     */
+    List<MachineGatherInfo> getGatherNoByWeldId(Long weldId);
+
 }

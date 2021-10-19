@@ -62,4 +62,12 @@ public interface MachineWeldsxDao {
      * @Params
      */
     public Integer judgeWeldCidYesOrNo(@Param("weldCid")String weldCid);
+
+    /**
+     * 根据ID查询设备CID
+     *
+     * @param id 主键
+     * @return MachineWeldsxInfo
+     */
+    MachineWeldsxInfo getSxWeldCidById(@Param("id") Long id);
 }

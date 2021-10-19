@@ -86,5 +86,9 @@ public class MachineWeldsxServiceImpl implements MachineWeldsxService {
         machineWeldsxDao.deleteMachineWeldsxInfoById(id);
     }
 
+    @Override
+    public MachineWeldsxInfo getSxWeldCidById(Long id) {
+        return machineWeldsxDao.getSxWeldCidById(id);
+    }
 
 }

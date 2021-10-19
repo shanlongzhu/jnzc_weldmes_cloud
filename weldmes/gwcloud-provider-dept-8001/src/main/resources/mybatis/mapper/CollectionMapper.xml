@@ -112,4 +112,12 @@
         select (1) from machine_gather_info where gather_no = #{GatherNo} and id != #{id}
     </select>
 
+    <!-- 根据焊机ID查询采集编号集合 -->
+    <select id="getGatherNoByWeldId" parameterType="java.lang.Long" resultType="com.gw.entities.MachineGatherInfo">
+        SELECT g.id,g.gather_no gatherNo
+        FROM machine_weld_info w
+                 JOIN mysql.help_topic b ON (LENGTH(w.g_id) - LENGTH(REPLACE(w.g_id, ',', '')) + 1) > b.help_topic_id
+                 INNER JOIN machine_gather_info g ON g.id = SUBSTRING_INDEX(SUBSTRING_INDEX(w.g_id, ',', b.help_topic_id + 1), ',', - 1 )
+        WHERE w.id = #{weldId}
+    </select>
 </mapper>

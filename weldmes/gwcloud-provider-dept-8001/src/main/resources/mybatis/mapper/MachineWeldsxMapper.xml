@@ -131,4 +131,9 @@
     <select id="judgeWeldCidYesOrNo" resultType="java.lang.Integer">
         select (1) from machine_weldsx_info where weld_cid = #{weldCid}
     </select>
+
+    <!-- 根据主键ID查询设备CID -->
+    <select id="getSxWeldCidById" parameterType="java.lang.Long" resultType="com.gw.entities.MachineWeldsxInfo">
+        SELECT weld_cid weldCid FROM machine_weldsx_info WHERE id = #{id}
+    </select>
 </mapper>
