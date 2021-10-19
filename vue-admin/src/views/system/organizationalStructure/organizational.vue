@@ -25,7 +25,7 @@
                 class="flex-c btn-show-hide"
                 @click="changeMenuShowHide"
             ><span
-                    :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"                    
+                    :class="{'el-icon-caret-right':!isMenuShow,'el-icon-caret-left':isMenuShow}"
                 ></span></div>
             <div
                 class="user-r flex-c"
@@ -253,7 +253,7 @@ export default {
 
     created () {
         this.ruleFormObj = { ...this.ruleForm };
-        this.getList();
+        // this.getList();
         this.getTeamList();
     },
     methods: {
