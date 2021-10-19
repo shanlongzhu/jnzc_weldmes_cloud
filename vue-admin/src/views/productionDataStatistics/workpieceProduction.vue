@@ -87,42 +87,36 @@
                     title="任务编号"
                     min-width="100"
                 >
-                    <template #default={row}>
-                        {{row.taskInfo.taskNo}}
-                    </template>
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="name"
+                    field="deptName"
                     title="班组"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.sysDept.name}}
-                    </template>
                 </vxe-table-column>
 
                 <vxe-table-column
-                    field="count"
+                    field="welderNum"
                     title="参与人员数"
                     min-width="100"
                 ></vxe-table-column>
                 <vxe-table-column
-                    field="count2"
+                    field="machineNum"
                     title="使用设备数"
                     min-width="100"
-                ></vxe-table-column>                
+                ></vxe-table-column>
                 <vxe-table-column
                     field="onOffTime"
                     title="工作时间"
                     min-width="100"
-                ></vxe-table-column>   
+                ></vxe-table-column>
                 <vxe-table-column
                     field="realWeldTime"
                     title="焊接时间"
                     min-width="100"
                 ></vxe-table-column>
-                             
+
                 <vxe-table-column
                     field="normalTime"
                     title="正常时间"
@@ -154,7 +148,7 @@
                     field="powerConsumption"
                     title="电能消耗"
                     min-width="100"
-                ></vxe-table-column>                
+                ></vxe-table-column>
             </vxe-table>
         </div>
         <el-pagination
@@ -175,7 +169,7 @@
             width="400"
         >
             {{layerCon}}
-        </el-dialog>        
+        </el-dialog>
     </div>
 </template>
 
@@ -294,8 +288,8 @@ export default {
                 deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
             }
             location.href = exportWorkProDataList(req)
-        }, 
-        
+        },
+
         cellClick ({ column, row }) {
             if (column.title == "参与人员数" && row.count != 0) {
                 this.title = "参与人员数";
