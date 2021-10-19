@@ -58,7 +58,7 @@
     <!--根据用户名查询用户登录信息-->
     <select id="queryUserInfoByUserNameAndPwd" resultType="com.gw.entities.SysUser">
         select id,`name`,password,status,dept_id from sys_user where `name` = #{userName}
-        and del_flag = 0 and status = 1
+        and del_flag = 0
     </select>
 
     <!--通过用户id查询用户角色id-->

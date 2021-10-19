@@ -101,9 +101,9 @@ public class LoginController {
 
             }catch(LockedAccountException lae){
 
-                logger.info("登陆失败: 此用户 >>> "+userToken.getPrincipal()+" 已被锁定");
+                logger.info("登陆失败: 此用户 >>> "+userToken.getPrincipal()+" 已被禁用");
 
-                return HttpResult.error("登陆失败,用户已被锁定");
+                return HttpResult.error("登陆失败,账号已被禁用");
 
             }catch(AuthenticationException ate){
 

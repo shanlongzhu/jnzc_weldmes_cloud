@@ -82,7 +82,7 @@ public class UserRealm extends AuthorizingRealm {
         //当用户状态 为 0  0-禁用  1-正常
         if(sysUser.getStatus() == 0){
 
-            throw new LockedAccountException("用户被禁用,登陆失败");
+            throw new LockedAccountException();
 
         }
 

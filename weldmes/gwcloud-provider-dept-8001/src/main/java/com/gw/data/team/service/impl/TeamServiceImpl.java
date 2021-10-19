@@ -13,7 +13,11 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @Date 2021/10/19 14:25
+ * @Description 班组报表业务实现层
+ * @Params
+ */
 @Service
 public class TeamServiceImpl implements TeamService {
 
@@ -23,7 +27,11 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     SysDeptDao sysDeptDao;
 
-
+    /**
+     * @Date 2021/10/19 14:26
+     * @Description 获取班组生产数据列表
+     * @Params
+     */
     @Override
     public List<WeldStatisticsDataTeam> getList(String time1, String time2, String deptId) {
 

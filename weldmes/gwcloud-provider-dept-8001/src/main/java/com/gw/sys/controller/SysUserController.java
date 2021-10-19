@@ -36,9 +36,15 @@ public class SysUserController {
     @RequestMapping(value = "user/gradeInfos")
     public HttpResult getCurrentGradeInfos() {
 
-        SysDept sysDeptInfo = sysUserService.getGradeInfo();
+        try{
 
-        return HttpResult.ok(sysDeptInfo);
+            SysDept sysDeptInfo = sysUserService.getGradeInfo();
+
+            return HttpResult.ok(sysDeptInfo);
+        }catch(NullPointerException ex){
+
+            return HttpResult.error("请刷新页面,重新登录");
+        }
 
     }
 
