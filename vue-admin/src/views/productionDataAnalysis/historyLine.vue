@@ -231,7 +231,7 @@
 
 <script>
 import moment from 'moment'
-import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData, getHistoryRepeat } from '_api/productionDataAnalysis/productionDataAnalysisApi'
+import { getTaskArr, getWelderArr, getWeldingArr, getHistoryList, getHistoryTimeData, getHistoryRepeat ,getProcessDbHistoryData} from '_api/productionDataAnalysis/productionDataAnalysisApi'
 import { getDictionaries} from '_api/productionProcess/process'
 // import LineCom from './components/lineCom.vue';
 import LineCom2 from './components/lineCom2.vue';
@@ -363,11 +363,11 @@ export default {
             if (!req.taskId && !req.welderId && req.weldMachineId) {
                 this.$nextTick(() => {
                     let rowObj = {
-                        taskId: req.taskId,
-                        welderId: req.welderId,
-                        machineId: req.weldMachineId,
-                        taskRealityStartTime: req.startTime,
-                        taskRealityEndTime: req.endTime,
+                        // taskId: req.taskId,
+                        // welderId: req.welderId,
+                        weldMachineId: req.weldMachineId,
+                        startTime: req.startTime,
+                        endTime: req.endTime,
                         weldType:req.weldType
                     }
                     this.currentChangeEvent({ row: rowObj });
@@ -451,7 +451,7 @@ export default {
             let req = {
                 ...this.curveReq
             }
-            let { data, code } = await getHistoryTimeData(req);
+            let { data, code } = await getProcessDbHistoryData(req);
             if (code == 200) {
                 this.surplusTable = data.tableNames || [];
                 this.timeData = (data.list || []).filter(item => item.weldTime).map(item => item.weldTime);

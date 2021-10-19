@@ -56,3 +56,12 @@ export function getHistoryRepeat(data = {}) {
   });
 }
 
+//获取历史曲线接口 new
+export function getProcessDbHistoryData(data = {}) {
+  return request({
+    url: "historicalCurve/getProcessDbHistoryData",
+    method: "post",
+    data
+  });
+}
+

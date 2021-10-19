@@ -414,7 +414,7 @@ export default {
             },
             loading: false,
 
-            
+
             //角色下拉数据
             rolesArr: [],
 
@@ -424,7 +424,7 @@ export default {
 
     created () {
         this.ruleFormObj = { ...this.ruleForm };
-        this.getList();
+        // this.getList();
         this.getRolesListFun();
         this.getTeamList();
     },
@@ -442,7 +442,7 @@ export default {
             this.page = 1;
             this.getList();
         },
-        
+
 
         //根据部门id获取用户列表
         async getList (id) {

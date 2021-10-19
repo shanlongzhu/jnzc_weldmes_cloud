@@ -117,18 +117,12 @@
                     title="焊工编号"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.welderInfo.welderNo}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="welderName"
                     title="焊工姓名"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.welderInfo.welderName}}
-                    </template>
                 </vxe-table-column>
 
                 <vxe-table-column
@@ -136,45 +130,30 @@
                     title="焊机编号"
                     width="100"
                 >
-                    <template #default={row}>
-                        {{row.machineWeldInfo.machineNo}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="taskNo"
                     title="任务编号"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.taskInfo.taskNo}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
-                    field="name"
+                    field="deptName"
                     title="班组"
                     width="100"
                 >
-                    <template #default={row}>
-                       {{row.sysDept.name}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
-                    field="realityStarttime"
+                    field="startTime"
                     title="开始时间"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.taskInfo.realityStarttime}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
-                    field="realityEndtime"
+                    field="endTime"
                     title="结束时间"
                     min-width="150"
                 >
-                    <template #default={row}>
-                        {{row.taskInfo.realityEndtime}}
-                    </template>
                 </vxe-table-column>
                 <vxe-table-column
                     field="eleScope"
