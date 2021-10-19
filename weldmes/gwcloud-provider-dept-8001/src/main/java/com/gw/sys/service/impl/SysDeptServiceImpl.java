@@ -4,12 +4,14 @@ import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtils;
 import com.gw.entities.SysDept;
 import com.gw.entities.UserLoginInfo;
+import com.gw.process.dispatch.dao.DispatchDao;
 import com.gw.sys.dao.SysDeptDao;
 import com.gw.sys.service.SysDeptService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,9 @@ public class SysDeptServiceImpl implements SysDeptService {
 
     @Autowired
     SysDeptDao sysDeptDao;
+
+    @Autowired
+    DispatchDao dispatchDao;
 
     /**
      * @Date 2021/7/8 16:38
@@ -86,7 +91,34 @@ public class SysDeptServiceImpl implements SysDeptService {
     @Override
     public void delDeptInfoById(Long id) {
 
+        //根据用户部门id、查询该部门下所有的下级部门信息
+        List<SysDept> list = dispatchDao.queryGradeList(id);
+
         sysDeptDao.deleteDeptInfoById(id);
+
+        if(!ObjectUtils.isEmpty(list)){
+            do {
+                List<SysDept> nextSysDeptInfos = new ArrayList<>();
+
+                for (SysDept sysDeptInfo : list) {
+
+                    //获取 当前用户所在部门 的 下级部门
+                    List<SysDept> sysDeptList = sysDeptDao.selectDeptInfosByParentId(sysDeptInfo.getId());
+
+                    nextSysDeptInfos.addAll(sysDeptList);
+
+                    sysDeptDao.deleteDeptInfoById(sysDeptInfo.getId());
+
+                }
+
+                list.clear();
+
+                list = nextSysDeptInfos;
+
+            } while (!ObjectUtils.isEmpty(list));
+
+        }
+
     }
 
     /**

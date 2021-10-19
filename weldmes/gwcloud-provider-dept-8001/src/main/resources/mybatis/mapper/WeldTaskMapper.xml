@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gw.data.weldTask.dao.WeldTaskDao">
 
-    <resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsData">
+    <resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsDataWeldStatics">
         <id property="id"  column="id"></id>
         <result property="weldModel" column="weldModel"></result>
         <result property="gatherNo" column="gatherNo"></result>
@@ -29,46 +29,12 @@
         <result property="wireFeedRate" column="wireFeedRate"></result>
         <result property="wireDiameter" column="wireDiameter"></result>
         <result property="wireMaterialsGases" column="wireMaterialsGases"></result>
-        <result property="count" column="count"></result>
-        <result property="count2" column="count2"></result>
-        <result property="count3" column="count3"></result>
-        <result property="count4" column="count4"></result>
-        <result property="count5" column="count5"></result>
-        <result property="utilization" column="utilization"></result>
-        <result property="time" column="time"></result>
-        <result property="time2" column="time2"></result>
-        <result property="utilization2" column="utilization2"></result>
-        <association property="sysDept" javaType="com.gw.entities.SysDept">
-            <id property="id" column="id"></id>
-            <result property="name" column="name"></result>
-            <result property="parentId" column="parent_id"></result>
-        </association>
-        <association property="taskInfo" javaType="com.gw.entities.TaskInfo">
-            <id property="id" column="id"></id>
-            <result property="taskNo" column="task_no"></result>
-            <result property="status" column="status"></result>
-        </association>
-        <association property="sysDictionary" javaType="com.gw.entities.SysDictionary">
-            <id property="id" column="id"></id>
-            <result property="valueName" column="value_name"></result>
-        </association>
     </resultMap>
 
+    <!--查询焊机任务列表信息-->
     <select id="getList" resultMap="weldStatisticsData">
-        select
-        distinct
-        s.name,
-        s.parent_id,
-        w.machineNo,
-        w.createTime,
-        t.task_no,
-        t.`status`,
-        d.value_name
-        from
-        weld_statistics_data w,
-        sys_dept s,
-        task_info t,
-        sys_dictionary d
+        select distinct s.name,s.parent_id,w.machineNo,w.createTime,t.task_no,t.`status`,d.value_name
+        from weld_statistics_data w,sys_dept s,task_info t,sys_dictionary d
         <where>
             w.machineDeptId = s.id
             and w.taskId = t.id
@@ -90,9 +56,13 @@
             </if>
         </where>
     </select>
+
+    <!--根据部门id 查询部门名称-->
     <select id="getTeamName" resultType="java.lang.String">
         select name from sys_dept where id=#{teamId}
     </select>
+
+    <!--根据类型名称查询描述-->
     <select id="getValueName" resultType="java.lang.String">
         select value_name from sys_dictionary where id=#{status}
     </select>

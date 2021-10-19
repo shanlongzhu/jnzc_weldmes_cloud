@@ -1,7 +1,5 @@
 package com.gw.data.team.dao;
 
-import com.gw.entities.SysDept;
-import com.gw.entities.WeldStatisticsData;
 import com.gw.entities.WeldStatisticsDataTeam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

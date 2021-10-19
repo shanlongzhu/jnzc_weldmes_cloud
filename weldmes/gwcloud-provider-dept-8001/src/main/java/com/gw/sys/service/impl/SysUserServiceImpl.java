@@ -69,7 +69,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * @Date 2021/7/7 16:29
-     * @Description 条件查询用户信息
+     * @Description 通过部门查询用户信息列表
      * @Params deptId 部门id   userName用户名 loginName登录名 mobile手机号 roleId角色id
      */
     @Override
