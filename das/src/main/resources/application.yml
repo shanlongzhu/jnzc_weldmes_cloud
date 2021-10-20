@@ -68,10 +68,10 @@ dataInsertForNumber:
   sx: 100
 
 # OTC待机数据是否存储（true：存储）
-otcStandbySave: false
+otcStandbySave: true
 
 # 松下待机数据是否存储（true：存储）
-sxStandbySave: false
+sxStandbySave: true
 
 # mybatis-plus 配置
 mybatis-plus:
