@@ -15,6 +15,7 @@ import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
@@ -35,10 +36,12 @@ public class JnSxRtDataProtocol {
      */
     private void sxWeldDataBinding(ChannelHandlerContext ctx, SxWeldModel sxWeldModel) {
         if (null != sxWeldModel) {
+            //根据通道获取设备CID
             if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                 final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                 sxWeldModel.setWeldCid(weldCid);
             }
+            //将松下设备信息与通道进行绑定
             if (!CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
                 CommonMap.SX_CTX_WELD_INFO_MAP.put(ctx, sxWeldModel);
             }
@@ -55,23 +58,26 @@ public class JnSxRtDataProtocol {
                     sxChannelSetLock(sxWeldModel.getWeldCid(), 1);
                 }
             }
-            //添加到松下设备阻塞队列，存储到数据库
-            try {
-                CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
-            } catch (Exception e) {
-                log.error("松下新增设备添加到阻塞队列异常：", e);
-            }
-            //设备存储到松下开机阻塞队列
-            try {
-                if (CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
-                    SxMachineQueue sxMachineQueue = new SxMachineQueue();
-                    sxMachineQueue.setWeldCid(sxWeldModel.getWeldCid());
-                    sxMachineQueue.setWeldIp(sxWeldModel.getWeldIp());
-                    sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
-                    CommonQueue.SX_ON_MACHINE_QUEUES.put(sxMachineQueue);
+            //设备CID不为空，则分表存储到新增设备和开机设备的阻塞队列中
+            if (StringUtils.isNotBlank(sxWeldModel.getWeldCid())) {
+                //添加到松下设备阻塞队列，存储到数据库
+                try {
+                    CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
+                } catch (Exception e) {
+                    log.error("松下新增设备添加到阻塞队列异常：", e);
                 }
-            } catch (Exception e) {
-                log.error("松下开机设备添加到阻塞队列异常：", e);
+                //设备存储到松下开机阻塞队列
+                try {
+                    if (CommonUtils.isNotEmpty(sxWeldModel.getWeldCid())) {
+                        SxMachineQueue sxMachineQueue = new SxMachineQueue();
+                        sxMachineQueue.setWeldCid(sxWeldModel.getWeldCid());
+                        sxMachineQueue.setWeldIp(sxWeldModel.getWeldIp());
+                        sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
+                        CommonQueue.SX_ON_MACHINE_QUEUES.put(sxMachineQueue);
+                    }
+                } catch (Exception e) {
+                    log.error("松下开机设备添加到阻塞队列异常：", e);
+                }
             }
         }
     }
@@ -127,7 +133,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxSoftHardParam(HandlerParam param) {
+    public void jnSxGl5SoftHardParam(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -276,7 +282,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxTigProcessClaimReturn(HandlerParam param) {
+    public void jnSxGl5TigProcessClaimReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -293,6 +299,24 @@ public class JnSxRtDataProtocol {
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.SxGL5TIGProcessClaimReturn), message, 0);
                 }
+            }
+        }
+    }
+
+    /**
+     * 松下焊机【FR2、AT3】系列软硬件参数存数据库
+     *
+     * @param param
+     */
+    public void jnSxFr2At3SoftHardParam(HandlerParam param) {
+        if (null != param) {
+            final Map<String, Object> map = param.getValue();
+            final ChannelHandlerContext ctx = param.getCtx();
+            //松下焊机GL5软硬件参数存数据库
+            if (map.containsKey("SxWeldModel")) {
+                SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
+                //松下参数绑定
+                sxWeldDataBinding(ctx, sxWeldModel);
             }
         }
     }
@@ -376,7 +400,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxChannelParamReplyHave(HandlerParam param) {
+    public void jnSxFr2ChannelParamReplyHave(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             //松下焊机FR2系列通道参数【查询回复（有参数）】
@@ -915,6 +939,34 @@ public class JnSxRtDataProtocol {
                 claimReturn.setHaltDelayTime(BigDecimal.valueOf(Long.valueOf(str.substring(346, 348), 16)));
                 claimReturn.setHaltFreezeTime(BigDecimal.valueOf(Long.valueOf(str.substring(348, 350), 16)));
                 return claimReturn;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 松下FR2和AT3软硬件参数协议解析
+     *
+     * @param clientIp 焊机IP
+     * @param str      16进制字符串
+     * @return SxWeldModel
+     */
+    public SxWeldModel jnSxFr2At3SoftHardParamAnalysis(String clientIp, String str) {
+        if (StringUtils.isNotBlank(str)) {
+            if (str.length() == 154 && "FE5AA5004D".equals(str.substring(0, 10))) {
+                SxWeldModel sxWeldModel = new SxWeldModel();
+                sxWeldModel.setWeldIp(clientIp);
+                sxWeldModel.setWeldKind(Integer.valueOf(str.substring(52, 54), 16));
+                sxWeldModel.setWeldModel(CommonUtils.convertHexToString(str.substring(54, 72)));
+                sxWeldModel.setWeldCode(str.substring(82, 92));
+                sxWeldModel.setWeldCpuNum(Integer.valueOf(str.substring(92, 94), 16));
+                sxWeldModel.setCpu1No(Integer.valueOf(str.substring(94, 96), 16).toString());
+                sxWeldModel.setCpu1Model(Integer.valueOf(str.substring(96, 100)));
+                String cpu1Version = str.substring(100, 104);
+                sxWeldModel.setCpu1Version("5453".equals(cpu1Version) ? CommonUtils.convertHexToString(str.substring(100, 124)) : str.substring(100, 124));
+                sxWeldModel.setWeldNo("0001");
+                sxWeldModel.setCreateTime(DateTimeUtils.getNowDateTime());
+                return sxWeldModel;
             }
         }
         return null;

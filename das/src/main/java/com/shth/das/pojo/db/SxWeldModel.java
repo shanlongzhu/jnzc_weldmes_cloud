@@ -33,8 +33,8 @@ public class SxWeldModel implements Serializable {
     private String weldModel;       //设备机型
     private Integer powerSupply;    //电源类型(字典)
     private Integer wireFeederModel; //送丝机类型(字典)
-    private Integer weldKind;       //设备种类(字典)
-    private int weldCpuNum;         //焊机CPU个数
+    private Integer weldKind;       //设备种类/类型(字典)[如果是FR2、AT3【0：数字焊机，1：模拟焊机】]
+    private Integer weldCpuNum;     //焊机CPU个数
     private String cpu1No;          //cpu1编号
     private Integer cpu1Model;      //cpu1类型(字典)
     private String cpu1Version;     //cpu1软件版本

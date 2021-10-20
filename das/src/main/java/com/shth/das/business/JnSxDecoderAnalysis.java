@@ -39,7 +39,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         //松下【GL5、FR2、AT3】第二次握手验证
         this.decoderMapping.put(128, this::jnSxSecondVerify);
         //松下焊机GL5软硬件参数
-        this.decoderMapping.put(180, this::jnSxSoftHardParam);
+        this.decoderMapping.put(180, this::jnSxGl5SoftHardParam);
         //松下焊机GL5系列CO2实时数据
         this.decoderMapping.put(206, this::jnSxGl5RtDataAnalysis);
         //松下焊机GL5系列CO2状态信息
@@ -47,9 +47,11 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         //松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
         this.decoderMapping.put(106, this::jnSxGl5ProcessWeldSet);
         //松下焊机GL5系列CO2工艺索取返回（有数据）
-        this.decoderMapping.put(406, this::jnSxCo2ProcessClaimReturn);
+        this.decoderMapping.put(406, this::jnSxGl5Co2ProcessClaimReturn);
         //松下焊机GL5系列TIG工艺索取返回（有数据）
-        this.decoderMapping.put(446, this::jnSxTigProcessClaimReturn);
+        this.decoderMapping.put(446, this::jnSxGl5TigProcessClaimReturn);
+        //松下焊机【FR2、AT3】系列软硬件参数
+        this.decoderMapping.put(154, this::jnSxFr2At3SoftHardParam);
         //松下焊机FR2系列CO2实时数据
         this.decoderMapping.put(112, this::jnSxFr2Co2RtDataDbAnalysis);
         //松下焊机FR2系列TIG实时数据
@@ -59,7 +61,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
         this.decoderMapping.put(52, this::jnSxChannelParamReplyAnalysis);
         //松下焊机FR2系列通道参数【查询回复（有参数）】
-        this.decoderMapping.put(220, this::jnSxChannelParamReplyHave);
+        this.decoderMapping.put(220, this::jnSxFr2ChannelParamReplyHave);
         //松下焊机AT3系列【查询回复（有参数）】
         this.decoderMapping.put(92, this::jnSxAt3ParamQueryReturn);
     }
@@ -109,7 +111,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
         if (null != jnSxDecoderParam) {
             try {
                 final String str = jnSxDecoderParam.getStr();
-                //松下焊机GL5/FR2/AT第二次验证（下行）
+                //松下焊机GL5/FR2/AT3第二次验证（下行）
                 if (str.length() == 128 && "4C4A5348".equals(str.substring(0, 8))) {
                     final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     //设备CID（8个字节：字符长度则为：16）
@@ -136,17 +138,17 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
      * @param jnSxDecoderParam 入参
      * @return 返回
      */
-    private HandlerParam jnSxSoftHardParam(JnSxDecoderParam jnSxDecoderParam) {
+    private HandlerParam jnSxGl5SoftHardParam(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             try {
                 final String str = jnSxDecoderParam.getStr();
                 //松下焊机GL5软硬件参数
-                if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
+                if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10)) && "0010".equals(str.substring(40, 44))) {
                     final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     final String clientIp = jnSxDecoderParam.getClientIp();
-                    Map<String, Object> map = new HashMap<>();
-                    HandlerParam handlerParam = new HandlerParam();
-                    SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
+                    final Map<String, Object> map = new HashMap<>();
+                    final HandlerParam handlerParam = new HandlerParam();
+                    final SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
                     if (null != sxWeldModel) {
                         map.put("SxWeldModel", sxWeldModel);
                         ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
@@ -278,7 +280,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
      * @param jnSxDecoderParam 入参
      * @return 返回
      */
-    private HandlerParam jnSxCo2ProcessClaimReturn(JnSxDecoderParam jnSxDecoderParam) {
+    private HandlerParam jnSxGl5Co2ProcessClaimReturn(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
             //松下GL5系列CO2工艺索取返回
@@ -304,7 +306,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
      * @param jnSxDecoderParam 入参
      * @return 返回
      */
-    private HandlerParam jnSxTigProcessClaimReturn(JnSxDecoderParam jnSxDecoderParam) {
+    private HandlerParam jnSxGl5TigProcessClaimReturn(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
             final String clientIp = jnSxDecoderParam.getClientIp();
@@ -319,6 +321,38 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     handlerParam.setValue(map);
                     return handlerParam;
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 松下焊机【FR2、AT3】系列软硬件参数
+     *
+     * @param jnSxDecoderParam 入参
+     * @return HandlerParam
+     */
+    private HandlerParam jnSxFr2At3SoftHardParam(JnSxDecoderParam jnSxDecoderParam) {
+        if (null != jnSxDecoderParam) {
+            try {
+                final String str = jnSxDecoderParam.getStr();
+                final String clientIp = jnSxDecoderParam.getClientIp();
+                final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
+                //判断是否是FR2或AT3的软硬件参数协议
+                if (str.length() == 154 && "FE5AA5004D".equals(str.substring(0, 10)) && "0010".equals(str.substring(40, 44))) {
+                    final SxWeldModel sxWeldModel = this.jnSxRtDataProtocol.jnSxFr2At3SoftHardParamAnalysis(clientIp, str);
+                    final Map<String, Object> map = new HashMap<>();
+                    final HandlerParam handlerParam = new HandlerParam();
+                    if (null != sxWeldModel) {
+                        map.put("SxWeldModel", sxWeldModel);
+                        ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
+                    }
+                    handlerParam.setKey(str.length());
+                    handlerParam.setValue(map);
+                    return handlerParam;
+                }
+            } catch (Exception e) {
+                log.error("松下焊机【FR2、AT3】系列软硬件参数协议解析异常：", e);
             }
         }
         return null;
@@ -452,7 +486,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
      * @param jnSxDecoderParam 入参
      * @return 返回
      */
-    private HandlerParam jnSxChannelParamReplyHave(JnSxDecoderParam jnSxDecoderParam) {
+    private HandlerParam jnSxFr2ChannelParamReplyHave(JnSxDecoderParam jnSxDecoderParam) {
         if (null != jnSxDecoderParam) {
             final String str = jnSxDecoderParam.getStr();
             final String clientIp = jnSxDecoderParam.getClientIp();

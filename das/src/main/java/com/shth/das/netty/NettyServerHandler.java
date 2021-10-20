@@ -2,9 +2,9 @@ package com.shth.das.netty;
 
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.business.JnSxRtDataProtocol;
-import com.shth.das.common.CommonMap;
-import com.shth.das.common.CommonFunction;
 import com.shth.das.codeparam.HandlerParam;
+import com.shth.das.common.CommonFunction;
+import com.shth.das.common.CommonMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -55,7 +55,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //松下焊机【GL5、FR2、AT3】第二次握手验证
         this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
         //松下焊机GL5系列软硬件参数
-        this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxSoftHardParam);
+        this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxGl5SoftHardParam);
         //松下焊机GL5系列CO2实时数据
         this.sxHandlerMapping.put(206, this.jnSxRtDataProtocol::jnSxGl5RtDataManage);
         //松下焊机GL5系列CO2状态信息
@@ -65,7 +65,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //松下焊机GL5系列CO2工艺索取返回（有数据）
         this.sxHandlerMapping.put(406, this.jnSxRtDataProtocol::jnSxCo2ProcessClaimReturn);
         //松下焊机GL5系列TIG工艺索取返回（有数据）
-        this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxTigProcessClaimReturn);
+        this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxGl5TigProcessClaimReturn);
+        //松下焊机【FR2、AT3】系列软硬件参数
+        this.sxHandlerMapping.put(154, this.jnSxRtDataProtocol::jnSxFr2At3SoftHardParam);
         //松下焊机FR2系列CO2实时数据
         this.sxHandlerMapping.put(112, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
         //松下焊机FR2系列TIG实时数据
@@ -75,7 +77,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
         this.sxHandlerMapping.put(52, this.jnSxRtDataProtocol::jnSxChannelParamReply);
         //松下焊机FR2系列通道参数【查询回复（有参数）】
-        this.sxHandlerMapping.put(220, this.jnSxRtDataProtocol::jnSxChannelParamReplyHave);
+        this.sxHandlerMapping.put(220, this.jnSxRtDataProtocol::jnSxFr2ChannelParamReplyHave);
         //松下焊机AT3系列【查询回复（有参数）】
         this.sxHandlerMapping.put(92, this.jnSxRtDataProtocol::jnSxAt3ParamQueryReturn);
     }
