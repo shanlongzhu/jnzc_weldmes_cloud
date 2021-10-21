@@ -61,14 +61,15 @@
 		LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id AND s2.weldStatus IN (3,5,7)
 		LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id AND s3.weldStatus = 99
 		<where>
+			d.id in
+			<foreach collection="ids" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
 			<if test="welderNo!=null and welderNo!=''">
-				w.welder_no = #{welderNo}
+				and w.welder_no = #{welderNo}
 			</if>
 			<if test="welderName!=null and welderName!=''">
 				and w.welder_name = #{welderName}
-			</if>
-			<if test="name!=null and name!=''">
-				and d.NAME = #{name}
 			</if>
 		</where>
 		GROUP BY w.id
@@ -76,7 +77,7 @@
 		SELECT w.id,w.welder_name,w.welder_no,d.NAME,GROUP_CONCAT(DISTINCT sx.taskNo) taskNo,
 		COUNT(DISTINCT sx.taskId) count,GROUP_CONCAT(DISTINCT sx.weldCode) machineNo,
 		COUNT(DISTINCT sx.weldCid) count2,
-		SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+		SUM(sx.weldSuration) onOffTime,
 		SUM(sx1.weldSuration) realWeldTime,
 		SUM(sx1.weldSuration) normalTime,
 		0 supergageTime,
@@ -89,26 +90,21 @@
 		INNER JOIN weldsx_statistics_data sx ON d.id = sx.welderDeptId AND w.id = sx.welderId
 		AND sx.startTime &gt;= #{time1} AND sx.endTime &lt;= #{time2}
 		LEFT JOIN machine_weldsx_info m ON m.weld_cid = sx.weldCid
-		LEFT JOIN weld_on_off_time onoff ON onoff.weld_cid = sx.weldCid
 		LEFT JOIN weldsx_statistics_data sx1 ON sx.id = sx1.id AND sx1.weldStatus NOT IN (0,3,4,6,9)
 		LEFT JOIN weldsx_statistics_data sx2 ON sx1.id = sx2.id AND sx2.weldStatus NOT IN (3,4,6,9)
 		<where>
+			d.id in
+			<foreach collection="ids" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
 			<if test="welderNo!=null and welderNo!=''">
 				w.welder_no = #{welderNo}
 			</if>
 			<if test="welderName!=null and welderName!=''">
 				and w.welder_name = #{welderName}
 			</if>
-			<if test="name!=null and name!=''">
-				and d.NAME = #{name}
-			</if>
 		</where>
 		GROUP BY w.id) p
 		group by p.id
     </select>
-
-	<!--根据部门id查询部门名称-->
-	<select id="getDeptName" resultType="java.lang.String">
-		select name from sys_dept where id=#{deptId}
-	</select>
 </mapper>
