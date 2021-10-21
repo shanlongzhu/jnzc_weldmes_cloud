@@ -27,7 +27,7 @@ public class MybatisPlusConfigds2 {
     static final String PACKAGE = "com.shth.das.sys.rtdata.mapper";
     static final String MAPPER_LOCATION = "classpath*:mybatis/rtdatamapper/*.xml";
 
-    //ds2数据源
+    //ds2数据源Session工厂
     @Bean("ds2SqlSessionFactory")
     public SqlSessionFactory ds2SqlSessionFactory(@Qualifier("ds2DataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
@@ -46,11 +46,13 @@ public class MybatisPlusConfigds2 {
         return sqlSessionFactory.getObject();
     }
 
+    //ds2数据源事务管理器
     @Bean(name = "ds2TransactionManager")
     public DataSourceTransactionManager ds2TransactionManager(@Qualifier("ds2DataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
+    //ds2数据源Session模板方法
     @Bean(name = "ds2SqlSessionTemplate")
     public SqlSessionTemplate ds2SqlSessionTemplate(@Qualifier("ds2SqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);

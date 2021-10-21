@@ -17,9 +17,9 @@ public class DruidAspectConfig {
 
     @Bean
     public DruidStatInterceptor druidStatInterceptor() {
-        DruidStatInterceptor dsInterceptor = new DruidStatInterceptor();
-        return dsInterceptor;
+        return new DruidStatInterceptor();
     }
+
     @Bean
     @Scope("prototype")
     public JdkRegexpMethodPointcut druidStatPointcut() {
@@ -28,6 +28,7 @@ public class DruidAspectConfig {
                 "com.shth.das.sys.weldmesdb.mapper.*","com.shth.das.sys.weldmesdb.service.*");
         return pointcut;
     }
+
     @Bean
     public DefaultPointcutAdvisor druidStatAdvisor(DruidStatInterceptor druidStatInterceptor, JdkRegexpMethodPointcut druidStatPointcut) {
         DefaultPointcutAdvisor defaultPointAdvisor = new DefaultPointcutAdvisor();

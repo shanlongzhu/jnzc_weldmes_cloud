@@ -28,7 +28,7 @@ public class MybatisPlusConfigds1 {
     static final String PACKAGE = "com.shth.das.sys.weldmesdb.mapper";
     static final String MAPPER_LOCATION = "classpath*:mybatis/dbmapper/*.xml";
 
-    //主数据源 ds1数据源
+    //主数据源工厂（ds1数据源）
     @Primary
     @Bean("ds1SqlSessionFactory")
     public SqlSessionFactory ds1SqlSessionFactory(@Qualifier("ds1DataSource") DataSource dataSource) throws Exception {
@@ -48,12 +48,14 @@ public class MybatisPlusConfigds1 {
         return sqlSessionFactory.getObject();
     }
 
+    //主数据源事务管理器（ds1数据源）
     @Primary
     @Bean(name = "ds1TransactionManager")
     public DataSourceTransactionManager ds1TransactionManager(@Qualifier("ds1DataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
+    //主数据源SqlSession模板方法（ds1数据源）
     @Primary
     @Bean(name = "ds1SqlSessionTemplate")
     public SqlSessionTemplate ds1SqlSessionTemplate(@Qualifier("ds1SqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
