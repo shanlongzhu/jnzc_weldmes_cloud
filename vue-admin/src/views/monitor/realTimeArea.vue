@@ -468,6 +468,10 @@ export default {
                     str = '焊接';
                     imgN = 'W';
                     break;
+              case 96:
+                str = '设备锁定';
+                imgN = '';
+                break;
                 default:
                     str = '故障';
                     imgN = 'O';
