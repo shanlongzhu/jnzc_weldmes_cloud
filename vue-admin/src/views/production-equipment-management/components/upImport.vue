@@ -183,6 +183,61 @@
 
             </template>
         </vxe-modal>
+
+      <!-- 下发结果显示 -->
+      <vxe-modal
+        title="下发升级预览"
+        v-model="model3"
+        width="700"
+      >
+        <template #default>
+          <vxe-table
+            border
+            show-overflow
+            auto-resize
+            size="mini"
+            height="300"
+            highlight-hover-row
+            resizable
+            stripe
+            :data="proData"
+          >
+            <vxe-table-column
+              field="gatherNo"
+              title="采集序号"
+              min-width="100"
+            >
+              <template #default="{row}">
+                {{row.gatherNo}}
+              </template>
+            </vxe-table-column>
+            <vxe-table-column
+              field="channelNo"
+              title="下发状态"
+              min-width="100"
+            >
+              <template #default="{row}">
+                            <span v-if="row.status===2">
+                              发送中...
+                            </span>
+                            <span v-else-if="row.status===0" style="color:#06834B">
+                              成功
+                            </span>
+                          <span v-else style="color:#f00">
+                              失败
+                            </span>
+              </template>
+            </vxe-table-column>
+          </vxe-table>
+          <div class="p10 tr">
+            <el-button
+              size="small"
+              type="primary"
+              @click="model3=false"
+            >确定</el-button>
+          </div>
+        </template>
+      </vxe-modal>
     </div>
 
 </template>
@@ -238,6 +293,11 @@ export default {
 
             //mqtt
             newClientMq: {},
+
+            //下发状态
+            model3:false,
+            //检测下发状态
+            proData:[]
         }
     },
     watch: {},
@@ -252,8 +312,11 @@ export default {
             this.search();
             this.getTeamList();
             this.selectEquipment = {};
+            this.gatherNoArr = [];
             this.$nextTick(() => {
                 this.$refs.vxeTable.clearCheckboxReserve();
+                this.proData = [];
+                this.fileName = '';
             })
         },
         //获取设备
@@ -324,11 +387,13 @@ export default {
         },
 
         submitFile () {
+          // this.submitIssue();
             this.$refs.upload.submit();
         },
 
         handleFileSuccess (res) {
             if (res.msg == 'true') {
+                this.$refs.upload.clearFiles();
                 this.submitIssue();
             }
         },
@@ -338,13 +403,16 @@ export default {
             this.gatherNoArr.map(item => {
                 let objItem = {}
                 objItem['gatherNo'] = item;
-                objItem['packagePath'] = this.packagePath || `http://${process.env.VUE_APP_MQTT_API}:${this.ruleForm.port}/${this.fileName}`;
+                objItem['packagePath'] = this.fileName;
                 objItem['port'] = this.ruleForm.port;
                 const msg = JSON.stringify(objItem);
                 this.doPublish(msg);
+                objItem.status=2;//发送中
+                this.proData.push(objItem)
             });
-
-
+            this.model3 = true;
+            this.model2 = false;
+            this.model = false;
             this.issueTimeOut();
         },
 
@@ -379,6 +447,12 @@ export default {
                 if (destinationName == 'jnOtcV1ProgramPathIssueReturn') {
                     var datajson = JSON.parse(payloadString);
                     console.log(datajson)
+                    this.proData.map(item => {
+                      //没有成功的状态全部置为失败
+                      if(parseInt(item.gatherNo)===parseInt(datajson.gatherNo)){
+                        item.status = datajson.status;
+                      }
+                    })
                 }
             }
         },
@@ -396,6 +470,12 @@ export default {
                     if (error) {
                         console.log('取消订阅失败', error)
                     }
+                })
+                this.proData.map(item => {
+                  //没有成功的状态全部置为失败
+                  if(item.status!==0){
+                    item.status =1;
+                  }
                 })
             }, 5000)
         },
