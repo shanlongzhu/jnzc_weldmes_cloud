@@ -18,7 +18,8 @@ public interface DeviceDao {
      * @Description 查询 设备生产数据列表信息
      * @Params
      */
-    List<WeldStatisticsDataDevice> getList(@Param("time1") String time1, @Param("time2") String time2, @Param("machineNo") String machineNo, @Param("name") String name);
+    List<WeldStatisticsDataDevice> getList(@Param("time1") String time1, @Param("time2") String time2,
+                                           @Param("machineNo") String machineNo, @Param("ids") List<Long> ids);
 
     /**
      * @Date 2021/10/18 15:14

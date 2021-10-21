@@ -61,11 +61,12 @@
         LEFT JOIN weld_statistics_data s2 ON s1.id = s2.id AND s2.weldStatus IN (3,5,7)
         LEFT JOIN weld_statistics_data s3 ON s1.id = s3.id AND s3.weldStatus = 99
         <where>
+            d.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
             <if test="machineNo!=null and machineNo!=''">
-                m.machine_no = #{machineNo}
-            </if>
-            <if test="name!=null and name!=''">
-                and d.NAME = #{name}
+                and m.machine_no = #{machineNo}
             </if>
         </where>
         GROUP BY m.machine_no
@@ -73,7 +74,7 @@
         SELECT m.id,m.weld_no machine_no,m.dept_id,d.NAME,COUNT(DISTINCT sx.welderId) count,
         GROUP_CONCAT(DISTINCT w.welder_no) welderNo,COUNT(DISTINCT sx.taskId) count2,
         GROUP_CONCAT(DISTINCT sx.taskNo) taskNo,
-        SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+        SUM(sx.weldSuration) onOffTime,
         SUM(sx1.weldSuration) realWeldTime,
         SUM(sx1.weldSuration) normalTime,
         0 supergageTime,
@@ -90,11 +91,12 @@
         LEFT JOIN weldsx_statistics_data sx1 ON sx.id = sx1.id AND sx1.weldStatus NOT IN (0,3,4,6,9)
         LEFT JOIN weldsx_statistics_data sx2 ON sx1.id = sx2.id AND sx2.weldStatus NOT IN (3,4,6,9)
         <where>
+            d.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
             <if test="machineNo!=null and machineNo!=''">
-                m.weld_no = #{machineNo}
-            </if>
-            <if test="name!=null and name!=''">
-                and d.NAME = #{name}
+                and m.weld_no = #{machineNo}
             </if>
         </where>
         GROUP BY m.weld_no) dev
