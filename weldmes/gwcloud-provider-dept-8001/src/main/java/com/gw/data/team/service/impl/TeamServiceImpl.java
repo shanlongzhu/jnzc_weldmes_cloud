@@ -65,18 +65,6 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Long> getNextDeptIds(String deptId) {
 
-        //判断用户部门id是否传入
-        if(ObjectUtils.isEmpty(deptId)){
-
-            //获取到当前用户
-            Subject currentUser = SecurityUtils.getSubject();
-
-            UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
-
-            deptId = subject.getDeptId().toString();
-
-        }
-
         //通过组织机构id 查询 该部门下所有的班组id
         List<Long> ids = sysDeptDao.selectNextDeptIdsById(deptId);
 

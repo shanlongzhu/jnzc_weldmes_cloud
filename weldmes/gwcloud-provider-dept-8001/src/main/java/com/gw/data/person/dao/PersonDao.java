@@ -18,12 +18,7 @@ public interface PersonDao {
      * @Description 查询人员生产数据列表
      * @Params
      */
-    List<WeldStatisticsDataPerson> getList(@Param("time1") String time1, @Param("time2") String time2, @Param("welderNo") String welderNo, @Param("welderName") String welderName, @Param("name") String name);
-
-    /**
-     * @Date 2021/10/18 16:25
-     * @Description 根据部门id 查询部门名称
-     * @Params
-     */
-    String getDeptName(Long deptId);
+    List<WeldStatisticsDataPerson> getList(@Param("time1") String time1, @Param("time2") String time2,
+                                           @Param("welderNo") String welderNo, @Param("welderName") String welderName,
+                                           @Param("ids") List<Long> ids);
 }

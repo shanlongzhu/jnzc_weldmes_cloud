@@ -20,23 +20,11 @@ public class PersonServiceImpl implements PersonService {
      * @Params
      */
     @Override
-    public List<WeldStatisticsDataPerson> getList(String time1, String time2, String welderNo, String welderName, String name) {
+    public List<WeldStatisticsDataPerson> getList(String time1, String time2,
+                                                  String welderNo, String welderName, List<Long> ids) {
 
-        List<WeldStatisticsDataPerson> list = personDao.getList(time1,time2,welderNo,welderName,name);
+        List<WeldStatisticsDataPerson> list = personDao.getList(time1,time2,welderNo,welderName,ids);
 
         return list;
-    }
-
-    /**
-     * @Date 2021/10/18 16:23
-     * @Description 获取部门名称
-     * @Params
-     */
-    @Override
-    public String getDeptName(Long deptId) {
-
-        String deptName = personDao.getDeptName(deptId);
-
-        return deptName;
     }
 }

@@ -5,8 +5,13 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
 import com.gw.data.person.service.PersonService;
+import com.gw.data.team.service.TeamService;
+import com.gw.entities.UserLoginInfo;
 import com.gw.entities.WeldStatisticsDataPerson;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
@@ -25,6 +30,9 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    TeamService teamService;
+
     /**
      * @Date 2021/10/18 16:01
      * @Description 获取人员生产数据列表
@@ -35,11 +43,24 @@ public class PersonController {
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
                               String time1, String time2,String welderNo,String welderName,Long deptId) {
 
-        String name = personService.getDeptName(deptId);
+        //判断用户部门id是否传入
+        if(ObjectUtils.isEmpty(deptId)){
+
+            //获取到当前用户
+            Subject currentUser = SecurityUtils.getSubject();
+
+            UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+
+            deptId = subject.getDeptId();
+
+        }
+
+        //通过组织机构id 查询 该部门下所有的班组id
+        List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
         PageHelper.startPage(pn, size);
 
-        List<WeldStatisticsDataPerson> list = personService.getList(time1,time2,welderNo,welderName,name);
+        List<WeldStatisticsDataPerson> list = personService.getList(time1,time2,welderNo,welderName,ids);
 
         PageInfo page = new PageInfo(list, 10);
 
@@ -64,11 +85,11 @@ public class PersonController {
             //设置sheet表格名
             String sheetName = "人员生产数据";
 
-            //获取部门名称
-            String name = personService.getDeptName(deptId);
+            //通过组织机构id 查询 该部门下所有的班组id
+            List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
             //获取人员生产数据信息列表
-            List<WeldStatisticsDataPerson> list = personService.getList(time1,time2,welderNo,welderName,name);
+            List<WeldStatisticsDataPerson> list = personService.getList(time1,time2,welderNo,welderName,ids);
 
             //导出为Excel
             DownExcel.download(response,WeldStatisticsDataPerson.class,list,sheetName,title);
