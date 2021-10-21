@@ -404,7 +404,7 @@ export default {
                 let objItem = {}
                 objItem['gatherNo'] = item;
                 objItem['packagePath'] = this.fileName;
-                objItem['port'] = this.ruleForm.port;
+                objItem['port'] =  this.ruleForm.port;
                 const msg = JSON.stringify(objItem);
                 this.doPublish(msg);
                 objItem.status=2;//发送中
