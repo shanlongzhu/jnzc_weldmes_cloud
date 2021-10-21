@@ -24,7 +24,7 @@ public class MqttMessageManage {
 
     public MqttMessageManage() {
         MqttMessageAnalysis mqttMessageAnalysis = new MqttMessageAnalysis();
-        //焊工刷卡领取任务
+        //焊工刷卡领取任务[解锁焊机]
         mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.TaskClaimIssue), mqttMessageAnalysis::taskClaimIssue);
         //OTC（1.0）工艺下发
         mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessIssue), mqttMessageAnalysis::otcV1ProcessIssue);

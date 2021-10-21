@@ -140,7 +140,7 @@ public class JnSxRtDataProtocol {
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey("SxWeldModel")) {
                 SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
-                //松下参数绑定
+                //松下参数绑定[刷卡会解锁焊机]
                 sxWeldDataBinding(ctx, sxWeldModel);
             }
         }
@@ -315,7 +315,7 @@ public class JnSxRtDataProtocol {
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey("SxWeldModel")) {
                 SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
-                //松下参数绑定
+                //松下参数绑定【刷卡会解锁焊机】
                 sxWeldDataBinding(ctx, sxWeldModel);
             }
         }

@@ -54,7 +54,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     private void setSxHandlerMapping() {
         //松下焊机【GL5、FR2、AT3】第二次握手验证
         this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
-        //松下焊机GL5系列软硬件参数
+        //松下焊机GL5系列软硬件参数【刷卡解锁焊机】
         this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxGl5SoftHardParam);
         //松下焊机GL5系列CO2实时数据
         this.sxHandlerMapping.put(206, this.jnSxRtDataProtocol::jnSxGl5RtDataManage);
@@ -66,7 +66,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         this.sxHandlerMapping.put(406, this.jnSxRtDataProtocol::jnSxCo2ProcessClaimReturn);
         //松下焊机GL5系列TIG工艺索取返回（有数据）
         this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxGl5TigProcessClaimReturn);
-        //松下焊机【FR2、AT3】系列软硬件参数
+        //松下焊机【FR2、AT3】系列软硬件参数【刷卡解锁焊机】
         this.sxHandlerMapping.put(154, this.jnSxRtDataProtocol::jnSxFr2At3SoftHardParam);
         //松下焊机FR2系列CO2实时数据
         this.sxHandlerMapping.put(112, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);

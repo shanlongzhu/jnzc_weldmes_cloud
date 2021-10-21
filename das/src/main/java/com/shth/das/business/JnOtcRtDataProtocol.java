@@ -746,8 +746,8 @@ public class JnOtcRtDataProtocol {
                 final String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
                 //ASCII码转16进制
                 final String path = CommonUtils.convertStringToHex(programPath.getPackagePath());
-                //长度拼接
-                final String packagePath = CommonUtils.stringLengthJoint(path, 100);
+                //长度拼接（后面拼接0）
+                final String packagePath = CommonUtils.backLengthJoint(path, 100);
                 final String foot = "007D";
                 final String str = head + gatherNo + port + packagePath + foot;
                 if (str.length() == 126) {

@@ -134,7 +134,7 @@ public class CommonUtils {
     }
 
     /**
-     * 字符串长度拼接
+     * 字符串长度拼接（在字符串前面拼接0）
      *
      * @param str    要拼接的字符串
      * @param length 要拼接的长度
@@ -145,7 +145,29 @@ public class CommonUtils {
             if (str.length() < length) {
                 StringBuilder stringBuilder = new StringBuilder(str);
                 for (int i = 0; i < (length - str.length()); i++) {
+                    //前面插入0
                     stringBuilder.insert(0, "0");
+                }
+                str = stringBuilder.toString();
+            }
+        }
+        return str;
+    }
+
+    /**
+     * 在字符串后面拼接0
+     *
+     * @param str    要拼接的字符串
+     * @param length 要拼接的长度
+     * @return 返回拼接好的字符串
+     */
+    public static String backLengthJoint(String str, int length) {
+        if (isNotEmpty(str)) {
+            if (str.length() < length) {
+                StringBuilder stringBuilder = new StringBuilder(str);
+                for (int i = 0; i < (length - str.length()); i++) {
+                    //后面拼接0
+                    stringBuilder.append("0");
                 }
                 str = stringBuilder.toString();
             }

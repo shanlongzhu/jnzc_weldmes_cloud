@@ -64,11 +64,11 @@ public class TaskClaimIssue implements Serializable {
     /**
      * 设备类型（默认0：OTC，1：松下）
      */
-    private int weldType;
+    private Integer weldType;
     /**
      * 开始标志（默认0：开始任务，1：结束任务）
      */
-    private int startFlag;
+    private Integer startFlag;
     /**
      * OTC设备必须传采集编号
      */
