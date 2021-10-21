@@ -65,6 +65,7 @@
                 and task.status = #{taskStatus}
             </if>
         </where>
+        order by task.id DESC
     </select>
 
     <!--通过所属作业区查询出部门Id-->
