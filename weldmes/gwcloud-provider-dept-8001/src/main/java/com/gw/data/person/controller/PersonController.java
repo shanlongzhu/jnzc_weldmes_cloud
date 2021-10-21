@@ -6,10 +6,8 @@ import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
 import com.gw.data.person.service.PersonService;
 import com.gw.entities.WeldStatisticsDataPerson;
-import com.gw.entities.WeldStatisticsDataTeam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
