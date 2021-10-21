@@ -19,12 +19,10 @@ public interface ProductionTaskDao {
      * @Description 查询生产任务详情数据列表
      * @Params
      */
-    List<WeldStatisticsDataProductionTask> getList(@Param("time1") String time1, @Param("time2") String time2, @Param("welderNo") String welderNo, @Param("welderName") String welderName, @Param("machineNo") String machineNo, @Param("taskNo") String taskNo, @Param("name") String name);
+    List<WeldStatisticsDataProductionTask> getList(@Param("time1") String time1, @Param("time2") String time2,
+                                                   @Param("welderNo") String welderNo,
+                                                   @Param("welderName") String welderName,
+                                                   @Param("machineNo") String machineNo,
+                                                   @Param("taskNo") String taskNo, @Param("ids") List<Long> ids);
 
-    /**
-     * @Date 2021/10/18 17:28
-     * @Description 通过部门id查询 部门名称
-     * @Params
-     */
-    String getName(Long deptId);
 }

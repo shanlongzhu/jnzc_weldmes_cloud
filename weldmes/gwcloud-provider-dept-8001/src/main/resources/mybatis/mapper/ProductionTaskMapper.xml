@@ -49,6 +49,10 @@
         LEFT JOIN weld_statistics_data s ON c.task_id = s.taskId
         AND c.weld_id = s.machineId AND c.welder_id = s.welderId AND s.weldStatus IN (3,99)
         <where>
+            d.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
             <if test="welderNo!=null and welderNo!=''">
                 w.welder_no = #{welderNo}
             </if>
@@ -60,9 +64,6 @@
             </if>
             <if test="taskNo!=null and taskNo!=''">
                 and t.task_no = #{taskNo}
-            </if>
-            <if test="name!=null and name!=''">
-                and d.NAME = #{name}
             </if>
         </where>
         GROUP BY c.task_id,c.weld_id,c.welder_id
@@ -79,6 +80,10 @@
         LEFT JOIN sys_dept d ON d.id = t.dept_id
         LEFT JOIN weldsx_statistics_data sx ON c.task_id = sx.taskId AND c.welder_id = sx.welderId AND sx.weldStatus NOT IN (0,3,4,6,9)
         <where>
+            d.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
             <if test="welderNo!=null and welderNo!=''">
                 w.welder_no = #{welderNo}
             </if>
@@ -91,16 +96,8 @@
             <if test="taskNo!=null and taskNo!=''">
                 and t.task_no = #{taskNo}
             </if>
-            <if test="name!=null and name!=''">
-                and d.NAME = #{name}
-            </if>
         </where>
         GROUP BY c.task_id,c.weld_id,c.welder_id) p
         group by p.task_id,p.weld_id,p.welder_id
-    </select>
-
-    <!--根据部门id 查询 部门名称-->
-    <select id="getName" resultType="java.lang.String">
-        select name from sys_dept where id=#{deptId}
     </select>
 </mapper>

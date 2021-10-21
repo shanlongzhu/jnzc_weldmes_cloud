@@ -25,17 +25,11 @@ public class ProductionTaskServiceImpl implements ProductionTaskService {
      * @Params
      */
     @Override
-    public List<WeldStatisticsDataProductionTask> getList(String time1, String time2, String welderNo, String welderName, String machineNo, String taskNo, String name) {
-        return productionTaskDao.getList(time1,time2,welderNo,welderName,machineNo,taskNo,name);
-    }
+    public List<WeldStatisticsDataProductionTask> getList(String time1, String time2, String welderNo, String welderName,
+                                                          String machineNo, String taskNo, List<Long> ids) {
 
-    /**
-     * @Date 2021/10/18 17:27
-     * @Description 获取部门名称
-     * @Params
-     */
-    @Override
-    public String getName(Long deptId) {
-        return productionTaskDao.getName(deptId);
+        List<WeldStatisticsDataProductionTask> list = productionTaskDao.getList(time1,time2,welderNo,welderName,machineNo,taskNo,ids);
+
+        return list;
     }
 }

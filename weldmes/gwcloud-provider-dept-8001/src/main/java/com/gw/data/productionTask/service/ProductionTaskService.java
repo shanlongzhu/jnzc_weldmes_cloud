@@ -16,12 +16,7 @@ public interface ProductionTaskService {
      * @Description 获取生产任务详情数据列表
      * @Params
      */
-    List<WeldStatisticsDataProductionTask> getList(String time1, String time2, String welderNo, String welderName, String machineNo, String taskNo, String name);
+    List<WeldStatisticsDataProductionTask> getList(String time1, String time2, String welderNo, String welderName,
+                                                   String machineNo, String taskNo, List<Long> ids);
 
-    /**
-     * @Date 2021/10/18 17:27
-     * @Description 获取部门名称
-     * @Params
-     */
-    String getName(Long deptId);
 }
