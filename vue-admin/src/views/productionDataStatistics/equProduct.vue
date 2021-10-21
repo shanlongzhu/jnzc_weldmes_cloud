@@ -185,6 +185,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { getEquProDataList, exportEquProDataList } from '_api/productDataStat/productDataStatApi'
 import { getTeam } from '_api/productionProcess/process'
@@ -236,6 +237,11 @@ export default {
 
         }
     },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
 
     created () {
         this.getList();
@@ -293,9 +299,9 @@ export default {
                 time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 machineNo:this.machineNo,
-                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
+                deptId:this.deptId && this.deptId.length > 0 ? parseInt(this.deptId.slice(-1).join('')) : this.user.user.deptId,
             }
-            location.href = exportEquProDataList(req)
+          location.href = exportEquProDataList(req)
         },
         cellClick ({ column, row }) {
             if (column.title == "使用人员数" && row.count != 0) {

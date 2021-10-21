@@ -195,6 +195,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { getPerProDataList, exportPerProDataList } from '_api/productDataStat/productDataStatApi'
 import { getTeam } from '_api/productionProcess/process'
@@ -248,6 +249,11 @@ export default {
             title: '焊接任务'
         }
     },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
 
     created () {
         this.getList();
@@ -306,7 +312,8 @@ export default {
                 time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 welderNo: this.welderNo,
                 welderName: this.welderName,
-                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
+              deptId:this.deptId && this.deptId.length > 0 ? parseInt(this.deptId.slice(-1).join('')) : this.user.user.deptId,
+
             }
             location.href = exportPerProDataList(req)
         },

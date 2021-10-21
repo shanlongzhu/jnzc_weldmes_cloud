@@ -174,7 +174,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+  import { mapGetters } from 'vuex'
+  import moment from 'moment'
 import { getWorkProDataList, exportWorkProDataList } from '_api/productDataStat/productDataStatApi'
 import { getTeam } from '_api/productionProcess/process'
 import { getToken } from '@/utils/auth'
@@ -227,6 +228,12 @@ export default {
             },
         }
     },
+
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
 
     created () {
         this.getList();
@@ -285,7 +292,8 @@ export default {
                 taskNo:this.taskNo,
                 time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
-                deptId:this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
+              deptId:this.deptId && this.deptId.length > 0 ? parseInt(this.deptId.slice(-1).join('')) : this.user.user.deptId,
+
             }
             location.href = exportWorkProDataList(req)
         },

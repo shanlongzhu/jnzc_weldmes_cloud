@@ -194,7 +194,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+  import { mapGetters } from 'vuex'
+  import moment from 'moment'
 import { getTeam } from '_api/productionProcess/process'
 import { getTaskDataList, exportTaskDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
@@ -244,7 +245,11 @@ export default {
 
         }
     },
-
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
     created () {
         this.getList();
         if (this.teamArr.length == 0) {
@@ -303,8 +308,8 @@ export default {
             let req = {
                 time1: this.startTime? moment(this.startTime).format('YYYY-MM-DD HH:mm:ss') : '',
                 time2: this.endTime  ? moment(this.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
-                deptId: this.deptId && this.deptId.length > 0 ? this.deptId.slice(-1).join('') : '',
-                welderNo: this.welderNo,
+              deptId:this.deptId && this.deptId.length > 0 ? parseInt(this.deptId.slice(-1).join('')) : this.user.user.deptId,
+              welderNo: this.welderNo,
                 welderName: this.welderName,
                 machineNo: this.machineNo,
                 taskNo: this.taskNo,

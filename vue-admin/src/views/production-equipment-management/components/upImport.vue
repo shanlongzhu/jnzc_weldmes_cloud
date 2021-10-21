@@ -159,7 +159,7 @@
                     <el-form-item label="程序路径：">
                         <el-input
                             style="width:350px"
-                            v-model="ruleForm.packagePath"
+                            v-model="packagePath"
                         ></el-input>
                     </el-form-item>
                     <el-form-item label="端口号：">
@@ -231,9 +231,7 @@ export default {
             model: false,
             ruleForm: {
                 //端口
-                port: 80,
-                //程序包路径
-                packagePath: '',
+                port: '80',
             },
 
             gatherNoArr: [],//选中设备的所有采集编号
@@ -243,7 +241,11 @@ export default {
         }
     },
     watch: {},
-    computed: {},
+    computed: {
+      packagePath(){
+        return `http://${process.env.VUE_APP_MQTT_API}:${this.ruleForm.port}/${this.fileName}`;
+      }
+    },
     methods: {
         init () {
             this.model2 = true;
@@ -316,9 +318,8 @@ export default {
             }
             //取出选中设备所有采集编号
             equipmentArr.filter(item => item.gatherNo).forEach(item => {
-                this.gatherNoArr = [...this.gatherNoArr, ...item.gatherNo.split(',')]
-            });
-            this.ruleForm.packagePath = `http://${process.env.VUE_APP_MQTT_API}:${this.ruleForm.port}/${this.fileName}`;
+                this.gatherNoArr = [...this.gatherNoArr, ...item.gatherNo.split(',')]            });
+
             this.model = true;
         },
 
@@ -334,16 +335,16 @@ export default {
 
         //命令下发
         submitIssue () {
-            let doMsgData = this.gatherNoArr.map(item => {
+            this.gatherNoArr.map(item => {
                 let objItem = {}
                 objItem['gatherNo'] = item;
-                objItem['packagePath'] = this.ruleForm.packagePath || `http://${process.env.VUE_APP_MQTT_API}:${this.ruleForm.port}/${this.fileName}`;
+                objItem['packagePath'] = this.packagePath || `http://${process.env.VUE_APP_MQTT_API}:${this.ruleForm.port}/${this.fileName}`;
                 objItem['port'] = this.ruleForm.port;
-                return objItem;
+                const msg = JSON.stringify(objItem);
+                this.doPublish(msg);
             });
 
-            const msg = JSON.stringify(doMsgData);
-            this.doPublish(msg);
+
             this.issueTimeOut();
         },
 
@@ -374,9 +375,10 @@ export default {
                 }
             })
             this.newClientMq.onMessageArrived = ({ destinationName, payloadString }) => {
-                if (destinationName == 'lindeOtcV2rtd') {
+              console.log(payloadString)
+                if (destinationName == 'jnOtcV1ProgramPathIssueReturn') {
                     var datajson = JSON.parse(payloadString);
-
+                    console.log(datajson)
                 }
             }
         },

@@ -16,7 +16,7 @@
                     :show-all-levels="false"
                 />
             </div> -->
-            
+
             <div class="con-w">
                 <span>时间：</span>
                 <el-date-picker
@@ -143,7 +143,9 @@
 </template>
 
 <script>
-import moment from 'moment'
+  import { mapGetters } from 'vuex'
+
+  import moment from 'moment'
 import { getTeam } from '_api/productionProcess/process'
 import { getWeldingTaskDataList, exportWeldingTaskDataList } from '_api/productDataStat/productDataStatApi'
 import { getToken } from '@/utils/auth'
@@ -190,6 +192,11 @@ export default {
 
         }
     },
+  computed: {
+    ...mapGetters([
+      'user'
+    ])
+  },
 
     created () {
         this.getList();
