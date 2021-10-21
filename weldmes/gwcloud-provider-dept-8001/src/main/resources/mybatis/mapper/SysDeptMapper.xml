@@ -78,4 +78,11 @@
         select id,`name` from sys_dept where parent_id in (select id from sys_dept where parent_id = 1)
     </select>
 
+    <!--通过组织机构id 查询 该部门下所有的班组id-->
+    <select id="selectNextDeptIdsById" parameterType="String" resultType="java.lang.Long">
+        select id from sys_dept
+        where FIND_IN_SET(id, getChild(#{deptId}))
+        and id not in (select distinct parent_id from sys_dept)
+    </select>
+
 </mapper>

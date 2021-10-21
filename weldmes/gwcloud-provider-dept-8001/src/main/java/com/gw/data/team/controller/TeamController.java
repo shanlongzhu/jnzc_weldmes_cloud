@@ -34,9 +34,13 @@ public class TeamController {
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
                               String time1,String time2,String deptId){
 
+        //通过组织机构id 查询 该部门下所有的班组id
+        List<Long> ids = teamService.getNextDeptIds(deptId);
+
         PageHelper.startPage(pn,size);
 
-        List<WeldStatisticsDataTeam> list = teamService.getList(time1,time2,deptId);
+        //获取班组生产数据列表
+        List<WeldStatisticsDataTeam> list = teamService.getList(time1,time2,ids);
 
         PageInfo page=new PageInfo(list,10);
 
@@ -61,8 +65,11 @@ public class TeamController {
             //设置sheet表格名
             String sheetName = "班组生产数据";
 
+            //通过组织机构id 查询 该部门下所有的班组id
+            List<Long> ids = teamService.getNextDeptIds(deptId);
+
             //获取班组数据列表
-            List<WeldStatisticsDataTeam> list = teamService.getList(time1,time2,deptId);
+            List<WeldStatisticsDataTeam> list = teamService.getList(time1,time2,ids);
 
             //导出为Excel
             DownExcel.download(response,WeldStatisticsDataTeam.class,list,sheetName,title);

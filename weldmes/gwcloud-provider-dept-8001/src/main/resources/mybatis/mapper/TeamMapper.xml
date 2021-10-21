@@ -67,7 +67,7 @@
 		SELECT d.id,d.`name` deptName,
 		COUNT(DISTINCT m.id) allCount,
 		COUNT(DISTINCT sx1.weldCid) onOffCount,
-		SUM(if(onoff.end_time is null,now(),onoff.end_time)) - SUM(onoff.start_time) onOffTime,
+		CONCAT(FLOOR(SUM(sx.weldSuration)/3600),':',FLOOR(SUM(sx.weldSuration)%3600/60),':',FLOOR(SUM(sx.weldSuration)%3600%60)) onOffTime,
 		COUNT(DISTINCT sx1.taskId)-COUNT(DISTINCT sx2.taskId) taskCount,
 		COUNT(DISTINCT sx3.weldCid) realWeldOnline,
 		SUM(sx3.weldSuration) realWeldTime,
@@ -84,7 +84,6 @@
 		INNER JOIN machine_weldsx_info m ON d.id = m.dept_id
 		LEFT JOIN weldsx_statistics_data sx ON m.weld_cid = sx.weldCid
 		AND sx.startTime &gt;= #{time1} AND sx.endTime &lt;= #{time2}
-		LEFT JOIN weld_on_off_time onoff ON onoff.weld_cid = sx.weldCid
 		LEFT JOIN weldsx_statistics_data sx1 ON sx.id=sx1.id  AND sx1.weldStatus NOT IN (3,4,6,9)
 		LEFT JOIN weldsx_statistics_data sx2 ON sx1.id=sx2.id  AND sx2.taskId IS NULL
 		LEFT JOIN weldsx_statistics_data sx3 ON sx1.id=sx3.id AND sx3.weldStatus NOT IN (0,3,4,6,9)
