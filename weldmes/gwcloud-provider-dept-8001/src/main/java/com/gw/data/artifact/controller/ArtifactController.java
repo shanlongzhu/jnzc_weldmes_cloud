@@ -6,14 +6,23 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
 import com.gw.data.artifact.service.ArtifactService;
+import com.gw.data.team.service.TeamService;
+import com.gw.entities.UserLoginInfo;
 import com.gw.entities.WeldStatisticsDataArtifact;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
-
+/**
+ * @Date 2021/10/21 13:51
+ * @Description 工件生产数据控制器
+ * @Params
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "artifact")
@@ -22,6 +31,8 @@ public class ArtifactController {
     @Autowired
     private ArtifactService artifactService;
 
+    @Autowired
+    TeamService teamService;
 
     /**
      * @Date 2021/10/18 13:55
@@ -33,11 +44,24 @@ public class ArtifactController {
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
                               String time1, String time2,String taskNo,Long deptId) {
 
-        String name=artifactService.getName(deptId);
+        //判断用户部门id是否传入
+        if(ObjectUtils.isEmpty(deptId)){
+
+            //获取到当前用户
+            Subject currentUser = SecurityUtils.getSubject();
+
+            UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+
+            deptId = subject.getDeptId();
+
+        }
+
+        //通过组织机构id 查询 该部门下所有的班组id
+        List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
         PageHelper.startPage(pn, size);
 
-        List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,name);
+        List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,ids);
 
         PageInfo page = new PageInfo(list, 10);
 
@@ -62,11 +86,11 @@ public class ArtifactController {
             //设置sheet表格名
             String sheetName = "工件生产数据";
 
-            //获取部门名称
-            String name = artifactService.getName(deptId);
+            //通过组织机构id 查询 该部门下所有的班组id
+            List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
             //获取工件报表数据
-            List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,name);
+            List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,ids);
 
             //导出为Excel
             DownExcel.download(response,WeldStatisticsDataArtifact.class,list,sheetName,title);

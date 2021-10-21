@@ -25,8 +25,11 @@ public class ArtifactServiceImpl implements ArtifactService {
      * @Params
      */
     @Override
-    public List<WeldStatisticsDataArtifact> getList(String time1, String time2, String taskNo, String name) {
-        return artifactDao.getList(time1,time2,taskNo,name);
+    public List<WeldStatisticsDataArtifact> getList(String time1, String time2, String taskNo, List<Long> ids) {
+
+        List<WeldStatisticsDataArtifact> list = artifactDao.getList(time1,time2,taskNo,ids);
+
+        return list;
     }
 
     /**

@@ -11,7 +11,7 @@ public interface ArtifactService {
      * @Description 工件生产报表数据列表
      * @Params
      */
-    List<WeldStatisticsDataArtifact> getList(String time1, String time2, String taskNo, String name);
+    List<WeldStatisticsDataArtifact> getList(String time1, String time2, String taskNo, List<Long> ids);
 
     /**
      * @Date 2021/10/18 14:06

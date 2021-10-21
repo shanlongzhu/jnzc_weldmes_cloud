@@ -18,7 +18,8 @@ public interface ArtifactDao {
      * @Description 查询 工件生产报表列表信息
      * @Params
      */
-    List<WeldStatisticsDataArtifact> getList(@Param("time1") String time1, @Param("time2") String time2, @Param("taskNo") String taskNo, @Param("name") String name);
+    List<WeldStatisticsDataArtifact> getList(@Param("time1") String time1, @Param("time2") String time2,
+                                             @Param("taskNo") String taskNo, @Param("ids") List<Long> ids);
 
     /**
      * @Date 2021/10/18 14:07
