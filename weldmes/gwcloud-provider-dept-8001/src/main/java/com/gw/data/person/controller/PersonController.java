@@ -85,6 +85,18 @@ public class PersonController {
             //设置sheet表格名
             String sheetName = "人员生产数据";
 
+            //判断用户部门id是否传入
+            if(ObjectUtils.isEmpty(deptId)){
+
+                //获取到当前用户
+                Subject currentUser = SecurityUtils.getSubject();
+
+                UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+
+                deptId = subject.getDeptId();
+
+            }
+
             //通过组织机构id 查询 该部门下所有的班组id
             List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
