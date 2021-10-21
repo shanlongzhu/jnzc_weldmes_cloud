@@ -466,7 +466,7 @@ export default {
                     break;
               case 96:
                 str = '设备锁定';
-                imgN = '';
+                imgN = 'O';
                 break;
                 default:
                     str = '故障';
