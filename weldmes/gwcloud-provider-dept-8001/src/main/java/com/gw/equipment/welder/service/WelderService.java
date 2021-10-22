@@ -1,5 +1,6 @@
 package com.gw.equipment.welder.service;
 
+import com.gw.entities.EquipFeatureInfo;
 import com.gw.entities.MachineWeldInfo;
 
 import java.util.List;
@@ -90,5 +91,12 @@ public interface WelderService {
      * @Params
      */
     public void addMachineWeldInfos(List<MachineWeldInfo> list);
+
+    /**
+     * @Date 2021/10/22 9:21
+     * @Description 根据焊机标识、焊机id 获取焊机特征信息
+     * @Params
+     */
+    public EquipFeatureInfo getEquipFeatureInfo(Integer macFlag,Long id);
 
 }

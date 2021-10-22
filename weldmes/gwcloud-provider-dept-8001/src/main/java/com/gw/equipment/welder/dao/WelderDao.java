@@ -1,6 +1,7 @@
 package com.gw.equipment.welder.dao;
 
 
+import com.gw.entities.EquipFeatureInfo;
 import com.gw.entities.MachineWeldInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -114,6 +115,34 @@ public interface WelderDao {
                                                               @Param("model")Integer model,@Param("area")Integer area,
                                                              @Param("bay")Integer bay,@Param("time1")String time1,
                                                              @Param("time2")String time2);
+
+    /**
+     * @Date 2021/10/22 9:23
+     * @Description 根据焊机标识、焊机id 获取OTC焊机特征信息
+     * @Params
+     */
+    public EquipFeatureInfo selectOTCEquipFeatureInfo(@Param("macFlag")Integer macFlag, @Param("id")Long id);
+
+    /**
+     * @Date 2021/10/22 9:23
+     * @Description 根据焊机标识、焊机id 获取松下焊机特征信息
+     * @Params
+     */
+    public EquipFeatureInfo selectSXEquipFeatureInfo(@Param("macFlag")Integer macFlag, @Param("weldCid")String weldCid);
+
+    /**
+     * @Date 2021/10/22 9:47
+     * @Description 根据焊机Id 查询 OTC焊机 焊接时长
+     * @Params
+     */
+    public String selectOTCMachineWeldDuration(@Param("id")Long id);
+
+    /**
+     * @Date 2021/10/22 10:40
+     * @Description 根据焊机设备CID 查询 松下焊机 焊接时长
+     * @Params
+     */
+    public String selectSXMachineWeldDuration(@Param("weldCid")String weldCid);
 
 
 

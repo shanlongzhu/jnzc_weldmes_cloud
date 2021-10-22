@@ -2,6 +2,7 @@ package com.gw.equipment.welder.service.impl;
 
 import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtils;
+import com.gw.entities.EquipFeatureInfo;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.entities.SysDept;
 import com.gw.equipment.welder.dao.WelderDao;
@@ -317,6 +318,44 @@ public class WelderServiceImpl implements WelderService {
 
         welderDao.insertMachineWeldInfoByGroup(list);
 
+    }
+
+    /**
+     * @Date 2021/10/22 9:23
+     * @Description 根据焊机标识、焊机id 获取焊机特征信息
+     * @Params
+     */
+    @Override
+    public EquipFeatureInfo getEquipFeatureInfo(Integer macFlag, Long id) {
+
+        EquipFeatureInfo equipFeatureInfo;
+
+        //判断焊机类型  0:OTC  1:松下
+        if(macFlag == ConstantInfo.MACHINE_TYPE_FLAG){
+
+            //获取OTC焊机特征信息
+            equipFeatureInfo = welderDao.selectOTCEquipFeatureInfo(macFlag,id);
+
+            //获取OTC焊机 焊接时长
+            String weldDuration = welderDao.selectOTCMachineWeldDuration(id);
+
+            equipFeatureInfo.setWeldingDuration(weldDuration);
+
+        }else{
+
+            //获取松下设备CID
+            String weldCid = id.toString();
+
+            //获取松下焊机特征信息
+            equipFeatureInfo = welderDao.selectSXEquipFeatureInfo(macFlag,weldCid);
+
+            //获取松下焊机 焊接时长
+            String weldDuration = welderDao.selectSXMachineWeldDuration(weldCid);
+
+            equipFeatureInfo.setWeldingDuration(weldDuration);
+        }
+
+        return equipFeatureInfo;
     }
 
 }

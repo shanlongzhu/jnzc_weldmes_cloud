@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.gw.common.HttpResult;
 import com.gw.config.DownExcel;
 import com.gw.config.WelderExcelListener;
+import com.gw.entities.EquipFeatureInfo;
 import com.gw.entities.MachineWeldInfo;
 import com.gw.equipment.welder.service.WelderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,7 +178,6 @@ public class WelderController {
     @PostMapping(value = "importExcel")
     public HttpResult importExcel(@RequestParam("file") MultipartFile file) throws IOException {
 
-
         EasyExcel.read(file.getInputStream(), MachineWeldInfo.class, new WelderExcelListener(welderService)).sheet().doRead();
 
         return HttpResult.ok("Excel导入成功");
@@ -213,48 +213,91 @@ public class WelderController {
         return HttpResult.ok(page);
     }
 
+    /**
+     * @Date 2021/10/19 14:15
+     * @Description 根据焊机标识、焊机id 获取焊机特征信息
+     * @Params
+     */
+    @RequestMapping(value = "getEquipFeatureInfo")
+    public HttpResult getEquipFeatureInfo(Integer macFlag,Long id){
+
+        EquipFeatureInfo equipFeatureInfo = welderService.getEquipFeatureInfo(macFlag,id);
+
+        return HttpResult.ok(equipFeatureInfo);
+    }
+
     @RequestMapping(value = "machineUpgrade")
     public HttpResult machineUpgrade(@RequestParam("file") MultipartFile file){
+
         HttpResult result =new HttpResult();
+
         String property = System.getProperty("user.dir");
+
         File absolutePath = new File(property);
+
         File savetFile = new File(absolutePath.getParent()+"/html/"+file.getOriginalFilename());
+
         FileOutputStream fos = null;
+
         try {
+
             fos = new FileOutputStream(savetFile);
+
         } catch (FileNotFoundException e) {
+
             e.printStackTrace();
         }
+
         InputStream inputStream = null;
+
         try {
+
             inputStream = file.getInputStream();
+
             byte[] buffer = new byte[1024];
+
             int len;
+
             while((len = inputStream.read(buffer)) != -1){
+
                 fos.write(buffer,0,len);
             }
+
         } catch (IOException e) {
+
             e.printStackTrace();
+
             result.setMsg("false");
+
             return result;
         } finally {
+
             if (inputStream != null) {
+
                 try {
+
                     inputStream.close();
+
                 } catch (IOException e) {
+
                     e.printStackTrace();
                 }
             }
+
             if(fos != null){
+
                 try {
+
                     fos.close();
                 } catch (IOException e) {
+
                     e.printStackTrace();
                 }
-
             }
         }
+
         result.setMsg("true");
+
         return result;
     }
 

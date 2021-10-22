@@ -411,4 +411,36 @@
         group by m.machine_no)w
     </select>
 
+    <!--根据焊机标识、焊机id 获取OTC焊机特征信息-->
+    <select id="selectOTCEquipFeatureInfo" resultType="com.gw.entities.EquipFeatureInfo">
+        select start_time StartUpTime,end_time ShutDownTime,
+        CONCAT(FLOOR(weld_on_duration/3600),':',FLOOR(weld_on_duration%3600/60),':',FLOOR(weld_on_duration%3600%60)) WorkHours
+        from weld_on_off_time
+        where machine_id = #{id} and machine_type = #{macFlag}
+        order by start_time desc limit 1
+    </select>
+
+    <!--根据焊机标识、焊机id 获取松下焊机特征信息-->
+    <select id="selectSXEquipFeatureInfo" resultType="com.gw.entities.EquipFeatureInfo">
+        select start_time StartUpTime,end_time ShutDownTime,
+        CONCAT(FLOOR(weld_on_duration/3600),':',FLOOR(weld_on_duration%3600/60),':',FLOOR(weld_on_duration%3600%60)) WorkHours
+        from weld_on_off_time
+        where weld_cid = #{weldCid} and machine_type = #{macFlag}
+        order by start_time desc limit 1
+    </select>
+
+    <!--根据焊机Id 查询 焊机 焊机时长-->
+    <select id="selectOTCMachineWeldDuration" resultType="String">
+        select CONCAT(FLOOR(sum(weldDuration)/3600),':',FLOOR(sum(weldDuration)%3600/60),':',FLOOR(sum(weldDuration)%3600%60)) WeldingDuration
+        from weld_statistics_data
+        where machineId = #{id} and weldStatus in (3,5,7,99)
+    </select>
+
+    <!--根据焊机设备CID 查询 松下焊机 焊接时长-->
+    <select id="selectSXMachineWeldDuration" resultType="String">
+        select CONCAT(FLOOR(sum(weldSuration)/3600),':',FLOOR(sum(weldSuration)%3600/60),':',FLOOR(sum(weldSuration)%3600%60)) WeldingDuration
+        from weldsx_statistics_data
+        where weldCid = #{weldCid} and weldStatus not in (0,3,4,6,9)
+    </select>
+
 </mapper>
