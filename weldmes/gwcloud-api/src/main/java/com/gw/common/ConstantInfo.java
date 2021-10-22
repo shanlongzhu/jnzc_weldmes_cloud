@@ -55,5 +55,10 @@ public class ConstantInfo {
      */
     public static final Long GROUP_FLAG = 0L;
 
+    /**
+     * OTC焊机类型标识
+     */
+    public static final Integer MACHINE_TYPE_FLAG = 0;
+
 
 }
