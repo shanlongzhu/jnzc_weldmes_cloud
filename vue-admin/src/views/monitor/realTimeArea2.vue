@@ -113,7 +113,7 @@
                         <div class="wel-text">
                             <el-row>
                                 <el-col :span="12">
-                                    开机时间：
+                                    开机时间：{{weldTimeData.startUpTime}}
                                 </el-col>
                                 <el-col :span="12">
                                     通道总数：30
@@ -121,7 +121,7 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="12">
-                                    关机时间：
+                                    关机时间：{{weldTimeData.shutDownTime}}
                                 </el-col>
                                 <el-col :span="12">
                                     当前通道：{{mqttLastData.channelNo==0||mqttLastData.channelNo==255?'自由调节状态':mqttLastData.channelNo}}
@@ -129,7 +129,7 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="12">
-                                    工作时长：
+                                    工作时长：{{weldTimeData.workHours}}
                                 </el-col>
                                 <el-col :span="12">
                                     送丝速度：{{mqttLastData.wireFeedRate||mqttLastData.realityWireSpeed}}
@@ -138,10 +138,10 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="12">
-                                    焊接时长：
+                                    焊接时长：{{weldTimeData.weldingDuration}}
                                 </el-col>
                                 <el-col :span="12">
-                                    瞬时功率：{{mqttLastData.weldEle*mqttLastData.weldVol}}
+                                    瞬时功率：{{(mqttLastData.weldEle||0)*(mqttLastData.weldVol||0)}}
                                 </el-col>
                             </el-row>
                         </div>
@@ -169,7 +169,7 @@
 
 <script>
 import mqtt from 'mqtt'
-import { getModelFindId } from '_api/productionEquipment/production'
+import { getModelFindId, getWeldInfoTime } from '_api/productionEquipment/production'
 import { getWelderListNoPage } from '_api/productionEquipment/production'
 import lineE from './components/lineE.vue'
 import LineV from './components/lineV.vue'
@@ -213,7 +213,9 @@ export default {
 
             mqttLastData: {},
 
-            isMenuShow: true
+            isMenuShow: true,
+            //焊机工作时长
+            weldTimeData: {}
 
 
 
@@ -227,7 +229,7 @@ export default {
 
     created () {
         if (this.$route.query.areaId || this.$route.query.bayId) {
-            this.currentChangeTree({areaId:this.$route.query.areaId,bayId:this.$route.query.bayId});
+            this.currentChangeTree({ areaId: this.$route.query.areaId, bayId: this.$route.query.bayId });
         }
         this.newMqtt();
     },
@@ -397,6 +399,24 @@ export default {
                 this.$refs.lineComVChild.init(this.lineData);
             })
 
+            this.getWeldTimeFun(v);
+
+        },
+
+        //获取焊机时间工作时长
+        async getWeldTimeFun (v) {
+            this.weldTimeData = {};
+            let req = {}
+            req.macFlag = v.macFlag;
+            if (v.macFlag === 1) {
+                req.id = parseInt(v.gatherNo);
+            } else {
+                req.id = v.id
+            }
+            let { data, code } = await getWeldInfoTime(req);
+            if (code == 200) {
+                this.weldTimeData = data || {};
+            }
         },
 
         setLineData (arr) {
@@ -404,7 +424,7 @@ export default {
                 let filterArr = (arr || []).filter(item => parseInt(item.gatherNo) == parseInt(this.selectItem.machineGatherInfo.gatherNo));
                 if (filterArr.length > 0) {
                     this.mqttLastData = filterArr.slice(-1)[0];
-                  this.mqttLastData.machineNo = this.selectItem.machineNo;
+                    this.mqttLastData.machineNo = this.selectItem.machineNo;
                     if (this.lineData.length > 15) {
                         this.lineData.shift();
                         this.lineData.shift();
@@ -424,11 +444,11 @@ export default {
             if (this.selectItem.hasOwnProperty('gatherNo')) {
                 if (parseInt(arr.weldCid) == parseInt(this.selectItem.gatherNo)) {
                     this.mqttLastData = { ...arr };
-                  this.mqttLastData.machineNo = this.selectItem.machineNo;
+                    this.mqttLastData.machineNo = this.selectItem.machineNo;
                     if (this.lineData.length > 20) {
                         this.lineData.shift();
                     }
-                    this.mqttLastData.voltage = this.mqttLastData.realityWeldVol/10;
+                    this.mqttLastData.voltage = this.mqttLastData.realityWeldVol / 10;
                     this.mqttLastData.electricity = this.mqttLastData.realityWeldEle;
                     this.lineData.push(this.mqttLastData);
                     this.$refs.lineComEChild.init(this.lineData);
@@ -455,10 +475,10 @@ export default {
                     str = '焊接';
                     imgN = 'W';
                     break;
-              case 96:
-                str = '设备锁定';
-                imgN = 'O';
-                break;
+                case 96:
+                    str = '设备锁定';
+                    imgN = 'O';
+                    break;
                 default:
                     str = '故障';
                     imgN = 'O';
@@ -650,8 +670,8 @@ export default {
     margin-right: 6px;
     width: 100px;
 }
-.real-con-item .real-con-item-txt{
-    flex:1;
+.real-con-item .real-con-item-txt {
+    flex: 1;
 }
 .real-con-item .real-con-item-txt p {
     margin: 0px;

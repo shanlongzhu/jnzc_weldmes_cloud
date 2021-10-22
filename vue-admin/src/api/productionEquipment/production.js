@@ -253,3 +253,16 @@ export function editSxWelder(data = {}) {
     data
   });
 }
+
+
+// 获取设备开机 关机 时间
+export function getWeldInfoTime(params = {}) {
+  return request({
+    url: "/welder/getEquipFeatureInfo",
+    method: "get",
+    params
+  });
+}
+
+
+
