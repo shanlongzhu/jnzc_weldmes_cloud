@@ -741,7 +741,7 @@ public class JnOtcRtDataProtocol {
     public static String otcV1IssueProgramPath(OtcV1IssueProgramPath programPath) {
         if (null != programPath) {
             try {
-                final String head = "007E3D01010111";
+                final String head = "007E3C01010111";
                 final String gatherNo = CommonUtils.lengthJoint(programPath.getGatherNo(), 4);
                 final String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
                 //ASCII码转16进制
