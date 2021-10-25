@@ -8,13 +8,13 @@
         <div
             class="btn-box"
             :style="styleObj"
-            @mouseenter="btnBoxOver('58')"
         >
+          <span class="btn-box-t">部件车间</span>
             <div
                 class="btn-box-inner"
                 @click="showArea"
             ></div>
-            <div class="btn-layer">
+            <div class="btn-layer btn-layer3">
                 <div class="btn-layer-inner flex">
                     <div
                         class="btn-layer-l"
@@ -57,8 +57,8 @@
         <div
             class="btn-box btn-box2"
             :style="styleObj2"
-            @mouseenter="btnBoxOver('60')"
         >
+          <span class="btn-box-t">曲面车间</span>
             <div
                 class="btn-box-inner"
                 @click="showArea"
@@ -106,13 +106,13 @@
         <div
             class="btn-box btn-box3"
             :style="styleObj3"
-            @mouseenter="btnBoxOver('59')"
         >
+          <span class="btn-box-t">平直车间</span>
             <div
                 class="btn-box-inner"
                 @click="showArea"
             ></div>
-            <div class="btn-layer">
+            <div class="btn-layer btn-layer2">
                 <div class="btn-layer-inner flex">
                     <div
                         class="btn-layer-l"
@@ -295,6 +295,8 @@ export default {
             //平直模块
             myChart3: {},
             option: {},
+          option2: {},
+          option3: {},
         }
     },
     watch: {
@@ -415,13 +417,14 @@ export default {
             this.warnArray = [];//故障
             this.searchObj.area = row.areaId || "";
             this.searchObj.bay = row.bayId || "";
-            this.getList();
+            this.getList(row.areaId || "",row.bayId || "");
         },
 
 
-        async getList () {
+        async getList (areaId,bayId) {
             let req = {
-                ...this.searchObj
+              area:areaId,
+              bay:bayId
             }
             let { code, data } = await getWelderListNoPage(req);
             if (code == 200) {
@@ -429,10 +432,7 @@ export default {
                     let objItem = { ...item };
                     return objItem;
                 });
-                this.myChart.clear();
-                this.myChart2.clear();
-                this.myChart3.clear();
-                this.setPieData();
+                this.setPieData(areaId);
             }
         },
 
@@ -501,17 +501,40 @@ export default {
         },
 
         //设置饼图值
-        setPieData () {
+        setPieData (areaId) {
+          //部件
+          if(areaId =='58'){
             this.option.series[1].data[0].value = this.list.length || 0;
             this.option.series[0].data = [
-                { value: this.workArrayPer, name: '工作' },
-                { value: this.warnArrayPer, name: '故障' },
-                { value: this.standbyArrayPer, name: '待机' },
-                { value: this.offnumPer, name: '关机' },
-            ]
+              { value: this.workArrayPer, name: '工作' },
+              { value: this.warnArrayPer, name: '故障' },
+              { value: this.standbyArrayPer, name: '待机' },
+              { value: this.offnumPer, name: '关机' },
+            ];
             this.myChart.setOption(this.option);
-            this.myChart2.setOption(this.option);
-            this.myChart3.setOption(this.option);
+          }
+          //曲面
+          if(areaId =='60'){
+            this.option2.series[1].data[0].value = this.list.length || 0;
+            this.option2.series[0].data = [
+              { value: this.workArrayPer, name: '工作' },
+              { value: this.warnArrayPer, name: '故障' },
+              { value: this.standbyArrayPer, name: '待机' },
+              { value: this.offnumPer, name: '关机' },
+            ];
+            this.myChart2.setOption(this.option2);
+          }
+          //平直
+          if(areaId =='59'){
+            this.option3.series[1].data[0].value = this.list.length || 0;
+            this.option3.series[0].data = [
+              { value: this.workArrayPer, name: '工作' },
+              { value: this.warnArrayPer, name: '故障' },
+              { value: this.standbyArrayPer, name: '待机' },
+              { value: this.offnumPer, name: '关机' },
+            ];
+            this.myChart3.setOption(this.option3);
+          }
         },
 
         //获取数值下标
@@ -717,9 +740,150 @@ export default {
                 }
             ]
         };
+      this.option2 = {
+        tooltip: {
+          show: false,
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        color: ['#1efbe9', '#07f001', '#fbd51e', '#017dfc'],
+        legend: {
+          orient: 'vertical',
+          left: 10,
+          show: false
+        },
+        series: [
+          {
+            name: '实时监测',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            hoverAnimation: false,
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: false,
+                fontSize: '30',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 0, name: '工作' },
+              { value: 0, name: '故障' },
+              { value: 0, name: '待机' },
+              { value: 0, name: '关机' },
+            ]
+          },
+          {
+            name: '焊机总数',
+            type: 'pie',
+            radius: ['0%', '30%'],
+            avoidLabelOverlap: false,
+            hoverAnimation: false,
+            label: {
+              show: true,
+              position: 'center',
+              verticalAlign: 'bottom',
+              formatter: `{c}`,
+              lineHeight: 30,
+              color: '#1efbe9',
+              fontSize: 18,
+              fontWeight: '700',
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 0, name: '焊机总数' }
+            ],
+            itemStyle: {
+              color: 'rgba(255, 0, 0, 0)'
+            }
+          }
+        ]
+      };
+      this.option3 = {
+        tooltip: {
+          show: false,
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        color: ['#1efbe9', '#07f001', '#fbd51e', '#017dfc'],
+        legend: {
+          orient: 'vertical',
+          left: 10,
+          show: false
+        },
+        series: [
+          {
+            name: '实时监测',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            hoverAnimation: false,
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: false,
+                fontSize: '30',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 0, name: '工作' },
+              { value: 0, name: '故障' },
+              { value: 0, name: '待机' },
+              { value: 0, name: '关机' },
+            ]
+          },
+          {
+            name: '焊机总数',
+            type: 'pie',
+            radius: ['0%', '30%'],
+            avoidLabelOverlap: false,
+            hoverAnimation: false,
+            label: {
+              show: true,
+              position: 'center',
+              verticalAlign: 'bottom',
+              formatter: `{c}`,
+              lineHeight: 30,
+              color: '#1efbe9',
+              fontSize: 18,
+              fontWeight: '700',
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 0, name: '焊机总数' }
+            ],
+            itemStyle: {
+              color: 'rgba(255, 0, 0, 0)'
+            }
+          }
+        ]
+      };
         this.myChart.setOption(this.option);
-        this.myChart2.setOption(this.option);
-        this.myChart3.setOption(this.option);
+        this.myChart2.setOption(this.option2);
+        this.myChart3.setOption(this.option3);
+
+
+        this.cellClick({ row: { areaId: '59' } })
+      this.cellClick({ row: { areaId: '60' } })
+      this.cellClick({ row: { areaId: '58' } })
 
     }
 }
@@ -733,6 +897,20 @@ export default {
 }
 .btn-box {
     position: absolute;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid #017dfc;
+  box-shadow: 0 0 5px rgba(1,125,252,1);
+
+}
+.btn-box-t{
+  color: #1efbe9;
+  font-size: 16px;
+  height: 100%;
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 // .btn-box2{
@@ -754,22 +932,53 @@ export default {
     height: 160px;
     background-size: 400px auto;
     position: absolute;
-    right: 1000px;
-    top: 0px;
-    opacity: 0;
     display: block;
-    transition: opacity 0.3s ease 0s;
+  top:0px;
+  right: -380px;
 }
-.btn-box:hover .btn-layer {
-    opacity: 1;
-    right: -400px;
+
+.btn-layer2 {
+  background: url("/home_images/home-layer2.png") no-repeat left top;
+  width: 400px;
+  height: 194px;
+  background-size: 400px auto;
+  position: absolute;
+  display: block;
+  top:55px;
+  right: -356px;
 }
+.btn-layer3 {
+  background: url("/home_images/home-layer3.png") no-repeat left top;
+  width: 350px;
+  height: 262px;
+  background-size: 350px auto;
+  position: absolute;
+  display: block;
+  top:50px;
+  right: -320px;
+}
+
 .btn-layer-inner {
     height: 136px;
     width: 326px;
     margin-top: 16px;
-    margin-left: 70px;
+    margin-left: 60px;
 }
+
+.btn-layer2 .btn-layer-inner {
+  height: 136px;
+  width: 326px;
+  margin-top: 52px;
+  margin-left: 60px;
+}
+
+.btn-layer3 .btn-layer-inner {
+  height: 136px;
+  width: 326px;
+  margin-top: 83px;
+  margin-left: 2px;
+}
+
 .layer-r-item {
     width: 50%;
     color: #fff;
