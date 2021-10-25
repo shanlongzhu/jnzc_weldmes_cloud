@@ -58,7 +58,7 @@ public class HistoricalCurveController {
 
         List<RtData> list = historicalCurveService.getHistoryCurveInfos(tableInfo);
 
-        PageInfo page = new PageInfo(list, 10);
+        PageInfo<RtData> page = new PageInfo<>(list, 10);
 
         return HttpResult.ok(page);
     }

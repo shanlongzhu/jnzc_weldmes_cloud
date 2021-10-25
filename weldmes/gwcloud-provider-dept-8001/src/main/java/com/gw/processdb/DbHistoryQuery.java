@@ -1,6 +1,7 @@
 package com.gw.processdb;
 
 import com.gw.common.CommonUtil;
+import com.gw.common.DateTimeUtils;
 import com.gw.entities.OtcSxHistoryData;
 import com.processdb.connection.DBConnect;
 import com.processdb.connection.DBConnectManager;
@@ -33,15 +34,19 @@ public class DbHistoryQuery {
      * 根据采集编号和时间段查询ProcessDB历史数据
      *
      * @param gatherNo  采集编号
-     * @param startTime 开始时间
-     * @param endTime   结束时间
+     * @param startTime 开始时间 yyyy-MM-dd HH:mm:ss
+     * @param endTime   结束时间 yyyy-MM-dd HH:mm:ss
      * @return MAP
      */
     public Map<String, Object> selectOtcHistoryFromDb(String gatherNo, String startTime, String endTime) {
         Map<String, Object> map = new HashMap<>();
         List<OtcSxHistoryData> otcHistoryList = new ArrayList<>();
         int otcDataNum = 0;
-        if (StringUtils.isNotBlank(gatherNo) && StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+        if (StringUtils.isNotBlank(gatherNo) && StringUtils.isNotBlank(startTime)) {
+            //如果结束时间为空，则默认当前系统时间
+            if (StringUtils.isBlank(endTime)) {
+                endTime = DateTimeUtils.getNowDateTime();
+            }
             final String eleGlobalName = getOtcGlobalName(gatherNo, "ele");
             final HistoryRecordSet eleHistoryRecordSet = getHistoryRecordSet(eleGlobalName, startTime, endTime);
             final String volGlobalName = getOtcGlobalName(gatherNo, "vol");
@@ -72,8 +77,8 @@ public class DbHistoryQuery {
      * 根据CID和时间段查询ProcessDB历史数据
      *
      * @param weldCid   设备CID
-     * @param startTime 开始时间
-     * @param endTime   结束时间
+     * @param startTime 开始时间 yyyy-MM-dd HH:mm:ss
+     * @param endTime   结束时间 yyyy-MM-dd HH:mm:ss
      * @return MAP
      */
     public Map<String, Object> selectSxHistoryFromDb(String weldCid, String startTime, String endTime) {
@@ -111,14 +116,14 @@ public class DbHistoryQuery {
      * 根据时间段和点路径名获取历史数据
      *
      * @param globalName 点的全路径名
-     * @param startTime  开始时间
-     * @param endTime    结束时间
+     * @param startTime  开始时间 yyyy-MM-dd HH:mm:ss
+     * @param endTime    结束时间 yyyy-MM-dd HH:mm:ss
      * @return HistoryRecordSet
      */
     public HistoryRecordSet getHistoryRecordSet(String globalName, String startTime, String endTime) {
+        final DBConnect dbConnect = createDbConnect();
         try {
             if (StringUtils.isNotBlank(globalName) && StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
-                final DBConnect dbConnect = createDbConnect();
                 if (dbConnect == null) {
                     System.out.println("ProcessDB连接创建失败！");
                     return null;
@@ -139,10 +144,15 @@ public class DbHistoryQuery {
                 if (pointHistoryById != 0) {
                     System.out.println("查询ProcessDB历史数据为空：" + pointHistoryById);
                 }
+
                 return pointHistory.getSampleRecordSet();
             }
         } catch (Exception e) {
             throw new RuntimeException("查询ProcessDB历史数据异常：", e);
+        } finally {
+            if (dbConnect != null) {
+                dbConnect.close();
+            }
         }
         return null;
     }
@@ -188,7 +198,7 @@ public class DbHistoryQuery {
     /**
      * 时间格式转换
      *
-     * @param dateTime String
+     * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return Date
      */
     private static Date getDateFormat(String dateTime) {
