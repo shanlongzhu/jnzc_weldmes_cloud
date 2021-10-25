@@ -36,7 +36,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
                 final String nowDateTime = DateTimeUtils.getNowDateTime();
                 String tableName = TableStrategy.getSxTableByDateTime(nowDateTime);
                 if (!StringUtils.isEmpty(tableName)) {
-                    Map<String, Object> map = new HashMap<>(6);
+                    Map<String, Object> map = new HashMap<>(8);
                     map.put("tableName", tableName);
                     map.put("list", list);
                     sxRtDataMapper.insertSxRtDataList(map);

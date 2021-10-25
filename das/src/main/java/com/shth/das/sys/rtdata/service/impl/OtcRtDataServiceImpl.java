@@ -36,7 +36,7 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
                 final String nowDateTime = DateTimeUtils.getNowDateTime();
                 String tableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
                 if (!StringUtils.isEmpty(tableName)) {
-                    Map<String, Object> map = new HashMap<>(6);
+                    Map<String, Object> map = new HashMap<>(8);
                     map.put("tableName", tableName);
                     map.put("list", list);
                     otcRtDataMapper.insertRtDataList(map);
