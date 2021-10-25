@@ -439,7 +439,7 @@ export default {
         //选择任务数据
         async currentChangeEvent ({ row }) {
             this.surIndex = 0;
-            this.curveReq.weldType = row.weldType;
+            this.curveReq.weldType = row.weldType||row.macFlag;
             this.curveReq.taskId = row.taskId;
             this.curveReq.welderId = row.welderId;
             this.curveReq.weldMachineId = row.machineId;
