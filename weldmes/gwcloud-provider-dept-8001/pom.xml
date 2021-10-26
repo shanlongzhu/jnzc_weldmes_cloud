@@ -17,6 +17,12 @@
             <groupId>com.gw</groupId>
             <artifactId>gwcloud-api</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>poi</artifactId>
+                    <groupId>org.apache.poi</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- 将微服务provider侧注册进eureka -->
         <dependency>
@@ -196,9 +202,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.5.0</version>
                 <!--这里写上main方法所在类的路径-->
                 <configuration>
                     <mainClass>com.gw.DeptProvider8001_App</mainClass>
+                    <!-- 添加自定义jar需要设置true -->
+                    <includeSystemScope>true</includeSystemScope>
                 </configuration>
                 <executions>
                     <execution>
