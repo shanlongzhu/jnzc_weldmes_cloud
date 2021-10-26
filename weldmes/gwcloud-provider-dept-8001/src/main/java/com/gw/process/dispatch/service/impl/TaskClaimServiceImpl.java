@@ -66,6 +66,7 @@ public class TaskClaimServiceImpl implements TaskClaimService {
     @Override
     public Set<TaskInfo> getTaskInfoByWelderId(Long welderId) {
 
+        //根据焊工id查询任务工单信息列表
         List<TaskInfo> list = taskClaimDao.selectTaskInfoByWelderId(welderId);
 
         //根据焊工id查询焊工信息   获取焊工部门id

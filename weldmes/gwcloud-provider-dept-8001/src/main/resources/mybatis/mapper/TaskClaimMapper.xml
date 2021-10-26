@@ -65,7 +65,7 @@
         task.craft_remarks craftRemarks
         from task_info task
         left join sys_dictionary dictionary on dictionary.id = task.status
-        where task.status != 41 and task.dept_id = #{deptId} and task.welder_id is null
+        where task.status != 41 and task.dept_id = #{deptId}
     </select>
 
     <!--根据任务id查询焊机厂家和采集编号列表-->
