@@ -245,7 +245,6 @@ export default {
     },
 
     created () {
-        this.getList();
         this.newMqtt();
     },
     methods: {
@@ -359,6 +358,7 @@ export default {
 
         search () {
             this.page = 1;
+            this.getList();
         },
 
         //根据部门id获取设备列表
