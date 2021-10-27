@@ -140,7 +140,7 @@
         <foreach collection="deptIds" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
-        GROUP BY sxm.weld_code )
+        GROUP BY sxm.weld_no )
         UNION ALL
         (SELECT m.id,m.machine_no,m.create_time,m.type,m.dept_id,m.g_id,m.`status`,
         m.model,m.firm,m.is_network,GROUP_CONCAT( machine_gather_info.gather_no ) gatherNo,
