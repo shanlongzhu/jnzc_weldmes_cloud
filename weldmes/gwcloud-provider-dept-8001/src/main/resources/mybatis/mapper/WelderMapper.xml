@@ -168,62 +168,7 @@
         w.g_id gId,w.status,w.model,w.firm,
         w.is_network isNetwork,w.gather_no gatherNo,w.statusStr,w.firmStr,w.modelStr,w.areaStr,w.bayStr,
         w.`name`,w.ip_path ipPath,w.area,w.bay,w.macFlag,w.typeStr,w.deptName
-        from (select if(ti.task_no is null,0,1) taskFlag,sxm.id,sxm.weld_no machine_no,
-        sxm.create_time,sxm.weld_kind type,sxm.dept_id,sxm.weld_cid g_id,sxm.weld_status status,sxm.sx_model model,
-        sxm.weld_firm firm,
-        null is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
-        d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,sxm.weld_ip ip_path,
-        sxm.area,sxm.bay,d4.value_name areaStr,d5.value_name bayStr,1 macFlag,s.name deptName
-        from machine_weldsx_info sxm
-        left join sys_dictionary d on sxm.weld_kind = d.id
-        left join sys_dictionary d1 on sxm.weld_status = d1.id
-        left join sys_dictionary d2 on sxm.weld_firm = d2.id
-        left join sys_dictionary d3 on sxm.sx_model = d3.id
-        left join sys_dictionary d4 on sxm.area = d4.id
-        left join sys_dictionary d5 on sxm.bay = d5.id
-        left join sys_dept s on sxm.dept_id = s.id
-        left join machine_gather_info on FIND_IN_SET( machine_gather_info.id,sxm.weld_cid )
-        left join task_claim claim on sxm.id=claim.weld_id AND sxm.id IN (
-        SELECT tem.weld_id FROM (
-        SELECT weld_id,task_id from task_claim group BY weld_id,task_id order by claim_time desc
-        ) tem  GROUP BY weld_id
-        )
-        left join task_info ti on claim.task_id=ti.id and ti.`status`=51
-        <where>
-            <if test="machineNo != null and machineNo != ''">
-                and  sxm.weld_no = #{machineNo}
-            </if>
-            <if test="type != null and type != ''">
-                and  d.id = #{type}
-            </if>
-            <if test="grade != null and grade != ''">
-                and  s.id = #{grade}
-            </if>
-            <if test="status != null and status != ''">
-                and  d1.id = #{status}
-            </if>
-            <if test="firm != null and firm != ''">
-                and  d2.id = #{firm}
-            </if>
-            <if test="gatherNo != null and gatherNo != ''">
-                and  g.gather_no = #{gatherNo}
-            </if>
-            <if test="ipPath != null and ipPath != ''">
-                and  sxm.weld_ip = #{ipPath}
-            </if>
-            <if test="model != null and model != ''">
-                and  sxm.sx_model = #{model}
-            </if>
-            <if test="area != null and area != ''">
-                and  sxm.area = #{area}
-            </if>
-            <if test="bay != null and bay != ''">
-                and  sxm.bay = #{bay}
-            </if>
-        </where>
-        group by sxm.weld_no
-        union all
-        select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,
+        from (select if(ti.task_no is null,0,1) taskFlag,m.id,m.machine_no,m.create_time,m.type,
         m.dept_id,m.g_id,m.`status`,m.model,m.firm,
         m.is_network,GROUP_CONCAT(DISTINCT machine_gather_info.gather_no ) gather_no,d.value_name typeStr,
         d1.value_name statusStr,d2.value_name firmStr,d3.value_name modelStr,s.`name`,m.ip_path,
