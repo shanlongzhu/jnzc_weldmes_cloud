@@ -37,7 +37,7 @@
 		CONCAT(FLOOR(SUM(g.onOffTime)/3600),':',FLOOR(SUM(g.onOffTime)%3600/60),':',FLOOR(SUM(g.onOffTime)%3600%60)) onOffTime,
 		SUM(g.taskCount) taskCount,SUM(g.realWeldOnline) realWeldOnline,
 		CONCAT(FLOOR(SUM(g.realWeldTime)/3600),':',FLOOR(SUM(g.realWeldTime)%3600/60),':',FLOOR(SUM(g.realWeldTime)%3600%60)) realWeldTime,
-		SUM(g.noTaskCount) noTaskCount,g.noTaskMachineDetail,
+		SUM(g.noTaskCount) noTaskCount,GROUP_CONCAT(g.noTaskMachineDetail),
 		SUM(g.equipUtilization) equipUtilization,
 		CONCAT(FLOOR(SUM(g.supergageTime)/3600),':',FLOOR(SUM(g.supergageTime)%3600/60),':',FLOOR(SUM(g.supergageTime)%3600%60)) supergageTime,
 		CONCAT(FLOOR((SUM(g.normalTime))/3600),':',FLOOR((SUM(g.normalTime))%3600/60),':',FLOOR((SUM(g.normalTime))%3600%60)) normalTime,
