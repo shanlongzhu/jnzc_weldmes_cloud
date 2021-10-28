@@ -157,6 +157,159 @@
         </div>
       </div>
     </div>
+    <!-- 船台 -->
+    <div
+      class="btn-box btn-box4"
+      :style="styleObj4"
+      @mouseenter="btnBoxOver('59')"
+    >
+      <span class="btn-box-t">船台</span>
+
+      <div
+        class="btn-box-inner"
+        @click="showArea"
+      ></div>
+      <div class="btn-layer">
+        <div class="btn-layer-inner flex">
+          <div
+            class="btn-layer-l"
+            style="flex:1"
+            ref="electricity4"
+          ></div>
+          <div
+            class="btn-layer-r flex-n"
+            style="flex:1"
+          >
+            <div class="layer-r-item layer-r-1">
+              <div class="layer-item-inner">
+                <div><span>{{workArrayPer||0}}</span>%</div>
+                <div>工 作</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-2">
+              <div class="layer-item-inner">
+                <div><span>{{warnArrayPer||0}}</span>%</div>
+                <div>故 障</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-3">
+              <div class="layer-item-inner">
+                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                <div>待 机</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-4">
+              <div class="layer-item-inner">
+                <div><span>{{offnumPer||0}}</span>%</div>
+                <div>关 机</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 装焊工场 -->
+    <div
+      class="btn-box btn-box5"
+      :style="styleObj5"
+      @mouseenter="btnBoxOver('59')"
+    >
+      <span class="btn-box-t">装焊工场</span>
+
+      <div
+        class="btn-box-inner"
+        @click="showArea"
+      ></div>
+      <div class="btn-layer btn-layer-right">
+        <div class="btn-layer-inner flex">
+          <div
+            class="btn-layer-l"
+            style="flex:1"
+            ref="electricity5"
+          ></div>
+          <div
+            class="btn-layer-r flex-n"
+            style="flex:1"
+          >
+            <div class="layer-r-item layer-r-1">
+              <div class="layer-item-inner">
+                <div><span>{{workArrayPer||0}}</span>%</div>
+                <div>工 作</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-2">
+              <div class="layer-item-inner">
+                <div><span>{{warnArrayPer||0}}</span>%</div>
+                <div>故 障</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-3">
+              <div class="layer-item-inner">
+                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                <div>待 机</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-4">
+              <div class="layer-item-inner">
+                <div><span>{{offnumPer||0}}</span>%</div>
+                <div>关 机</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 部件工场 -->
+    <div
+      class="btn-box btn-box6"
+      :style="styleObj6"
+      @mouseenter="btnBoxOver('59')"
+    >
+      <span class="btn-box-t">部件工场</span>
+
+      <div
+        class="btn-box-inner"
+        @click="showArea"
+      ></div>
+      <div class="btn-layer btn-layer-right">
+        <div class="btn-layer-inner flex">
+          <div
+            class="btn-layer-l"
+            style="flex:1"
+            ref="electricity6"
+          ></div>
+          <div
+            class="btn-layer-r flex-n"
+            style="flex:1"
+          >
+            <div class="layer-r-item layer-r-1">
+              <div class="layer-item-inner">
+                <div><span>{{workArrayPer||0}}</span>%</div>
+                <div>工 作</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-2">
+              <div class="layer-item-inner">
+                <div><span>{{warnArrayPer||0}}</span>%</div>
+                <div>故 障</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-3">
+              <div class="layer-item-inner">
+                <div><span>{{standbyArrayPer||0}}</span>%</div>
+                <div>待 机</div>
+              </div>
+            </div>
+            <div class="layer-r-item layer-r-4">
+              <div class="layer-item-inner">
+                <div><span>{{offnumPer||0}}</span>%</div>
+                <div>关 机</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <img
       width="100%"
       src="../../assets/home_images/home2.jpg"
@@ -276,6 +429,33 @@
           top: 476,
           left: 152
         },
+        //船台
+        styleObj4: {},
+        styleC4: {
+          width: 196,
+          height: 281,
+          top: 689,
+          left: 1672
+        },
+
+        //装焊工场
+        styleObj5: {},
+        styleC5: {
+          width: 196,
+          height: 340,
+          top: 1093,
+          left: 3441
+        },
+
+        //部件工场
+        styleObj6: {},
+        styleC6: {
+          width: 200,
+          height: 377,
+          top: 1672,
+          left: 3383
+        },
+
 
         visable1: false,
         listAreaData: [],
@@ -300,6 +480,14 @@
         myChart2: {},
         //平直模块
         myChart3: {},
+        //船台
+        myChart4: {},
+        //装焊工场
+        myChart5: {},
+        //部件工场
+        myChart6: {},
+
+
         option: {},
       }
     },
@@ -364,6 +552,25 @@
           this.styleObj3.height = this.styleObj3.height / scale + 'px';
           this.styleObj3.left = this.styleObj3.left / scale + 'px';
           this.styleObj3.top = this.styleObj3.top / scale + 'px';
+          //船台
+          this.styleObj4 = { ...this.styleC4 };
+          this.styleObj4.width = this.styleObj4.width / scale+ 'px';
+          this.styleObj4.height = this.styleObj4.height/ scale+ 'px';
+          this.styleObj4.left = this.styleObj4.left / scale + 'px';
+          this.styleObj4.top = this.styleObj4.top/ scale + 'px';
+
+          //装焊
+          this.styleObj5 = { ...this.styleC5 };
+          this.styleObj5.width = this.styleObj5.width/ scale + 'px';
+          this.styleObj5.height = this.styleObj5.height/ scale+ 'px';
+          this.styleObj5.left = this.styleObj5.left/ scale  + 'px';
+          this.styleObj5.top = this.styleObj5.top/ scale + 'px';
+          //部件
+          this.styleObj6 = { ...this.styleC6 };
+          this.styleObj6.width = this.styleObj6.width / scale+ 'px';
+          this.styleObj6.height = this.styleObj6.height/ scale+ 'px';
+          this.styleObj6.left = this.styleObj6.left/ scale  + 'px';
+          this.styleObj6.top = this.styleObj6.top/ scale + 'px';
         }
       },
 
@@ -438,6 +645,9 @@
           this.myChart.clear();
           this.myChart2.clear();
           this.myChart3.clear();
+          this.myChart4.clear();
+          this.myChart5.clear();
+          this.myChart6.clear();
           this.setPieData();
         }
       },
@@ -518,6 +728,9 @@
         this.myChart.setOption(this.option);
         this.myChart2.setOption(this.option);
         this.myChart3.setOption(this.option);
+        this.myChart4.setOption(this.option);
+        this.myChart5.setOption(this.option);
+        this.myChart6.setOption(this.option);
       },
 
       //获取数值下标
@@ -655,6 +868,9 @@
       this.myChart = echarts.init(this.$refs.electricity);
       this.myChart2 = echarts.init(this.$refs.electricity2);
       this.myChart3 = echarts.init(this.$refs.electricity3);
+      this.myChart4 = echarts.init(this.$refs.electricity4);
+      this.myChart5 = echarts.init(this.$refs.electricity5);
+      this.myChart6 = echarts.init(this.$refs.electricity6);
       this.option = {
         tooltip: {
           show: false,
@@ -726,6 +942,9 @@
       this.myChart.setOption(this.option);
       this.myChart2.setOption(this.option);
       this.myChart3.setOption(this.option);
+      this.myChart4.setOption(this.option);
+      this.myChart5.setOption(this.option);
+      this.myChart6.setOption(this.option);
 
     }
   }
@@ -739,12 +958,12 @@
   }
   .btn-box {
     position: absolute;
-  background: rgba(0,0,0,0.5);
-  border: 2px solid #017dfc;
-  box-shadow: 0 0 5px rgba(1,125,252,1);
 
 }
 .btn-box-t{
+  background: rgba(0,0,0,0.5);
+  border: 2px solid #017dfc;
+  box-shadow: 0 0 5px rgba(1,125,252,1);
   color: #1efbe9;
   font-size: 16px;
   height: 100%;
@@ -754,6 +973,11 @@
   justify-content: center;
   align-items: center;
 }
+
+  .btn-box4 .btn-box-t{
+    transform: rotate(9deg);
+  }
+
 
   // .btn-box2{
   //     background: #f00;
@@ -767,6 +991,9 @@
     width: 100%;
     height: 100%;
     cursor: pointer;
+    position: absolute;
+    left: 0px;
+    top:0px;
   }
   .btn-layer {
     background: url("/home_images/home-layer.png") no-repeat left top;
@@ -779,17 +1006,45 @@
     opacity: 0;
     display: block;
     transition: opacity 0.3s ease 0s;
+    z-index: 10;
   }
+
+  .btn-layer-right{
+    background: url("/home_images/home-layer4.png") no-repeat left top;
+    background-size: 400px auto;
+    right: 0;
+    left:-2000px;
+    top: -180px;
+    height: 228px;
+  }
+
+
   .btn-box:hover .btn-layer {
     opacity: 1;
     right: -400px;
   }
+
+  .btn-box:hover:hover .btn-layer-right {
+    opacity: 1;
+    right:0px;
+    left: -400px;
+  }
+
+
   .btn-layer-inner {
     height: 136px;
     width: 326px;
     margin-top: 16px;
     margin-left: 70px;
   }
+
+
+  .btn-layer-right .btn-layer-inner{
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+
+
   .layer-r-item {
     width: 50%;
     color: #fff;
