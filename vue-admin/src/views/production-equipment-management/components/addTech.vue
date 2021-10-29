@@ -706,56 +706,44 @@
                     title="请选择"
                     width="60"
                 ></vxe-table-column>
-                <vxe-table-column
-                    field="machineNo"
-                    title="固定资产编号"
-                    width="100"
-                ></vxe-table-column>
-                <vxe-table-column
-                    field="deptName"
-                    title="设备类型"
-                    width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueName}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="welderName"
-                    title="所属项目"
-                    width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDept.name}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="status"
-                    title="状态"
-                    width="60"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNames}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="macPath"
-                    title="厂家"
-                    width="100"
-                >
-                    <template #default="{row}">
-                        {{row.sysDictionary.valueNamess}}
-                    </template>
-                </vxe-table-column>
-                <vxe-table-column
-                    field="gatherNo"
-                    title="采集序号"
-                    min-width="100"
-                >
-                    <template #default="{row}">
-                        {{row.machineGatherInfo.gatherNo}}
-                    </template>
-                </vxe-table-column>
+              <vxe-table-column
+                field="machineNo"
+                title="固定资产编号"
+                width="100"
+              ></vxe-table-column>
+              <vxe-table-column
+                field="typeStr"
+                title="设备类型"
+                width="100"
+              >
+              </vxe-table-column>
+              <vxe-table-column
+                field="deptName"
+                title="所属项目"
+                width="100"
+              >
+              </vxe-table-column>
+              <vxe-table-column
+                field="status"
+                title="状态"
+                width="60"
+              >
+                <template slot-scope="scope">
+                  <span :class="{'green':scope.row.statusStr=='启用','waring':scope.row.statusStr=='维修','error':scope.row.statusStr=='报废'}">{{scope.row.statusStr}}</span>
+                </template>
+              </vxe-table-column>
+              <vxe-table-column
+                field="macPath"
+                title="厂家"
+                width="100"
+              >
+              </vxe-table-column>
+              <vxe-table-column
+                field="gatherNo"
+                title="采集序号"
+                min-width="100"
+              >
+              </vxe-table-column>
             </vxe-table>
             <div
                 class="p10 flex"
@@ -1398,10 +1386,10 @@ export default {
             this.doSubscribe();
             if (JSON.stringify(this.selectModel) == "{}") {
                 return this.$message.error("请选择设备!!");
-            } else if (this.selectModel.machineGatherInfo && this.selectModel.machineGatherInfo.gatherNo) {
+            } else if (this.selectModel && this.selectModel.gatherNo) {
                 setTimeout(() => {
                     let msg = {}
-                    msg['gatherNo'] = this.selectModel.machineGatherInfo.gatherNo;
+                    msg['gatherNo'] = this.selectModel.gatherNo;
                     msg['channelNo'] = this.ruleForm2.channelNo;
                     this.doPublish(JSON.stringify(msg));
                     console.log(msg)
