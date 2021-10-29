@@ -309,49 +309,37 @@
                         width="100"
                     ></vxe-table-column>
                     <vxe-table-column
-                        field="deptName"
+                        field="typeStr"
                         title="设备类型"
                         width="100"
                     >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueName}}
-                        </template>
                     </vxe-table-column>
                     <vxe-table-column
-                        field="welderName"
+                        field="deptName"
                         title="所属项目"
                         width="100"
                     >
-                        <template #default="{row}">
-                            {{row.sysDept.name}}
-                        </template>
                     </vxe-table-column>
                     <vxe-table-column
                         field="status"
                         title="状态"
                         width="60"
                     >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNames}}
-                        </template>
+                      <template slot-scope="scope">
+                        <span :class="{'green':scope.row.statusStr=='启用','waring':scope.row.statusStr=='维修','error':scope.row.statusStr=='报废'}">{{scope.row.statusStr}}</span>
+                      </template>
                     </vxe-table-column>
                     <vxe-table-column
                         field="macPath"
                         title="厂家"
                         width="100"
                     >
-                        <template #default="{row}">
-                            {{row.sysDictionary.valueNamess}}
-                        </template>
                     </vxe-table-column>
                     <vxe-table-column
                         field="gatherNo"
                         title="采集序号"
                         min-width="100"
                     >
-                        <template #default="{row}">
-                            {{row.machineGatherInfo.gatherNo}}
-                        </template>
                     </vxe-table-column>
                 </vxe-table>
                 <div
@@ -714,12 +702,12 @@ export default {
                 return this.$message.error("请选择设备");
             }
             //检查选择的设备采集编号是否存在空值
-            if (equipmentArr.filter(item => !item.machineGatherInfo.gatherNo || item.machineGatherInfo.gatherNo == '').length > 0) {
+            if (equipmentArr.filter(item => !item.gatherNo || item.gatherNo == '').length > 0) {
                 return this.$message.error("选择的设备存在采集序号为空");
             }
             //取出选中设备所有采集编号
-            equipmentArr.filter(item => item.machineGatherInfo.gatherNo).forEach(item => {
-                gatherNoArr = [...gatherNoArr, ...item.machineGatherInfo.gatherNo.split(',')]
+            equipmentArr.filter(item => item.gatherNo).forEach(item => {
+                gatherNoArr = [...gatherNoArr, ...item.gatherNo.split(',')]
             });
             this.$confirm('确定要下发吗?', '提示', {
                 confirmButtonText: '确定',
