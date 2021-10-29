@@ -339,7 +339,10 @@ public class WelderServiceImpl implements WelderService {
             //获取OTC焊机 焊接时长
             String weldDuration = welderDao.selectOTCMachineWeldDuration(id);
 
-            equipFeatureInfo.setWeldingDuration(weldDuration);
+            if(!ObjectUtils.isEmpty(weldDuration)){
+
+                equipFeatureInfo.setWeldingDuration(weldDuration);
+            }
 
         }else{
 
@@ -352,7 +355,10 @@ public class WelderServiceImpl implements WelderService {
             //获取松下焊机 焊接时长
             String weldDuration = welderDao.selectSXMachineWeldDuration(weldCid);
 
-            equipFeatureInfo.setWeldingDuration(weldDuration);
+            if(!ObjectUtils.isEmpty(weldDuration)){
+
+                equipFeatureInfo.setWeldingDuration(weldDuration);
+            }
         }
 
         return equipFeatureInfo;

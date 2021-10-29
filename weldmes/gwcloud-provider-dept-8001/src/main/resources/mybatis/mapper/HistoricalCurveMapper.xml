@@ -36,9 +36,6 @@
                 <if test="welderId != null">
                     and tableInfo.welderId = #{welderId}
                 </if>
-<!--                <if test="weldMachineId != null">-->
-<!--                    and tableInfo.machineId = #{weldMachineId}-->
-<!--                </if>-->
             </where>
         </if>
     </select>

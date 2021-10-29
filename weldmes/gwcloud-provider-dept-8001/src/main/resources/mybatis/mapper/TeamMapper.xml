@@ -95,4 +95,71 @@
 		GROUP BY g.deptName
 	</select>
 
+	<!--查询OTC、松下实时班组报表信息列表-->
+	<select id="getOTCAndSXRealTimeInfos" parameterType="String" resultType="com.gw.entities.WeldStatisticsDataTeam">
+		SELECT g.deptName,SUM(g.allCount) allCount,SUM(g.onOffCount) onOffCount,
+		CONCAT(FLOOR(SUM(g.onOffTime)/3600),':',FLOOR(SUM(g.onOffTime)%3600/60),':',FLOOR(SUM(g.onOffTime)%3600%60)) onOffTime,
+		SUM(g.taskCount) taskCount,SUM(g.realWeldOnline) realWeldOnline,
+		CONCAT(FLOOR(SUM(g.realWeldTime)/3600),':',FLOOR(SUM(g.realWeldTime)%3600/60),':',FLOOR(SUM(g.realWeldTime)%3600%60)) realWeldTime,
+		SUM(g.noTaskCount) noTaskCount,GROUP_CONCAT(g.noTaskMachineDetail),
+		SUM(g.equipUtilization) equipUtilization,
+		CONCAT(FLOOR(SUM(g.supergageTime)/3600),':',FLOOR(SUM(g.supergageTime)%3600/60),':',FLOOR(SUM(g.supergageTime)%3600%60)) supergageTime,
+		CONCAT(FLOOR((SUM(g.normalTime))/3600),':',FLOOR((SUM(g.normalTime))%3600/60),':',FLOOR((SUM(g.normalTime))%3600%60)) normalTime,
+		SUM(g.weldingEfficiency) weldingEfficiency,SUM(g.standardPercentage) standardPercentage,SUM(g.materialsConsumption) materialsConsumption,
+		SUM(g.powerConsumption) powerConsumption
+		FROM(select dept.name deptName,COUNT(DISTINCT m.id) allCount,COUNT(DISTINCT otcTable.machineId) onOffCount,
+		COUNT(DISTINCT otcTable1.machineId) realWeldOnline,IF(SUM(otcTable1.weldTime)>300,COUNT(DISTINCT otcTable2.machineId),0) noTaskCount,
+		ROUND(COUNT(DISTINCT otcTable.machineId)/COUNT(DISTINCT m.id),2)*100 equipUtilization,
+		COUNT(DISTINCT otcTable.taskId)-COUNT(DISTINCT otcTable2.taskId) taskCount,SUM(otcTable1.weldTime) realWeldTime,
+		SUM(otcTable.weldTime) onOffTime,SUM(otcTable1.weldTime)-IFNULL(SUM(otcTable3.weldTime),0) normalTime,
+		ROUND((SUM(otcTable1.weldTime))/SUM(otcTable.weldTime),2)*100 weldingEfficiency,
+		SUM(otcTable3.weldTime) supergageTime,
+		ROUND((SUM(otcTable1.weldTime)-IFNULL(SUM(otcTable3.weldTime),0))/SUM(otcTable1.weldTime),2)*100 standardPercentage,
+		sum(otcTable.wireFeedRate*otcTable.weldTime)/600 materialsConsumption,
+		sum((otcTable.weldElectricity*otcTable.weldVoltage*otcTable.weldTime)/3600/1000)+sum(otcTable.weldTime-otcTable1.weldTime)/36000 powerConsumption,
+		GROUP_CONCAT(distinct otcTable2.machineNo) noTaskMachineDetail
+		from weldmesdb.sys_dept dept
+		left join ${otcTableName} otcTable on dept.id = otcTable.machineDeptId
+		left join weldmesdb.machine_weld_info m on m.id = otcTable.machineId
+		left join ${otcTableName} otcTable1 on otcTable1.id = otcTable.id and otcTable1.weldStatus in (3,5,7,99)
+		left join ${otcTableName} otcTable2 on otcTable2.id = otcTable1.id and otcTable2.taskId is NULL
+		left join ${otcTableName} otcTable3 on otcTable3.id = otcTable2.id and otcTable3.weldStatus = 99
+		where otcTable.weldTime between #{time} and #{time2}
+		and dept.id in
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		group by dept.`name`
+		union all
+		select dept.`name` deptName,
+		COUNT(DISTINCT sxm.id) allCount,
+		COUNT(DISTINCT sxTable1.weldCid) onOffCount,
+		SUM(sxTable.weldTime) onOffTime,
+		COUNT(DISTINCT sxTable1.taskId)-COUNT(DISTINCT sxTable2.taskId) taskCount,
+		COUNT(DISTINCT sxTable3.weldCid) realWeldOnline,
+		SUM(sxTable3.weldTime) realWeldTime,
+		IF(SUM(sxTable3.weldTime)>300,COUNT(DISTINCT sxTable2.weldCid),0) noTaskCount,
+		GROUP_CONCAT(distinct sxTable2.weldCid) noTaskMachineDetail,
+		ROUND(COUNT(DISTINCT sxTable.weldCid)/COUNT(DISTINCT sxm.id),2) equipUtilization,
+		0 supergageTime,
+		SUM(sxTable3.weldTime) normalTime,
+		ROUND((SUM(sxTable1.weldTime))/SUM(sxTable3.weldTime),2) weldingEfficiency,
+		100 standardPercentage,
+		sum(sxTable3.realityWireSpeed*sxTable3.weldTime)/600 materialsConsumption,
+		sum((sxTable3.realityWeldEle*sxTable3.realityWeldVol*sxTable3.weldTime)/3600/1000)+(sxTable3.weldTime-sxTable1.weldTime)/36000 powerConsumption
+		from weldmesdb.sys_dept dept
+		left join weldmesdb.machine_weldsx_info sxm on sxm.dept_id = dept.id
+		left join ${sxTableName} sxTable on sxm.weld_cid = sxTable.weldCid
+		left join ${sxTableName} sxTable1 on sxTable1.id = sxTable.id and sxTable1.weldStatus not in (3,4,6,9)
+		left join ${sxTableName} sxTable2 on sxTable2.id = sxTable1.id and sxTable2.taskId is NULL
+		left join ${sxTableName} sxTable3 on sxTable3.id = sxTable2.id and sxTable3.weldStatus not in (0,3,4,6,9)
+		where sxTable.weldTime &gt;= #{time} and sxTable.weldTime &lt;= #{time2}
+		and dept.id in
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		group by dept.`name`)g
+		GROUP BY g.deptName
+	</select>
+
 </mapper>

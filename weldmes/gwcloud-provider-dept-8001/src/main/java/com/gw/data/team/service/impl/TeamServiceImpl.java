@@ -1,18 +1,18 @@
 package com.gw.data.team.service.impl;
 
+import com.gw.common.ConstantInfo;
 import com.gw.common.DateTimeUtils;
 import com.gw.data.team.dao.TeamDao;
 import com.gw.data.team.service.TeamService;
-import com.gw.entities.UserLoginInfo;
 import com.gw.entities.WeldStatisticsDataTeam;
 import com.gw.sys.dao.SysDeptDao;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Date 2021/10/19 14:25
@@ -54,7 +54,34 @@ public class TeamServiceImpl implements TeamService {
         //查询班组报表信息
         weldStatisticsDataList = teamDao.getList(time1, time2, ids);
 
-        return weldStatisticsDataList;
+        //获取time2的日期
+        String date = time2.split(" ")[0];
+
+        //获取time2的时间
+        String nowTime = time2.split(" ")[1];
+
+        //日期格式 yyyy-MM-dd 替换为 yyyyMMdd
+        String tableDate = date.split("-")[0] + date.split("-")[1] + date.split("-")[2];
+
+        //获取OTC表名
+        String otcTableName = ConstantInfo.OTC_TABLE_NAME_PREFIX_FLAG + tableDate;
+
+        //获取松下表名
+        String sxTableName = ConstantInfo.SX_TABLE_NAME_PREFIX_FLAG + tableDate;
+
+        //获取查询实时表的整点时间
+        String time = date + " " + nowTime.split(":")[0]+ ":00:00";
+
+        List<WeldStatisticsDataTeam> realTimeInfos = teamDao.getOTCAndSXRealTimeInfos(otcTableName,sxTableName,
+                time,time2,ids);
+
+        weldStatisticsDataList.addAll(realTimeInfos);
+
+        Set<WeldStatisticsDataTeam> set = new HashSet<>(weldStatisticsDataList);
+
+        List<WeldStatisticsDataTeam> asList = new ArrayList<>(set);
+
+        return asList;
     }
 
     /**
