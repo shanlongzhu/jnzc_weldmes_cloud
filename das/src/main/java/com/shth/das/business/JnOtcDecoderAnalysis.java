@@ -25,7 +25,6 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      * Function<T,R>,T:传入参数，R：返回参数
      */
     private final Map<Integer, Function<JnOtcDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
-    private final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
 
     public JnOtcDecoderAnalysis() {
         //OTC（1.0）实时数据解析
@@ -61,9 +60,9 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             HandlerParam handlerParam = new HandlerParam();
             Map<String, Object> map = new HashMap<>();
             //存数据库
-            List<JNRtDataDB> jnRtDataDbs = this.jnOtcRtDataProtocol.jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
+            List<JNRtDataDB> jnRtDataDbs = JnOtcRtDataProtocol.jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
             //发送前端
-            List<JNRtDataUI> jnRtDataUis = this.jnOtcRtDataProtocol.jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
+            List<JNRtDataUI> jnRtDataUis = JnOtcRtDataProtocol.jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
             if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
                 map.put("JNRtDataDB", jnRtDataDbs);
             }
@@ -85,7 +84,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      */
     private HandlerParam otcIssueReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
-            JNProcessIssueReturn issueReturn = this.jnOtcRtDataProtocol.jnIssueReturnAnalysis(jnOtcDecoderParam.getStr());
+            JNProcessIssueReturn issueReturn = JnOtcRtDataProtocol.jnIssueReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != issueReturn) {
                 HandlerParam handlerParam = new HandlerParam();
                 Map<String, Object> map = new HashMap<>();
@@ -106,7 +105,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
      */
     private HandlerParam otcClaimReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
-            JNProcessClaimReturn claimReturn = this.jnOtcRtDataProtocol.jnClaimReturnAnalysis(jnOtcDecoderParam.getStr());
+            JNProcessClaimReturn claimReturn = JnOtcRtDataProtocol.jnClaimReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != claimReturn) {
                 HandlerParam handlerParam = new HandlerParam();
                 Map<String, Object> map = new HashMap<>();
@@ -132,35 +131,35 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             String str = jnOtcDecoderParam.getStr();
             //密码返回
             if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                JNPasswordReturn passwordReturn = this.jnOtcRtDataProtocol.jnPasswordReturnAnalysis(str);
+                JNPasswordReturn passwordReturn = JnOtcRtDataProtocol.jnPasswordReturnAnalysis(str);
                 if (null != passwordReturn) {
                     map.put("JNPasswordReturn", passwordReturn);
                 }
             }
             //控制命令返回
             else if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                JNCommandReturn commandReturn = this.jnOtcRtDataProtocol.jnCommandReturnAnalysis(str);
+                JNCommandReturn commandReturn = JnOtcRtDataProtocol.jnCommandReturnAnalysis(str);
                 if (null != commandReturn) {
                     map.put("JNCommandReturn", commandReturn);
                 }
             }
             //锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                final JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put("JnLockMachineReturn", jnLockMachineReturn);
                 }
             }
             //解锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "19".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final JnLockMachineReturn jnLockMachineReturn = this.jnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                final JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put("JnLockMachineReturn", jnLockMachineReturn);
                 }
             }
             //程序包路径下发返回
             else if ("7E".equals(str.substring(0, 2)) && "11".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = this.jnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
+                final OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = JnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
                 if (null != otcV1ProgramPathIssueReturn) {
                     map.put("OtcV1ProgramPathIssueReturn", otcV1ProgramPathIssueReturn);
                 }

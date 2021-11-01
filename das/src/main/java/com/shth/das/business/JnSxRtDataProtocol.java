@@ -27,14 +27,12 @@ import java.util.Map;
 @Slf4j
 public class JnSxRtDataProtocol {
 
-    private DBCreateMethod dbCreateMethod = new DBCreateMethod();
-
     /**
      * 松下设备信息绑定到通道（设备开机）
      *
      * @param sxWeldModel 焊机信息实体类
      */
-    private void sxWeldDataBinding(ChannelHandlerContext ctx, SxWeldModel sxWeldModel) {
+    private static void sxWeldDataBinding(ChannelHandlerContext ctx, SxWeldModel sxWeldModel) {
         if (null != sxWeldModel) {
             //根据通道获取设备CID
             if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
@@ -88,7 +86,7 @@ public class JnSxRtDataProtocol {
      * @param weldCid  设备CID
      * @param function 0：解锁，1：锁定
      */
-    private void sxChannelSetLock(String weldCid, int function) {
+    private static void sxChannelSetLock(String weldCid, int function) {
         try {
             final SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
             sxWeldChannelSetting.setWeldCid(weldCid);
@@ -115,7 +113,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param 入参
      */
-    public void jnSxSecondVerify(HandlerParam param) {
+    public static void jnSxSecondVerify(HandlerParam param) {
         if (null != param) {
             final ChannelHandlerContext ctx = param.getCtx();
             final Map<String, Object> map = param.getValue();
@@ -133,7 +131,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxGl5SoftHardParam(HandlerParam param) {
+    public static void jnSxGl5SoftHardParam(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -151,7 +149,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxGl5RtDataManage(HandlerParam param) {
+    public static void jnSxGl5RtDataManage(HandlerParam param) {
         if (null != param) {
             jnSxRtdManage(param);
         }
@@ -162,7 +160,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxGl5StatusManage(HandlerParam param) {
+    public static void jnSxGl5StatusManage(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -188,7 +186,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxGl5ProcessWeldSet(HandlerParam param) {
+    public static void jnSxGl5ProcessWeldSet(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -256,7 +254,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxCo2ProcessClaimReturn(HandlerParam param) {
+    public static void jnSxCo2ProcessClaimReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -282,7 +280,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxGl5TigProcessClaimReturn(HandlerParam param) {
+    public static void jnSxGl5TigProcessClaimReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -308,7 +306,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxFr2At3SoftHardParam(HandlerParam param) {
+    public static void jnSxFr2At3SoftHardParam(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -326,7 +324,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxFr2Co2RtDataDbManage(HandlerParam param) {
+    public static void jnSxFr2Co2RtDataDbManage(HandlerParam param) {
         if (null != param) {
             jnSxRtdManage(param);
         }
@@ -337,7 +335,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxFr2TigRtDataDbManage(HandlerParam param) {
+    public static void jnSxFr2TigRtDataDbManage(HandlerParam param) {
         if (null != param) {
             jnSxRtdManage(param);
         }
@@ -348,7 +346,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxFr2StatusUiManage(HandlerParam param) {
+    public static void jnSxFr2StatusUiManage(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -374,7 +372,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxChannelParamReply(HandlerParam param) {
+    public static void jnSxChannelParamReply(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -400,7 +398,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxFr2ChannelParamReplyHave(HandlerParam param) {
+    public static void jnSxFr2ChannelParamReplyHave(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             //松下焊机FR2系列通道参数【查询回复（有参数）】
@@ -421,7 +419,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param
      */
-    public void jnSxAt3ParamQueryReturn(HandlerParam param) {
+    public static void jnSxAt3ParamQueryReturn(HandlerParam param) {
         if (null != param) {
             final Map<String, Object> map = param.getValue();
             final ChannelHandlerContext ctx = param.getCtx();
@@ -447,7 +445,7 @@ public class JnSxRtDataProtocol {
      *
      * @param param 入参
      */
-    private void jnSxRtdManage(HandlerParam param) {
+    private static void jnSxRtdManage(HandlerParam param) {
         final Map<String, Object> map = param.getValue();
         final ChannelHandlerContext ctx = param.getCtx();
         //松下焊机实时数据发送到mq
@@ -541,7 +539,7 @@ public class JnSxRtDataProtocol {
                 //添加到松下阻塞队列（通过定时任务定时存储）,offer：如果队列已满，则不再添加
                 CommonQueue.SX_LINKED_BLOCKING_QUEUE.offer(sxRtDataDb);
                 //添加实时数据到松下的队列，并定时存储到ProcessDB
-                dbCreateMethod.addSxRtDataToProcessDbQueue(sxRtDataDb);
+                DBCreateMethod.addSxRtDataToProcessDbQueue(sxRtDataDb);
             }
         }
     }
@@ -549,7 +547,7 @@ public class JnSxRtDataProtocol {
     /**
      * 松下GL5软硬件参数解析
      */
-    public SxWeldModel sxWeldAnalysis(String clientIp, String str) {
+    public static SxWeldModel sxWeldAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10))) {
                 SxWeldModel sxWeldModel = new SxWeldModel();
@@ -582,7 +580,7 @@ public class JnSxRtDataProtocol {
      *
      * @return SxRtDataUI
      */
-    public SxRtDataUi sxRtDataUiAnalysis(String clientIp, String str) {
+    public static SxRtDataUi sxRtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
@@ -630,7 +628,7 @@ public class JnSxRtDataProtocol {
      * @param str 16进制字符串
      * @return SxRtDataDB
      */
-    public SxRtDataDb sxRtDataDbAnalysis(String clientIp, String str) {
+    public static SxRtDataDb sxRtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 try {
@@ -686,7 +684,7 @@ public class JnSxRtDataProtocol {
      * @param str 16进制字符串
      * @return 松下GL5状态数据实体类
      */
-    public SxStatusDataUI sxStatusDataUiAnalysis(String clientIp, String str) {
+    public static SxStatusDataUI sxStatusDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
                 SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
@@ -738,7 +736,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return 工艺返回实体类
      */
-    public SxProcessReturn sxProcessReturnAnalysis(String clientIp, String str) {
+    public static SxProcessReturn sxProcessReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50035".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxProcessReturn sxProcessReturn = new SxProcessReturn();
@@ -766,7 +764,7 @@ public class JnSxRtDataProtocol {
      * @param str
      * @return
      */
-    public SxProcessDeleteReturn sxProcessDeleteReturnAnalysis(String clientIp, String str) {
+    public static SxProcessDeleteReturn sxProcessDeleteReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50028".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxProcessDeleteReturn sxProcessDeleteReturn = new SxProcessDeleteReturn();
@@ -794,7 +792,7 @@ public class JnSxRtDataProtocol {
      * @param str
      * @return
      */
-    public SxProcessClaimReturn sxProcessClaimReturnAnalysis(String clientIp, String str) {
+    public static SxProcessClaimReturn sxProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxProcessClaimReturn sxProcessClaimReturn = new SxProcessClaimReturn();
             sxProcessClaimReturn.setWeldIp(clientIp);
@@ -821,7 +819,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return 松下焊机通道设定回复实体类
      */
-    public SxWeldChannelSetReturn sxWeldChannelSetReturnAnalysis(String clientIp, String str) {
+    public static SxWeldChannelSetReturn sxWeldChannelSetReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 106 && "FE5AA50035".equals(str.substring(0, 10)) && "1202".equals(str.substring(40, 44))) {
                 SxWeldChannelSetReturn weldChannelSetReturn = new SxWeldChannelSetReturn();
@@ -853,7 +851,7 @@ public class JnSxRtDataProtocol {
      * @return 松下CO2焊机工艺索取返回实体类
      */
     @SuppressWarnings("AlibabaMethodTooLong")
-    public SxCO2ProcessClaimReturn sxCO2ProcessClaimReturnAnalysis(String clientIp, String str) {
+    public static SxCO2ProcessClaimReturn sxCO2ProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxCO2ProcessClaimReturn claimReturn = new SxCO2ProcessClaimReturn();
@@ -951,7 +949,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxWeldModel
      */
-    public SxWeldModel jnSxFr2At3SoftHardParamAnalysis(String clientIp, String str) {
+    public static SxWeldModel jnSxFr2At3SoftHardParamAnalysis(String clientIp, String str) {
         if (StringUtils.isNotBlank(str)) {
             if (str.length() == 154 && "FE5AA5004D".equals(str.substring(0, 10))) {
                 SxWeldModel sxWeldModel = new SxWeldModel();
@@ -980,7 +978,7 @@ public class JnSxRtDataProtocol {
      * @return 松下TIG焊机工艺索取返回实体类
      */
     @SuppressWarnings("AlibabaMethodTooLong")
-    public SxTIGProcessClaimReturn sxTIGProcessClaimReturnAnalysis(String clientIp, String str) {
+    public static SxTIGProcessClaimReturn sxTIGProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 SxTIGProcessClaimReturn claimReturn = new SxTIGProcessClaimReturn();
@@ -1093,7 +1091,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制数据包
      * @return 实时表实体类
      */
-    public SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
+    public static SxRtDataDb fr2Co2RtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
             if (!CommonFunction.isSxStandbySave()) {
@@ -1138,7 +1136,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxRtDataUI
      */
-    public SxRtDataUi fr2Co2RtDataUiAnalysis(String clientIp, String str) {
+    public static SxRtDataUi fr2Co2RtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataUi sxRtDataUi = new SxRtDataUi();
             sxRtDataUi.setWeldIp(clientIp);
@@ -1175,7 +1173,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制数据包
      * @return FR2系列TIG实体类
      */
-    public SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
+    public static SxRtDataDb fr2TigRtDataDbAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 118) {
             //判断松下待机数据是否存储,如果不存储，则取出待机状态判断
             if (!CommonFunction.isSxStandbySave()) {
@@ -1222,7 +1220,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxRtDataUi
      */
-    public SxRtDataUi fr2TigRtDataUiAnalysis(String clientIp, String str) {
+    public static SxRtDataUi fr2TigRtDataUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxRtDataUi sxRtDataUi = new SxRtDataUi();
             sxRtDataUi.setWeldIp(clientIp);
@@ -1261,7 +1259,7 @@ public class JnSxRtDataProtocol {
      * @param str
      * @return
      */
-    public SxStatusDataUI fr2Co2StatusUiAnalysis(String clientIp, String str) {
+    public static SxStatusDataUI fr2Co2StatusUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
             String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
@@ -1301,7 +1299,7 @@ public class JnSxRtDataProtocol {
      * @param str
      * @return
      */
-    public SxStatusDataUI fr2TigStatusUiAnalysis(String clientIp, String str) {
+    public static SxStatusDataUI fr2TigStatusUiAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             SxStatusDataUI sxStatusDataUi = new SxStatusDataUI();
             String year = CommonUtils.hexToDecLengthJoint(str.substring(46, 48), 2);
@@ -1340,7 +1338,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxChannelParamReply
      */
-    public SxChannelParamReply sxChannelParamReplyAnalysis(String clientIp, String str) {
+    public static SxChannelParamReply sxChannelParamReplyAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if ("0211".equals(str.substring(40, 44))) {
                 SxChannelParamReply sxChannelParamReply = new SxChannelParamReply();
@@ -1360,7 +1358,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return SxChannelParamReplyHave
      */
-    public SxChannelParamReplyHave sxChannelParamReplyHaveAnalysis(String clientIp, String str) {
+    public static SxChannelParamReplyHave sxChannelParamReplyHaveAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str) && "0211".equals(str.substring(40, 44))) {
             SxChannelParamReplyHave replyHave = new SxChannelParamReplyHave();
             replyHave.setWeldIp(clientIp);
@@ -1423,7 +1421,7 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return At3ParamQueryReturn
      */
-    public At3ParamQueryReturn at3ParamQueryReturnAnalysis(String clientIp, String str) {
+    public static At3ParamQueryReturn at3ParamQueryReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 92) {
             At3ParamQueryReturn at3ParamQueryReturn = new At3ParamQueryReturn();
             at3ParamQueryReturn.setWeldIp(clientIp);

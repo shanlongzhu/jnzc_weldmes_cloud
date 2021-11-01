@@ -25,9 +25,6 @@ import java.util.function.Consumer;
 @Slf4j
 public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam> {
 
-    private final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
-    private final JnSxRtDataProtocol jnSxRtDataProtocol = new JnSxRtDataProtocol();
-
     /**
      * 保存字符串长度和方法映射关系
      * Consumer<T>,T:入参，不返回
@@ -42,44 +39,44 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
 
     private void setOtcHandlerMapping() {
         //OTC（1.0）实时数据解析
-        this.otcHandlerMapping.put(282, this.jnOtcRtDataProtocol::jnRtDataManage);
+        this.otcHandlerMapping.put(282, JnOtcRtDataProtocol::jnRtDataManage);
         //OTC（1.0）工艺下发返回解析
-        this.otcHandlerMapping.put(24, this.jnOtcRtDataProtocol::otcIssueReturnManage);
+        this.otcHandlerMapping.put(24, JnOtcRtDataProtocol::otcIssueReturnManage);
         //OTC（1.0）索取返回协议解析
-        this.otcHandlerMapping.put(112, this.jnOtcRtDataProtocol::otcClaimReturnManage);
+        this.otcHandlerMapping.put(112, JnOtcRtDataProtocol::otcClaimReturnManage);
         //OTC（1.0）密码返回和控制命令返回[新增程序包路径下发返回]
-        this.otcHandlerMapping.put(22, this.jnOtcRtDataProtocol::otcPwdCmdReturnManage);
+        this.otcHandlerMapping.put(22, JnOtcRtDataProtocol::otcPwdCmdReturnManage);
     }
 
     private void setSxHandlerMapping() {
         //松下焊机【GL5、FR2、AT3】第二次握手验证
-        this.sxHandlerMapping.put(128, this.jnSxRtDataProtocol::jnSxSecondVerify);
+        this.sxHandlerMapping.put(128, JnSxRtDataProtocol::jnSxSecondVerify);
         //松下焊机GL5系列软硬件参数【刷卡解锁焊机】
-        this.sxHandlerMapping.put(180, this.jnSxRtDataProtocol::jnSxGl5SoftHardParam);
+        this.sxHandlerMapping.put(180, JnSxRtDataProtocol::jnSxGl5SoftHardParam);
         //松下焊机GL5系列CO2实时数据
-        this.sxHandlerMapping.put(206, this.jnSxRtDataProtocol::jnSxGl5RtDataManage);
+        this.sxHandlerMapping.put(206, JnSxRtDataProtocol::jnSxGl5RtDataManage);
         //松下焊机GL5系列CO2状态信息
-        this.sxHandlerMapping.put(246, this.jnSxRtDataProtocol::jnSxGl5StatusManage);
+        this.sxHandlerMapping.put(246, JnSxRtDataProtocol::jnSxGl5StatusManage);
         //松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
-        this.sxHandlerMapping.put(106, this.jnSxRtDataProtocol::jnSxGl5ProcessWeldSet);
+        this.sxHandlerMapping.put(106, JnSxRtDataProtocol::jnSxGl5ProcessWeldSet);
         //松下焊机GL5系列CO2工艺索取返回（有数据）
-        this.sxHandlerMapping.put(406, this.jnSxRtDataProtocol::jnSxCo2ProcessClaimReturn);
+        this.sxHandlerMapping.put(406, JnSxRtDataProtocol::jnSxCo2ProcessClaimReturn);
         //松下焊机GL5系列TIG工艺索取返回（有数据）
-        this.sxHandlerMapping.put(446, this.jnSxRtDataProtocol::jnSxGl5TigProcessClaimReturn);
+        this.sxHandlerMapping.put(446, JnSxRtDataProtocol::jnSxGl5TigProcessClaimReturn);
         //松下焊机【FR2、AT3】系列软硬件参数【刷卡解锁焊机】
-        this.sxHandlerMapping.put(154, this.jnSxRtDataProtocol::jnSxFr2At3SoftHardParam);
+        this.sxHandlerMapping.put(154, JnSxRtDataProtocol::jnSxFr2At3SoftHardParam);
         //松下焊机FR2系列CO2实时数据
-        this.sxHandlerMapping.put(112, this.jnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
+        this.sxHandlerMapping.put(112, JnSxRtDataProtocol::jnSxFr2Co2RtDataDbManage);
         //松下焊机FR2系列TIG实时数据
-        this.sxHandlerMapping.put(118, this.jnSxRtDataProtocol::jnSxFr2TigRtDataDbManage);
+        this.sxHandlerMapping.put(118, JnSxRtDataProtocol::jnSxFr2TigRtDataDbManage);
         //松下焊机FR2系列【CO2和TIG】的状态信息
-        this.sxHandlerMapping.put(156, this.jnSxRtDataProtocol::jnSxFr2StatusUiManage);
+        this.sxHandlerMapping.put(156, JnSxRtDataProtocol::jnSxFr2StatusUiManage);
         //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
-        this.sxHandlerMapping.put(52, this.jnSxRtDataProtocol::jnSxChannelParamReply);
+        this.sxHandlerMapping.put(52, JnSxRtDataProtocol::jnSxChannelParamReply);
         //松下焊机FR2系列通道参数【查询回复（有参数）】
-        this.sxHandlerMapping.put(220, this.jnSxRtDataProtocol::jnSxFr2ChannelParamReplyHave);
+        this.sxHandlerMapping.put(220, JnSxRtDataProtocol::jnSxFr2ChannelParamReplyHave);
         //松下焊机AT3系列【查询回复（有参数）】
-        this.sxHandlerMapping.put(92, this.jnSxRtDataProtocol::jnSxAt3ParamQueryReturn);
+        this.sxHandlerMapping.put(92, JnSxRtDataProtocol::jnSxAt3ParamQueryReturn);
     }
 
     /**
@@ -186,7 +183,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
                 log.info("OTC终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             }
-            this.jnOtcRtDataProtocol.jnWeldOffDataManage(ctx, clientIp);
+            final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
+            jnOtcRtDataProtocol.jnWeldOffDataManage(ctx, clientIp);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == CommonFunction.getSxPort()) {
@@ -196,7 +194,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
                 log.info("SX终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
             }
-            this.jnSxRtDataProtocol.sxWeldOffDataManage(ctx, clientIp);
+            final JnSxRtDataProtocol jnSxRtDataProtocol = new JnSxRtDataProtocol();
+            jnSxRtDataProtocol.sxWeldOffDataManage(ctx, clientIp);
         }
         ctx.flush();
         ctx.channel().close();

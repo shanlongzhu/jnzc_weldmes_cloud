@@ -45,7 +45,7 @@ public class DBCreateMethod {
     /**
      * 添加OTC实时数据到ProcessDB的阻塞队列中
      */
-    public void addOtcRtDataToProcessDbQueue(JNRtDataDB data) {
+    public static void addOtcRtDataToProcessDbQueue(JNRtDataDB data) {
         //存储电流的点
         final DBPoint eleDbPoint = getPointByGatherNo(data.getGatherNo(), "ELE");
         if (null != eleDbPoint) {
@@ -63,7 +63,7 @@ public class DBCreateMethod {
      *
      * @param data 松下实时数据
      */
-    public void addSxRtDataToProcessDbQueue(SxRtDataDb data) {
+    public static void addSxRtDataToProcessDbQueue(SxRtDataDb data) {
         final String weldCid = Integer.valueOf(data.getWeldCid()).toString();
         //根据设备CID获取电流点对象
         final DBPoint eleDbPoint = getPointByWeldCid(weldCid, "ELE");
@@ -84,7 +84,7 @@ public class DBCreateMethod {
      * @param value    值
      * @param weldTime 时间
      */
-    private void setOtcRecordData(DBPoint dbPoint, float value, String weldTime) {
+    private static void setOtcRecordData(DBPoint dbPoint, float value, String weldTime) {
         if (null != dbPoint) {
             RecordData recordData = new RecordData();
             //指定点的ID
@@ -108,7 +108,7 @@ public class DBCreateMethod {
      * @param value    值
      * @param weldTime 时间
      */
-    private void setSxRecordData(DBPoint dbPoint, float value, String weldTime) {
+    private static void setSxRecordData(DBPoint dbPoint, float value, String weldTime) {
         if (null != dbPoint) {
             RecordData recordData = new RecordData();
             //指定点的ID
@@ -149,7 +149,7 @@ public class DBCreateMethod {
      * @param pointType 点属性（ele、vol）
      * @return 点对象
      */
-    public DBPoint getPointByGatherNo(String gatherNo, String pointType) {
+    public static DBPoint getPointByGatherNo(String gatherNo, String pointType) {
         if (StringUtils.isNotBlank(gatherNo)) {
             gatherNo = CommonUtils.stringLengthJoint(gatherNo, 4);
             //点名
@@ -187,7 +187,7 @@ public class DBCreateMethod {
      * @param weldCid 设备CID
      * @return DBPoint
      */
-    public DBPoint getPointByWeldCid(String weldCid, String pointType) {
+    public static DBPoint getPointByWeldCid(String weldCid, String pointType) {
         if (StringUtils.isNotBlank(weldCid)) {
             weldCid = CommonUtils.stringLengthJoint(weldCid, 4);
             //点名
@@ -291,7 +291,7 @@ public class DBCreateMethod {
      * @param dbTable   指定表
      * @param pointName 点名
      */
-    public DBPoint addPoint(DBTable dbTable, String pointName) {
+    public static DBPoint addPoint(DBTable dbTable, String pointName) {
         if (null != dbTable && StringUtils.isNotBlank(pointName)) {
             final DBPoint dbPoint = dbTable.getPointByName(pointName);
             if (dbPoint != null) {

@@ -2,8 +2,8 @@ package com.shth.das.netty;
 
 import com.shth.das.business.JnOtcDecoderAnalysis;
 import com.shth.das.business.JnSxDecoderAnalysis;
-import com.shth.das.common.CommonFunction;
 import com.shth.das.codeparam.HandlerParam;
+import com.shth.das.common.CommonFunction;
 import com.shth.das.util.CommonUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -22,9 +22,6 @@ import java.util.Map;
  * @author zsl
  */
 public class NettyDecoder extends ByteToMessageDecoder {
-
-    private final JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
-    private final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
 
     /**
      * 用来临时保留没有处理过的请求报文
@@ -123,8 +120,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     byte[] bytes = new byte[otcLength];
                     message.readBytes(bytes);
                     //解析完整数据包成16进制
-                    String str = CommonUtils.bytesToHexString(bytes);
-                    HandlerParam handlerParam = this.jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    final String str = CommonUtils.bytesToHexString(bytes);
+                    final JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
+                    final HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
                     }
@@ -172,8 +170,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 if (length > 0 && bufNum >= length) {
                     byte[] bytes = new byte[length];
                     message.readBytes(bytes);
-                    String str = CommonUtils.bytesToHexString(bytes);
-                    final HandlerParam handlerParam = this.jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    final String str = CommonUtils.bytesToHexString(bytes);
+                    final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
+                    final HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
                     }
@@ -210,8 +209,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         byte[] bytes = new byte[length];
                         message.readBytes(bytes);
                         //解析完整数据包成16进制
-                        String str = CommonUtils.bytesToHexString(bytes);
-                        final HandlerParam handlerParam = this.jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                        final String str = CommonUtils.bytesToHexString(bytes);
+                        final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
+                        final HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                         if (null != handlerParam) {
                             out.add(handlerParam);
                         }

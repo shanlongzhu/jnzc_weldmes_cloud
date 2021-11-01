@@ -33,12 +33,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JnOtcRtDataProtocol {
 
-    private final DBCreateMethod dbCreateMethod = new DBCreateMethod();
-
     /**
      * OTC设备刷卡启用设备功能
      */
-    private void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
+    private static void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
         //进制转换，长度拼接
         final String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
         final Channel channel = ctx.channel();
@@ -83,12 +81,12 @@ public class JnOtcRtDataProtocol {
     /**
      * 采集盒IP地址盒采集编号绑定
      */
-    private void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
+    private static void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
         //判断map集合是否有，没有则新增
         if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
             CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
             //刷卡领任务功能判断
-            this.slotCardEnableDevice(ctx, gatherNo);
+            slotCardEnableDevice(ctx, gatherNo);
             try {
                 OtcMachineQueue otcMachineSaveQueue = new OtcMachineQueue();
                 otcMachineSaveQueue.setWeldTime(DateTimeUtils.getNowDateTime());
@@ -111,7 +109,7 @@ public class JnOtcRtDataProtocol {
      * @param handlerParam 入参
      */
     @SuppressWarnings("unchecked")
-    public void jnRtDataManage(HandlerParam handlerParam) {
+    public static void jnRtDataManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //实时数据发送到前端
@@ -121,7 +119,7 @@ public class JnOtcRtDataProtocol {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
                     //采集盒IP地址盒采集编号绑定
-                    this.gatherNoIpBinding(clientIp, handlerParam.getCtx(), gatherNo);
+                    gatherNoIpBinding(clientIp, handlerParam.getCtx(), gatherNo);
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
                     //通过mqtt发送到服务端
@@ -137,7 +135,7 @@ public class JnOtcRtDataProtocol {
                     //判断是否启用ProcessDB，true：添加到队列中
                     if (CommonFunction.isEnableProcessDB()) {
                         //添加到实时数据库的阻塞队列
-                        list.forEach(dbCreateMethod::addOtcRtDataToProcessDbQueue);
+                        list.forEach(DBCreateMethod::addOtcRtDataToProcessDbQueue);
                     }
                 }
             }
@@ -149,7 +147,7 @@ public class JnOtcRtDataProtocol {
      *
      * @param handlerParam
      */
-    public void otcIssueReturnManage(HandlerParam handlerParam) {
+    public static void otcIssueReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //工艺下发返回
@@ -170,7 +168,7 @@ public class JnOtcRtDataProtocol {
      *
      * @param handlerParam
      */
-    public void otcClaimReturnManage(HandlerParam handlerParam) {
+    public static void otcClaimReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //工艺索取返回
@@ -190,7 +188,7 @@ public class JnOtcRtDataProtocol {
      *
      * @param handlerParam 入参
      */
-    public void otcPwdCmdReturnManage(HandlerParam handlerParam) {
+    public static void otcPwdCmdReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             final Map<String, Object> map = handlerParam.getValue();
             final ChannelHandlerContext ctx = handlerParam.getCtx();
@@ -283,7 +281,7 @@ public class JnOtcRtDataProtocol {
      * @param command  控制命令
      * @param channel  通道
      */
-    private void otcLockMachineRetries(String gatherNo, String command, Channel channel) {
+    private static void otcLockMachineRetries(String gatherNo, String command, Channel channel) {
         try {
             gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
             //总长度：24（解锁焊机指令）
@@ -303,7 +301,7 @@ public class JnOtcRtDataProtocol {
      * @param str 需要解析的16进制字符串
      * @return 返回一个集合对象
      */
-    public List<JNRtDataUI> jnRtDataUiAnalysis(String clientIp, String str) {
+    public static List<JNRtDataUI> jnRtDataUiAnalysis(String clientIp, String str) {
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
@@ -386,7 +384,7 @@ public class JnOtcRtDataProtocol {
      * @param str 需要解析的16进制字符串
      * @return 返回一个集合对象
      */
-    public List<JNRtDataDB> jnRtDataDbAnalysis(String str) {
+    public static List<JNRtDataDB> jnRtDataDbAnalysis(String str) {
         try {
             if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
                 str = str.toUpperCase();
@@ -602,7 +600,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 下发规范返回类
      */
-    public JNProcessIssueReturn jnIssueReturnAnalysis(String str) {
+    public static JNProcessIssueReturn jnIssueReturnAnalysis(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 24) {
             if ("7E".equals(str.substring(0, 2)) && "52".equals(str.substring(10, 12)) && "7D".equals(str.substring(22, 24))) {
                 JNProcessIssueReturn issueReturn = new JNProcessIssueReturn();
@@ -643,7 +641,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 索取返回实体类
      */
-    public JNProcessClaimReturn jnClaimReturnAnalysis(String str) {
+    public static JNProcessClaimReturn jnClaimReturnAnalysis(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 112) {
             if ("7E".equals(str.substring(0, 2)) && "56".equals(str.substring(10, 12)) && "7D".equals(str.substring(110, 112))) {
                 JNProcessClaimReturn claim = new JNProcessClaimReturn();
@@ -766,7 +764,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 密码返回实体类
      */
-    public JNPasswordReturn jnPasswordReturnAnalysis(String str) {
+    public static JNPasswordReturn jnPasswordReturnAnalysis(String str) {
         if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
             JNPasswordReturn passwordReturn = new JNPasswordReturn();
             passwordReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
@@ -782,7 +780,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 控制命令返回实体类
      */
-    public JNCommandReturn jnCommandReturnAnalysis(String str) {
+    public static JNCommandReturn jnCommandReturnAnalysis(String str) {
         if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
             JNCommandReturn commandReturn = new JNCommandReturn();
             commandReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
@@ -798,7 +796,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 锁焊机和解锁焊机指令返回
      */
-    public JnLockMachineReturn jnLockMachineReturnAnalysis(String str) {
+    public static JnLockMachineReturn jnLockMachineReturnAnalysis(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
             try {
                 JnLockMachineReturn jnLockMachineReturn = new JnLockMachineReturn();
@@ -820,7 +818,7 @@ public class JnOtcRtDataProtocol {
      * @param str 16进制字符串
      * @return 程序包路径下发返回实体类
      */
-    public OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn(String str) {
+    public static OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
             try {
                 OtcV1ProgramPathIssueReturn pathIssueReturn = new OtcV1ProgramPathIssueReturn();
