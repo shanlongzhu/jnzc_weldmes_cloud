@@ -60,5 +60,15 @@ public class ConstantInfo {
      */
     public static final Integer MACHINE_TYPE_FLAG = 0;
 
+    /**
+     * OTC表名前缀标识
+     */
+    public static final String OTC_TABLE_NAME_PREFIX_FLAG = "otcrtd";
+
+    /**
+     * 松下表名前缀标识
+     */
+    public static final String SX_TABLE_NAME_PREFIX_FLAG = "sxrtd";
+
 
 }
