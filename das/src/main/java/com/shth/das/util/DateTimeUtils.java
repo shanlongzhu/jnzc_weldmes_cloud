@@ -1,5 +1,7 @@
 package com.shth.das.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * 日期时间工具类
  */
+@Slf4j
 public class DateTimeUtils {
 
     public static final DateTimeFormatter DEFAULT_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -80,7 +83,7 @@ public class DateTimeUtils {
             BigInteger hours = apartStamp.divide(hourStamp);
             return hours.intValue();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("计算相差多少小时方法异常：", e);
         }
         return 0;
     }

@@ -19,7 +19,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @ToString
 @Accessors(chain = true)
-public class JNRtDataUI implements Serializable,Cloneable {
+public class JNRtDataUI implements Serializable {
 
     /**
      * 采集编号
@@ -112,7 +112,7 @@ public class JNRtDataUI implements Serializable,Cloneable {
     private int weldType;
 
     /**
-     *当前通道号
+     * 当前通道号
      */
     private String channelNo;
 
@@ -146,14 +146,4 @@ public class JNRtDataUI implements Serializable,Cloneable {
      */
     private BigDecimal weldVolAdjust;
 
-    @Override
-    public Object clone() {
-        JNRtDataUI jnr = null;
-        try{
-            jnr = (JNRtDataUI)super.clone();
-        }catch(CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return jnr;
-    }
 }

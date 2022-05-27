@@ -20,7 +20,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @ToString
 @Accessors(chain = true)
-public class SxRtDataDb implements Serializable, Cloneable {
+public class SxRtDataDb implements Serializable {
 
     //松下设备共有的字段
     @TableId(type = IdType.AUTO)
@@ -79,13 +79,4 @@ public class SxRtDataDb implements Serializable, Cloneable {
     private BigDecimal mixFrequency;     //MIX频率
     private BigDecimal mixAcRate;        //MIX（AC）比率
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

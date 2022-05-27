@@ -16,9 +16,11 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -82,6 +84,16 @@ public class JnOtcRtDataProtocol {
      * 采集盒IP地址盒采集编号绑定
      */
     private static void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
+
+        //双向绑定（channel -> gatherNo）
+        AttributeKey<String> key = AttributeKey.valueOf("gatherNo");
+        ctx.channel().attr(key).set(gatherNo);
+
+        //添加通道到通道组
+        if (!CommonMap.CHANNEL_GROUP.contains(ctx.channel())) {
+            CommonMap.CHANNEL_GROUP.add(ctx.channel());
+        }
+
         //判断map集合是否有，没有则新增
         if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
             CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
@@ -307,29 +319,29 @@ public class JnOtcRtDataProtocol {
                 str = str.toUpperCase();
                 if ("7E".equals(str.substring(0, 2)) && "22".equals(str.substring(10, 12)) && "7D".equals(str.substring(280, 282))) {
                     List<JNRtDataUI> rtData = new ArrayList<>();
-                    JNRtDataUI data = new JNRtDataUI();
                     Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
-                    //采集模块编号
-                    data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                    if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
-                        TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
-                        if (null != taskClaimIssue) {
-                            data.setWelderId(taskClaimIssue.getWelderId());
-                            data.setWelderName(taskClaimIssue.getWelderName());
-                            data.setWelderNo(taskClaimIssue.getWelderNo());
-                            data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                            data.setTaskId(taskClaimIssue.getTaskId());
-                            data.setTaskName(taskClaimIssue.getTaskName());
-                            data.setTaskNo(taskClaimIssue.getTaskNo());
-                            data.setMachineId(taskClaimIssue.getMachineId());
-                            data.setMachineNo(taskClaimIssue.getMachineNo());
-                            data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
-                            data.setWeldType(taskClaimIssue.getWeldType());
-                        }
-                    }
                     //当前系统时间 yyyy-MM-dd HH:mm:ss
                     String nowDateTime = DateTimeUtils.getNowDateTime();
                     for (int a = 0; a < 239; a += 80) {
+                        JNRtDataUI data = new JNRtDataUI();
+                        //采集模块编号
+                        data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
+                        if (!CollectionUtils.isEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                            TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
+                            if (null != taskClaimIssue) {
+                                data.setWelderId(taskClaimIssue.getWelderId());
+                                data.setWelderName(taskClaimIssue.getWelderName());
+                                data.setWelderNo(taskClaimIssue.getWelderNo());
+                                data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                                data.setTaskId(taskClaimIssue.getTaskId());
+                                data.setTaskName(taskClaimIssue.getTaskName());
+                                data.setTaskNo(taskClaimIssue.getTaskNo());
+                                data.setMachineId(taskClaimIssue.getMachineId());
+                                data.setMachineNo(taskClaimIssue.getMachineNo());
+                                data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                                data.setWeldType(taskClaimIssue.getWeldType());
+                            }
+                        }
                         String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
                         String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
                         String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
@@ -367,7 +379,7 @@ public class JnOtcRtDataProtocol {
                         //焊接电压微调
                         data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)));
                         data.setChannelNo(Integer.valueOf(str.substring(94 + a, 96 + a), 16).toString());
-                        rtData.add((JNRtDataUI) data.clone());
+                        rtData.add(data);
                     }
                     return rtData;
                 }
@@ -429,7 +441,7 @@ public class JnOtcRtDataProtocol {
                             }
                         }
                         //焊工、任务、焊机等信息判断并赋值
-                        if (otcTaskClaimMap.size() > 0 && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                        if (!CollectionUtils.isEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                             TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                             if (null != taskClaimIssue) {
                                 data.setWelderId(taskClaimIssue.getWelderId());
@@ -511,7 +523,7 @@ public class JnOtcRtDataProtocol {
                         if (!CommonFunction.isOtcStandbySave()) {
                             //起弧（增加一条待机数据）
                             if (data.getWeldStatus() == 7) {
-                                JNRtDataDB jnRtDataDb = (JNRtDataDB) data.clone();
+                                JNRtDataDB jnRtDataDb = new JNRtDataDB();
                                 jnRtDataDb.setWeldStatus(0);
                                 final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                                 //减去1秒
@@ -523,7 +535,7 @@ public class JnOtcRtDataProtocol {
                             }
                             //收弧（增加一条待机数据）
                             else if (data.getWeldStatus() == 5) {
-                                JNRtDataDB jnRtDataDb = (JNRtDataDB) data.clone();
+                                JNRtDataDB jnRtDataDb = new JNRtDataDB();
                                 jnRtDataDb.setWeldStatus(0);
                                 final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                                 //加上1秒

@@ -513,7 +513,7 @@ public class JnSxRtDataProtocol {
                 if (!CommonFunction.isSxStandbySave()) {
                     //初期焊接（起弧），增加一条待机数据
                     if (sxRtDataDb.getWeldStatus() == 5) {
-                        SxRtDataDb sxdata = (SxRtDataDb) sxRtDataDb.clone();
+                        SxRtDataDb sxdata = new SxRtDataDb();
                         sxdata.setWeldStatus(0);
                         final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //减去1秒
@@ -525,7 +525,7 @@ public class JnSxRtDataProtocol {
                     }
                     //收弧焊接（收弧），增加一条待机数据
                     else if (sxRtDataDb.getWeldStatus() == 10) {
-                        SxRtDataDb sxdata = (SxRtDataDb) sxRtDataDb.clone();
+                        SxRtDataDb sxdata = new SxRtDataDb();
                         sxdata.setWeldStatus(0);
                         final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //加上1秒
