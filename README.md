@@ -9,7 +9,7 @@ D.开发工具 IntelliJ IDEA
 
 #### 2.Gitee地址
 
-https://gitee.com/shgw_th/base-weldmes.git
+https://github.com/shanlongzhu/jnzc_weldmes_cloud.git
 
 #### 3.系统架构构成
 
