@@ -51,7 +51,7 @@ public class JnOtcRtDataProtocol {
                     final String str = "007E0A01010119" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                     }
                 }
                 //没有刷卡，锁定焊机
@@ -60,10 +60,10 @@ public class JnOtcRtDataProtocol {
                     final String str = "007E0A01010118" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                     }
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("OTC设备刷卡启用设备功能异常：", e);
             }
         } else {
@@ -72,9 +72,9 @@ public class JnOtcRtDataProtocol {
                 final String str = "007E0A01010119" + gatherno + "00007D";
                 //判断该焊机通道是否打开、是否活跃、是否可写
                 if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                    channel.writeAndFlush(str).sync();
+                    channel.writeAndFlush(str);
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("解锁焊机指令异常：", e);
             }
         }
@@ -106,7 +106,7 @@ public class JnOtcRtDataProtocol {
                 otcMachineSaveQueue.setWeldIp(clientIp);
                 //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
                 CommonQueue.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("OTC开机设备阻塞队列添加：", e);
             }
         }
@@ -300,9 +300,9 @@ public class JnOtcRtDataProtocol {
             final String str = "007E0A010101" + command + gatherNo + "00007D";
             //判断该焊机通道是否打开、是否活跃、是否可写
             if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                channel.writeAndFlush(str).sync();
+                channel.writeAndFlush(str);
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             log.error("锁焊机或者解锁焊机重试异常：", e);
         }
     }
@@ -886,7 +886,7 @@ public class JnOtcRtDataProtocol {
                 otcOnMachineQueue.setWeldIp(clientIp);
                 otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("OTC设备关机数据添加到阻塞队列异常：", e);
             }
             //关机数据通过线程池发送到mq

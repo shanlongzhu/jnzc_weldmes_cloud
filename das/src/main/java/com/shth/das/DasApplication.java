@@ -38,28 +38,28 @@ public class DasApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         //emq客户端启动，连接服务端
-        emqMqttClient.start();
+//        emqMqttClient.start();
         //启动所有任务
-        powerBootJob.startAllJob();
+//        powerBootJob.startAllJob();
         //判断是否启用OTC业务功能
-        if (CommonFunction.isEnableOtcFunction()) {
-            //OTC（松下）服务端启动
-            nettyServer.start(CommonFunction.getOtcPort());
-        }
-        //判断是否启用ProcessDB实时数据库功能
-        if (CommonFunction.isEnableProcessDB()) {
-            //创建Processdb连接
-            dbCreateConnect.start();
-            //创建Processdb的库，表
-            dbCreateMethod.addDbaseTablePoint();
-        }
-        //判断是否启用松下业务功能
-        if (CommonFunction.isEnableSxFunction()) {
-            if (CommonFunction.getOtcPort() != CommonFunction.getSxPort()) {
-                //松下服务端启动
-                nettyServer.start(CommonFunction.getSxPort());
-            }
-        }
+//        if (CommonFunction.isEnableOtcFunction()) {
+//            //OTC（松下）服务端启动
+//            nettyServer.start(CommonFunction.getOtcPort());
+//        }
+//        //判断是否启用ProcessDB实时数据库功能
+//        if (CommonFunction.isEnableProcessDB()) {
+//            //创建Processdb连接
+//            dbCreateConnect.start();
+//            //创建Processdb的库，表
+//            dbCreateMethod.addDbaseTablePoint();
+//        }
+//        //判断是否启用松下业务功能
+//        if (CommonFunction.isEnableSxFunction()) {
+//            if (CommonFunction.getOtcPort() != CommonFunction.getSxPort()) {
+//                //松下服务端启动
+//                nettyServer.start(CommonFunction.getSxPort());
+//            }
+//        }
     }
 
     public static void main(String[] args) {

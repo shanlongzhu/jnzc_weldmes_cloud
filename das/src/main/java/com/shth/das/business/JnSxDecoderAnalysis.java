@@ -90,7 +90,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                 final String str = jnSxDecoderParam.getStr();
                 if (str.length() == 42 && "4E455430".equals(str.substring(0, 8))) {
                     final ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
-                    ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION).sync();
+                    ctx.channel().writeAndFlush(SxVerificationCode.SX_FIRST_VERIFICATION);
                 }
             } catch (Exception e) {
                 log.error("松下第一次握手验证异常：", e);
@@ -120,7 +120,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     HandlerParam handlerParam = new HandlerParam();
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
-                    ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION).sync();
+                    ctx.channel().writeAndFlush(SxVerificationCode.SX_SECOND_VERIFICATION);
                     return handlerParam;
                 }
             } catch (Exception e) {
@@ -150,7 +150,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     final SxWeldModel sxWeldModel = JnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
                     if (null != sxWeldModel) {
                         map.put("SxWeldModel", sxWeldModel);
-                        ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
+                        ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN);
                     }
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
@@ -344,7 +344,7 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
                     final HandlerParam handlerParam = new HandlerParam();
                     if (null != sxWeldModel) {
                         map.put("SxWeldModel", sxWeldModel);
-                        ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN).sync();
+                        ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN);
                     }
                     handlerParam.setKey(str.length());
                     handlerParam.setValue(map);

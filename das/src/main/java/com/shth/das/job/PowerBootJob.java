@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 
 /**
@@ -43,6 +44,7 @@ public class PowerBootJob {
     /**
      * 启动所有任务
      */
+//    @PostConstruct
     public void startAllJob() {
         //创建OTC实时数据表
         startJnOtcJob();

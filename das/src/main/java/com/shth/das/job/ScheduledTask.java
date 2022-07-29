@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * 定时任务类
@@ -230,7 +229,7 @@ public class ScheduledTask {
                             //字符总长度：36
                             String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
                             if (timeString.length() == 36) {
-                                channel.writeAndFlush(timeString).sync();
+                                channel.writeAndFlush(timeString);
                             }
                         }
                     }
@@ -249,17 +248,14 @@ public class ScheduledTask {
     @Async
     public void scheduled6() {
         if (CommonFunction.isEnableOtcFunction()) {
-            LinkedBlockingDeque<JNRtDataDB> otcLinkedBlockingDeque = CommonQueue.OTC_LINKED_BLOCKING_QUEUE;
             try {
-                while (!otcLinkedBlockingDeque.isEmpty()) {
+                while (!CommonQueue.OTC_LINKED_BLOCKING_QUEUE.isEmpty()) {
                     List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
-                    Queues.drain(otcLinkedBlockingDeque, jnRtDataDbList, 2000, Duration.ofMillis(0));
+                    Queues.drain(CommonQueue.OTC_LINKED_BLOCKING_QUEUE, jnRtDataDbList, 2000, Duration.ofMillis(0));
                     otcRtDataService.insertRtDataList(jnRtDataDbList);
                 }
             } catch (Exception e) {
                 log.error("3秒执行一次OTC设备实时数据存MySQLDB异常：", e);
-            } finally {
-                otcLinkedBlockingDeque.clear();
             }
         }
     }
@@ -272,17 +268,14 @@ public class ScheduledTask {
     @Async
     public void scheduled7() {
         if (CommonFunction.isEnableSxFunction()) {
-            LinkedBlockingDeque<SxRtDataDb> sxLinkedBlockingDeque = CommonQueue.SX_LINKED_BLOCKING_QUEUE;
             try {
-                while (!sxLinkedBlockingDeque.isEmpty()) {
+                while (!CommonQueue.SX_LINKED_BLOCKING_QUEUE.isEmpty()) {
                     ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
-                    Queues.drain(sxLinkedBlockingDeque, sxRtDataList, 2000, Duration.ofMillis(0));
+                    Queues.drain(CommonQueue.SX_LINKED_BLOCKING_QUEUE, sxRtDataList, 2000, Duration.ofMillis(0));
                     sxRtDataService.insertSxRtDataList(sxRtDataList);
                 }
             } catch (Exception e) {
                 log.error("3秒执行一次松下设备实时数据存MySQLDB异常：", e);
-            } finally {
-                sxLinkedBlockingDeque.clear();
             }
         }
     }
@@ -318,18 +311,15 @@ public class ScheduledTask {
     @Async
     public void scheduled10() {
         if (CommonFunction.isEnableOtcFunction() && CommonFunction.isEnableProcessDB()) {
-            LinkedBlockingDeque<RecordData> otcProcessDbQueues = CommonQueue.OTC_ADD_PROCESS_DB_QUEUE;
             try {
                 Vector<RecordData> vector = new Vector<>();
-                while (!otcProcessDbQueues.isEmpty()) {
-                    Queues.drain(otcProcessDbQueues, vector, 2000, Duration.ofMillis(0));
+                while (!CommonQueue.OTC_ADD_PROCESS_DB_QUEUE.isEmpty()) {
+                    Queues.drain(CommonQueue.OTC_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
                 }
                 //添加OTC实时数据数据到ProcessDB
                 DBCreateMethod.addPointData(vector);
             } catch (Exception e) {
                 log.error("3秒执行一次OTC设备实时数据存ProcessDB异常：", e);
-            } finally {
-                otcProcessDbQueues.clear();
             }
         }
     }
@@ -338,22 +328,24 @@ public class ScheduledTask {
      * 3秒执行一次
      * 任务：读取实时数据队列并存储到ProcessDB实时数据库中
      */
-    @Scheduled(fixedRate = 1000 * 3)
     @Async
+    @Scheduled(fixedRate = 1000 * 3)
     public void scheduled11() {
         if (CommonFunction.isEnableSxFunction() && CommonFunction.isEnableProcessDB()) {
-            LinkedBlockingDeque<RecordData> sxProcessDbQueues = CommonQueue.SX_ADD_PROCESS_DB_QUEUE;
             try {
                 Vector<RecordData> vector = new Vector<>();
-                while (!sxProcessDbQueues.isEmpty()) {
-                    Queues.drain(sxProcessDbQueues, vector, 2000, Duration.ofMillis(0));
+                final int size = CommonQueue.SX_ADD_PROCESS_DB_QUEUE.size();
+                for (int i = 0; i < size; i+=2000) {
+                    Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
                 }
+//                Vector<RecordData> vector = new Vector<>();
+//                while (!CommonQueue.SX_ADD_PROCESS_DB_QUEUE.isEmpty()) {
+//                    Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
+//                }
                 //添加松下实时数据数据到ProcessDB
                 DBCreateMethod.addPointData(vector);
             } catch (Exception e) {
                 log.error("3秒执行一次松下设备实时数据存ProcessDB异常：", e);
-            } finally {
-                sxProcessDbQueues.clear();
             }
         }
     }

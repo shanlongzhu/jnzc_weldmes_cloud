@@ -99,7 +99,7 @@ public class JnSxRtDataProtocol {
                     final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                     }
                 }
             }

@@ -98,7 +98,7 @@ public class MqttMessageAnalysis {
                     final String str = "007E0A01010119" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                     }
                 }
             } catch (Exception e) {
@@ -129,7 +129,7 @@ public class MqttMessageAnalysis {
                         final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                         //判断该焊机通道是否打开、是否活跃、是否可写
                         if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                            channel.writeAndFlush(str).sync();
+                            channel.writeAndFlush(str);
                         }
                     }
                 }
@@ -385,12 +385,12 @@ public class MqttMessageAnalysis {
                     Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(gatherNo).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                         log.info("{}:{}", msg, topic);
                     }
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             log.error("OTC数据下行异常：", e);
         }
     }
@@ -412,12 +412,12 @@ public class MqttMessageAnalysis {
                     final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str).sync();
+                        channel.writeAndFlush(str);
                         log.info("{}:{}", msg, topic);
                     }
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             log.error("松下数据下行异常：", e);
         }
     }

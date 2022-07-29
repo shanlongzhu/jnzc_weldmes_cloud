@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -59,6 +60,7 @@ public class EmqMqttClient {
         mqttConnectOptions.setPassword(password.toCharArray());
     }
 
+//    @PostConstruct
     public void start() {
         try {
             if (mqttClient == null) {

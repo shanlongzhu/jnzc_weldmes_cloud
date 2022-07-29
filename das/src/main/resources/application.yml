@@ -96,10 +96,10 @@ clearTaskBindingByTime: '0 0 7 * * ?'
 slotCardEnableDevice: true
 
 # 是否启用OTC业务功能
-enableOtcFunction: true
+enableOtcFunction: false
 
 # 是否启用松下业务功能
-enableSxFunction: true
+enableSxFunction: false
 
 # 使用SLF4J日志框架进行日志记录功能
 logging:

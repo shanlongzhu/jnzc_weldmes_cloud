@@ -8,7 +8,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Netty服务端
@@ -17,7 +20,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class NettyServer {
 
-    public void start(int port) {
+    @Value("${otcNettyServer.port}")
+    private Integer otcPort;
+    @Value("${sxNettyServer.port}")
+    private Integer sxPort;
+
+    @PostConstruct
+    public void start() {
         CommonThreadPool.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             // Netty 客户端连接监听事件处理线程池
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -48,14 +57,20 @@ public class NettyServer {
                     //System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
                     //ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
                     // 服务端绑定端口并且开始接收进来的连接请求
-                    ChannelFuture channelFuture = server.bind(port).sync();
-                    //channelFuture = server.bind(port).sync();
+                    ChannelFuture otccChannelFuture = server.bind(otcPort).sync();
+                    ChannelFuture sxChannelFuture = server.bind(sxPort).sync();
                     // 查看一下操作是不是成功结束了
-                    if (channelFuture.isSuccess()) {
+                    if (otccChannelFuture.isSuccess()) {
                         //如果没有成功结束就处理一些事情,结束了就执行关闭服务端等操作
-                        log.info("Netty服务端启动成功,监听端口是：" + port);
+                        log.info("Netty服务端启动成功,监听端口是：" + otcPort);
                     }
-                    channelFuture.channel().closeFuture().sync();
+                    // 查看一下操作是不是成功结束了
+                    if (sxChannelFuture.isSuccess()) {
+                        //如果没有成功结束就处理一些事情,结束了就执行关闭服务端等操作
+                        log.info("Netty服务端启动成功,监听端口是：" + sxPort);
+                    }
+                    otccChannelFuture.channel().closeFuture().sync();
+                    sxChannelFuture.channel().closeFuture().sync();
                 } catch (Exception e) {
                     log.error("服务端启动异常：{}", e.getMessage());
                 } finally {
