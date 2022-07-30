@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>weldmes-cloud-comsumer</artifactId>
+    <artifactId>weldmes-cloud-consumer</artifactId>
 
     <dependencies>
         <dependency><!-- 自己定义的api -->
