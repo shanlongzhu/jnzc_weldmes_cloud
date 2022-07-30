@@ -25,9 +25,9 @@ public class SxWeldServiceImpl implements SxWeldService {
             QueryWrapper<SxWeldModel> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("weld_cid", sxWeldModel.getWeldCid());
             //根据设备CID查询个数
-            Integer count = sxWeldMapper.selectCount(queryWrapper);
+            Long aLong = sxWeldMapper.selectCount(queryWrapper);
             //如果已经存在，则直接返回，不再增加
-            if (null != count && count != 0) {
+            if (null != aLong && aLong != 0L) {
                 return 0;
             }
             //如果设备CID不为空，则取非0字符作为序号
