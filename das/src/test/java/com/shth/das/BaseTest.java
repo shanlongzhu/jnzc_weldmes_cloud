@@ -21,7 +21,7 @@ public abstract class BaseTest {
 
     @After
     public void after() {
-        long totalTime = new Date().getTime() - startTime.getTime();
+        long totalTime = System.currentTimeMillis() - startTime.getTime();
         System.out.println();
         System.out.println("==================TEST END==================");
         System.out.println("==================运行总耗时：" + totalTime + " 毫秒==================");
