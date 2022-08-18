@@ -2,7 +2,6 @@ package com.gw.config;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
-
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -10,13 +9,13 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
+@Component
 public class ShiroConfig {
 
     @Autowired
@@ -28,7 +27,7 @@ public class ShiroConfig {
      * @Params securityManager
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager){
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
 
         ShiroFilterFactoryBean shiroFilterBean = new ShiroFilterFactoryBean();
 
@@ -42,7 +41,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setUnauthorizedUrl("/path/unauth");*/
 
         //配置路径过滤器  anon 无需登陆验证,直接访问; acthc 访问需要进行登录验证
-        Map<String,String> filterMap = new HashMap<>();
+        Map<String, String> filterMap = new HashMap<>();
 
         /*filterMap.put("/sysUser/login/**","anon");
 
@@ -57,7 +56,7 @@ public class ShiroConfig {
 
     /**
      * @Date 2021/6/17 23:54
-     * @Description  shiro安全管理器  将自定义session 配置 交给shiro管理
+     * @Description shiro安全管理器  将自定义session 配置 交给shiro管理
      * @Params
      */
     @Bean("securityManager")
@@ -92,7 +91,7 @@ public class ShiroConfig {
 
     /**
      * @Date 2021/6/17 23:47
-     * @Description  加入注解的使用，不加入注解不生效
+     * @Description 加入注解的使用，不加入注解不生效
      * @Params
      */
     @Bean
@@ -108,7 +107,7 @@ public class ShiroConfig {
 
     /**
      * @Date 2021/7/27 10:01
-     * @Description  开启Shiro授权生效
+     * @Description 开启Shiro授权生效
      * @Params
      */
     @Bean

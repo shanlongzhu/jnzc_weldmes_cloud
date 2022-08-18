@@ -33,7 +33,7 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
     public void insertRtDataList(List<JNRtDataDB> list) {
         if (CommonUtils.isNotEmpty(list)) {
             try {
-                final String nowDateTime = DateTimeUtils.getNowDateTime();
+                String nowDateTime = DateTimeUtils.getNowDateTime();
                 String tableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
                 if (!StringUtils.isEmpty(tableName)) {
                     Map<String, Object> map = new HashMap<>(8);

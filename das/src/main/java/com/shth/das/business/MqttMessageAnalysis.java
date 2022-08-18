@@ -30,7 +30,7 @@ public class MqttMessageAnalysis {
      */
     public void taskClaimIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
+            String message = param.getMessage();
             TaskClaimIssue taskClaimIssue = JSON.parseObject(message, TaskClaimIssue.class);
             if (null != taskClaimIssue) {
                 //0:如果是OTC设备
@@ -59,7 +59,7 @@ public class MqttMessageAnalysis {
                 else if (taskClaimIssue.getWeldType() == 1) {
                     //判断是开始任务还是结束任务（0：开始）
                     if (taskClaimIssue.getStartFlag() == 0) {
-                        final String weldCid = taskClaimIssue.getWeldCid();
+                        String weldCid = taskClaimIssue.getWeldCid();
                         if (CommonUtils.isNotEmpty(weldCid)) {
                             //如果已经开始任务，则会将之前的任务顶掉
                             CommonMap.SX_TASK_CLAIM_MAP.put(weldCid, taskClaimIssue);
@@ -69,7 +69,7 @@ public class MqttMessageAnalysis {
                     }
                     //判断是开始任务还是结束任务（1：结束）
                     else if (taskClaimIssue.getStartFlag() == 1) {
-                        final String weldCid = taskClaimIssue.getWeldCid();
+                        String weldCid = taskClaimIssue.getWeldCid();
                         if (CommonUtils.isNotEmpty(weldCid)) {
                             CommonMap.SX_TASK_CLAIM_MAP.remove(weldCid);
                         }
@@ -91,11 +91,11 @@ public class MqttMessageAnalysis {
                 gatherNo = Integer.valueOf(gatherNo).toString();
                 if (CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
                     //根据采集编号查询通道
-                    final Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(gatherNo).channel();
+                    Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(gatherNo).channel();
                     //数据长度拼接
-                    final String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
+                    String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
                     //总长度：24（解锁焊机指令）
-                    final String str = "007E0A01010119" + gatherno + "00007D";
+                    String str = "007E0A01010119" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str);

@@ -1,6 +1,7 @@
 package com.gw.config;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ public class TokenWebSessionManager extends DefaultWebSessionManager {
         String token = WebUtils.toHttp(request).getHeader("Authorization");
 
         //如果token存在，就返回token，否则就生成一个
-        if (token != null && token != "") {
+        if (StringUtils.isNotBlank(token)) {
             return token;
         }
 

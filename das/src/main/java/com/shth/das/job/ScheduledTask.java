@@ -64,7 +64,7 @@ public class ScheduledTask {
     @Scheduled(cron = TableStrategy.EXECUTE_TIME)
     @Async
     public void scheduled1() {
-        final String nowDateTime = DateTimeUtils.getNowDateTime();
+        String nowDateTime = DateTimeUtils.getNowDateTime();
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
             //根据时间获取OTC下一个表的表名
@@ -112,7 +112,7 @@ public class ScheduledTask {
             try {
                 //延迟1分钟
                 Thread.sleep(1000 * 60);
-                final String nowDateTime = DateTimeUtils.getNowDateTime();
+                String nowDateTime = DateTimeUtils.getNowDateTime();
                 //获取当前时间对应的表名
                 String otcTableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
                 //系统时间整点作为结束时间点
@@ -139,7 +139,7 @@ public class ScheduledTask {
                     statisticsDataService.insertWeldStatisticsData(otcStartTime, endTime, otcTableName);
                 } else {
                     //循环每个小时统计
-                    String nowEndTime = "";
+                    String nowEndTime;
                     for (int i = 0; i < hours; i++) {
                         nowEndTime = DateTimeUtils.addDateMinut(otcStartTime, 1);
                         statisticsDataService.insertWeldStatisticsData(otcStartTime, nowEndTime, otcTableName);
@@ -164,7 +164,7 @@ public class ScheduledTask {
             try {
                 //延迟1分钟
                 Thread.sleep(1000 * 60);
-                final String nowDateTime = DateTimeUtils.getNowDateTime();
+                String nowDateTime = DateTimeUtils.getNowDateTime();
                 //系统时间整点作为结束时间点
                 String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
                 String sxTableName = TableStrategy.getSxTableByDateTime(nowDateTime);
@@ -188,7 +188,7 @@ public class ScheduledTask {
                     statisticsDataService.insertSxWeldStatisticsData(sxStartTime, endTime, sxTableName);
                 } else {
                     //循环每个小时统计
-                    String nowEndTime = "";
+                    String nowEndTime;
                     for (int i = 0; i < sxHours; i++) {
                         nowEndTime = DateTimeUtils.addDateMinut(sxStartTime, 1);
                         statisticsDataService.insertSxWeldStatisticsData(sxStartTime, nowEndTime, sxTableName);
@@ -334,8 +334,8 @@ public class ScheduledTask {
         if (CommonFunction.isEnableSxFunction() && CommonFunction.isEnableProcessDB()) {
             try {
                 Vector<RecordData> vector = new Vector<>();
-                final int size = CommonQueue.SX_ADD_PROCESS_DB_QUEUE.size();
-                for (int i = 0; i < size; i+=2000) {
+                int size = CommonQueue.SX_ADD_PROCESS_DB_QUEUE.size();
+                for (int i = 0; i < size; i += 2000) {
                     Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
                 }
 //                Vector<RecordData> vector = new Vector<>();

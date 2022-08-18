@@ -14,7 +14,7 @@ public class WelderExcelListener extends AnalysisEventListener<MachineWeldInfo> 
 
     List<MachineWeldInfo> list = new ArrayList<>();
 
-    public WelderExcelListener(WelderService welderService){
+    public WelderExcelListener(WelderService welderService) {
 
         this.welderService = welderService;
     }
@@ -23,7 +23,7 @@ public class WelderExcelListener extends AnalysisEventListener<MachineWeldInfo> 
     public void invoke(MachineWeldInfo data, AnalysisContext analysisContext) {
 
         MachineWeldInfo machineWeldInfo = welderService.importExcel(data);
-
+        
         list.add(machineWeldInfo);
 
     }

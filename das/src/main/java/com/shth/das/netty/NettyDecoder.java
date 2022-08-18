@@ -47,7 +47,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) {
         if (byteBuf.readableBytes() == 0) {
             ctx.flush();
             return;
@@ -120,9 +120,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     byte[] bytes = new byte[otcLength];
                     message.readBytes(bytes);
                     //解析完整数据包成16进制
-                    final String str = CommonUtils.bytesToHexString(bytes);
-                    final JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
-                    final HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    String str = CommonUtils.bytesToHexString(bytes);
+                    JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
+                    HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
                     }
@@ -170,9 +170,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 if (length > 0 && bufNum >= length) {
                     byte[] bytes = new byte[length];
                     message.readBytes(bytes);
-                    final String str = CommonUtils.bytesToHexString(bytes);
-                    final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
-                    final HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                    String str = CommonUtils.bytesToHexString(bytes);
+                    JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
+                    HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
                     }

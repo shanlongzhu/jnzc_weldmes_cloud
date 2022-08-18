@@ -8,7 +8,6 @@ import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * @description: 公共队列

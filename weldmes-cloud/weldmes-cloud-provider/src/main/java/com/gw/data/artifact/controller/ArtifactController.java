@@ -14,6 +14,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -38,15 +39,15 @@ public class ArtifactController {
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
-                              String time1, String time2,String taskNo,Long deptId) {
+                              String time1, String time2, String taskNo, Long deptId) {
 
         //判断用户部门id是否传入
-        if(ObjectUtils.isEmpty(deptId)){
+        if (ObjectUtils.isEmpty(deptId)) {
 
             //获取到当前用户
             Subject currentUser = SecurityUtils.getSubject();
 
-            UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+            UserLoginInfo subject = (UserLoginInfo) currentUser.getPrincipal();
 
             deptId = subject.getDeptId();
 
@@ -57,7 +58,7 @@ public class ArtifactController {
 
         PageHelper.startPage(pn, size);
 
-        List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,ids);
+        List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2, taskNo, ids);
 
         PageInfo<WeldStatisticsDataArtifact> page = new PageInfo<>(list, 10);
 
@@ -70,14 +71,14 @@ public class ArtifactController {
      * @Params
      */
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2,String taskNo,Long deptId) {
+    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2, String taskNo, Long deptId) {
 
         try {
 
             String time = new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis());
 
             //设置Excel文件名
-            String title = URLEncoder.encode("工件生产数据"+time, "UTF-8");
+            String title = URLEncoder.encode("工件生产数据" + time, "UTF-8");
 
             //设置sheet表格名
             String sheetName = "工件生产数据";
@@ -86,10 +87,10 @@ public class ArtifactController {
             List<Long> ids = teamService.getNextDeptIds(deptId.toString());
 
             //获取工件报表数据
-            List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2,taskNo,ids);
+            List<WeldStatisticsDataArtifact> list = artifactService.getList(time1, time2, taskNo, ids);
 
             //导出为Excel
-            DownExcel.download(response,WeldStatisticsDataArtifact.class,list,sheetName,title);
+            DownExcel.download(response, WeldStatisticsDataArtifact.class, list, sheetName, title);
 
             return HttpResult.ok("Excel导出成功");
 

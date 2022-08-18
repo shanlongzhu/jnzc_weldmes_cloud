@@ -45,10 +45,10 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
                         if (startTime.length() > 19) {
                             startTime = startTime.substring(0, 19);
                         }
-                        final LocalDateTime starttime = LocalDateTime.parse(startTime, DateTimeUtils.DEFAULT_DATETIME);
-                        final LocalDateTime endtime = LocalDateTime.parse(weldOnOffTime.getEndTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime starttime = LocalDateTime.parse(startTime, DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime endtime = LocalDateTime.parse(weldOnOffTime.getEndTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //时间差（单位：毫秒）
-                        final long difference = Duration.between(starttime, endtime).toMillis();
+                        long difference = Duration.between(starttime, endtime).toMillis();
                         //赋值时除1000，毫秒转换为秒
                         onOffTime.setWeldOnDuration(BigInteger.valueOf(difference / 1000));
                     }
@@ -66,10 +66,10 @@ public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
                         if (startTime.length() > 19) {
                             startTime = startTime.substring(0, 19);
                         }
-                        final LocalDateTime starttime = LocalDateTime.parse(startTime, DateTimeUtils.DEFAULT_DATETIME);
-                        final LocalDateTime endtime = LocalDateTime.parse(weldOnOffTime.getEndTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime starttime = LocalDateTime.parse(startTime, DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime endtime = LocalDateTime.parse(weldOnOffTime.getEndTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //时间差（单位：毫秒）
-                        final long difference = Duration.between(starttime, endtime).toMillis();
+                        long difference = Duration.between(starttime, endtime).toMillis();
                         //赋值时除1000，毫秒转换为秒
                         onOffTime.setWeldOnDuration(BigInteger.valueOf(difference / 1000));
                     }

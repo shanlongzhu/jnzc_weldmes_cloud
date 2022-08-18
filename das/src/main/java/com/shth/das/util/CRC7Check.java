@@ -56,9 +56,9 @@ public class CRC7Check {
                 //替换第19字节得CRC7校验码位数
                 builder.replace(38, 40, "00");
                 //对所有字段进行CRC7校验，得到校验码
-                final String crc7Code = crc7Check(builder.toString());
+                String crc7Code = crc7Check(builder.toString());
                 //长度拼接
-                final String crc7CodeStr = CommonUtils.stringLengthJoint(crc7Code, 2);
+                String crc7CodeStr = CommonUtils.stringLengthJoint(crc7Code, 2);
                 //替换第19字节的校验码为计算后的校验码（校验码替换）
                 builder.replace(38, 40, crc7CodeStr);
                 return builder.toString();

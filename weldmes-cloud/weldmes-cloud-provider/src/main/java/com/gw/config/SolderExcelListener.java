@@ -35,7 +35,7 @@ public class SolderExcelListener extends AnalysisEventListener<WelderInfo> {
 
     }
 
-    public SolderExcelListener(SoldererService soldererService){
+    public SolderExcelListener(SoldererService soldererService) {
 
         this.soldererService = soldererService;
 

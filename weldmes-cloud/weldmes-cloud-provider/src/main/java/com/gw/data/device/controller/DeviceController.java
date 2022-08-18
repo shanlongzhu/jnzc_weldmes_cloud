@@ -38,15 +38,15 @@ public class DeviceController {
     @GetMapping
     public HttpResult getList(@RequestParam(value = "pn", defaultValue = "1") Integer pn,
                               @RequestParam(value = "size", defaultValue = "10") Integer size,
-                              String time1, String time2,String machineNo,Long deptId) {
+                              String time1, String time2, String machineNo, Long deptId) {
 
         //判断用户部门id是否传入
-        if(ObjectUtils.isEmpty(deptId)){
+        if (ObjectUtils.isEmpty(deptId)) {
 
             //获取到当前用户
             Subject currentUser = SecurityUtils.getSubject();
 
-            UserLoginInfo subject = (UserLoginInfo)currentUser.getPrincipal();
+            UserLoginInfo subject = (UserLoginInfo) currentUser.getPrincipal();
 
             deptId = subject.getDeptId();
 
@@ -57,7 +57,7 @@ public class DeviceController {
 
         PageHelper.startPage(pn, size);
 
-        List<WeldStatisticsDataDevice> list = deviceService.getList(time1,time2,machineNo,ids);
+        List<WeldStatisticsDataDevice> list = deviceService.getList(time1, time2, machineNo, ids);
 
         PageInfo<WeldStatisticsDataDevice> page = new PageInfo<>(list, 5);
 
@@ -70,7 +70,7 @@ public class DeviceController {
      * @Params
      */
     @GetMapping(value = "excel")
-    public HttpResult exportExcel(HttpServletResponse response,String time1, String time2,String machineNo,Long deptId) {
+    public HttpResult exportExcel(HttpServletResponse response, String time1, String time2, String machineNo, Long deptId) {
 
         try {
 

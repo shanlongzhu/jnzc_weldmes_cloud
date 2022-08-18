@@ -47,12 +47,12 @@ public class DBCreateMethod {
      */
     public static void addOtcRtDataToProcessDbQueue(JNRtDataDB data) {
         //存储电流的点
-        final DBPoint eleDbPoint = getPointByGatherNo(data.getGatherNo(), "ELE");
+        DBPoint eleDbPoint = getPointByGatherNo(data.getGatherNo(), "ELE");
         if (null != eleDbPoint) {
             setOtcRecordData(eleDbPoint, data.getElectricity().floatValue(), data.getWeldTime());
         }
         //存储电压的点
-        final DBPoint volDbPoint = getPointByGatherNo(data.getGatherNo(), "VOL");
+        DBPoint volDbPoint = getPointByGatherNo(data.getGatherNo(), "VOL");
         if (null != volDbPoint) {
             setOtcRecordData(volDbPoint, data.getVoltage().floatValue(), data.getWeldTime());
         }
@@ -64,14 +64,14 @@ public class DBCreateMethod {
      * @param data 松下实时数据
      */
     public static void addSxRtDataToProcessDbQueue(SxRtDataDb data) {
-        final String weldCid = Integer.valueOf(data.getWeldCid()).toString();
+        String weldCid = Integer.valueOf(data.getWeldCid()).toString();
         //根据设备CID获取电流点对象
-        final DBPoint eleDbPoint = getPointByWeldCid(weldCid, "ELE");
+        DBPoint eleDbPoint = getPointByWeldCid(weldCid, "ELE");
         if (null != eleDbPoint) {
             setSxRecordData(eleDbPoint, data.getRealityWeldEle().floatValue(), data.getWeldTime());
         }
         //根据设备CID获取电压点对象
-        final DBPoint volDbPoint = getPointByWeldCid(weldCid, "VOL");
+        DBPoint volDbPoint = getPointByWeldCid(weldCid, "VOL");
         if (null != volDbPoint) {
             setSxRecordData(volDbPoint, data.getRealityWeldVol().floatValue(), data.getWeldTime());
         }
@@ -155,9 +155,9 @@ public class DBCreateMethod {
             //点名
             String pointName = "OTC_" + gatherNo + "_" + pointType;
             //库名
-            final String processDbName = CommonFunction.getProcessDbName();
+            String processDbName = CommonFunction.getProcessDbName();
             //OTC表名
-            final String processDbOtcTableName = CommonFunction.getProcessDbOtcTableName();
+            String processDbOtcTableName = CommonFunction.getProcessDbOtcTableName();
             //根据库名获取库对象
             DBase dBase = DBCreateConnect.getDbConnect().getDBaseByName(processDbName);
             if (null == dBase) {
@@ -171,7 +171,7 @@ public class DBCreateMethod {
                 dbTable = addTable(dBase, processDbOtcTableName);
             }
             //根据点名获取点对象
-            final DBPoint dbPoint = dbTable.getPointByName(pointName);
+            DBPoint dbPoint = dbTable.getPointByName(pointName);
             if (null != dbPoint) {
                 return dbPoint;
             }
@@ -193,9 +193,9 @@ public class DBCreateMethod {
             //点名
             String pointName = "SX_" + weldCid + "_" + pointType;
             //库名
-            final String processDbName = CommonFunction.getProcessDbName();
+            String processDbName = CommonFunction.getProcessDbName();
             //松下表名
-            final String processDbSxTableName = CommonFunction.getProcessDbSxTableName();
+            String processDbSxTableName = CommonFunction.getProcessDbSxTableName();
             //根据库名获取库对象
             DBase dBase = DBCreateConnect.getDbConnect().getDBaseByName(processDbName);
             if (null == dBase) {

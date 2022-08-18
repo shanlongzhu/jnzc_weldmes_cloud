@@ -40,15 +40,15 @@ public class JnOtcRtDataProtocol {
      */
     private static void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
         //进制转换，长度拼接
-        final String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
-        final Channel channel = ctx.channel();
+        String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
+        Channel channel = ctx.channel();
         //是否开启（true：开启）
         if (CommonFunction.isSlotCardEnableDevice()) {
             try {
                 //判断当前焊机是否已经刷卡（true：刷过卡），刷卡后解锁焊机
                 if (!CommonMap.OTC_TASK_CLAIM_MAP.isEmpty() && CommonMap.OTC_TASK_CLAIM_MAP.containsKey(gatherNo)) {
                     //总长度：24（解锁焊机指令）
-                    final String str = "007E0A01010119" + gatherno + "00007D";
+                    String str = "007E0A01010119" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str);

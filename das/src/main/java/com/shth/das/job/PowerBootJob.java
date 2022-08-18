@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 
 /**
@@ -188,7 +187,7 @@ public class PowerBootJob {
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
                 while (true) {
                     try {
-                        final SxMachineQueue sxMachineQueue = CommonQueue.SX_ON_MACHINE_QUEUES.take();
+                        SxMachineQueue sxMachineQueue = CommonQueue.SX_ON_MACHINE_QUEUES.take();
                         //根据IP地址查询松下焊机信息
                         SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldCid(sxMachineQueue.getWeldCid());
                         //新增设备关机时间
@@ -221,7 +220,7 @@ public class PowerBootJob {
             CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
                 while (true) {
                     try {
-                        final SxMachineQueue sxMachineQueue = CommonQueue.SX_OFF_MACHINE_QUEUES.take();
+                        SxMachineQueue sxMachineQueue = CommonQueue.SX_OFF_MACHINE_QUEUES.take();
                         //根据IP地址查询松下焊机信息
                         SxWeldModel sxWeldModel = sxWeldService.getSxWeldByWeldCid(sxMachineQueue.getWeldCid());
                         //新增设备关机时间

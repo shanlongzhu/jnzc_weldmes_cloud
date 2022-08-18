@@ -124,7 +124,7 @@ public class TableStrategy {
                 Map<String, String> map = new HashMap<>();
                 map.put("startTime", startTime);
                 map.put("endTime", endTime);
-                final List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
+                List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
                 return otcTableList.stream().map(value -> OTC_TABLE_PREFIX + value).collect(Collectors.toList());
             }
         }
@@ -174,7 +174,7 @@ public class TableStrategy {
                 Map<String, String> map = new HashMap<>();
                 map.put("startTime", startTime);
                 map.put("endTime", endTime);
-                final List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
+                List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
                 return otcTableList.stream().map(value -> SX_TABLE_PREFIX + value).collect(Collectors.toList());
             }
         }
@@ -219,11 +219,11 @@ public class TableStrategy {
         if (!map.isEmpty()) {
             try {
                 if (map.containsKey("startTime") && map.containsKey("endTime")) {
-                    final LocalDateTime startTime = LocalDateTime.parse(map.get("startTime"), DateTimeUtils.DEFAULT_DATETIME);
-                    final int startYear = startTime.getYear();
-                    final int endYear = LocalDateTime.parse(map.get("endTime"), DateTimeUtils.DEFAULT_DATETIME).getYear();
+                    LocalDateTime startTime = LocalDateTime.parse(map.get("startTime"), DateTimeUtils.DEFAULT_DATETIME);
+                    int startYear = startTime.getYear();
+                    int endYear = LocalDateTime.parse(map.get("endTime"), DateTimeUtils.DEFAULT_DATETIME).getYear();
                     //计算时间差，取绝对值
-                    final int totalYears = Math.abs(endYear - startYear);
+                    int totalYears = Math.abs(endYear - startYear);
                     List<String> list = new ArrayList<>();
                     for (int i = 0; i <= totalYears; i++) {
                         list.add(startTime.plusYears(i).format(DateTimeUtils.CUSTOM_YEAR));
