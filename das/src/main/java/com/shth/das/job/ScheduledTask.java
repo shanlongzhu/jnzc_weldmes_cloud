@@ -43,19 +43,19 @@ import java.util.Vector;
 public class ScheduledTask {
 
     @Autowired
-    OtcRtDataService otcRtDataService;
+    private OtcRtDataService otcRtDataService;
     @Autowired
-    MachineGatherService gatherService;
+    private MachineGatherService gatherService;
     @Autowired
-    MachineWeldService weldService;
+    private MachineWeldService weldService;
     @Autowired
-    TaskService taskService;
+    private TaskService taskService;
     @Autowired
-    WelderService welderService;
+    private WelderService welderService;
     @Autowired
-    StatisticsDataService statisticsDataService;
+    private StatisticsDataService statisticsDataService;
     @Autowired
-    SxRtDataService sxRtDataService;
+    private SxRtDataService sxRtDataService;
 
     /**
      * 每天晚上23点执行

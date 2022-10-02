@@ -14,7 +14,7 @@ import java.util.List;
 public class MachineWeldServiceImpl implements MachineWeldService {
 
     @Autowired
-    MachineWeldMapper weldMapper;
+    private MachineWeldMapper weldMapper;
 
 
     @Override

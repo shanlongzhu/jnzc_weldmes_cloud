@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StatisticsDataServiceImpl implements StatisticsDataService {
 
     @Autowired
-    StatisticsDataMapper statisticsDataMapper;
+    private StatisticsDataMapper statisticsDataMapper;
 
     @Override
     public void insertWeldStatisticsData(String startTime, String endTime, String tableName) {

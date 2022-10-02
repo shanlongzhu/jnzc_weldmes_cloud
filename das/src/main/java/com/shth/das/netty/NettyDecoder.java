@@ -28,6 +28,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private final ByteBuf tempMsg = Unpooled.buffer(1024);
 
+    private final JnOtcDecoderAnalysis jnOtcDecoderAnalysis;
+    private final JnSxDecoderAnalysis jnSxDecoderAnalysis;
+
     /**
      * key:包头固定值
      * value：字节长度
@@ -35,7 +38,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
     private final Map<String, Integer> otcMap = new HashMap<>();
     private final Map<String, Integer> sxMap = new HashMap<>();
 
-    NettyDecoder() {
+    public NettyDecoder() {
         //OTC通讯协议固定头部
         this.otcMap.put("7E", 1);
         //松下第一次握手验证
@@ -44,6 +47,10 @@ public class NettyDecoder extends ByteToMessageDecoder {
         this.sxMap.put("4C4A5348", 64);
         //其他（握手成功后正常传输的通讯协议）
         this.sxMap.put("FE5AA5", 0);
+
+        this.jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
+
+        this.jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
     }
 
     @Override
@@ -121,7 +128,6 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     message.readBytes(bytes);
                     //解析完整数据包成16进制
                     String str = CommonUtils.bytesToHexString(bytes);
-                    JnOtcDecoderAnalysis jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
                     HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
@@ -171,7 +177,6 @@ public class NettyDecoder extends ByteToMessageDecoder {
                     byte[] bytes = new byte[length];
                     message.readBytes(bytes);
                     String str = CommonUtils.bytesToHexString(bytes);
-                    JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
                     HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                     if (null != handlerParam) {
                         out.add(handlerParam);
@@ -209,9 +214,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
                         byte[] bytes = new byte[length];
                         message.readBytes(bytes);
                         //解析完整数据包成16进制
-                        final String str = CommonUtils.bytesToHexString(bytes);
-                        final JnSxDecoderAnalysis jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
-                        final HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                        String str = CommonUtils.bytesToHexString(bytes);
+                        HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
                         if (null != handlerParam) {
                             out.add(handlerParam);
                         }

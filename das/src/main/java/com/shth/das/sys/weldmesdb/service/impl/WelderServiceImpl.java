@@ -14,7 +14,7 @@ import java.util.List;
 public class WelderServiceImpl implements WelderService {
 
     @Autowired
-    WelderMapper welderMapper;
+    private WelderMapper welderMapper;
 
     @Override
     public List<WelderModel> getWelderModelAll() {

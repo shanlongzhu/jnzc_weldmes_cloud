@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
+import oshi.util.Util;
 
 import java.text.DecimalFormat;
 import java.util.Properties;
@@ -46,6 +47,7 @@ public class OshiSystemInfo {
         SystemInfo systemInfo = new SystemInfo();
         CentralProcessor processor = systemInfo.getHardware().getProcessor();
         long[] prevTicks = processor.getSystemCpuLoadTicks();
+        Util.sleep(100);
         long[] ticks = processor.getSystemCpuLoadTicks();
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
         long irq = ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
@@ -56,12 +58,16 @@ public class OshiSystemInfo {
         long iowait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
         long idle = ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
         long totalCpu = user + nice + cSys + idle + iowait + irq + softirq + steal;
+        if (totalCpu == 0) {
+            return;
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#.##%");
         log.info("-----------------------------------------");
         log.info("cpu核数:{}", processor.getLogicalProcessorCount());
-        log.info("cpu系统使用率:{}", new DecimalFormat("#.##%").format(cSys * 1.0 / totalCpu));
-        log.info("cpu用户使用率:{}", new DecimalFormat("#.##%").format(user * 1.0 / totalCpu));
-        log.info("cpu当前等待率:{}", new DecimalFormat("#.##%").format(iowait * 1.0 / totalCpu));
-        log.info("cpu当前使用率:{}", new DecimalFormat("#.##%").format(1.0 - (idle * 1.0 / totalCpu)));
+        log.info("cpu系统使用率:{}", decimalFormat.format(cSys / totalCpu));
+        log.info("cpu用户使用率:{}", decimalFormat.format(user / totalCpu));
+        log.info("cpu当前等待率:{}", decimalFormat.format(iowait / totalCpu));
+        log.info("cpu当前使用率:{}", decimalFormat.format(1 - (idle / totalCpu)));
         log.info("-----------------------------------------");
     }
 

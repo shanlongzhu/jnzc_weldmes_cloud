@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class WeldOnOffTimeServiceImpl implements WeldOnOffTimeService {
 
     @Autowired
-    WeldOnOffTimeMapper weldOnOffTimeMapper;
+    private WeldOnOffTimeMapper weldOnOffTimeMapper;
 
     @Override
     public void insertWeldOnOffTime(WeldOnOffTime weldOnOffTime) {

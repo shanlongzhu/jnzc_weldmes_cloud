@@ -22,7 +22,7 @@ import java.util.Map;
 public class SxRtDataServiceImpl implements SxRtDataService {
 
     @Autowired
-    SxRtDataMapper sxRtDataMapper;
+    private SxRtDataMapper sxRtDataMapper;
 
     @Override
     public int createNewTable(String tableName) {

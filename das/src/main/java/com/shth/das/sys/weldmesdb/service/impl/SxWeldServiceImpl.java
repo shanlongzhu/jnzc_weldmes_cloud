@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SxWeldServiceImpl implements SxWeldService {
 
     @Autowired
-    SxWeldMapper sxWeldMapper;
+    private SxWeldMapper sxWeldMapper;
 
     @Override
     public int insertSxWeld(SxWeldModel sxWeldModel) {

@@ -18,7 +18,7 @@ import java.util.List;
 public class MachineGatherServiceImpl implements MachineGatherService {
 
     @Autowired
-    MachineGatherMapper gatherMapper;
+    private MachineGatherMapper gatherMapper;
 
     @Override
     public List<GatherModel> getMachineGatherAll() {

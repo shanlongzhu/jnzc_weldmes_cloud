@@ -64,10 +64,10 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             //发送前端
             List<JNRtDataUI> jnRtDataUis = JnOtcRtDataProtocol.jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
             if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
-                map.put("JNRtDataDB", jnRtDataDbs);
+                map.put(JNRtDataDB.class.getSimpleName(), jnRtDataDbs);
             }
             if (CommonUtils.isNotEmpty(jnRtDataUis)) {
-                map.put("JNRtDataUI", jnRtDataUis);
+                map.put(JNRtDataUI.class.getSimpleName(), jnRtDataUis);
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
@@ -88,7 +88,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             if (null != issueReturn) {
                 HandlerParam handlerParam = new HandlerParam();
                 Map<String, Object> map = new HashMap<>();
-                map.put("JNProcessIssueReturn", issueReturn);
+                map.put(JNProcessIssueReturn.class.getSimpleName(), issueReturn);
                 handlerParam.setKey(jnOtcDecoderParam.getStr().length());
                 handlerParam.setValue(map);
                 return handlerParam;
@@ -109,7 +109,7 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             if (null != claimReturn) {
                 HandlerParam handlerParam = new HandlerParam();
                 Map<String, Object> map = new HashMap<>();
-                map.put("JNProcessClaimReturn", claimReturn);
+                map.put(JNProcessClaimReturn.class.getSimpleName(), claimReturn);
                 handlerParam.setKey(jnOtcDecoderParam.getStr().length());
                 handlerParam.setValue(map);
                 return handlerParam;
@@ -133,35 +133,35 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
             if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JNPasswordReturn passwordReturn = JnOtcRtDataProtocol.jnPasswordReturnAnalysis(str);
                 if (null != passwordReturn) {
-                    map.put("JNPasswordReturn", passwordReturn);
+                    map.put(JNPasswordReturn.class.getSimpleName(), passwordReturn);
                 }
             }
             //控制命令返回
             else if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JNCommandReturn commandReturn = JnOtcRtDataProtocol.jnCommandReturnAnalysis(str);
                 if (null != commandReturn) {
-                    map.put("JNCommandReturn", commandReturn);
+                    map.put(JNCommandReturn.class.getSimpleName(), commandReturn);
                 }
             }
             //锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
-                    map.put("JnLockMachineReturn", jnLockMachineReturn);
+                    map.put(JnLockMachineReturn.class.getSimpleName(), jnLockMachineReturn);
                 }
             }
             //解锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "19".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
+                JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
-                    map.put("JnLockMachineReturn", jnLockMachineReturn);
+                    map.put(JnLockMachineReturn.class.getSimpleName(), jnLockMachineReturn);
                 }
             }
             //程序包路径下发返回
             else if ("7E".equals(str.substring(0, 2)) && "11".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
-                final OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = JnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
+                OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = JnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
                 if (null != otcV1ProgramPathIssueReturn) {
-                    map.put("OtcV1ProgramPathIssueReturn", otcV1ProgramPathIssueReturn);
+                    map.put(OtcV1ProgramPathIssueReturn.class.getSimpleName(), otcV1ProgramPathIssueReturn);
                 }
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());

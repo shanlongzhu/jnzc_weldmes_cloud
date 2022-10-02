@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-@SuppressWarnings({"ALL"})
 @Slf4j
 public class JnSxRtDataProtocol {
 
@@ -36,7 +35,7 @@ public class JnSxRtDataProtocol {
         if (null != sxWeldModel) {
             //根据通道获取设备CID
             if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                 sxWeldModel.setWeldCid(weldCid);
             }
             //将松下设备信息与通道进行绑定
@@ -88,15 +87,15 @@ public class JnSxRtDataProtocol {
      */
     private static void sxChannelSetLock(String weldCid, int function) {
         try {
-            final SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
+            SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
             sxWeldChannelSetting.setWeldCid(weldCid);
             sxWeldChannelSetting.setFunction(function);
             sxWeldChannelSetting.setReadWriteFlag(2);
             sxWeldChannelSetting.setChannelSelect(0);
-            final String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+            String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
             if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                 if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
-                    final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
+                    Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str);
@@ -115,10 +114,10 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxSecondVerify(HandlerParam param) {
         if (null != param) {
-            final ChannelHandlerContext ctx = param.getCtx();
-            final Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
             if (map.containsKey("weldCid")) {
-                final String weldCid = (String) map.get("weldCid");
+                String weldCid = (String) map.get("weldCid");
                 //保存设备CID和通道对应关系
                 CommonMap.SX_WELD_CID_CTX_MAP.put(weldCid, ctx);
                 CommonMap.SX_CTX_WELD_CID_MAP.put(ctx, weldCid);
@@ -133,11 +132,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5SoftHardParam(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5软硬件参数存数据库
-            if (map.containsKey("SxWeldModel")) {
-                SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
+            if (map.containsKey(SxWeldModel.class.getSimpleName())) {
+                SxWeldModel sxWeldModel = (SxWeldModel) map.get(SxWeldModel.class.getSimpleName());
                 //松下参数绑定[刷卡会解锁焊机]
                 sxWeldDataBinding(ctx, sxWeldModel);
             }
@@ -162,14 +161,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5StatusManage(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5状态信息发送到mq
-            if (map.containsKey("SxStatusDataUI")) {
-                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
+            if (map.containsKey(SxStatusDataUI.class.getSimpleName())) {
+                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get(SxStatusDataUI.class.getSimpleName());
                 if (null != sxStatusDataUi) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxStatusDataUi.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -188,14 +187,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5ProcessWeldSet(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下GL5系列工艺索取返回(无数据)
-            if (map.containsKey("SxProcessClaimReturn")) {
-                SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get("SxProcessClaimReturn");
+            if (map.containsKey(SxProcessClaimReturn.class.getSimpleName())) {
+                SxProcessClaimReturn sxProcessClaimReturn = (SxProcessClaimReturn) map.get(SxProcessClaimReturn.class.getSimpleName());
                 if (null != sxProcessClaimReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxProcessClaimReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -205,11 +204,11 @@ public class JnSxRtDataProtocol {
                 }
             }
             //松下GL5系列工艺下发返回
-            if (map.containsKey("SxProcessReturn")) {
-                SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get("SxProcessReturn");
+            if (map.containsKey(SxProcessReturn.class.getSimpleName())) {
+                SxProcessReturn sxProcessReturn = (SxProcessReturn) map.get(SxProcessReturn.class.getSimpleName());
                 if (null != sxProcessReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxProcessReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -219,11 +218,11 @@ public class JnSxRtDataProtocol {
                 }
             }
             //松下GL5系列工艺删除返回
-            if (map.containsKey("SxProcessDeleteReturn")) {
-                SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get("SxProcessDeleteReturn");
+            if (map.containsKey(SxProcessDeleteReturn.class.getSimpleName())) {
+                SxProcessDeleteReturn sxProcessDeleteReturn = (SxProcessDeleteReturn) map.get(SxProcessDeleteReturn.class.getSimpleName());
                 if (null != sxProcessDeleteReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxProcessDeleteReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -233,11 +232,11 @@ public class JnSxRtDataProtocol {
                 }
             }
             //松下GL5系列焊机通道【通道设定返回、通道读取返回】
-            if (map.containsKey("SxWeldChannelSetReturn")) {
-                SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get("SxWeldChannelSetReturn");
+            if (map.containsKey(SxWeldChannelSetReturn.class.getSimpleName())) {
+                SxWeldChannelSetReturn sxWeldChannelSetReturn = (SxWeldChannelSetReturn) map.get(SxWeldChannelSetReturn.class.getSimpleName());
                 if (null != sxWeldChannelSetReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxWeldChannelSetReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -256,14 +255,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxCo2ProcessClaimReturn(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下CO2工艺索取返回
-            if (map.containsKey("SxCO2ProcessClaimReturn")) {
-                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get("SxCO2ProcessClaimReturn");
+            if (map.containsKey(SxCO2ProcessClaimReturn.class.getSimpleName())) {
+                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = (SxCO2ProcessClaimReturn) map.get(SxCO2ProcessClaimReturn.class.getSimpleName());
                 if (null != sxCO2ProcessClaimReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxCO2ProcessClaimReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -282,14 +281,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5TigProcessClaimReturn(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5系列TIG工艺索取返回（有数据）
-            if (map.containsKey("SxTIGProcessClaimReturn")) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get("SxTIGProcessClaimReturn");
+            if (map.containsKey(SxTIGProcessClaimReturn.class.getSimpleName())) {
+                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = (SxTIGProcessClaimReturn) map.get(SxTIGProcessClaimReturn.class.getSimpleName());
                 if (null != sxTIGProcessClaimReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxTIGProcessClaimReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -308,11 +307,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2At3SoftHardParam(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5软硬件参数存数据库
-            if (map.containsKey("SxWeldModel")) {
-                SxWeldModel sxWeldModel = (SxWeldModel) map.get("SxWeldModel");
+            if (map.containsKey(SxWeldModel.class.getSimpleName())) {
+                SxWeldModel sxWeldModel = (SxWeldModel) map.get(SxWeldModel.class.getSimpleName());
                 //松下参数绑定【刷卡会解锁焊机】
                 sxWeldDataBinding(ctx, sxWeldModel);
             }
@@ -348,14 +347,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2StatusUiManage(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机FR2状态信息发送到mq
-            if (map.containsKey("SxStatusDataUI")) {
-                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get("SxStatusDataUI");
+            if (map.containsKey(SxStatusDataUI.class.getSimpleName())) {
+                SxStatusDataUI sxStatusDataUi = (SxStatusDataUI) map.get(SxStatusDataUI.class.getSimpleName());
                 if (null != sxStatusDataUi) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxStatusDataUi.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -374,14 +373,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxChannelParamReply(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
-            if (map.containsKey("SxChannelParamReply")) {
-                SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get("SxChannelParamReply");
+            if (map.containsKey(SxChannelParamReply.class.getSimpleName())) {
+                SxChannelParamReply sxChannelParamReply = (SxChannelParamReply) map.get(SxChannelParamReply.class.getSimpleName());
                 if (null != sxChannelParamReply) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         sxChannelParamReply.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -400,10 +399,10 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2ChannelParamReplyHave(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
+            Map<String, Object> map = param.getValue();
             //松下焊机FR2系列通道参数【查询回复（有参数）】
-            if (map.containsKey("SxChannelParamReplyHave")) {
-                SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get("SxChannelParamReplyHave");
+            if (map.containsKey(SxChannelParamReplyHave.class.getSimpleName())) {
+                SxChannelParamReplyHave sxChannelParamReplyHave = (SxChannelParamReplyHave) map.get(SxChannelParamReplyHave.class.getSimpleName());
                 if (null != sxChannelParamReplyHave) {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxChannelParamReplyHave);
@@ -421,14 +420,14 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxAt3ParamQueryReturn(HandlerParam param) {
         if (null != param) {
-            final Map<String, Object> map = param.getValue();
-            final ChannelHandlerContext ctx = param.getCtx();
+            Map<String, Object> map = param.getValue();
+            ChannelHandlerContext ctx = param.getCtx();
             //松下AT3系列查询回复（有参数）
-            if (map.containsKey("At3ParamQueryReturn")) {
-                At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get("At3ParamQueryReturn");
+            if (map.containsKey(At3ParamQueryReturn.class.getSimpleName())) {
+                At3ParamQueryReturn at3ParamQueryReturn = (At3ParamQueryReturn) map.get(At3ParamQueryReturn.class.getSimpleName());
                 if (null != at3ParamQueryReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                        final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                        String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                         at3ParamQueryReturn.setWeldCid(weldCid);
                     }
                     //实体类转JSON字符串
@@ -446,18 +445,18 @@ public class JnSxRtDataProtocol {
      * @param param 入参
      */
     private static void jnSxRtdManage(HandlerParam param) {
-        final Map<String, Object> map = param.getValue();
-        final ChannelHandlerContext ctx = param.getCtx();
+        Map<String, Object> map = param.getValue();
+        ChannelHandlerContext ctx = param.getCtx();
         //松下焊机实时数据发送到mq
-        if (map.containsKey("SxRtDataUi")) {
-            SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get("SxRtDataUi");
+        if (map.containsKey(SxRtDataUi.class.getSimpleName())) {
+            SxRtDataUi sxRtDataUi = (SxRtDataUi) map.get(SxRtDataUi.class.getSimpleName());
             if (null != sxRtDataUi) {
                 if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-                    final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                    String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                     sxRtDataUi.setWeldCid(weldCid);
                 }
                 if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
-                    final SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
+                    SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
                     if (null != sxWeldModel) {
                         //设备编码
                         sxRtDataUi.setWeldCode(sxWeldModel.getWeldCode());
@@ -472,25 +471,25 @@ public class JnSxRtDataProtocol {
             }
         }
         //松下焊机实时数据存数据库
-        if (map.containsKey("SxRtDataDb")) {
-            SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get("SxRtDataDb");
+        if (map.containsKey(SxRtDataDb.class.getSimpleName())) {
+            SxRtDataDb sxRtDataDb = (SxRtDataDb) map.get(SxRtDataDb.class.getSimpleName());
             if (null != sxRtDataDb) {
                 //如果找不到通道的CID，则不能增加设备实时数据
                 if (!CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                     InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
                     //客户端IP
-                    final String clientIp = insocket.getAddress().getHostAddress();
+                    String clientIp = insocket.getAddress().getHostAddress();
                     //客户端端口
-                    final int clientPort = insocket.getPort();
+                    int clientPort = insocket.getPort();
                     log.warn("[jnSxRtdManage]当前通道找不到CID：-----> {}:{}", clientIp, clientPort);
                     return;
                 }
-                final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+                String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
                 sxRtDataDb.setWeldCid(weldCid);
                 //刷卡领取任务后进行数据绑定
                 Map<String, TaskClaimIssue> sxTaskClaimMap = CommonMap.SX_TASK_CLAIM_MAP;
                 if (sxTaskClaimMap.size() > 0 && sxTaskClaimMap.containsKey(weldCid)) {
-                    final TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(weldCid);
+                    TaskClaimIssue taskClaimIssue = sxTaskClaimMap.get(weldCid);
                     if (null != taskClaimIssue) {
                         sxRtDataDb.setWelderId(taskClaimIssue.getWelderId());
                         sxRtDataDb.setWelderName(taskClaimIssue.getWelderName());
@@ -501,7 +500,7 @@ public class JnSxRtDataProtocol {
                     }
                 }
                 if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
-                    final SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
+                    SxWeldModel sxWeldModel = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
                     if (null != sxWeldModel) {
                         //设备编码
                         sxRtDataDb.setWeldCode(sxWeldModel.getWeldCode());
@@ -515,9 +514,9 @@ public class JnSxRtDataProtocol {
                     if (sxRtDataDb.getWeldStatus() == 5) {
                         SxRtDataDb sxdata = new SxRtDataDb();
                         sxdata.setWeldStatus(0);
-                        final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //减去1秒
-                        final String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                        String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
                         sxdata.setWeldTime(weldTime);
                         sxdata.setRealityWeldEle(BigDecimal.ZERO);
                         sxdata.setRealityWeldVol(BigDecimal.ZERO);
@@ -527,9 +526,9 @@ public class JnSxRtDataProtocol {
                     else if (sxRtDataDb.getWeldStatus() == 10) {
                         SxRtDataDb sxdata = new SxRtDataDb();
                         sxdata.setWeldStatus(0);
-                        final LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                        LocalDateTime parse = LocalDateTime.parse(sxdata.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                         //加上1秒
-                        final String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                        String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
                         sxdata.setWeldTime(weldTime);
                         sxdata.setRealityWeldEle(BigDecimal.ZERO);
                         sxdata.setRealityWeldVol(BigDecimal.ZERO);
@@ -1451,7 +1450,7 @@ public class JnSxRtDataProtocol {
     public void sxWeldOffDataManage(ChannelHandlerContext ctx, String clientIp) {
         SxRtDataUi sxRtDataUi = new SxRtDataUi();
         if (CommonMap.SX_CTX_WELD_INFO_MAP.containsKey(ctx)) {
-            final SxWeldModel sxWeld = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
+            SxWeldModel sxWeld = CommonMap.SX_CTX_WELD_INFO_MAP.get(ctx);
             if (null != sxWeld) {
                 sxRtDataUi.setWeldCode(sxWeld.getWeldCode());
                 sxRtDataUi.setWeldModel(sxWeld.getWeldModel());
@@ -1459,7 +1458,7 @@ public class JnSxRtDataProtocol {
             CommonMap.SX_CTX_WELD_INFO_MAP.remove(ctx);
         }
         if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
-            final String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
+            String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
             sxRtDataUi.setWeldCid(weldCid);
             CommonMap.SX_CTX_WELD_CID_MAP.remove(ctx);
             CommonMap.SX_WELD_CID_CTX_MAP.remove(weldCid);

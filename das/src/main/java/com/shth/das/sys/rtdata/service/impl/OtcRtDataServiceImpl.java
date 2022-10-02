@@ -22,7 +22,7 @@ import java.util.Map;
 public class OtcRtDataServiceImpl implements OtcRtDataService {
 
     @Autowired
-    OtcRtDataMapper otcRtDataMapper;
+    private OtcRtDataMapper otcRtDataMapper;
 
     @Override
     public int createNewTable(String tableName) {

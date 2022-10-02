@@ -96,17 +96,17 @@ clearTaskBindingByTime: '0 0 7 * * ?'
 slotCardEnableDevice: true
 
 # 是否启用OTC业务功能
-enableOtcFunction: false
+enableOtcFunction: true
 
 # 是否启用松下业务功能
 enableSxFunction: false
 
 # 使用SLF4J日志框架进行日志记录功能
 logging:
-# 日志级别从高到低分别是：error、warn、info、debug、trace
+  # 日志级别从高到低分别是：error、warn、info、debug、trace
   level:
     root: info
-# 指定输出的日志文件名（不指定路径默认和项目同路径，没有会自动新建）
+  # 指定输出的日志文件名（不指定路径默认和项目同路径，没有会自动新建）
   file:
     name: D:\jn-das-log\jndas.log
 

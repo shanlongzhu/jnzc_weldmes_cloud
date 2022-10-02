@@ -32,9 +32,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     private final Map<Integer, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
     private final Map<Integer, Consumer<HandlerParam>> sxHandlerMapping = new HashMap<>();
 
-    NettyServerHandler() {
+    private final JnOtcRtDataProtocol jnOtcRtDataProtocol;
+    private final JnSxRtDataProtocol jnSxRtDataProtocol;
+
+    public NettyServerHandler() {
         setOtcHandlerMapping();
         setSxHandlerMapping();
+        jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
+        jnSxRtDataProtocol = new JnSxRtDataProtocol();
     }
 
     private void setOtcHandlerMapping() {
@@ -183,7 +188,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
                 log.info("OTC终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             }
-            final JnOtcRtDataProtocol jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
             jnOtcRtDataProtocol.jnWeldOffDataManage(ctx, clientIp);
         }
         //端口为sxPort，则为松下通讯协议
@@ -194,7 +198,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
                 log.info("SX终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
             }
-            final JnSxRtDataProtocol jnSxRtDataProtocol = new JnSxRtDataProtocol();
             jnSxRtDataProtocol.sxWeldOffDataManage(ctx, clientIp);
         }
         ctx.flush();

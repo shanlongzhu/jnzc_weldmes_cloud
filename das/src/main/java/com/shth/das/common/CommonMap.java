@@ -3,9 +3,6 @@ package com.shth.das.common;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.db.TaskClaimIssue;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,8 +83,4 @@ public class CommonMap {
      */
     public static volatile ConcurrentHashMap<String, Map<Integer, Integer>> OTC_LOCK_FAIL_RETRY_MAP = new ConcurrentHashMap<>();
 
-    /**
-     * 通道组（不需要维护Channel的生命周期）
-     */
-    public static ChannelGroup CHANNEL_GROUP = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 }

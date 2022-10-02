@@ -16,10 +16,8 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -31,7 +29,6 @@ import java.util.stream.Collectors;
 /**
  * 江南项目数据解析类
  */
-@Component
 @Slf4j
 public class JnOtcRtDataProtocol {
 
@@ -84,16 +81,6 @@ public class JnOtcRtDataProtocol {
      * 采集盒IP地址盒采集编号绑定
      */
     private static void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
-
-        //双向绑定（channel -> gatherNo）
-        AttributeKey<String> key = AttributeKey.valueOf("gatherNo");
-        ctx.channel().attr(key).set(gatherNo);
-
-        //添加通道到通道组
-        if (!CommonMap.CHANNEL_GROUP.contains(ctx.channel())) {
-            CommonMap.CHANNEL_GROUP.add(ctx.channel());
-        }
-
         //判断map集合是否有，没有则新增
         if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
             CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
@@ -120,13 +107,12 @@ public class JnOtcRtDataProtocol {
      *
      * @param handlerParam 入参
      */
-    @SuppressWarnings("unchecked")
     public static void jnRtDataManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //实时数据发送到前端
-            if (map.containsKey("JNRtDataUI")) {
-                List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get("JNRtDataUI");
+            if (map.containsKey(JNRtDataUI.class.getSimpleName())) {
+                List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get(JNRtDataUI.class.getSimpleName());
                 if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
@@ -139,8 +125,8 @@ public class JnOtcRtDataProtocol {
                 }
             }
             //实时数据存数据库
-            if (map.containsKey("JNRtDataDB")) {
-                List<JNRtDataDB> list = (List<JNRtDataDB>) map.get("JNRtDataDB");
+            if (map.containsKey(JNRtDataDB.class.getSimpleName())) {
+                List<JNRtDataDB> list = (List<JNRtDataDB>) map.get(JNRtDataDB.class.getSimpleName());
                 if (CommonUtils.isNotEmpty(list)) {
                     //添加到OTC阻塞队列（通过定时任务存储）;offer:当阻塞队列满了，则不再增加
                     list.forEach(CommonQueue.OTC_LINKED_BLOCKING_QUEUE::offer);
@@ -163,8 +149,8 @@ public class JnOtcRtDataProtocol {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //工艺下发返回
-            if (map.containsKey("JNProcessIssueReturn")) {
-                JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get("JNProcessIssueReturn");
+            if (map.containsKey(JNProcessIssueReturn.class.getSimpleName())) {
+                JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get(JNProcessIssueReturn.class.getSimpleName());
                 if (null != processIssueReturn) {
                     //Java类转JSON字符串
                     String message = JSON.toJSONString(processIssueReturn);
@@ -184,8 +170,8 @@ public class JnOtcRtDataProtocol {
         if (null != handlerParam) {
             Map<String, Object> map = handlerParam.getValue();
             //工艺索取返回
-            if (map.containsKey("JNProcessClaimReturn")) {
-                JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get("JNProcessClaimReturn");
+            if (map.containsKey(JNProcessClaimReturn.class.getSimpleName())) {
+                JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get(JNProcessClaimReturn.class.getSimpleName());
                 if (null != processClaimReturn) {
                     String message = JSON.toJSONString(processClaimReturn);
                     //通过mqtt发送到服务端
@@ -205,8 +191,8 @@ public class JnOtcRtDataProtocol {
             final Map<String, Object> map = handlerParam.getValue();
             final ChannelHandlerContext ctx = handlerParam.getCtx();
             //密码返回
-            if (map.containsKey("JNPasswordReturn")) {
-                JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get("JNPasswordReturn");
+            if (map.containsKey(JNPasswordReturn.class.getSimpleName())) {
+                JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get(JNPasswordReturn.class.getSimpleName());
                 if (null != passwordReturn) {
                     String message = JSON.toJSONString(passwordReturn);
                     //通过mqtt发送到服务端
@@ -214,8 +200,8 @@ public class JnOtcRtDataProtocol {
                 }
             }
             //控制命令返回
-            if (map.containsKey("JNCommandReturn")) {
-                JNCommandReturn commandReturn = (JNCommandReturn) map.get("JNCommandReturn");
+            if (map.containsKey(JNCommandReturn.class.getSimpleName())) {
+                JNCommandReturn commandReturn = (JNCommandReturn) map.get(JNCommandReturn.class.getSimpleName());
                 if (null != commandReturn) {
                     String message = JSON.toJSONString(commandReturn);
                     //通过mqtt发送到服务端
@@ -223,8 +209,8 @@ public class JnOtcRtDataProtocol {
                 }
             }
             //锁焊机或者解锁焊机返回
-            if (map.containsKey("JnLockMachineReturn")) {
-                final JnLockMachineReturn jnLockMachineReturn = (JnLockMachineReturn) map.get("JnLockMachineReturn");
+            if (map.containsKey(JnLockMachineReturn.class.getSimpleName())) {
+                final JnLockMachineReturn jnLockMachineReturn = (JnLockMachineReturn) map.get(JnLockMachineReturn.class.getSimpleName());
                 if (null != jnLockMachineReturn) {
                     try {
                         //采集编号
@@ -275,8 +261,8 @@ public class JnOtcRtDataProtocol {
                 }
             }
             //程序包路径下发返回
-            if (map.containsKey("OtcV1ProgramPathIssueReturn")) {
-                final OtcV1ProgramPathIssueReturn pathIssueReturn = (OtcV1ProgramPathIssueReturn) map.get("OtcV1ProgramPathIssueReturn");
+            if (map.containsKey(OtcV1ProgramPathIssueReturn.class.getSimpleName())) {
+                final OtcV1ProgramPathIssueReturn pathIssueReturn = (OtcV1ProgramPathIssueReturn) map.get(OtcV1ProgramPathIssueReturn.class.getSimpleName());
                 if (null != pathIssueReturn) {
                     final String message = JSON.toJSONString(pathIssueReturn);
                     //通过mqtt发送到服务端

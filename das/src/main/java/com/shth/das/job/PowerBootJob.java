@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 
 /**
@@ -30,20 +31,20 @@ import java.math.BigInteger;
 public class PowerBootJob {
 
     @Autowired
-    OtcRtDataService otcRtDataService;
+    private OtcRtDataService otcRtDataService;
     @Autowired
-    SxRtDataService sxRtDataService;
+    private SxRtDataService sxRtDataService;
     @Autowired
-    SxWeldService sxWeldService;
+    private SxWeldService sxWeldService;
     @Autowired
-    WeldOnOffTimeService weldOnOffTimeService;
+    private WeldOnOffTimeService weldOnOffTimeService;
     @Autowired
-    MachineGatherService machineGatherService;
+    private MachineGatherService machineGatherService;
 
     /**
      * 启动所有任务
      */
-//    @PostConstruct
+    @PostConstruct
     public void startAllJob() {
         //创建OTC实时数据表
         startJnOtcJob();

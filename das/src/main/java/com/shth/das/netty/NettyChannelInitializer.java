@@ -2,11 +2,7 @@ package com.shth.das.netty;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 通道初始化
@@ -14,12 +10,6 @@ import java.util.concurrent.TimeUnit;
  * @create: 2021-07-31
  */
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
-
-    private final EventLoopGroup eventLoopGroup;
-
-    NettyChannelInitializer(EventLoopGroup eventLoopGroup) {
-        this.eventLoopGroup = eventLoopGroup;
-    }
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
@@ -34,6 +24,6 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         //自定义协议编码器
         pipeline.addLast("encoder", new NettyEncoder());
         //业务处理
-        pipeline.addLast(eventLoopGroup, new NettyServerHandler());
+        pipeline.addLast(new NettyServerHandler());
     }
 }

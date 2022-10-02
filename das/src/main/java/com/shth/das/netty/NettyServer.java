@@ -32,8 +32,6 @@ public class NettyServer {
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
             // Netty i/o 处理事件的线程池
             final EventLoopGroup workerGroup = new NioEventLoopGroup();
-            //业务线程池
-            final EventLoopGroup handlerGroup = new NioEventLoopGroup();
 
             @Override
             public void run() {
@@ -52,7 +50,7 @@ public class NettyServer {
                             //心跳保持
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             //通道初始化
-                            .childHandler(new NettyChannelInitializer(handlerGroup));
+                            .childHandler(new NettyChannelInitializer());
                     //System.setProperty("io.netty.leakDetection.maxRecords", "1000");
                     //System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
                     //ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);

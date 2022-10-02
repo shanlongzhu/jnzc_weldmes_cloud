@@ -60,7 +60,7 @@ public class EmqMqttClient {
         mqttConnectOptions.setPassword(password.toCharArray());
     }
 
-//    @PostConstruct
+    @PostConstruct
     public void start() {
         try {
             if (mqttClient == null) {

@@ -115,7 +115,7 @@ public class MqttMessageAnalysis {
     private void slotCardUnLockSxWeld(String weldCid) {
         if (CommonFunction.isSlotCardEnableDevice() && StringUtils.isNotBlank(weldCid)) {
             try {
-                final SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
+                SxWeldChannelSetting sxWeldChannelSetting = new SxWeldChannelSetting();
                 sxWeldChannelSetting.setWeldCid(weldCid);
                 //（0：解锁；1：锁定）
                 sxWeldChannelSetting.setFunction(0);
@@ -123,10 +123,10 @@ public class MqttMessageAnalysis {
                 sxWeldChannelSetting.setReadWriteFlag(2);
                 //0：焊接通道
                 sxWeldChannelSetting.setChannelSelect(0);
-                final String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+                String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
                 if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                     if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
-                        final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
+                        Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                         //判断该焊机通道是否打开、是否活跃、是否可写
                         if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                             channel.writeAndFlush(str);
@@ -146,8 +146,8 @@ public class MqttMessageAnalysis {
      */
     public void otcV1ProcessIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             //匹配下发规范模板
             List<JNProcessIssue> list = JSON.parseArray(message, JNProcessIssue.class);
             if (CommonUtils.isNotEmpty(list)) {
@@ -168,8 +168,8 @@ public class MqttMessageAnalysis {
      */
     public void otcV1ProcessClaim(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             JNProcessClaim jnProcessClaim = JSON.parseObject(message, JNProcessClaim.class);
             if (null != jnProcessClaim) {
                 String gatherNo = jnProcessClaim.getGatherNo();
@@ -187,8 +187,8 @@ public class MqttMessageAnalysis {
      */
     public void otcV1PasswordIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             JNPasswordIssue jnPasswordIssue = JSON.parseObject(message, JNPasswordIssue.class);
             if (null != jnPasswordIssue) {
                 String gatherNo = jnPasswordIssue.getGatherNo();
@@ -206,8 +206,8 @@ public class MqttMessageAnalysis {
      */
     public void otcV1CommandIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             JNCommandIssue jnCommandIssue = JSON.parseObject(message, JNCommandIssue.class);
             if (null != jnCommandIssue) {
                 String gatherNo = jnCommandIssue.getGatherNo();
@@ -225,11 +225,11 @@ public class MqttMessageAnalysis {
      */
     public void sxGl5Co2ProcessIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxCO2ProcessIssue sxCo2ProcessIssue = JSON.parseObject(message, SxCO2ProcessIssue.class);
             if (null != sxCo2ProcessIssue) {
-                final String weldCid = sxCo2ProcessIssue.getWeldCid();
+                String weldCid = sxCo2ProcessIssue.getWeldCid();
                 //length：406
                 String str = JnSxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列CO2工艺下发成功", topic);
@@ -244,11 +244,11 @@ public class MqttMessageAnalysis {
      */
     public void sxGl5TigProcessIssue(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxTIGProcessIssue sxTigProcessIssue = JSON.parseObject(message, SxTIGProcessIssue.class);
             if (null != sxTigProcessIssue) {
-                final String weldCid = sxTigProcessIssue.getWeldCid();
+                String weldCid = sxTigProcessIssue.getWeldCid();
                 //length：446
                 String str = JnSxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列TIG工艺下发成功", topic);
@@ -263,11 +263,11 @@ public class MqttMessageAnalysis {
      */
     public void sxGl5WeldChannelSet(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxWeldChannelSetting sxWeldChannelSetting = JSON.parseObject(message, SxWeldChannelSetting.class);
             if (null != sxWeldChannelSetting) {
-                final String weldCid = sxWeldChannelSetting.getWeldCid();
+                String weldCid = sxWeldChannelSetting.getWeldCid();
                 //length:106
                 String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列焊机通道[设定/读取]成功", topic);
@@ -282,11 +282,11 @@ public class MqttMessageAnalysis {
      */
     public void sxGl5ProcessClaim(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxProcessClaim sxProcessClaim = JSON.parseObject(message, SxProcessClaim.class);
             if (null != sxProcessClaim) {
-                final String weldCid = sxProcessClaim.getWeldCid();
+                String weldCid = sxProcessClaim.getWeldCid();
                 //length:106
                 String str = JnSxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列工艺[索取/删除]成功", topic);
@@ -301,11 +301,11 @@ public class MqttMessageAnalysis {
      */
     public void sxFr2ChannelParamQuery(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxChannelParamQuery sxChannelParamQuery = JSON.parseObject(message, SxChannelParamQuery.class);
             if (null != sxChannelParamQuery) {
-                final String weldCid = sxChannelParamQuery.getWeldCid();
+                String weldCid = sxChannelParamQuery.getWeldCid();
                 //length:52
                 String str = JnSxRtDataProtocol.sxChannelParamQueryProtocol(sxChannelParamQuery);
                 sxChannelWrite(weldCid, str, "----->松下[FR2、AT3]系列通道参数[查询/删除]成功", topic);
@@ -320,8 +320,8 @@ public class MqttMessageAnalysis {
      */
     public void sxFr2ChannelParamDownload(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             SxChannelParamReplyHave channelParamReplyHave = JSON.parseObject(message, SxChannelParamReplyHave.class);
             if (null != channelParamReplyHave) {
                 String weldCid = channelParamReplyHave.getWeldCid();
@@ -339,11 +339,11 @@ public class MqttMessageAnalysis {
      */
     public void sxAt3ParamDownload(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
+            String message = param.getMessage();
+            String topic = param.getTopic();
             At3ParamDownload at3ParamDownload = JSON.parseObject(message, At3ParamDownload.class);
             if (null != at3ParamDownload) {
-                final String weldCid = at3ParamDownload.getWeldCid();
+                String weldCid = at3ParamDownload.getWeldCid();
                 //length：92
                 String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
@@ -358,12 +358,12 @@ public class MqttMessageAnalysis {
      */
     public void otcV1IssueProgramPath(MqttParam param) {
         if (null != param) {
-            final String message = param.getMessage();
-            final String topic = param.getTopic();
-            final OtcV1IssueProgramPath otcV1IssueProgramPath = JSON.parseObject(message, OtcV1IssueProgramPath.class);
+            String message = param.getMessage();
+            String topic = param.getTopic();
+            OtcV1IssueProgramPath otcV1IssueProgramPath = JSON.parseObject(message, OtcV1IssueProgramPath.class);
             if (null != otcV1IssueProgramPath) {
-                final String gatherNo = otcV1IssueProgramPath.getGatherNo();
-                final String str = JnOtcRtDataProtocol.otcV1IssueProgramPath(otcV1IssueProgramPath);
+                String gatherNo = otcV1IssueProgramPath.getGatherNo();
+                String str = JnOtcRtDataProtocol.otcV1IssueProgramPath(otcV1IssueProgramPath);
                 otcChannelWrite(gatherNo, str, "----->OTC程序包路径下发成功", topic);
             }
         }
@@ -409,7 +409,7 @@ public class MqttMessageAnalysis {
             str = CRC7Check.crc7CheckAndReplace(str);
             if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                 if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
-                    final Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
+                    Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str);
