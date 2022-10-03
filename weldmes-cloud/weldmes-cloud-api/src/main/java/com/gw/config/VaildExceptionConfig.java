@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@SuppressWarnings({"ALL"})
 @Slf4j
 @ControllerAdvice
 public class VaildExceptionConfig {
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public HttpResult throwCustomException(MethodArgumentNotValidException methodArgumentNotValidException){
+    public HttpResult throwCustomException(MethodArgumentNotValidException methodArgumentNotValidException) {
 
         log.error("[ 实体类异常捕获 ] " + methodArgumentNotValidException.getMessage());
 

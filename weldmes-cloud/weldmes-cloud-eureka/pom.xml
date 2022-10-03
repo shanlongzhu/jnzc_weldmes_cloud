@@ -30,14 +30,14 @@
     </dependencies>
 
     <build>
-        <finalName>weldmes-cloud-eureka-7001</finalName>
+        <finalName>weldmes-cloud-eureka</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!--这里写上main方法所在类的路径-->
                 <configuration>
-                    <mainClass>com.gw.EurekaServer7001_App</mainClass>
+                    <mainClass>com.gw.eureka.EurekaServer</mainClass>
                 </configuration>
                 <executions>
                     <execution>
