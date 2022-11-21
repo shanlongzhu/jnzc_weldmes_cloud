@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @ToString
 @Accessors(chain = true)
+@Document("otc_weld_rtdata")
 public class JNRtDataDB implements Serializable {
 
     /**

@@ -3,6 +3,9 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: mongodb://admin:123456@localhost:27017/weld_rtdb?authSource=admin
   datasource:
     ds1: #数据源1
       type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
