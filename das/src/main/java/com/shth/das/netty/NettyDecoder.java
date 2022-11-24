@@ -119,8 +119,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
             //数据包长度(数组转16进制再转10进制)
             int otcLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
             //判断可读长度是否多于数据包长度（是否是一个完整数据包）
-            if (otcLength == 0 || message.readableBytes() < otcLength) {
-                return;
+            if (message.readableBytes() < otcLength) {
+                break;
             }
             //将一个完整数据包读取到bytes数组中
             byte[] bytes = new byte[otcLength];
@@ -155,12 +155,12 @@ public class NettyDecoder extends ByteToMessageDecoder {
             //判断是否为两次握手验证
             if (this.sxMap.containsKey(sxFourHead)) {
                 //获得数据包长度
-                int length = this.sxMap.get(sxFourHead);
+                int sxFourHeadLength = this.sxMap.get(sxFourHead);
                 //可读字节是否多于数据包长度（是否为完整包）
-                if (length == 0 || message.readableBytes() < length) {
-                    return;
+                if (message.readableBytes() < sxFourHeadLength) {
+                    break;
                 }
-                byte[] bytes = new byte[length];
+                byte[] bytes = new byte[sxFourHeadLength];
                 message.readBytes(bytes);
                 String str = CommonUtils.bytesToHexString(bytes);
                 HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
@@ -176,13 +176,13 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 lengthBytes[0] = message.getByte(3);
                 lengthBytes[1] = message.getByte(4);
                 //查看数据包应该有的长度(字节长度)
-                int length = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
+                int sxThreeHeadLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
                 //判断可读长度是否多于数据包长度（是否是一个完整数据包）
-                if (length == 0 && message.readableBytes() < length) {
-                    return;
+                if (message.readableBytes() < sxThreeHeadLength) {
+                    break;
                 }
                 //将一个完整数据包读取到bytes数组中
-                byte[] bytes = new byte[length];
+                byte[] bytes = new byte[sxThreeHeadLength];
                 message.readBytes(bytes);
                 //解析完整数据包成16进制
                 String str = CommonUtils.bytesToHexString(bytes);
