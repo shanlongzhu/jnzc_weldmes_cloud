@@ -94,141 +94,125 @@ public class NettyDecoder extends ByteToMessageDecoder {
     }
 
     /**
-     * 递归读取ByteBuf
+     * 读取ByteBuf，将字节数组解析成对象，封装到HandlerParam中传输
      *
      * @param ctx     通道
      * @param message ByteBuf
      * @param out     List
      */
     private void otcRecursionReadBytes(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
-        int bufNum = message.readableBytes();
-        if (bufNum == 0) {
+        if (message.readableBytes() == 0) {
             return;
         }
-        //可读长度小于等于2，先暂存，大于2则进行读取
-        if (bufNum <= 2) {
-            //将message拷贝到tempMsg中暂存
-            this.tempMsg.writeBytes(message);
-        } else {
+        while (message.readableBytes() > 2) {
             byte[] headBytes = new byte[1];
             headBytes[0] = message.getByte(0);
             //头部1个字节
             String otcHead = CommonUtils.bytesToHexString(headBytes);
-            if (this.otcMap.containsKey(otcHead)) {
-                //查看包长度
-                byte[] lengthBytes = new byte[1];
-                //查看第2字节的数据包长度
-                lengthBytes[0] = message.getByte(1);
-                //数据包长度(数组转16进制再转10进制)
-                int otcLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
-                //判断可读长度是否多于数据包长度（是否是一个完整数据包）
-                if (otcLength > 0 && bufNum >= otcLength) {
-                    //将一个完整数据包读取到bytes数组中
-                    byte[] bytes = new byte[otcLength];
-                    message.readBytes(bytes);
-                    //解析完整数据包成16进制
-                    String str = CommonUtils.bytesToHexString(bytes);
-                    HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
-                    if (null != handlerParam) {
-                        out.add(handlerParam);
-                    }
-                    //如果还有可读字节，则继续递归读取
-                    if (message.readableBytes() > 0) {
-                        this.otcRecursionReadBytes(ctx, message, out);
-                    }
-                } else {
-                    //将message拷贝到tempMsg中暂存
-                    this.tempMsg.writeBytes(message);
-                }
+            if (!this.otcMap.containsKey(otcHead)) {
+                return;
+            }
+            //查看包长度
+            byte[] lengthBytes = new byte[1];
+            //查看第2字节的数据包长度
+            lengthBytes[0] = message.getByte(1);
+            //数据包长度(数组转16进制再转10进制)
+            int otcLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
+            //判断可读长度是否多于数据包长度（是否是一个完整数据包）
+            if (otcLength == 0 || message.readableBytes() < otcLength) {
+                return;
+            }
+            //将一个完整数据包读取到bytes数组中
+            byte[] bytes = new byte[otcLength];
+            message.readBytes(bytes);
+            //解析完整数据包成16进制
+            String str = CommonUtils.bytesToHexString(bytes);
+            HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+            if (null != handlerParam) {
+                out.add(handlerParam);
             }
         }
+        //将message拷贝到tempMsg中暂存
+        this.tempMsg.writeBytes(message);
     }
 
     /**
-     * 递归读取ByteBuf
+     * 读取ByteBuf，将字节数组解析成对象，封装到HandlerParam中传输
      *
      * @param ctx     通道
      * @param message ByteBuf
      * @param out     List
      */
     private void sxRecursionReadBytes(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
-        int bufNum = message.readableBytes();
-        if (bufNum == 0) {
+        if (message.readableBytes() == 0) {
             return;
         }
-        //判断可读字节数小于5，直接存储，下次读取
-        if (bufNum <= 5) {
-            //将message拷贝到tempMsg中暂存
-            this.tempMsg.writeBytes(message);
-        } else {
-            //查看前4个字节
-            byte[] headBytes = new byte[4];
-            for (int index = 0; index < 4; index++) {
-                headBytes[index] = message.getByte(index);
-            }
-            //头部4个字节
-            String sxFourHead = CommonUtils.bytesToHexString(headBytes);
+        while (message.readableBytes() > 5) {
+            //查看头部4个字节
+            String sxFourHead = this.getHexStringByByteBuf(message, 4);
+            //查看头部3个字节（FE5AA5）
+            String sxThreeHead = this.getHexStringByByteBuf(message, 3);
             //判断是否为两次握手验证
             if (this.sxMap.containsKey(sxFourHead)) {
                 //获得数据包长度
                 int length = this.sxMap.get(sxFourHead);
                 //可读字节是否多于数据包长度（是否为完整包）
-                if (length > 0 && bufNum >= length) {
-                    byte[] bytes = new byte[length];
-                    message.readBytes(bytes);
-                    String str = CommonUtils.bytesToHexString(bytes);
-                    HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
-                    if (null != handlerParam) {
-                        out.add(handlerParam);
-                    }
-                    //如果还有可读字节，则继续递归读取
-                    if (message.readableBytes() > 0) {
-                        this.sxRecursionReadBytes(ctx, message, out);
-                    }
-                } else {
-                    //将message拷贝到tempMsg中暂存
-                    this.tempMsg.writeBytes(message);
+                if (length == 0 || message.readableBytes() < length) {
+                    return;
+                }
+                byte[] bytes = new byte[length];
+                message.readBytes(bytes);
+                String str = CommonUtils.bytesToHexString(bytes);
+                HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                if (null != handlerParam) {
+                    out.add(handlerParam);
                 }
             }
             //非两次握手，正常通讯协议
-            else {
-                //查看前3个字节
-                byte[] headByte = new byte[3];
-                for (int index = 0; index < 3; index++) {
-                    headByte[index] = message.getByte(index);
+            else if (this.sxMap.containsKey(sxThreeHead)) {
+                //查看包长度
+                byte[] lengthBytes = new byte[2];
+                //查看第4、5字节的数据包长度
+                lengthBytes[0] = message.getByte(3);
+                lengthBytes[1] = message.getByte(4);
+                //查看数据包应该有的长度(字节长度)
+                int length = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
+                //判断可读长度是否多于数据包长度（是否是一个完整数据包）
+                if (length == 0 && message.readableBytes() < length) {
+                    return;
                 }
-                //头部3个字节（FE5AA5）
-                String sxThreeHead = CommonUtils.bytesToHexString(headByte);
-                //判断是否是松下的正常通讯协议
-                if (this.sxMap.containsKey(sxThreeHead)) {
-                    //查看包长度
-                    byte[] lengthBytes = new byte[2];
-                    //查看第4、5字节的数据包长度
-                    lengthBytes[0] = message.getByte(3);
-                    lengthBytes[1] = message.getByte(4);
-                    //查看数据包应该有的长度(字节长度)
-                    int length = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
-                    //判断可读长度是否多于数据包长度（是否是一个完整数据包）
-                    if (length > 0 && bufNum >= length) {
-                        //将一个完整数据包读取到bytes数组中
-                        byte[] bytes = new byte[length];
-                        message.readBytes(bytes);
-                        //解析完整数据包成16进制
-                        String str = CommonUtils.bytesToHexString(bytes);
-                        HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
-                        if (null != handlerParam) {
-                            out.add(handlerParam);
-                        }
-                        //如果还有可读字节，则继续递归读取
-                        if (message.readableBytes() > 0) {
-                            this.sxRecursionReadBytes(ctx, message, out);
-                        }
-                    } else {
-                        //将message拷贝到tempMsg中暂存
-                        this.tempMsg.writeBytes(message);
-                    }
+                //将一个完整数据包读取到bytes数组中
+                byte[] bytes = new byte[length];
+                message.readBytes(bytes);
+                //解析完整数据包成16进制
+                String str = CommonUtils.bytesToHexString(bytes);
+                HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                if (null != handlerParam) {
+                    out.add(handlerParam);
                 }
             }
+            //无法识别的通讯协议
+            else {
+                return;
+            }
         }
+        //将message拷贝到tempMsg中暂存
+        this.tempMsg.writeBytes(message);
     }
+
+    /**
+     * 查询指定的字节字符串内容
+     *
+     * @param message
+     * @param num
+     * @return
+     */
+    private String getHexStringByByteBuf(ByteBuf message, int num) {
+        byte[] headBytes = new byte[num];
+        for (int index = 0; index < num; index++) {
+            headBytes[index] = message.getByte(index);
+        }
+        return CommonUtils.bytesToHexString(headBytes);
+    }
+
 }
