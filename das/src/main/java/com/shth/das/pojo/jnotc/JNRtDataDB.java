@@ -2,11 +2,7 @@ package com.shth.das.pojo.jnotc;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -16,12 +12,7 @@ import java.math.BigInteger;
 /**
  * 江南项目实时数据实体类
  */
-@SuppressWarnings("ALL")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 @Document("otc_weld_rtdata")
 public class JNRtDataDB implements Serializable {
 

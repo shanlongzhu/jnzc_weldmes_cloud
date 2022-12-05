@@ -2,11 +2,7 @@ package com.shth.das.pojo.jnsx;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,10 +12,6 @@ import java.math.BigInteger;
  * 松下实时数据实体类（GL5、FR2、AT共用）
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 public class SxRtDataDb implements Serializable {
 
     //松下设备共有的字段

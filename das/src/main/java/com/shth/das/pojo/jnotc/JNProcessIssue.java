@@ -1,20 +1,11 @@
 package com.shth.das.pojo.jnotc;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@SuppressWarnings("ALL")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 /**
  * 工艺下发规范实体类
  */
@@ -36,7 +27,9 @@ public class JNProcessIssue implements Serializable {
         }
     }
 
-    /**采集模块编号*/
+    /**
+     * 采集模块编号
+     */
     private String gatherNo;
     private String channelNo;           //通道号
     private BigDecimal spotWeldTime;    //点焊时间

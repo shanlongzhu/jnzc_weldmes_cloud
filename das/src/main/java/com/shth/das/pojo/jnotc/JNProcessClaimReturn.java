@@ -1,10 +1,6 @@
 package com.shth.das.pojo.jnotc;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,12 +8,7 @@ import java.math.BigDecimal;
 /**
  * 工艺索取返回实体类
  */
-@SuppressWarnings("ALL")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 public class JNProcessClaimReturn implements Serializable {
 
     private String gatherNo; //采集编号

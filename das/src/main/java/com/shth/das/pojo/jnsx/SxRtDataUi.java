@@ -1,11 +1,6 @@
 package com.shth.das.pojo.jnsx;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,10 +9,6 @@ import java.math.BigDecimal;
  * 松下实时数据解析前端展示实体类（GL5、FR2、AT共用）
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 public class SxRtDataUi implements Serializable {
 
     /**

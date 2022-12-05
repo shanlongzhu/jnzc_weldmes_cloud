@@ -1,22 +1,13 @@
 package com.shth.das.pojo.jnotc;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
 /**
  * 工艺索取规范实体类
  */
-@SuppressWarnings("ALL")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 public class JNProcessClaim implements Serializable {
 
     //枚举类

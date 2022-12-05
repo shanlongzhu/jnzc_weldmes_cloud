@@ -18,7 +18,6 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import com.shth.das.util.OshiSystemInfo;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -31,7 +30,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -220,11 +218,11 @@ public class ScheduledTask {
                 String head = "007E1001010145";
                 String foot = "007D";
                 if (!CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
-                    for (Map.Entry<String, ChannelHandlerContext> entry : CommonMap.OTC_GATHER_NO_CTX_MAP.entrySet()) {
+                    CommonMap.OTC_GATHER_NO_CTX_MAP.forEach((key, value) -> {
                         //采集编号
-                        String gatherNo = CommonUtils.lengthJoint(entry.getKey(), 4);
+                        String gatherNo = CommonUtils.lengthJoint(key, 4);
                         //设备通道
-                        Channel channel = entry.getValue().channel();
+                        Channel channel = value.channel();
                         if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                             //字符总长度：36
                             String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
@@ -232,7 +230,7 @@ public class ScheduledTask {
                                 channel.writeAndFlush(timeString);
                             }
                         }
-                    }
+                    });
                 }
             } catch (Exception e) {
                 log.error("OTC设备时间定时校准异常：", e);

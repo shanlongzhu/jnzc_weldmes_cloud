@@ -4,11 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -17,10 +13,6 @@ import java.math.BigInteger;
  * 采集模块实体类
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 @TableName(value = "machine_gather_info")
 public class GatherModel implements Serializable {
 
@@ -38,7 +30,7 @@ public class GatherModel implements Serializable {
     @TableField("mac_path")
     private String macPath;
     private String protocol;
-    @TableField(value = "machine_id",exist = false)
+    @TableField(value = "machine_id", exist = false)
     private BigInteger machineId;
 
 }

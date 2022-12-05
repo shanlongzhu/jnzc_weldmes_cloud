@@ -1,10 +1,6 @@
 package com.shth.das.pojo.db;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -15,10 +11,6 @@ import java.math.BigInteger;
  * @create: 2021-07-19
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 public class TaskClaimIssue implements Serializable {
 
     /**

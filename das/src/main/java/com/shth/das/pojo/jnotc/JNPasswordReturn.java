@@ -1,19 +1,10 @@
 package com.shth.das.pojo.jnotc;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Accessors(chain = true)
 /**
  * 密码返回实体类
  */
