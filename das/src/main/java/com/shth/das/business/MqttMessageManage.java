@@ -23,33 +23,37 @@ public class MqttMessageManage {
     private final Map<String, Consumer<MqttParam>> mqttMessageMap = new HashMap<>();
 
     public MqttMessageManage() {
+        initMqttMessageManage();
+    }
+
+    private void initMqttMessageManage() {
         MqttMessageAnalysis mqttMessageAnalysis = new MqttMessageAnalysis();
         //焊工刷卡领取任务[解锁焊机]
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.TaskClaimIssue), mqttMessageAnalysis::taskClaimIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.TaskClaimIssue), mqttMessageAnalysis::taskClaimIssue);
         //OTC（1.0）工艺下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessIssue), mqttMessageAnalysis::otcV1ProcessIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessIssue), mqttMessageAnalysis::otcV1ProcessIssue);
         //OTC（1.0）工艺索取
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessClaim), mqttMessageAnalysis::otcV1ProcessClaim);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1ProcessClaim), mqttMessageAnalysis::otcV1ProcessClaim);
         //OTC（1.0）密码下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1PasswordIssue), mqttMessageAnalysis::otcV1PasswordIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1PasswordIssue), mqttMessageAnalysis::otcV1PasswordIssue);
         //OTC（1.0）控制命令下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1CommandIssue), mqttMessageAnalysis::otcV1CommandIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1CommandIssue), mqttMessageAnalysis::otcV1CommandIssue);
         //松下GL5系列CO2焊机工艺下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5Co2ProcessIssue), mqttMessageAnalysis::sxGl5Co2ProcessIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5Co2ProcessIssue), mqttMessageAnalysis::sxGl5Co2ProcessIssue);
         //松下GL5系列TIG焊机工艺下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5TigProcessIssue), mqttMessageAnalysis::sxGl5TigProcessIssue);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5TigProcessIssue), mqttMessageAnalysis::sxGl5TigProcessIssue);
         //松下GL5系列【通道设定、通道读取】:106
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5WeldChannelSet), mqttMessageAnalysis::sxGl5WeldChannelSet);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5WeldChannelSet), mqttMessageAnalysis::sxGl5WeldChannelSet);
         //松下GL5系列【工艺索取、工艺删除】:106
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5ProcessClaim), mqttMessageAnalysis::sxGl5ProcessClaim);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxGl5ProcessClaim), mqttMessageAnalysis::sxGl5ProcessClaim);
         //松下【FR2、AT3】系列【通道参数查询、通道参数删除】
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamQuery), mqttMessageAnalysis::sxFr2ChannelParamQuery);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamQuery), mqttMessageAnalysis::sxFr2ChannelParamQuery);
         //松下FR2系列【通道参数下载】
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamDownload), mqttMessageAnalysis::sxFr2ChannelParamDownload);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxFr2ChannelParamDownload), mqttMessageAnalysis::sxFr2ChannelParamDownload);
         //松下AT3系列【通道参数下载】
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxAt3ParamDownload), mqttMessageAnalysis::sxAt3ParamDownload);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.SxAt3ParamDownload), mqttMessageAnalysis::sxAt3ParamDownload);
         //OTC程序包路径下发
-        mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1IssueProgramPath), mqttMessageAnalysis::otcV1IssueProgramPath);
+        this.mqttMessageMap.put(GainTopicName.getMqttDownTopicName(DownTopicEnum.OtcV1IssueProgramPath), mqttMessageAnalysis::otcV1IssueProgramPath);
     }
 
     /**

@@ -32,14 +32,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
     private final Map<Integer, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
     private final Map<Integer, Consumer<HandlerParam>> sxHandlerMapping = new HashMap<>();
 
-    private final JnOtcRtDataProtocol jnOtcRtDataProtocol;
-    private final JnSxRtDataProtocol jnSxRtDataProtocol;
+    private JnOtcRtDataProtocol jnOtcRtDataProtocol;
+    private JnSxRtDataProtocol jnSxRtDataProtocol;
 
     public NettyServerHandler() {
+        init();
+    }
+
+    private void init() {
         setOtcHandlerMapping();
         setSxHandlerMapping();
-        jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
-        jnSxRtDataProtocol = new JnSxRtDataProtocol();
+        this.jnOtcRtDataProtocol = new JnOtcRtDataProtocol();
+        this.jnSxRtDataProtocol = new JnSxRtDataProtocol();
     }
 
     private void setOtcHandlerMapping() {

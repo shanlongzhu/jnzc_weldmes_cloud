@@ -28,8 +28,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private final ByteBuf tempMsg = Unpooled.buffer(1024);
 
-    private final JnOtcDecoderAnalysis jnOtcDecoderAnalysis;
-    private final JnSxDecoderAnalysis jnSxDecoderAnalysis;
+    private JnOtcDecoderAnalysis jnOtcDecoderAnalysis;
+    private JnSxDecoderAnalysis jnSxDecoderAnalysis;
 
     /**
      * key:包头固定值
@@ -39,6 +39,10 @@ public class NettyDecoder extends ByteToMessageDecoder {
     private final Map<String, Integer> sxMap = new HashMap<>();
 
     public NettyDecoder() {
+        init();
+    }
+
+    private void init() {
         //OTC通讯协议固定头部
         this.otcMap.put("7E", 1);
         //松下第一次握手验证
@@ -47,9 +51,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
         this.sxMap.put("4C4A5348", 64);
         //其他（握手成功后正常传输的通讯协议）
         this.sxMap.put("FE5AA5", 0);
-
+        //OTC协议解析对象
         this.jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
-
+        //松下协议解析对象
         this.jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
     }
 

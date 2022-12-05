@@ -1,5 +1,6 @@
 package com.shth.das.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -18,7 +19,7 @@ public class BeanContext implements ApplicationContextAware {
      * 通过传递applicationContext参数初始化成员变量applicationContext
      */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         BeanContext.applicationContext = applicationContext;
     }
 

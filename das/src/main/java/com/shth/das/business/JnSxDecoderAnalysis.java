@@ -29,10 +29,10 @@ public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
     private final Map<Integer, Function<JnSxDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
 
     public JnSxDecoderAnalysis() {
-        setDecoderMapping();
+        initDecoderMapping();
     }
 
-    private void setDecoderMapping() {
+    private void initDecoderMapping() {
         //松下【GL5、FR2、AT3】第一次握手验证
         this.decoderMapping.put(42, this::jnSxFirstVerify);
         //松下【GL5、FR2、AT3】第二次握手验证

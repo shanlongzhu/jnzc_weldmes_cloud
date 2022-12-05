@@ -27,6 +27,10 @@ public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
     private final Map<Integer, Function<JnOtcDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
 
     public JnOtcDecoderAnalysis() {
+        init();
+    }
+
+    private void init() {
         //OTC（1.0）实时数据解析
         this.decoderMapping.put(282, this::jnOtcRtDataAnalysis);
         //OTC（1.0）工艺下发返回解析
