@@ -3,6 +3,10 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+  boot:
+    admin:
+      client:
+        url: http://localhost:9090
   data:
     mongodb:
       uri: mongodb://admin:123456@localhost:27017/weld_rtdb?authSource=admin
@@ -43,6 +47,26 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       #合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
+
+# 监控端点配置，访问地址：http://localhost:9090
+management:
+  endpoint: # 具体端点的配置
+    health:
+      show-details: always
+    info:
+      enabled: true
+  endpoints: # 全部端点的配置
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true
+
+# 配置info端点信息
+info:
+  appName: @project.artifactId@
+  version: @project.version@
+  company: das
+  author: dragon
 
 # mqtt客户端配置
 mqtt:
