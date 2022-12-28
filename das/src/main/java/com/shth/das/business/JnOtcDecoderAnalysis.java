@@ -2,7 +2,7 @@ package com.shth.das.business;
 
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnOtcDecoderParam;
-import com.shth.das.common.BaseAbstractDecoder;
+import com.shth.das.common.BaseDecoder;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,7 +18,7 @@ import java.util.function.Function;
  * @author: Shan Long
  * @create: 2021-08-08
  */
-public class JnOtcDecoderAnalysis extends BaseAbstractDecoder {
+public class JnOtcDecoderAnalysis implements BaseDecoder {
 
     /**
      * 保存字符串长度和方法映射关系

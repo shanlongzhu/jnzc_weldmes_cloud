@@ -55,10 +55,10 @@ public class NettyServer {
                     //System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
                     //ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
                     // 服务端绑定端口并且开始接收进来的连接请求
-                    ChannelFuture otccChannelFuture = server.bind(otcPort).sync();
+                    ChannelFuture otcChannelFuture = server.bind(otcPort).sync();
                     ChannelFuture sxChannelFuture = server.bind(sxPort).sync();
                     // 查看一下操作是不是成功结束了
-                    if (otccChannelFuture.isSuccess()) {
+                    if (otcChannelFuture.isSuccess()) {
                         //如果没有成功结束就处理一些事情,结束了就执行关闭服务端等操作
                         log.info("Netty服务端启动成功,监听端口是：" + otcPort);
                     }
@@ -67,7 +67,7 @@ public class NettyServer {
                         //如果没有成功结束就处理一些事情,结束了就执行关闭服务端等操作
                         log.info("Netty服务端启动成功,监听端口是：" + sxPort);
                     }
-                    otccChannelFuture.channel().closeFuture().sync();
+                    otcChannelFuture.channel().closeFuture().sync();
                     sxChannelFuture.channel().closeFuture().sync();
                 } catch (Exception e) {
                     log.error("服务端启动异常：{}", e.getMessage());

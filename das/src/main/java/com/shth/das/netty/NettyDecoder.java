@@ -1,5 +1,6 @@
 package com.shth.das.netty;
 
+import com.shth.das.business.DecoderContext;
 import com.shth.das.business.JnOtcDecoderAnalysis;
 import com.shth.das.business.JnSxDecoderAnalysis;
 import com.shth.das.codeparam.HandlerParam;
@@ -28,8 +29,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
      */
     private final ByteBuf tempMsg = Unpooled.buffer(1024);
 
-    private JnOtcDecoderAnalysis jnOtcDecoderAnalysis;
-    private JnSxDecoderAnalysis jnSxDecoderAnalysis;
+    private DecoderContext decoderContext;
 
     /**
      * key:包头固定值
@@ -51,10 +51,6 @@ public class NettyDecoder extends ByteToMessageDecoder {
         this.sxMap.put("4C4A5348", 64);
         //其他（握手成功后正常传输的通讯协议）
         this.sxMap.put("FE5AA5", 0);
-        //OTC协议解析对象
-        this.jnOtcDecoderAnalysis = new JnOtcDecoderAnalysis();
-        //松下协议解析对象
-        this.jnSxDecoderAnalysis = new JnSxDecoderAnalysis();
     }
 
     @Override
@@ -79,16 +75,18 @@ public class NettyDecoder extends ByteToMessageDecoder {
             int serverPort = inetSocket.getPort();
             //端口为otcPort，则为江南版OTC通讯协议
             if (serverPort == CommonFunction.getOtcPort()) {
+                if (this.decoderContext == null) {
+                    this.decoderContext = new DecoderContext(new JnOtcDecoderAnalysis());
+                }
                 this.otcRecursionReadBytes(ctx, message, out);
             }
             //端口为sxPort，则为松下通讯协议
-            if (serverPort == CommonFunction.getSxPort()) {
+            else if (serverPort == CommonFunction.getSxPort()) {
+                if (this.decoderContext == null) {
+                    this.decoderContext = new DecoderContext(new JnSxDecoderAnalysis());
+                }
                 this.sxRecursionReadBytes(ctx, message, out);
             }
-            //读写指针清空
-            message.clear();
-            //内容清零（清空缓冲区）
-            message.setZero(0, message.capacity());
         }
         //读写指针清空
         byteBuf.clear();
@@ -131,7 +129,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
             message.readBytes(bytes);
             //解析完整数据包成16进制
             String str = CommonUtils.bytesToHexString(bytes);
-            HandlerParam handlerParam = jnOtcDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+            HandlerParam handlerParam = decoderContext.protocolAnalysisSelector(ctx, str);
             if (null != handlerParam) {
                 out.add(handlerParam);
             }
@@ -167,7 +165,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 byte[] bytes = new byte[sxFourHeadLength];
                 message.readBytes(bytes);
                 String str = CommonUtils.bytesToHexString(bytes);
-                HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                HandlerParam handlerParam = decoderContext.protocolAnalysisSelector(ctx, str);
                 if (null != handlerParam) {
                     out.add(handlerParam);
                 }
@@ -190,7 +188,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
                 message.readBytes(bytes);
                 //解析完整数据包成16进制
                 String str = CommonUtils.bytesToHexString(bytes);
-                HandlerParam handlerParam = jnSxDecoderAnalysis.baseProtocolAnalysis(ctx, str);
+                HandlerParam handlerParam = decoderContext.protocolAnalysisSelector(ctx, str);
                 if (null != handlerParam) {
                     out.add(handlerParam);
                 }

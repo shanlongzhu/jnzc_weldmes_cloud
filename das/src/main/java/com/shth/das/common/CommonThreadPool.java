@@ -28,7 +28,7 @@ public class CommonThreadPool {
      * 最大线程：2000
      * 超时时间：30秒
      */
-    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(100, 1000, 30000, TimeUnit.MILLISECONDS,
+    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(50, 1000, 30000, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<>(10), new CommonThreadPool.CustomRejectedExecutionHandler());
 
 

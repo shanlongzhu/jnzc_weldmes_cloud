@@ -3,7 +3,7 @@ package com.shth.das.business;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnSxDecoderParam;
 import com.shth.das.codeparam.SxVerificationCode;
-import com.shth.das.common.BaseAbstractDecoder;
+import com.shth.das.common.BaseDecoder;
 import com.shth.das.pojo.db.SxWeldModel;
 import com.shth.das.pojo.jnsx.*;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +20,7 @@ import java.util.function.Function;
  * @create: 2021-08-09
  */
 @Slf4j
-public class JnSxDecoderAnalysis extends BaseAbstractDecoder {
+public class JnSxDecoderAnalysis implements BaseDecoder {
 
     /**
      * 保存字符串长度和方法映射关系
