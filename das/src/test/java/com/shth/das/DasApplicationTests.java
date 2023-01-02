@@ -79,8 +79,10 @@ public class DasApplicationTests extends BaseTest {
                 int i = 1 / 0;
             } catch (Exception e) {
                 log.error("测试编程式事务异常,手动回滚事务：", e);
-                //手动回滚
-                taskMapper.deleteById(taskModel);
+                //手动回滚数据
+//                taskMapper.deleteById(taskModel);
+                //手动回滚事务
+                transactionStatus.setRollbackOnly();
             }
         });
     }
