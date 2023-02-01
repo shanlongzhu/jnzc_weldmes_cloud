@@ -24,13 +24,13 @@ https://gitee.com/zhushanlong/jnzc_weldmes_cloud.git
 
 ## 5.端口
 
-### Netty服务端（OTC）：5555
+#### Netty服务端（OTC）：5555
 
-### Netty服务端（松下）：9002
+#### Netty服务端（松下）：9002
 
-### Das：9090
+#### Das：9090
 
-### Mqtt服务端：1883
+#### Mqtt服务端：1883
 
 ## 6.数据走向流程图
 
