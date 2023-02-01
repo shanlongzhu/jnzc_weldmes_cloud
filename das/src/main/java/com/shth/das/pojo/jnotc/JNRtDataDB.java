@@ -3,7 +3,6 @@ package com.shth.das.pojo.jnotc;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,7 +12,7 @@ import java.math.BigInteger;
  * 江南项目实时数据实体类
  */
 @Data
-@Document("otc_weld_rtdata")
+//@Document("otc_weld_rtdata")
 public class JNRtDataDB implements Serializable {
 
     /**

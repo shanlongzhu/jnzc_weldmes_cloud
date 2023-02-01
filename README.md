@@ -4,7 +4,7 @@
 
 #### A.JDK 1.8、MySQL 5.7
 
-#### B.数据库：weldmesdb、weldmes-rtdata
+#### B.数据库：weldmesdb、weldmes-rtdata、mongodb
 
 #### C.消息队列服务端：EMQ
 
@@ -45,6 +45,8 @@ https://gitee.com/zhushanlong/jnzc_weldmes_cloud.git
 #### (1)SQL和日志监控：http://localhost:9090/druid/login.html
 
 #### (2)EMQ监控台：http://localhost:18083/#/login
+
+#### (3)SpringBoot监控台：http://localhost:9090
 
 ## 9.打包部署
 

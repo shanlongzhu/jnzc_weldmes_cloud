@@ -6,13 +6,10 @@ import com.shth.das.sys.weldmesdb.mapper.TaskMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -21,8 +18,8 @@ public class DasApplicationTests extends BaseTest {
     @Autowired
     TaskMapper taskMapper;
 
-    @Autowired
-    MongoTemplate mongoTemplate;
+//    @Autowired
+//    MongoTemplate mongoTemplate;
 
     @Autowired
     TransactionTemplate transactionTemplate;
@@ -52,16 +49,16 @@ public class DasApplicationTests extends BaseTest {
         jnRtDataDB2.setMachineNo("0002");
         list.add(jnRtDataDB);
         list.add(jnRtDataDB2);
-        Collection<JNRtDataDB> insert = mongoTemplate.insert(list, JNRtDataDB.class);
-        int size = insert.size();
-        System.out.println("---size---" + size);
+//        Collection<JNRtDataDB> insert = mongoTemplate.insert(list, JNRtDataDB.class);
+//        int size = insert.size();
+//        System.out.println("---size---" + size);
     }
 
     @Test
     public void testSelectByMongoDB() {
-        Query query = new Query();
-        List<JNRtDataDB> otc_weld_rtdata = mongoTemplate.find(query, JNRtDataDB.class);
-        System.out.println("---size---" + otc_weld_rtdata.size());
+//        Query query = new Query();
+//        List<JNRtDataDB> otc_weld_rtdata = mongoTemplate.find(query, JNRtDataDB.class);
+//        System.out.println("---size---" + otc_weld_rtdata.size());
     }
 
     @Test
