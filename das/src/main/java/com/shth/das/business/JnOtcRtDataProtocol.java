@@ -282,11 +282,13 @@ public class JnOtcRtDataProtocol {
     private static void otcLockMachineRetries(String gatherNo, String command, Channel channel) {
         try {
             gatherNo = CommonUtils.lengthJoint(gatherNo, 4);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("007E0A010101").append(command).append(gatherNo).append("00007D");
             //总长度：24（解锁焊机指令）
-            final String str = "007E0A010101" + command + gatherNo + "00007D";
+            //String str = "007E0A010101" + command + gatherNo + "00007D";
             //判断该焊机通道是否打开、是否活跃、是否可写
             if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                channel.writeAndFlush(str);
+                channel.writeAndFlush(stringBuilder.toString());
             }
         } catch (Exception e) {
             log.error("锁焊机或者解锁焊机重试异常：", e);
@@ -334,9 +336,11 @@ public class JnOtcRtDataProtocol {
                         String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
                         String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
                         String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
-                        String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                        StringBuilder strDate = new StringBuilder();
+                        strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
+                        //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
                         try {
-                            String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                            String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
                             data.setWeldTime(weldDateTime);
                         } catch (Exception e) {
                             log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
@@ -346,10 +350,8 @@ public class JnOtcRtDataProtocol {
                         //电流
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
                         //电压
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
+                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
+                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
                         //给定电流(焊机面板上的值)
                         data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));
                         //给定电压(焊机面板上的值)
@@ -447,8 +449,7 @@ public class JnOtcRtDataProtocol {
                                 for (WeldModel weld : weldList) {
                                     //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
                                     if (StringUtils.isNotBlank(weld.getGatherNo())) {
-                                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
-                                                map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
+                                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
                                         if (gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
                                             data.setMachineId(weld.getId());
                                             data.setMachineNo(weld.getMachineNo());
@@ -465,10 +466,12 @@ public class JnOtcRtDataProtocol {
                         String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
                         String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
                         String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
-                        String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                        StringBuilder strDate = new StringBuilder();
+                        strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
+                        //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
                         try {
-                            String weldDate = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
-                            String weldDateTime = LocalDateTime.parse(strDate, DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                            String weldDate = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                            String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
                             //判断实时数据是否当天数据，true：保存，false；赋值系统时间
                             if (weldDate.equals(nowDate)) {
                                 data.setWeldTime(weldDateTime);
@@ -481,30 +484,23 @@ public class JnOtcRtDataProtocol {
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));  //电压
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
+                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));  //电压
+                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
                         data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));//预置(给定)电流
-                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//预置(给定)电压
+                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//预置(给定)电压
                         data.setWeldedJunctionNo(Integer.valueOf(str.substring(70 + a, 78 + a), 16).toString());//焊口号
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));//焊机状态
                         data.setWireDiameter(BigDecimal.valueOf(Integer.valueOf(str.substring(80 + a, 82 + a), 16)));//焊丝直径
                         data.setWireMaterialsGases(BigDecimal.valueOf(Integer.valueOf(str.substring(82 + a, 84 + a), 16)));//焊丝材料和保护气体
                         data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));//焊接电流（中位数）
-                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压（中位数）
+                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压（中位数）
                         data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));//焊接电流微调
-                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
+                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
                         data.setChannelNo(Integer.valueOf(str.substring(100 + a, 102 + a), 16).toString());//当前通道号
                         data.setAlarmsEleMax(BigDecimal.valueOf(Integer.valueOf(str.substring(102 + a, 106 + a), 16)));//报警电流上限
-                        data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
+                        data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
-                        data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16))
-                                .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
+                        data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
                         //待机数据不存储，则针对起弧、收弧各存储一条待机数据
                         if (!CommonFunction.isOtcStandbySave()) {
                             //起弧（增加一条待机数据）
@@ -582,12 +578,15 @@ public class JnOtcRtDataProtocol {
             String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().intValue(), 4);//报警电流下限:0
             String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
             String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
-            String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity +
-                    weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity +
-                    gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust +
-                    alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
-            str = str.toUpperCase(); //字母全部转为大写
-            return str;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(spotWeldTime).append(preflowTime).append(initialEle)
+                    .append(initialVol).append(initialVolUnitary).append(weldElectricity).append(weldVoltage).append(weldVoltageUnitary).append(extinguishArcEle)
+                    .append(extinguishArcVol).append(extinguishArcVolUnitary).append(hysteresisAspirated).append(arcPeculiarity).append(gases).append(wireDiameter)
+                    .append(wireMaterials).append(weldProcess).append(controlInfo).append(weldEleAdjust).append(weldVolAdjust).append(extinguishArcEleAdjust)
+                    .append(extinguishArcVolAdjust).append(alarmsElectricityMax).append(alarmsElectricityMin).append(alarmsVoltageMax).append(alarmsVoltageMin);
+            //String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity + weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity + gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust + alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
+            //str = str.toUpperCase(); //字母全部转为大写
+            return stringBuilder.toString().toUpperCase();
         }
         return null;
     }
@@ -626,9 +625,11 @@ public class JnOtcRtDataProtocol {
             String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);
             //通道号：01
             String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);
-            String str = head + order + gatherNo + channelNo + foot;
-            str = str.toUpperCase();
-            return str;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(foot);
+//            String str = head + order + gatherNo + channelNo + foot;
+//            str = str.toUpperCase();
+            return stringBuilder.toString().toUpperCase();
         }
         return null;
     }
@@ -646,24 +647,18 @@ public class JnOtcRtDataProtocol {
                 claim.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString()); //采集模块编号
                 claim.setStatus(Integer.valueOf(str.substring(16, 18), 16));
                 claim.setChannelNo(Integer.valueOf(str.substring(18, 20), 16).toString());
-                claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//点焊时间
-                claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//提前送气时间
+                claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//点焊时间
+                claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//提前送气时间
                 claim.setInitialEle(BigDecimal.valueOf(Long.valueOf(str.substring(28, 32), 16)));//初期电流
-                claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//初期电压
+                claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//初期电压
                 claim.setInitialVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(36, 40), 16)));//初期电压一元
                 claim.setWeldElectricity(BigDecimal.valueOf(Long.valueOf(str.substring(40, 44), 16)));//焊接电流
-                claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压
+                claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压
                 claim.setWeldVoltageUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(48, 52), 16)));//焊接电压一元
                 claim.setExtinguishArcEle(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));//收弧电流
-                claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压
+                claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压
                 claim.setExtinguishArcVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));//收弧电压一元
-                claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//滞后送气
+                claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//滞后送气
                 claim.setArcPeculiarity(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));//电弧特性
                 claim.setGases(BigDecimal.valueOf(Long.valueOf(str.substring(72, 74), 16)));//气体
                 claim.setWireDiameter(BigDecimal.valueOf(Long.valueOf(str.substring(74, 76), 16)));//焊丝直径
@@ -671,17 +666,13 @@ public class JnOtcRtDataProtocol {
                 claim.setWeldProcess(Integer.valueOf(str.substring(78, 80), 16).toString());//焊接过程
                 claim.setControlInfo(Integer.valueOf(str.substring(80, 84), 16).toString());//控制信息
                 claim.setWeldEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(84, 86), 16)));//焊接电流微调
-                claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
+                claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
                 claim.setExtinguishArcEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(88, 90), 16)));//收弧电流微调
-                claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压微调
+                claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压微调
                 claim.setAlarmsElectricityMax(BigDecimal.valueOf(Long.valueOf(str.substring(92, 96), 16)));//报警电流上限
-                claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
+                claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
                 claim.setAlarmsElectricityMin(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));//报警电流下限
-                claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16))
-                        .divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
+                claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
                 return claim;
             }
         }
@@ -701,9 +692,11 @@ public class JnOtcRtDataProtocol {
             String foot = JNPasswordIssue.Flag.FOOT.value;
             String gatherNo = CommonUtils.lengthJoint(jnPasswordIssue.getGatherNo(), 4);
             String password = CommonUtils.lengthJoint(jnPasswordIssue.getPassword(), 4);
-            String str = head + order + gatherNo + password + foot;
-            str = str.toUpperCase();
-            return str;
+//            String str = head + order + gatherNo + password + foot;
+//            str = str.toUpperCase();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(head).append(order).append(gatherNo).append(password).append(foot);
+            return stringBuilder.toString().toUpperCase();
         }
         return null;
     }
@@ -721,9 +714,11 @@ public class JnOtcRtDataProtocol {
             String foot = JNCommandIssue.Flag.FOOT.value;
             String gatherNo = CommonUtils.lengthJoint(jnCommandIssue.getGatherNo(), 4);
             String command = CommonUtils.lengthJoint(jnCommandIssue.getCommand(), 2);
-            String str = head + order + gatherNo + command + foot;
-            str = str.toUpperCase();
-            return str;
+//            String str = head + order + gatherNo + command + foot;
+//            str = str.toUpperCase();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(head).append(order).append(gatherNo).append(command).append(foot);
+            return stringBuilder.toString().toUpperCase();
         }
         return null;
     }
@@ -737,17 +732,19 @@ public class JnOtcRtDataProtocol {
     public static String otcV1IssueProgramPath(OtcV1IssueProgramPath programPath) {
         if (null != programPath) {
             try {
-                final String head = "007E3C01010111";
-                final String gatherNo = CommonUtils.lengthJoint(programPath.getGatherNo(), 4);
-                final String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
+                String head = "007E3C01010111";
+                String gatherNo = CommonUtils.lengthJoint(programPath.getGatherNo(), 4);
+                String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
                 //ASCII码转16进制
-                final String path = CommonUtils.convertStringToHex(programPath.getPackagePath());
+                String path = CommonUtils.convertStringToHex(programPath.getPackagePath());
                 //长度拼接（后面拼接0）
-                final String packagePath = CommonUtils.backLengthJoint(path, 100);
-                final String foot = "007D";
-                final String str = head + gatherNo + port + packagePath + foot;
-                if (str.length() == 126) {
-                    return str.toUpperCase();
+                String packagePath = CommonUtils.backLengthJoint(path, 100);
+                String foot = "007D";
+                StringBuilder stringBuilder = new StringBuilder();
+//                final String str = head + gatherNo + port + packagePath + foot;
+                stringBuilder.append(head).append(gatherNo).append(port).append(packagePath).append(foot);
+                if (stringBuilder.toString().length() == 126) {
+                    return stringBuilder.toString().toUpperCase();
                 }
             } catch (Exception e) {
                 log.error("OTC程序包路径下发字符串拼接异常：", e);
@@ -843,8 +840,7 @@ public class JnOtcRtDataProtocol {
             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
                 for (WeldModel weld : weldList) {
                     if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).
-                                map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
+                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
                         if (gatherNoList.contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
                             return weld.getId();
                         }

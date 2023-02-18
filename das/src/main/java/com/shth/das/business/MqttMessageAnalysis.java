@@ -94,11 +94,13 @@ public class MqttMessageAnalysis {
                     Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(gatherNo).channel();
                     //数据长度拼接
                     String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("007E0A01010119").append(gatherno).append("00007D");
                     //总长度：24（解锁焊机指令）
-                    String str = "007E0A01010119" + gatherno + "00007D";
+                    //String str = "007E0A01010119" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                        channel.writeAndFlush(str);
+                        channel.writeAndFlush(stringBuilder.toString());
                     }
                 }
             } catch (Exception e) {
