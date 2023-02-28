@@ -27,12 +27,16 @@ public class BeanContext implements ApplicationContextAware {
         return applicationContext;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T getBean(String name) throws BeansException {
-        return (T) applicationContext.getBean(name);
+    public static <T> T getBean(String name, Class<T> clazz) throws BeansException {
+        return applicationContext.getBean(name, clazz);
     }
 
-    public static <T> T getBean(Class<T> clz) throws BeansException {
-        return (T) applicationContext.getBean(clz);
+    public static <T> T getBean(Class<T> clazz) throws BeansException {
+        return applicationContext.getBean(clazz);
     }
+
+    public static Object getBean(String beanName) throws BeansException {
+        return applicationContext.getBean(beanName);
+    }
+
 }

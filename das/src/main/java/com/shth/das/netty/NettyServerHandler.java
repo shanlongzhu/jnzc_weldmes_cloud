@@ -92,9 +92,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
      * 服务端收到消息执行的方法
      *
      * @param ctx：通道
-     * @param msg：数据
+     * @param param：数据
      */
-    @SuppressWarnings({"ALL"})
     @Override
     public void channelRead0(ChannelHandlerContext ctx, HandlerParam param) {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();

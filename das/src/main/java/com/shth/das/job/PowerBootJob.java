@@ -99,7 +99,6 @@ public class PowerBootJob {
     /**
      * 启动OTC开机设备阻塞队列消费者
      */
-    @SuppressWarnings("InfiniteLoopStatement")
     public void startOtcOnQueueConsumer() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
@@ -131,7 +130,6 @@ public class PowerBootJob {
     /**
      * 启动OTC关机设备阻塞队列消费者
      */
-    @SuppressWarnings("InfiniteLoopStatement")
     public void startOtcOffQueueConsumer() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
@@ -159,7 +157,6 @@ public class PowerBootJob {
     /**
      * 启动松下新增设备从队列存储的消费者
      */
-    @SuppressWarnings("InfiniteLoopStatement")
     public void startSxAddMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
@@ -181,7 +178,6 @@ public class PowerBootJob {
     /**
      * 读取松下开机阻塞队列数据，存储数据库
      */
-    @SuppressWarnings("InfiniteLoopStatement")
     public void startSxOnMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
@@ -214,7 +210,6 @@ public class PowerBootJob {
     /**
      * 读取松下关机阻塞队列数据，存储数据库
      */
-    @SuppressWarnings("InfiniteLoopStatement")
     public void startSxOffMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {

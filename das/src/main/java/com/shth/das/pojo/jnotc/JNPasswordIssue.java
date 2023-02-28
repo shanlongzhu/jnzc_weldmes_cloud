@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
 @Data
 /**
  * 密码下发实体类

@@ -1,6 +1,6 @@
 package com.shth.das.business;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.SxVerificationCode;
 import com.shth.das.common.*;
@@ -849,7 +849,6 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return 松下CO2焊机工艺索取返回实体类
      */
-    @SuppressWarnings("AlibabaMethodTooLong")
     public static SxCO2ProcessClaimReturn sxCO2ProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
@@ -976,7 +975,6 @@ public class JnSxRtDataProtocol {
      * @param str      16进制字符串
      * @return 松下TIG焊机工艺索取返回实体类
      */
-    @SuppressWarnings("AlibabaMethodTooLong")
     public static SxTIGProcessClaimReturn sxTIGProcessClaimReturnAnalysis(String clientIp, String str) {
         if (CommonUtils.isNotEmpty(str)) {
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
@@ -1489,7 +1487,6 @@ public class JnSxRtDataProtocol {
      * @param sxCO2ProcessIssue 松下CO2焊机工艺下发实体类
      * @return 16进制字符串
      */
-    @SuppressWarnings("AlibabaMethodTooLong")
     public static String sxCO2ProcessProtocol(SxCO2ProcessIssue sxCO2ProcessIssue) {
         if (null != sxCO2ProcessIssue) {
             try {
@@ -1608,7 +1605,6 @@ public class JnSxRtDataProtocol {
      * @param sxTigProcessIssue 松下TIG焊机实体类
      * @return 16进制工艺下发参数
      */
-    @SuppressWarnings("AlibabaMethodTooLong")
     public static String sxTigProcessProtocol(SxTIGProcessIssue sxTigProcessIssue) {
         if (null != sxTigProcessIssue) {
             try {
@@ -1840,7 +1836,7 @@ public class JnSxRtDataProtocol {
     /**
      * 松下FR2系列【通道参数下载】
      *
-     * @param channelParamReplyHave 参数下载实体类
+     * @param paramDownload 参数下载实体类
      * @return 16进制字符串
      */
     public static String sxChannelParamReplyHaveProtocol(SxChannelParamReplyHave paramDownload) {

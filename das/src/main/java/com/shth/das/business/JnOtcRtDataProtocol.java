@@ -1,8 +1,6 @@
 package com.shth.das.business;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
@@ -17,11 +15,12 @@ import com.shth.das.util.DateTimeUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,21 +111,21 @@ public class JnOtcRtDataProtocol {
             Map<String, Object> map = handlerParam.getValue();
             //实时数据发送到前端
             if (map.containsKey(JNRtDataUI.class.getSimpleName())) {
-                List<JNRtDataUI> jnRtDataUis = (List<JNRtDataUI>) map.get(JNRtDataUI.class.getSimpleName());
+                List<JNRtDataUI> jnRtDataUis = JSON.parseArray(map.get(JNRtDataUI.class.getSimpleName()).toString(), JNRtDataUI.class);
                 if (CommonUtils.isNotEmpty(jnRtDataUis)) {
                     String gatherNo = jnRtDataUis.get(0).getGatherNo();
                     String clientIp = jnRtDataUis.get(0).getWeldIp();
                     //采集盒IP地址盒采集编号绑定
                     gatherNoIpBinding(clientIp, handlerParam.getCtx(), gatherNo);
                     //集合转字符串[消除对同一对象的循环引用]
-                    String message = JSON.toJSONString(jnRtDataUis, SerializerFeature.DisableCircularReferenceDetect);
+                    String message = JSON.toJSONString(jnRtDataUis);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), message, 0);
                 }
             }
             //实时数据存数据库
             if (map.containsKey(JNRtDataDB.class.getSimpleName())) {
-                List<JNRtDataDB> list = (List<JNRtDataDB>) map.get(JNRtDataDB.class.getSimpleName());
+                List<JNRtDataDB> list = JSON.parseArray(map.get(JNRtDataDB.class.getSimpleName()).toString(), JNRtDataDB.class);
                 if (CommonUtils.isNotEmpty(list)) {
                     //添加到OTC阻塞队列（通过定时任务存储）;offer:当阻塞队列满了，则不再增加
                     list.forEach(CommonQueue.OTC_LINKED_BLOCKING_QUEUE::offer);
@@ -314,7 +313,7 @@ public class JnOtcRtDataProtocol {
                         JNRtDataUI data = new JNRtDataUI();
                         //采集模块编号
                         data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                        if (!CollectionUtils.isEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                        if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                             TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                             if (null != taskClaimIssue) {
                                 data.setWelderId(taskClaimIssue.getWelderId());
@@ -350,8 +349,8 @@ public class JnOtcRtDataProtocol {
                         //电流
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
                         //电压
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
+                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));
+                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
                         //给定电流(焊机面板上的值)
                         data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));
                         //给定电压(焊机面板上的值)
@@ -429,7 +428,7 @@ public class JnOtcRtDataProtocol {
                             }
                         }
                         //焊工、任务、焊机等信息判断并赋值
-                        if (!CollectionUtils.isEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                        if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
                             TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
                             if (null != taskClaimIssue) {
                                 data.setWelderId(taskClaimIssue.getWelderId());
@@ -484,23 +483,23 @@ public class JnOtcRtDataProtocol {
                             data.setWeldTime(nowDateTime);
                         }
                         data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));  //电压
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//送丝速度
+                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));  //电压
+                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
                         data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));//预置(给定)电流
-                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//预置(给定)电压
+                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//预置(给定)电压
                         data.setWeldedJunctionNo(Integer.valueOf(str.substring(70 + a, 78 + a), 16).toString());//焊口号
                         data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));//焊机状态
                         data.setWireDiameter(BigDecimal.valueOf(Integer.valueOf(str.substring(80 + a, 82 + a), 16)));//焊丝直径
                         data.setWireMaterialsGases(BigDecimal.valueOf(Integer.valueOf(str.substring(82 + a, 84 + a), 16)));//焊丝材料和保护气体
                         data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));//焊接电流（中位数）
-                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压（中位数）
+                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压（中位数）
                         data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));//焊接电流微调
-                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
+                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
                         data.setChannelNo(Integer.valueOf(str.substring(100 + a, 102 + a), 16).toString());//当前通道号
                         data.setAlarmsEleMax(BigDecimal.valueOf(Integer.valueOf(str.substring(102 + a, 106 + a), 16)));//报警电流上限
-                        data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
+                        data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
                         data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
-                        data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
+                        data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
                         //待机数据不存储，则针对起弧、收弧各存储一条待机数据
                         if (!CommonFunction.isOtcStandbySave()) {
                             //起弧（增加一条待机数据）
@@ -579,11 +578,7 @@ public class JnOtcRtDataProtocol {
             String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
             String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(spotWeldTime).append(preflowTime).append(initialEle)
-                    .append(initialVol).append(initialVolUnitary).append(weldElectricity).append(weldVoltage).append(weldVoltageUnitary).append(extinguishArcEle)
-                    .append(extinguishArcVol).append(extinguishArcVolUnitary).append(hysteresisAspirated).append(arcPeculiarity).append(gases).append(wireDiameter)
-                    .append(wireMaterials).append(weldProcess).append(controlInfo).append(weldEleAdjust).append(weldVolAdjust).append(extinguishArcEleAdjust)
-                    .append(extinguishArcVolAdjust).append(alarmsElectricityMax).append(alarmsElectricityMin).append(alarmsVoltageMax).append(alarmsVoltageMin);
+            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(spotWeldTime).append(preflowTime).append(initialEle).append(initialVol).append(initialVolUnitary).append(weldElectricity).append(weldVoltage).append(weldVoltageUnitary).append(extinguishArcEle).append(extinguishArcVol).append(extinguishArcVolUnitary).append(hysteresisAspirated).append(arcPeculiarity).append(gases).append(wireDiameter).append(wireMaterials).append(weldProcess).append(controlInfo).append(weldEleAdjust).append(weldVolAdjust).append(extinguishArcEleAdjust).append(extinguishArcVolAdjust).append(alarmsElectricityMax).append(alarmsElectricityMin).append(alarmsVoltageMax).append(alarmsVoltageMin);
             //String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity + weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity + gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust + alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
             //str = str.toUpperCase(); //字母全部转为大写
             return stringBuilder.toString().toUpperCase();
@@ -647,18 +642,18 @@ public class JnOtcRtDataProtocol {
                 claim.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString()); //采集模块编号
                 claim.setStatus(Integer.valueOf(str.substring(16, 18), 16));
                 claim.setChannelNo(Integer.valueOf(str.substring(18, 20), 16).toString());
-                claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//点焊时间
-                claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//提前送气时间
+                claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//点焊时间
+                claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//提前送气时间
                 claim.setInitialEle(BigDecimal.valueOf(Long.valueOf(str.substring(28, 32), 16)));//初期电流
-                claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//初期电压
+                claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//初期电压
                 claim.setInitialVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(36, 40), 16)));//初期电压一元
                 claim.setWeldElectricity(BigDecimal.valueOf(Long.valueOf(str.substring(40, 44), 16)));//焊接电流
-                claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压
+                claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压
                 claim.setWeldVoltageUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(48, 52), 16)));//焊接电压一元
                 claim.setExtinguishArcEle(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));//收弧电流
-                claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压
+                claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压
                 claim.setExtinguishArcVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));//收弧电压一元
-                claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//滞后送气
+                claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//滞后送气
                 claim.setArcPeculiarity(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));//电弧特性
                 claim.setGases(BigDecimal.valueOf(Long.valueOf(str.substring(72, 74), 16)));//气体
                 claim.setWireDiameter(BigDecimal.valueOf(Long.valueOf(str.substring(74, 76), 16)));//焊丝直径
@@ -666,13 +661,13 @@ public class JnOtcRtDataProtocol {
                 claim.setWeldProcess(Integer.valueOf(str.substring(78, 80), 16).toString());//焊接过程
                 claim.setControlInfo(Integer.valueOf(str.substring(80, 84), 16).toString());//控制信息
                 claim.setWeldEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(84, 86), 16)));//焊接电流微调
-                claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//焊接电压微调
+                claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
                 claim.setExtinguishArcEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(88, 90), 16)));//收弧电流微调
-                claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//收弧电压微调
+                claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压微调
                 claim.setAlarmsElectricityMax(BigDecimal.valueOf(Long.valueOf(str.substring(92, 96), 16)));//报警电流上限
-                claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压上限
+                claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
                 claim.setAlarmsElectricityMin(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));//报警电流下限
-                claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, BigDecimal.ROUND_HALF_UP));//报警电压下限
+                claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
                 return claim;
             }
         }
@@ -883,7 +878,7 @@ public class JnOtcRtDataProtocol {
                 jnRtDataUi.setWeldIp(clientIp);
                 jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
                 dataList.add(jnRtDataUi);
-                String dataArray = JSONArray.toJSONString(dataList);
+                String dataArray = JSON.toJSONString(dataList);
                 EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray, 0);
             });
             CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
