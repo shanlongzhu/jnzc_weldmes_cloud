@@ -36,7 +36,7 @@ public class SxCO2ProcessClaimReturn implements Serializable {
     /**
      * 数据标志（1：有数据；0：无数据）
      */
-    private int dataFlag;
+    private Integer dataFlag;
     /**
      * 通道标志
      */
@@ -88,7 +88,7 @@ public class SxCO2ProcessClaimReturn implements Serializable {
     private BigDecimal beforeAspiratedTime; //提前送气时间
     private BigDecimal afterStopGasTime;    //滞后停气时间
     private Integer unitaryDifference;      //一元/分别
-    private int nowChannel;                 //当前通道
+    private Integer nowChannel;                 //当前通道
 
     /*
     动态限流参数

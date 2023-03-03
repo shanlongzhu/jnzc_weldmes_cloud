@@ -20,7 +20,7 @@ public class SxProcessClaim implements Serializable {
     /**
      * 读写标志（1：读取；3：删除）
      */
-    private int readWriteFlag;
+    private Integer readWriteFlag;
 
     /**
      * 通道编号

@@ -18,11 +18,11 @@ public class JnLockMachineReturn {
     /**
      * 控制命令（18：锁焊机，19：解锁）
      */
-    private int command;
+    private Integer command;
 
     /**
      * 接收结果（0：成功， 1：失败）
      */
-    private int result;
+    private Integer result;
 
 }

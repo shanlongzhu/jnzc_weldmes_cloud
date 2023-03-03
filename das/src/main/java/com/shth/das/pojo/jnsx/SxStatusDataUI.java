@@ -25,11 +25,11 @@ public class SxStatusDataUI implements Serializable {
     private Integer gases;              //气体
     private Integer weldingControl;     //焊接控制
     private BigDecimal spotWeldingTime; //点焊时间
-    private int nowChannel;             //当前通道
-    private int maxChannel;             //最大通道
+    private Integer nowChannel;             //当前通道
+    private Integer maxChannel;             //最大通道
     private Integer unitaryDifference;  //一元/分别
 
-    private int weldFlag;               //设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
+    private Integer weldFlag;               //设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
 
     //GL5系列CO2
     private Integer weldType;           //设备类型

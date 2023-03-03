@@ -19,7 +19,7 @@ public class SxChannelParamQuery implements Serializable {
     /**
      * 控制（1.查询，3.删除）
      */
-    private int command;
+    private Integer command;
     /**
      * 要查询的通道
      */

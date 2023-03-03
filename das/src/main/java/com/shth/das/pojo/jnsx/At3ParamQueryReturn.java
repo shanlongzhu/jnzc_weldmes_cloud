@@ -26,7 +26,7 @@ public class At3ParamQueryReturn implements Serializable {
     /**
      * 控制（1.查询）
      */
-    private int command;
+    private Integer command;
     /**
      * 通道号
      */

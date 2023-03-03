@@ -36,7 +36,7 @@ public class SxTIGProcessClaimReturn implements Serializable {
     /**
      * 数据标志（1：有数据；0：无数据）
      */
-    private int dataFlag;
+    private Integer dataFlag;
     /**
      * 通道标志
      */

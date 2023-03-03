@@ -21,7 +21,7 @@ public class At3ParamDownload implements Serializable {
     /**
      * 控制（2.下载）
      */
-    private int command;
+    private Integer command;
     /**
      * 通道号
      */

@@ -40,7 +40,7 @@ public class SxRtDataUi implements Serializable {
     private BigDecimal realityWireSpeed;    //实际送丝速度
     private String alarmsCode;              //报警代码
 
-    private int weldFlag;               //设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
+    private Integer weldFlag;               //设备标志（0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
 
     //FR2系列CO2
     private BigDecimal presetInitialEle; //预置初期电流

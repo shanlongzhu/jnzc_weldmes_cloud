@@ -25,7 +25,7 @@ public class SxRtDataDb implements Serializable {
     private BigDecimal realityWeldEle;  //实际焊接电流
     private BigDecimal realityWeldVol;  //实际焊接电压
     private String createTime;          //创建时间
-    private int weldFlag;               //设备标志（自定义字段：0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
+    private Integer weldFlag;               //设备标志（自定义字段：0:GL5CO2,1:FR2CO2,2:FR2TIG,3:AT）
     private BigInteger welderId;        //焊工id（任务领取时不为空）
     private String welderName;          //焊工姓名（任务领取时不为空）
     private BigInteger welderDeptId;    //焊工组织id（任务领取时不为空）

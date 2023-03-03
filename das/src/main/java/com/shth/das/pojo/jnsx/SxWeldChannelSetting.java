@@ -21,17 +21,17 @@ public class SxWeldChannelSetting implements Serializable {
      * 读写标志（0：主动上传；1：读取；2：设置；3：删除）
      * 共有
      */
-    private int readWriteFlag;
+    private Integer readWriteFlag;
 
     /**
      * 功能（0：解锁；1：锁定）
      * 仅通道设定有
      */
-    private int function;
+    private Integer function;
 
     /**
      * 通道选择（0：焊接通道；1：PC通道）
      * 仅通道设定有
      */
-    private int channelSelect;
+    private Integer channelSelect;
 }

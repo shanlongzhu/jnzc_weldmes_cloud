@@ -62,7 +62,7 @@ public class SxCO2ProcessIssue {
     private BigDecimal beforeAspiratedTime; //提前送气时间
     private BigDecimal afterStopGasTime;    //滞后停气时间
     private Integer unitaryDifference;      //一元/分别
-    private int nowChannel;                 //当前通道
+    private Integer nowChannel;                 //当前通道
 
     /*
     动态限流参数

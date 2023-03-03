@@ -53,7 +53,7 @@ public class JnOtcRtDataProtocol {
                 //没有刷卡，锁定焊机
                 else {
                     //总长度：24（锁焊机指令）
-                    final String str = "007E0A01010118" + gatherno + "00007D";
+                    String str = "007E0A01010118" + gatherno + "00007D";
                     //判断该焊机通道是否打开、是否活跃、是否可写
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                         channel.writeAndFlush(str);
@@ -65,7 +65,7 @@ public class JnOtcRtDataProtocol {
         } else {
             try {
                 //总长度：24（解锁焊机指令）
-                final String str = "007E0A01010119" + gatherno + "00007D";
+                String str = "007E0A01010119" + gatherno + "00007D";
                 //判断该焊机通道是否打开、是否活跃、是否可写
                 if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
                     channel.writeAndFlush(str);
@@ -149,7 +149,7 @@ public class JnOtcRtDataProtocol {
             Map<String, Object> map = handlerParam.getValue();
             //工艺下发返回
             if (map.containsKey(JNProcessIssueReturn.class.getSimpleName())) {
-                JNProcessIssueReturn processIssueReturn = (JNProcessIssueReturn) map.get(JNProcessIssueReturn.class.getSimpleName());
+                JNProcessIssueReturn processIssueReturn = JSON.parseObject(map.get(JNProcessIssueReturn.class.getSimpleName()).toString(), JNProcessIssueReturn.class);
                 if (null != processIssueReturn) {
                     //Java类转JSON字符串
                     String message = JSON.toJSONString(processIssueReturn);
@@ -170,7 +170,7 @@ public class JnOtcRtDataProtocol {
             Map<String, Object> map = handlerParam.getValue();
             //工艺索取返回
             if (map.containsKey(JNProcessClaimReturn.class.getSimpleName())) {
-                JNProcessClaimReturn processClaimReturn = (JNProcessClaimReturn) map.get(JNProcessClaimReturn.class.getSimpleName());
+                JNProcessClaimReturn processClaimReturn = JSON.parseObject(map.get(JNProcessClaimReturn.class.getSimpleName()).toString(), JNProcessClaimReturn.class);
                 if (null != processClaimReturn) {
                     String message = JSON.toJSONString(processClaimReturn);
                     //通过mqtt发送到服务端
@@ -187,11 +187,11 @@ public class JnOtcRtDataProtocol {
      */
     public static void otcPwdCmdReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
-            final Map<String, Object> map = handlerParam.getValue();
-            final ChannelHandlerContext ctx = handlerParam.getCtx();
+            Map<String, Object> map = handlerParam.getValue();
+            ChannelHandlerContext ctx = handlerParam.getCtx();
             //密码返回
             if (map.containsKey(JNPasswordReturn.class.getSimpleName())) {
-                JNPasswordReturn passwordReturn = (JNPasswordReturn) map.get(JNPasswordReturn.class.getSimpleName());
+                JNPasswordReturn passwordReturn = JSON.parseObject(map.get(JNPasswordReturn.class.getSimpleName()).toString(), JNPasswordReturn.class);
                 if (null != passwordReturn) {
                     String message = JSON.toJSONString(passwordReturn);
                     //通过mqtt发送到服务端
@@ -200,7 +200,7 @@ public class JnOtcRtDataProtocol {
             }
             //控制命令返回
             if (map.containsKey(JNCommandReturn.class.getSimpleName())) {
-                JNCommandReturn commandReturn = (JNCommandReturn) map.get(JNCommandReturn.class.getSimpleName());
+                JNCommandReturn commandReturn = JSON.parseObject(map.get(JNCommandReturn.class.getSimpleName()).toString(), JNCommandReturn.class);
                 if (null != commandReturn) {
                     String message = JSON.toJSONString(commandReturn);
                     //通过mqtt发送到服务端
@@ -209,13 +209,13 @@ public class JnOtcRtDataProtocol {
             }
             //锁焊机或者解锁焊机返回
             if (map.containsKey(JnLockMachineReturn.class.getSimpleName())) {
-                final JnLockMachineReturn jnLockMachineReturn = (JnLockMachineReturn) map.get(JnLockMachineReturn.class.getSimpleName());
+                JnLockMachineReturn jnLockMachineReturn = JSON.parseObject(map.get(JnLockMachineReturn.class.getSimpleName()).toString(), JnLockMachineReturn.class);
                 if (null != jnLockMachineReturn) {
                     try {
                         //采集编号
-                        final String gatherNo = jnLockMachineReturn.getGatherNo();
+                        String gatherNo = jnLockMachineReturn.getGatherNo();
                         //控制命令：（18：锁焊机，19：解锁焊机）
-                        final int command = jnLockMachineReturn.getCommand();
+                        int command = jnLockMachineReturn.getCommand();
                         //接收结果:0 成功（如果成功，删除重试次数）
                         if (jnLockMachineReturn.getResult() == 0) {
                             if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
@@ -226,7 +226,7 @@ public class JnOtcRtDataProtocol {
                         else if (jnLockMachineReturn.getResult() == 1) {
                             //判断是否有当前设备（true：增加重试次数）
                             if (CommonMap.OTC_LOCK_FAIL_RETRY_MAP.containsKey(gatherNo)) {
-                                final Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
+                                Map<Integer, Integer> otcLockMap = CommonMap.OTC_LOCK_FAIL_RETRY_MAP.get(gatherNo);
                                 if (otcLockMap.containsKey(command)) {
                                     //得到重试次数
                                     Integer numOfRetries = otcLockMap.get(command);
@@ -261,9 +261,9 @@ public class JnOtcRtDataProtocol {
             }
             //程序包路径下发返回
             if (map.containsKey(OtcV1ProgramPathIssueReturn.class.getSimpleName())) {
-                final OtcV1ProgramPathIssueReturn pathIssueReturn = (OtcV1ProgramPathIssueReturn) map.get(OtcV1ProgramPathIssueReturn.class.getSimpleName());
+                OtcV1ProgramPathIssueReturn pathIssueReturn = JSON.parseObject(map.get(OtcV1ProgramPathIssueReturn.class.getSimpleName()).toString(), OtcV1ProgramPathIssueReturn.class);
                 if (null != pathIssueReturn) {
-                    final String message = JSON.toJSONString(pathIssueReturn);
+                    String message = JSON.toJSONString(pathIssueReturn);
                     //通过mqtt发送到服务端
                     EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProgramPathIssueReturn), message, 0);
                 }
@@ -448,7 +448,7 @@ public class JnOtcRtDataProtocol {
                                 for (WeldModel weld : weldList) {
                                     //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
                                     if (StringUtils.isNotBlank(weld.getGatherNo())) {
-                                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
+                                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
                                         if (gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
                                             data.setMachineId(weld.getId());
                                             data.setMachineNo(weld.getMachineNo());
@@ -506,9 +506,9 @@ public class JnOtcRtDataProtocol {
                             if (data.getWeldStatus() == 7) {
                                 JNRtDataDB jnRtDataDb = new JNRtDataDB();
                                 jnRtDataDb.setWeldStatus(0);
-                                final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                                 //减去1秒
-                                final String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                                String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
                                 jnRtDataDb.setWeldTime(weldTime);
                                 jnRtDataDb.setElectricity(BigDecimal.ZERO);
                                 jnRtDataDb.setVoltage(BigDecimal.ZERO);
@@ -518,9 +518,9 @@ public class JnOtcRtDataProtocol {
                             else if (data.getWeldStatus() == 5) {
                                 JNRtDataDB jnRtDataDb = new JNRtDataDB();
                                 jnRtDataDb.setWeldStatus(0);
-                                final LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
                                 //加上1秒
-                                final String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                                String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
                                 jnRtDataDb.setWeldTime(weldTime);
                                 jnRtDataDb.setElectricity(BigDecimal.ZERO);
                                 jnRtDataDb.setVoltage(BigDecimal.ZERO);
@@ -736,7 +736,7 @@ public class JnOtcRtDataProtocol {
                 String packagePath = CommonUtils.backLengthJoint(path, 100);
                 String foot = "007D";
                 StringBuilder stringBuilder = new StringBuilder();
-//                final String str = head + gatherNo + port + packagePath + foot;
+//                 String str = head + gatherNo + port + packagePath + foot;
                 stringBuilder.append(head).append(gatherNo).append(port).append(packagePath).append(foot);
                 if (stringBuilder.toString().length() == 126) {
                     return stringBuilder.toString().toUpperCase();
@@ -835,7 +835,7 @@ public class JnOtcRtDataProtocol {
             if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
                 for (WeldModel weld : weldList) {
                     if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                        final List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
+                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
                         if (gatherNoList.contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
                             return weld.getId();
                         }

@@ -100,7 +100,7 @@ public class JNRtDataUI implements Serializable {
     /**
      * 设备类型（默认0：OTC，1：松下）
      */
-    private int weldType;
+    private Integer weldType;
 
     /**
      * 当前通道号
