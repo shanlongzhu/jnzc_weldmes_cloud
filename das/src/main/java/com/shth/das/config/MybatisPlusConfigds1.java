@@ -1,4 +1,4 @@
-package com.shth.das.dbconfig;
+package com.shth.das.config;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;

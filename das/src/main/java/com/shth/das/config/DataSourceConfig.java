@@ -1,4 +1,4 @@
-package com.shth.das.dbconfig;
+package com.shth.das.config;
 
 import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.filter.logging.Slf4jLogFilter;

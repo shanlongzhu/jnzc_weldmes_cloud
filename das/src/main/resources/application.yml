@@ -3,6 +3,8 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+  jmx:
+    enabled: true
   boot:
     admin:
       client:
@@ -60,6 +62,12 @@ management:
       exposure:
         include: "*"
     enabled-by-default: true
+
+# 系统日志配置
+logging:
+  config: classpath:logback.xml
+  file:
+    name: 'D:/jn-das-log/das_output.log'
 
 # 配置info端点信息
 info:

@@ -1,4 +1,4 @@
-package com.shth.das.dbconfig;
+package com.shth.das.config;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
@@ -18,10 +18,10 @@ import javax.sql.DataSource;
 
 /**
  * Mybatis-plus ds2数据源配置
- *  多数据源配置依赖数据源配置
+ * 多数据源配置依赖数据源配置
  */
 @Configuration
-@MapperScan(basePackages =MybatisPlusConfigds2.PACKAGE, sqlSessionTemplateRef  = "ds2SqlSessionTemplate")
+@MapperScan(basePackages = MybatisPlusConfigds2.PACKAGE, sqlSessionTemplateRef = "ds2SqlSessionTemplate")
 public class MybatisPlusConfigds2 {
 
     static final String PACKAGE = "com.shth.das.sys.rtdata.mapper";

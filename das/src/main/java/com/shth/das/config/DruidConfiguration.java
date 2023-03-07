@@ -1,4 +1,4 @@
-package com.shth.das.dbconfig;
+package com.shth.das.config;
 
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;

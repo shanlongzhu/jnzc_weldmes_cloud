@@ -1,4 +1,4 @@
-package com.shth.das.dbconfig;
+package com.shth.das.config;
 
 import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -24,8 +24,8 @@ public class DruidAspectConfig {
     @Scope("prototype")
     public JdkRegexpMethodPointcut druidStatPointcut() {
         JdkRegexpMethodPointcut pointcut = new JdkRegexpMethodPointcut();
-        pointcut.setPatterns("com.shth.das.sys.rtdata.mapper.*","com.shth.das.sys.rtdata.service.*",
-                "com.shth.das.sys.weldmesdb.mapper.*","com.shth.das.sys.weldmesdb.service.*");
+        pointcut.setPatterns("com.shth.das.sys.rtdata.mapper.*", "com.shth.das.sys.rtdata.service.*",
+                "com.shth.das.sys.weldmesdb.mapper.*", "com.shth.das.sys.weldmesdb.service.*");
         return pointcut;
     }
 
