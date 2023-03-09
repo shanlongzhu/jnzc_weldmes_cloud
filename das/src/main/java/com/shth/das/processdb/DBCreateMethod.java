@@ -209,7 +209,7 @@ public class DBCreateMethod {
                 dbTable = addTable(dBase, processDbSxTableName);
             }
             //根据点名获取点对象
-            final DBPoint dbPoint = dbTable.getPointByName(pointName);
+            DBPoint dbPoint = dbTable.getPointByName(pointName);
             if (null != dbPoint) {
                 return dbPoint;
             }
@@ -223,8 +223,8 @@ public class DBCreateMethod {
      * 添加库，表
      */
     public void addDbaseTablePoint() {
-        final DBRoot dbRoot = DBCreateConnect.getDbRoot();
-        final DBase dBase = addDataBase(dbRoot, dbName);
+        DBRoot dbRoot = DBCreateConnect.getDbRoot();
+        DBase dBase = addDataBase(dbRoot, dbName);
         if (null != dBase) {
             addTable(dBase, otcTableName);
             addTable(dBase, sxTableName);
@@ -240,14 +240,14 @@ public class DBCreateMethod {
      */
     public static DBase addDataBase(DBRoot dbRoot, String dataBaseName) {
         if (null != dbRoot && StringUtils.isNotBlank(dataBaseName)) {
-            final DBase dBase = dbRoot.getDBaseByName(dataBaseName);
+            DBase dBase = dbRoot.getDBaseByName(dataBaseName);
             if (dBase != null) {
                 log.warn("------" + dataBaseName + ":数据库已存在------");
                 return dBase;
             }
             DatabaseInfo databaseInfo = new DatabaseInfo();
             databaseInfo.setDatabaseName(dataBaseName);
-            final int add = dbRoot.add(databaseInfo);
+            int add = dbRoot.add(databaseInfo);
             if (add != 0) {
                 log.error("添加数据库：{} 失败,错误码：{}", dataBaseName, add);
             } else {
@@ -267,14 +267,14 @@ public class DBCreateMethod {
      */
     public static DBTable addTable(DBase dBase, String tableName) {
         if (null != dBase && StringUtils.isNotBlank(tableName)) {
-            final DBTable dbTable = dBase.getDBTableByName(tableName);
+            DBTable dbTable = dBase.getDBTableByName(tableName);
             if (dbTable != null) {
                 log.warn("------" + tableName + ":表已存在------");
                 return dbTable;
             }
-            final TableInfo tableInfo = new TableInfo();
+            TableInfo tableInfo = new TableInfo();
             tableInfo.setTableName(tableName);
-            final int add = dBase.add(tableInfo);
+            int add = dBase.add(tableInfo);
             if (add != 0) {
                 log.error("添加表：{} 失败,错误码：{}", tableName, add);
             } else {
@@ -293,7 +293,7 @@ public class DBCreateMethod {
      */
     public static DBPoint addPoint(DBTable dbTable, String pointName) {
         if (null != dbTable && StringUtils.isNotBlank(pointName)) {
-            final DBPoint dbPoint = dbTable.getPointByName(pointName);
+            DBPoint dbPoint = dbTable.getPointByName(pointName);
             if (dbPoint != null) {
                 log.warn("------" + pointName + ":点已存在------");
                 return dbPoint;
@@ -310,7 +310,7 @@ public class DBCreateMethod {
             //pointInfo.setCompress(ConstantValue.POINT_COMPRESS_DEAD);//采用死区压缩算法
             //pointInfo.setDevType(ConstantValue.POINT_DEVTYPE_PERCENT);//选择按百分比进行判断是否被压缩
             //pointInfo.setDeviation(0.05f);//压缩死区大小，这和上一行强相关，如果选择百分百压缩，表示变换率在0.05%变化之内会被丢弃掉
-            final int add = dbTable.add(pointInfo);
+            int add = dbTable.add(pointInfo);
             if (add != 0) {
                 log.error("添加点：{} 失败,错误码：{}", pointName, add);
             } else {
@@ -329,9 +329,9 @@ public class DBCreateMethod {
     public static void addPointData(Vector<RecordData> vector) {
         try {
             if (vector != null && vector.size() > 0) {
-                final DBRealtimeDataDao dbRealtimeDataDao = DBCreateConnect.getDbRealtimeDataDao();
+                DBRealtimeDataDao dbRealtimeDataDao = DBCreateConnect.getDbRealtimeDataDao();
                 if (null != dbRealtimeDataDao) {
-                    final int insertRealtimeData = dbRealtimeDataDao.insertRealtimeData(vector);
+                    int insertRealtimeData = dbRealtimeDataDao.insertRealtimeData(vector);
                     if (insertRealtimeData != 0) {
                         log.error("添加数据失败,错误码：{}", insertRealtimeData);
                     }

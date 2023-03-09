@@ -1,5 +1,6 @@
 package com.shth.das.business;
 
+import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnOtcDecoderParam;
 import com.shth.das.common.BaseDecoder;
@@ -62,16 +63,16 @@ public class JnOtcDecoderAnalysis implements BaseDecoder {
     private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
             HandlerParam handlerParam = new HandlerParam();
-            Map<String, Object> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             //存数据库
             List<JNRtDataDB> jnRtDataDbs = JnOtcRtDataProtocol.jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
             //发送前端
             List<JNRtDataUI> jnRtDataUis = JnOtcRtDataProtocol.jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
             if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
-                map.put(JNRtDataDB.class.getSimpleName(), jnRtDataDbs);
+                map.put(JNRtDataDB.class.getSimpleName(), JSON.toJSONString(jnRtDataDbs));
             }
             if (CommonUtils.isNotEmpty(jnRtDataUis)) {
-                map.put(JNRtDataUI.class.getSimpleName(), jnRtDataUis);
+                map.put(JNRtDataUI.class.getSimpleName(), JSON.toJSONString(jnRtDataUis));
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
@@ -91,8 +92,8 @@ public class JnOtcDecoderAnalysis implements BaseDecoder {
             JNProcessIssueReturn issueReturn = JnOtcRtDataProtocol.jnIssueReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != issueReturn) {
                 HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
-                map.put(JNProcessIssueReturn.class.getSimpleName(), issueReturn);
+                Map<String, String> map = new HashMap<>();
+                map.put(JNProcessIssueReturn.class.getSimpleName(), JSON.toJSONString(issueReturn));
                 handlerParam.setKey(jnOtcDecoderParam.getStr().length());
                 handlerParam.setValue(map);
                 return handlerParam;
@@ -112,8 +113,8 @@ public class JnOtcDecoderAnalysis implements BaseDecoder {
             JNProcessClaimReturn claimReturn = JnOtcRtDataProtocol.jnClaimReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != claimReturn) {
                 HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
-                map.put(JNProcessClaimReturn.class.getSimpleName(), claimReturn);
+                Map<String, String> map = new HashMap<>();
+                map.put(JNProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(claimReturn));
                 handlerParam.setKey(jnOtcDecoderParam.getStr().length());
                 handlerParam.setValue(map);
                 return handlerParam;
@@ -131,41 +132,41 @@ public class JnOtcDecoderAnalysis implements BaseDecoder {
     private HandlerParam otcPwdCmdReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
             HandlerParam handlerParam = new HandlerParam();
-            Map<String, Object> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             String str = jnOtcDecoderParam.getStr();
             //密码返回
             if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JNPasswordReturn passwordReturn = JnOtcRtDataProtocol.jnPasswordReturnAnalysis(str);
                 if (null != passwordReturn) {
-                    map.put(JNPasswordReturn.class.getSimpleName(), passwordReturn);
+                    map.put(JNPasswordReturn.class.getSimpleName(), JSON.toJSONString(passwordReturn));
                 }
             }
             //控制命令返回
             else if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JNCommandReturn commandReturn = JnOtcRtDataProtocol.jnCommandReturnAnalysis(str);
                 if (null != commandReturn) {
-                    map.put(JNCommandReturn.class.getSimpleName(), commandReturn);
+                    map.put(JNCommandReturn.class.getSimpleName(), JSON.toJSONString(commandReturn));
                 }
             }
             //锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
-                    map.put(JnLockMachineReturn.class.getSimpleName(), jnLockMachineReturn);
+                    map.put(JnLockMachineReturn.class.getSimpleName(), JSON.toJSONString(jnLockMachineReturn));
                 }
             }
             //解锁焊机指令返回
             else if ("7E".equals(str.substring(0, 2)) && "19".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 JnLockMachineReturn jnLockMachineReturn = JnOtcRtDataProtocol.jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
-                    map.put(JnLockMachineReturn.class.getSimpleName(), jnLockMachineReturn);
+                    map.put(JnLockMachineReturn.class.getSimpleName(), JSON.toJSONString(jnLockMachineReturn));
                 }
             }
             //程序包路径下发返回
             else if ("7E".equals(str.substring(0, 2)) && "11".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
                 OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = JnOtcRtDataProtocol.otcV1ProgramPathIssueReturn(str);
                 if (null != otcV1ProgramPathIssueReturn) {
-                    map.put(OtcV1ProgramPathIssueReturn.class.getSimpleName(), otcV1ProgramPathIssueReturn);
+                    map.put(OtcV1ProgramPathIssueReturn.class.getSimpleName(), JSON.toJSONString(otcV1ProgramPathIssueReturn));
                 }
             }
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());

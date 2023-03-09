@@ -21,7 +21,7 @@ public class HandlerParam implements Serializable {
     /**
      * 封装解析好的pojo对象
      */
-    private Map<String,Object> value;
+    private Map<String, String> value;
     /**
      * 通道
      */

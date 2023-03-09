@@ -1,5 +1,6 @@
 package com.shth.das.util;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class CommonUtils {
      * @return boolean
      */
     public static boolean isNotEmpty(List<?> list) {
-        return null != list && !list.isEmpty();
+        return ObjectUtils.isNotEmpty(list);
     }
 
     /**

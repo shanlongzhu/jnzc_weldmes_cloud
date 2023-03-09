@@ -117,7 +117,7 @@ public class JnSxRtDataProtocol {
     public static void jnSxSecondVerify(HandlerParam param) {
         if (null != param) {
             ChannelHandlerContext ctx = param.getCtx();
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             if (map.containsKey("weldCid")) {
                 String weldCid = JSON.toJSONString(map.get("weldCid"));
                 //保存设备CID和通道对应关系
@@ -134,7 +134,7 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5SoftHardParam(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey(SxWeldModel.class.getSimpleName())) {
@@ -163,7 +163,7 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5StatusManage(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5状态信息发送到mq
             if (map.containsKey(SxStatusDataUI.class.getSimpleName())) {
@@ -190,11 +190,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5ProcessWeldSet(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下GL5系列工艺索取返回(无数据)
             if (map.containsKey(SxProcessClaimReturn.class.getSimpleName())) {
-                SxProcessClaimReturn sxProcessClaimReturn = JSON.parseObject(map.get(SxProcessClaimReturn.class.getSimpleName()).toString(), SxProcessClaimReturn.class);
+                SxProcessClaimReturn sxProcessClaimReturn = JSON.parseObject(map.get(SxProcessClaimReturn.class.getSimpleName()), SxProcessClaimReturn.class);
                 if (null != sxProcessClaimReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -222,7 +222,7 @@ public class JnSxRtDataProtocol {
             }
             //松下GL5系列工艺删除返回
             if (map.containsKey(SxProcessDeleteReturn.class.getSimpleName())) {
-                SxProcessDeleteReturn sxProcessDeleteReturn = JSON.parseObject(map.get(SxProcessDeleteReturn.class.getSimpleName()).toString(), SxProcessDeleteReturn.class);
+                SxProcessDeleteReturn sxProcessDeleteReturn = JSON.parseObject(map.get(SxProcessDeleteReturn.class.getSimpleName()), SxProcessDeleteReturn.class);
                 if (null != sxProcessDeleteReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -236,7 +236,7 @@ public class JnSxRtDataProtocol {
             }
             //松下GL5系列焊机通道【通道设定返回、通道读取返回】
             if (map.containsKey(SxWeldChannelSetReturn.class.getSimpleName())) {
-                SxWeldChannelSetReturn sxWeldChannelSetReturn = JSON.parseObject(map.get(SxWeldChannelSetReturn.class.getSimpleName()).toString(), SxWeldChannelSetReturn.class);
+                SxWeldChannelSetReturn sxWeldChannelSetReturn = JSON.parseObject(map.get(SxWeldChannelSetReturn.class.getSimpleName()), SxWeldChannelSetReturn.class);
                 if (null != sxWeldChannelSetReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -258,11 +258,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxCo2ProcessClaimReturn(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下CO2工艺索取返回
             if (map.containsKey(SxCO2ProcessClaimReturn.class.getSimpleName())) {
-                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = JSON.parseObject(map.get(SxCO2ProcessClaimReturn.class.getSimpleName()).toString(), SxCO2ProcessClaimReturn.class);
+                SxCO2ProcessClaimReturn sxCO2ProcessClaimReturn = JSON.parseObject(map.get(SxCO2ProcessClaimReturn.class.getSimpleName()), SxCO2ProcessClaimReturn.class);
                 if (ObjectUtils.isEmpty(sxCO2ProcessClaimReturn)) {
                     return;
                 }
@@ -285,11 +285,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxGl5TigProcessClaimReturn(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5系列TIG工艺索取返回（有数据）
             if (map.containsKey(SxTIGProcessClaimReturn.class.getSimpleName())) {
-                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = JSON.parseObject(map.get(SxTIGProcessClaimReturn.class.getSimpleName()).toString(), SxTIGProcessClaimReturn.class);
+                SxTIGProcessClaimReturn sxTIGProcessClaimReturn = JSON.parseObject(map.get(SxTIGProcessClaimReturn.class.getSimpleName()), SxTIGProcessClaimReturn.class);
                 if (null != sxTIGProcessClaimReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -311,11 +311,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2At3SoftHardParam(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机GL5软硬件参数存数据库
             if (map.containsKey(SxWeldModel.class.getSimpleName())) {
-                SxWeldModel sxWeldModel = (SxWeldModel) map.get(SxWeldModel.class.getSimpleName());
+                SxWeldModel sxWeldModel = JSON.parseObject(map.get(SxWeldModel.class.getSimpleName()), SxWeldModel.class);
                 //松下参数绑定【刷卡会解锁焊机】
                 sxWeldDataBinding(ctx, sxWeldModel);
             }
@@ -351,11 +351,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2StatusUiManage(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机FR2状态信息发送到mq
             if (map.containsKey(SxStatusDataUI.class.getSimpleName())) {
-                SxStatusDataUI sxStatusDataUi = JSON.parseObject(map.get(SxStatusDataUI.class.getSimpleName()).toString(), SxStatusDataUI.class);
+                SxStatusDataUI sxStatusDataUi = JSON.parseObject(map.get(SxStatusDataUI.class.getSimpleName()), SxStatusDataUI.class);
                 if (ObjectUtils.isEmpty(sxStatusDataUi)) {
                     return;
                 }
@@ -378,11 +378,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxChannelParamReply(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
             if (map.containsKey(SxChannelParamReply.class.getSimpleName())) {
-                SxChannelParamReply sxChannelParamReply = JSON.parseObject(map.get(SxChannelParamReply.class.getSimpleName()).toString(), SxChannelParamReply.class);
+                SxChannelParamReply sxChannelParamReply = JSON.parseObject(map.get(SxChannelParamReply.class.getSimpleName()), SxChannelParamReply.class);
                 if (null != sxChannelParamReply) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -404,10 +404,10 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxFr2ChannelParamReplyHave(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             //松下焊机FR2系列通道参数【查询回复（有参数）】
             if (map.containsKey(SxChannelParamReplyHave.class.getSimpleName())) {
-                SxChannelParamReplyHave sxChannelParamReplyHave = JSON.parseObject(map.get(SxChannelParamReplyHave.class.getSimpleName()).toString(), SxChannelParamReplyHave.class);
+                SxChannelParamReplyHave sxChannelParamReplyHave = JSON.parseObject(map.get(SxChannelParamReplyHave.class.getSimpleName()), SxChannelParamReplyHave.class);
                 if (null != sxChannelParamReplyHave) {
                     //实体类转JSON字符串
                     String message = JSON.toJSONString(sxChannelParamReplyHave);
@@ -425,11 +425,11 @@ public class JnSxRtDataProtocol {
      */
     public static void jnSxAt3ParamQueryReturn(HandlerParam param) {
         if (null != param) {
-            Map<String, Object> map = param.getValue();
+            Map<String, String> map = param.getValue();
             ChannelHandlerContext ctx = param.getCtx();
             //松下AT3系列查询回复（有参数）
             if (map.containsKey(At3ParamQueryReturn.class.getSimpleName())) {
-                At3ParamQueryReturn at3ParamQueryReturn = JSON.parseObject(map.get(At3ParamQueryReturn.class.getSimpleName()).toString(), At3ParamQueryReturn.class);
+                At3ParamQueryReturn at3ParamQueryReturn = JSON.parseObject(map.get(At3ParamQueryReturn.class.getSimpleName()), At3ParamQueryReturn.class);
                 if (null != at3ParamQueryReturn) {
                     if (CommonMap.SX_CTX_WELD_CID_MAP.containsKey(ctx)) {
                         String weldCid = CommonMap.SX_CTX_WELD_CID_MAP.get(ctx);
@@ -450,7 +450,7 @@ public class JnSxRtDataProtocol {
      * @param param 入参
      */
     private static void jnSxRtdManage(HandlerParam param) {
-        Map<String, Object> map = param.getValue();
+        Map<String, String> map = param.getValue();
         ChannelHandlerContext ctx = param.getCtx();
         //松下焊机实时数据发送到mq
         if (map.containsKey(SxRtDataUi.class.getSimpleName())) {
@@ -1581,17 +1581,7 @@ public class JnSxRtDataProtocol {
                 String haltDelayTime = CommonUtils.lengthJoint(sxCO2ProcessIssue.getHaltDelayTime().intValue(), 2);
                 String haltFreezeTime = CommonUtils.lengthJoint(sxCO2ProcessIssue.getHaltFreezeTime().intValue(), 2);
                 String reserved4 = "0000000000000000000000000000000000000000000000000000000000";
-                String str = head + datetime + readWriteFlag + channelNo + dataFlag + initialEleMax + initialEleMin +
-                        initialVolMax + initialVolMin + initialWireSpeedMax + initialWireSpeedMin + weldEleMax + weldEleMin +
-                        weldVolMax + weldVolMin + weldWireSpeedMax + weldWireSpeedMin + arcEleMax + arcEleMin + arcVolMax +
-                        arcVolMin + arcWireSpeedMax + arcWireSpeedMin + reserved1 + modeSelect + weldingControl + weldingManner +
-                        texture + wireDiameter + gases + wireFeed + checkGasStatus + cutStatus + lockStatus + eleShowSelect +
-                        rev + boardThickness + spotWeldingTime + volShowSelect + arcLength + arcCharacter + penetrationControl +
-                        beforeAspiratedTime + afterStopGasTime + unitaryDifference + nowChannel + reserved2 + dclInitialEleMax +
-                        dclInitialEleMin + dclWeldEleMax + dclWeldEleMin + dclArcEleMax + dclArcEleMin + startDelayTime +
-                        clAmendPeriod + reserved3 + oaInitialEleMax + oaInitialEleMin + oaInitialVolMax + oaInitialVolMin +
-                        oaWeldEleMax + oaWeldEleMin + oaWeldVolMax + oaWeldVolMin + oaArcEleMax + oaArcEleMin + oaArcVolMax +
-                        oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime + haltFreezeTime + reserved4;
+                String str = head + datetime + readWriteFlag + channelNo + dataFlag + initialEleMax + initialEleMin + initialVolMax + initialVolMin + initialWireSpeedMax + initialWireSpeedMin + weldEleMax + weldEleMin + weldVolMax + weldVolMin + weldWireSpeedMax + weldWireSpeedMin + arcEleMax + arcEleMin + arcVolMax + arcVolMin + arcWireSpeedMax + arcWireSpeedMin + reserved1 + modeSelect + weldingControl + weldingManner + texture + wireDiameter + gases + wireFeed + checkGasStatus + cutStatus + lockStatus + eleShowSelect + rev + boardThickness + spotWeldingTime + volShowSelect + arcLength + arcCharacter + penetrationControl + beforeAspiratedTime + afterStopGasTime + unitaryDifference + nowChannel + reserved2 + dclInitialEleMax + dclInitialEleMin + dclWeldEleMax + dclWeldEleMin + dclArcEleMax + dclArcEleMin + startDelayTime + clAmendPeriod + reserved3 + oaInitialEleMax + oaInitialEleMin + oaInitialVolMax + oaInitialVolMin + oaWeldEleMax + oaWeldEleMin + oaWeldVolMax + oaWeldVolMin + oaArcEleMax + oaArcEleMin + oaArcVolMax + oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime + haltFreezeTime + reserved4;
                 str = str.toUpperCase();
                 if (str.length() == 406) {
                     return str;
@@ -1714,20 +1704,7 @@ public class JnSxRtDataProtocol {
                 String haltDelayTime = CommonUtils.lengthJoint(sxTigProcessIssue.getHaltDelayTime().intValue(), 2);
                 String haltFreezeTime = CommonUtils.lengthJoint(sxTigProcessIssue.getHaltFreezeTime().intValue(), 2);
                 String reserved4 = "00000000000000000000";
-                String str = head + datetime + readWriteFlag + channelNo + dataFlag + initialEleMax + initialEleMin + initialVolMax +
-                        initialVolMin + firstWeldEleMax + firstWeldEleMin + firstWeldVolMax + firstWeldVolMin + secondWeldEleMax +
-                        secondWeldEleMin + secondWeldVolMax + secondWeldVolMin + arcEleMax + arcEleMin + arcVolMax + arcVolMin +
-                        peakWeldEleMax + peakWeldEleMin + peakWeldVolMax + peakWeldVolMin + reserved1 + weldMethod + arcHaveNot +
-                        pulseHaveNot + acWaveform + pulseRate + pulseFrequency + cleanWidth + acFrequency + mixFrequency + mixAcRate +
-                        pulseRadian + arcStiffness + handWeldThrust + beforeAspiratedTime + afterStopGasTime + mainWeldRiseTime +
-                        mainWeldDeclineTime + mainWeldRiseRadian + mainWeldDeclineRadian + spotWeldingTime + spotWeldIntervalTime +
-                        spotWeldRiseTime + spotWeldDeclineTime + spotWeldRiseRadian + spotWeldDeclineRadian + maxChannel + nowChannel +
-                        handWeldWeldEle + handWeldArcEle + reserved2 + dclInitialEleMax + dclInitialEleMin + dclWeldEleMax + dclWeldEleMin +
-                        dclSecondWeldEleMax + dclSecondWeldEleMin + dclArcEleMax + dclArcEleMin + startDelayTime + clAmendPeriod +
-                        reserved3 + oaInitialEleMax + oaInitialEleMin + oaInitialVolMax + oaInitialVolMin + oaWeldEleMax + oaWeldEleMin +
-                        oaWeldVolMax + oaWeldVolMin + oaSecondWeldEleMax + oaSecondWeldEleMin + oaSecondWeldVolMax + oaSecondWeldVolMin +
-                        oaArcEleMax + oaArcEleMin + oaArcVolMax + oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime +
-                        haltFreezeTime + reserved4;
+                String str = head + datetime + readWriteFlag + channelNo + dataFlag + initialEleMax + initialEleMin + initialVolMax + initialVolMin + firstWeldEleMax + firstWeldEleMin + firstWeldVolMax + firstWeldVolMin + secondWeldEleMax + secondWeldEleMin + secondWeldVolMax + secondWeldVolMin + arcEleMax + arcEleMin + arcVolMax + arcVolMin + peakWeldEleMax + peakWeldEleMin + peakWeldVolMax + peakWeldVolMin + reserved1 + weldMethod + arcHaveNot + pulseHaveNot + acWaveform + pulseRate + pulseFrequency + cleanWidth + acFrequency + mixFrequency + mixAcRate + pulseRadian + arcStiffness + handWeldThrust + beforeAspiratedTime + afterStopGasTime + mainWeldRiseTime + mainWeldDeclineTime + mainWeldRiseRadian + mainWeldDeclineRadian + spotWeldingTime + spotWeldIntervalTime + spotWeldRiseTime + spotWeldDeclineTime + spotWeldRiseRadian + spotWeldDeclineRadian + maxChannel + nowChannel + handWeldWeldEle + handWeldArcEle + reserved2 + dclInitialEleMax + dclInitialEleMin + dclWeldEleMax + dclWeldEleMin + dclSecondWeldEleMax + dclSecondWeldEleMin + dclArcEleMax + dclArcEleMin + startDelayTime + clAmendPeriod + reserved3 + oaInitialEleMax + oaInitialEleMin + oaInitialVolMax + oaInitialVolMin + oaWeldEleMax + oaWeldEleMin + oaWeldVolMax + oaWeldVolMin + oaSecondWeldEleMax + oaSecondWeldEleMin + oaSecondWeldVolMax + oaSecondWeldVolMin + oaArcEleMax + oaArcEleMin + oaArcVolMax + oaArcVolMin + arcDelayTime + alarmDelayTime + haltDelayTime + haltFreezeTime + reserved4;
                 str = str.toUpperCase();
                 if (str.length() == 446) {
                     return str;
@@ -1898,13 +1875,7 @@ public class JnSxRtDataProtocol {
             //String reserved2 = "00";
             //String alarmFlag = CommonUtils.lengthJoint(paramDownload.getAlarmFlag(), 2);
             //String reserved3 = "00000000";
-            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
-                    presetVolMin + initialEleMax + initialVolMax + initialEleMin + initialVolMin + arcEleMax + arcVolMax +
-                    arcEleMin + arcVolMin + texture + wireDiameter + gases + weldingControl + pulseHaveNot + spotWeldingTime +
-                    unitaryDifference + dryExtendLength + reserved1 + weldMax + weldMin + initialMax + initialMin + arcMax +
-                    arcMin + delayTime + amendPeriod + presetEleAlarmMax + presetVolAlarmMax + presetEleAlarmMin + presetVolAlarmMin +
-                    initialEleAlarmMax + initialVolAlarmMax + initialEleAlarmMin + initialVolAlarmMin + arcEleAlarmMax +
-                    arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime;
+            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin + presetVolMin + initialEleMax + initialVolMax + initialEleMin + initialVolMin + arcEleMax + arcVolMax + arcEleMin + arcVolMin + texture + wireDiameter + gases + weldingControl + pulseHaveNot + spotWeldingTime + unitaryDifference + dryExtendLength + reserved1 + weldMax + weldMin + initialMax + initialMin + arcMax + arcMin + delayTime + amendPeriod + presetEleAlarmMax + presetVolAlarmMax + presetEleAlarmMin + presetVolAlarmMin + initialEleAlarmMax + initialVolAlarmMax + initialEleAlarmMin + initialVolAlarmMin + arcEleAlarmMax + arcVolAlarmMax + arcEleAlarmMin + arcVolAlarmMin + arcDelayTime + alarmDelayTime;
             str = str.toUpperCase();
             if (str.length() == 204) {
                 return str;
@@ -1937,8 +1908,7 @@ public class JnSxRtDataProtocol {
             String alarmDelayTime = CommonUtils.lengthJoint(at3ParamDownload.getAlarmDelayTime().intValue(), 2);
             String alarmHaltTime = CommonUtils.lengthJoint(at3ParamDownload.getAlarmHaltTime().intValue(), 2);
             String reserved1 = "0000";
-            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin +
-                    presetVolMin + eleAlarmMax + volAlarmMax + eleAlarmMin + volAlarmMin + alarmDelayTime + alarmHaltTime + reserved1;
+            String str = head + command + channel + reserved + channelFlag + presetEleMax + presetVolMax + presetEleMin + presetVolMin + eleAlarmMax + volAlarmMax + eleAlarmMin + volAlarmMin + alarmDelayTime + alarmHaltTime + reserved1;
             str = str.toUpperCase();
             if (str.length() == 92) {
                 return str;

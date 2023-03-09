@@ -1,6 +1,5 @@
 package com.shth.das.job;
 
-import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Queues;
 import com.processdb.driver.record.RecordData;
 import com.shth.das.codeparam.TableStrategy;
@@ -18,18 +17,22 @@ import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import com.shth.das.util.OshiSystemInfo;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -39,6 +42,11 @@ import java.util.Vector;
 @Slf4j
 @EnableAsync
 public class ScheduledTask {
+
+    /**
+     * 新增数据库记录最大数量
+     */
+    private static final int ADD_DATA_MAX_SIZE = 1000;
 
     @Autowired
     private OtcRtDataService otcRtDataService;
@@ -67,18 +75,18 @@ public class ScheduledTask {
         if (CommonFunction.isEnableOtcFunction()) {
             //根据时间获取OTC下一个表的表名
             String otcTableName = TableStrategy.getNextOtcTableByDateTime(nowDateTime);
-            if (!StringUtils.isEmpty(otcTableName)) {
+            if (StringUtils.isNotBlank(otcTableName)) {
                 int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
-                log.info("otcCreateResult:--->>>>{}", otcCreateResult);
+                log.info("otcCreateTableResult:--->>>>{}", otcCreateResult);
             }
         }
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
             //根据时间获取松下下一个表的表名
             String sxTableName = TableStrategy.getNextSxTableByDateTime(nowDateTime);
-            if (!StringUtils.isEmpty(sxTableName)) {
+            if (StringUtils.isNotBlank(sxTableName)) {
                 int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
-                log.info("sxCreateResult:--->>>>{}", sxCreateResult);
+                log.info("sxCreateTableResult:--->>>>{}", sxCreateResult);
             }
         }
     }
@@ -217,20 +225,22 @@ public class ScheduledTask {
                 String second = CommonUtils.lengthJoint(String.valueOf(localDateTime.getSecond()), 2);
                 String head = "007E1001010145";
                 String foot = "007D";
-                if (!CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
-                    CommonMap.OTC_GATHER_NO_CTX_MAP.forEach((key, value) -> {
-                        //采集编号
-                        String gatherNo = CommonUtils.lengthJoint(key, 4);
-                        //设备通道
-                        Channel channel = value.channel();
-                        if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
-                            //字符总长度：36
-                            String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
-                            if (timeString.length() == 36) {
-                                channel.writeAndFlush(timeString);
-                            }
+                if (CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
+                    return;
+                }
+                for (Map.Entry<String, ChannelHandlerContext> next : CommonMap.OTC_GATHER_NO_CTX_MAP.entrySet()) {
+                    String key = next.getKey();
+                    //采集编号
+                    String gatherNo = CommonUtils.lengthJoint(key, 4);
+                    //设备通道
+                    Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(key).channel();
+                    if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        //字符总长度：36
+                        String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
+                        if (timeString.length() == 36) {
+                            channel.writeAndFlush(timeString);
                         }
-                    });
+                    }
                 }
             } catch (Exception e) {
                 log.error("OTC设备时间定时校准异常：", e);
@@ -247,11 +257,19 @@ public class ScheduledTask {
     public void scheduled6() {
         if (CommonFunction.isEnableOtcFunction()) {
             try {
-                while (!CommonQueue.OTC_LINKED_BLOCKING_QUEUE.isEmpty()) {
-                    List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
-                    Queues.drain(CommonQueue.OTC_LINKED_BLOCKING_QUEUE, jnRtDataDbList, 2000, Duration.ofMillis(0));
-                    otcRtDataService.insertRtDataList(jnRtDataDbList);
+                int size = CommonQueue.OTC_LINKED_BLOCKING_QUEUE.size();
+                if (size == 0) {
+                    return;
                 }
+                StopWatch stopWatch = new StopWatch();
+                for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
+                    stopWatch.start();
+                    List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
+                    Queues.drain(CommonQueue.OTC_LINKED_BLOCKING_QUEUE, jnRtDataDbList, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
+                    otcRtDataService.insertRtDataList(jnRtDataDbList);
+                    stopWatch.stop();
+                }
+                log.info("3秒执行一次OTC设备实时数据存MySQL总耗时：{} ms,总数：{}", stopWatch.getTotalTimeMillis(), size);
             } catch (Exception e) {
                 log.error("3秒执行一次OTC设备实时数据存MySQLDB异常：", e);
             }
@@ -267,11 +285,19 @@ public class ScheduledTask {
     public void scheduled7() {
         if (CommonFunction.isEnableSxFunction()) {
             try {
-                while (!CommonQueue.SX_LINKED_BLOCKING_QUEUE.isEmpty()) {
-                    ArrayList<SxRtDataDb> sxRtDataList = new ArrayList<>();
-                    Queues.drain(CommonQueue.SX_LINKED_BLOCKING_QUEUE, sxRtDataList, 2000, Duration.ofMillis(0));
-                    sxRtDataService.insertSxRtDataList(sxRtDataList);
+                int size = CommonQueue.SX_LINKED_BLOCKING_QUEUE.size();
+                if (size == 0) {
+                    return;
                 }
+                StopWatch stopWatch = new StopWatch();
+                for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
+                    stopWatch.start();
+                    List<SxRtDataDb> sxRtDataList = new ArrayList<>();
+                    Queues.drain(CommonQueue.SX_LINKED_BLOCKING_QUEUE, sxRtDataList, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
+                    sxRtDataService.insertSxRtDataList(sxRtDataList);
+                    stopWatch.stop();
+                }
+                log.info("3秒执行一次松下设备实时数据存MySQL总耗时：{} ms,总数：{}", stopWatch.getTotalTimeMillis(), size);
             } catch (Exception e) {
                 log.error("3秒执行一次松下设备实时数据存MySQLDB异常：", e);
             }
@@ -303,19 +329,23 @@ public class ScheduledTask {
 
     /**
      * 3秒执行一次
-     * 任务：读取实时数据队列并存储到ProcessDB实时数据库中
+     * 任务：读取OTC实时数据队列并存储到ProcessDB实时数据库中
      */
     @Scheduled(fixedRate = 1000 * 3)
     @Async
     public void scheduled10() {
         if (CommonFunction.isEnableOtcFunction() && CommonFunction.isEnableProcessDB()) {
             try {
-                Vector<RecordData> vector = new Vector<>();
-                while (!CommonQueue.OTC_ADD_PROCESS_DB_QUEUE.isEmpty()) {
-                    Queues.drain(CommonQueue.OTC_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
+                int size = CommonQueue.OTC_ADD_PROCESS_DB_QUEUE.size();
+                if (size == 0) {
+                    return;
                 }
-                //添加OTC实时数据数据到ProcessDB
-                DBCreateMethod.addPointData(vector);
+                for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
+                    Vector<RecordData> vector = new Vector<>();
+                    Queues.drain(CommonQueue.OTC_ADD_PROCESS_DB_QUEUE, vector, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
+                    //添加OTC实时数据数据到ProcessDB
+                    DBCreateMethod.addPointData(vector);
+                }
             } catch (Exception e) {
                 log.error("3秒执行一次OTC设备实时数据存ProcessDB异常：", e);
             }
@@ -324,24 +354,23 @@ public class ScheduledTask {
 
     /**
      * 3秒执行一次
-     * 任务：读取实时数据队列并存储到ProcessDB实时数据库中
+     * 任务：读取SX实时数据队列并存储到ProcessDB实时数据库中
      */
     @Async
     @Scheduled(fixedRate = 1000 * 3)
     public void scheduled11() {
         if (CommonFunction.isEnableSxFunction() && CommonFunction.isEnableProcessDB()) {
             try {
-                Vector<RecordData> vector = new Vector<>();
                 int size = CommonQueue.SX_ADD_PROCESS_DB_QUEUE.size();
-                for (int i = 0; i < size; i += 2000) {
-                    Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
+                if (size == 0) {
+                    return;
                 }
-//                Vector<RecordData> vector = new Vector<>();
-//                while (!CommonQueue.SX_ADD_PROCESS_DB_QUEUE.isEmpty()) {
-//                    Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, 2000, Duration.ofMillis(0));
-//                }
-                //添加松下实时数据数据到ProcessDB
-                DBCreateMethod.addPointData(vector);
+                for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
+                    Vector<RecordData> vector = new Vector<>();
+                    Queues.drain(CommonQueue.SX_ADD_PROCESS_DB_QUEUE, vector, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
+                    //添加松下实时数据数据到ProcessDB
+                    DBCreateMethod.addPointData(vector);
+                }
             } catch (Exception e) {
                 log.error("3秒执行一次松下设备实时数据存ProcessDB异常：", e);
             }

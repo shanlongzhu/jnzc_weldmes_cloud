@@ -109,20 +109,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             ctx.flush();
             return;
         }
-        if (param instanceof HandlerParam) {
-            //通道赋值
-            param.setCtx(ctx);
-            //端口为otcPort，则为江南版OTC通讯协议
-            if (serverPort == CommonFunction.getOtcPort()) {
-                if (this.otcHandlerMapping.containsKey(param.getKey())) {
-                    this.otcHandlerMapping.get(param.getKey()).accept(param);
-                }
+        //通道赋值
+        param.setCtx(ctx);
+        //端口为otcPort，则为江南版OTC通讯协议
+        if (serverPort == CommonFunction.getOtcPort()) {
+            if (this.otcHandlerMapping.containsKey(param.getKey())) {
+                this.otcHandlerMapping.get(param.getKey()).accept(param);
             }
-            //端口为sxPort，则为松下通讯协议
-            if (serverPort == CommonFunction.getSxPort()) {
-                if (this.sxHandlerMapping.containsKey(param.getKey())) {
-                    this.sxHandlerMapping.get(param.getKey()).accept(param);
-                }
+        }
+        //端口为sxPort，则为松下通讯协议
+        if (serverPort == CommonFunction.getSxPort()) {
+            if (this.sxHandlerMapping.containsKey(param.getKey())) {
+                this.sxHandlerMapping.get(param.getKey()).accept(param);
             }
         }
         ctx.flush();

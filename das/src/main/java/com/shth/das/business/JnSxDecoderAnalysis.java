@@ -1,5 +1,6 @@
 package com.shth.das.business;
 
+import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnSxDecoderParam;
 import com.shth.das.codeparam.SxVerificationCode;
@@ -115,7 +116,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                     ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     //设备CID（8个字节：字符长度则为：16）
                     String weldCid = str.substring(12, 28);
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, String> map = new HashMap<>();
                     map.put("weldCid", weldCid);
                     HandlerParam handlerParam = new HandlerParam();
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
@@ -145,11 +146,11 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 if (str.length() == 180 && "FE5AA5005A".equals(str.substring(0, 10)) && "0010".equals(str.substring(40, 44))) {
                     ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                     String clientIp = jnSxDecoderParam.getClientIp();
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
                     SxWeldModel sxWeldModel = JnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
                     if (null != sxWeldModel) {
-                        map.put(SxWeldModel.class.getSimpleName(), sxWeldModel);
+                        map.put(SxWeldModel.class.getSimpleName(), JSON.toJSONString(sxWeldModel));
                         ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN);
                     }
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
@@ -176,15 +177,15 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             //松下焊机GL5实时数据
             if (str.length() == 206 && "FE5AA50067".equals(str.substring(0, 10))) {
                 String clientIp = jnSxDecoderParam.getClientIp();
-                Map<String, Object> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
                 SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.sxRtDataUiAnalysis(clientIp, str);
                 SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.sxRtDataDbAnalysis(clientIp, str);
                 if (null != sxRtDataUi) {
-                    map.put(SxRtDataUi.class.getSimpleName(), sxRtDataUi);
+                    map.put(SxRtDataUi.class.getSimpleName(), JSON.toJSONString(sxRtDataUi));
                 }
                 if (null != sxRtDataDb) {
-                    map.put(SxRtDataDb.class.getSimpleName(), sxRtDataDb);
+                    map.put(SxRtDataDb.class.getSimpleName(), JSON.toJSONString(sxRtDataDb));
                 }
                 handlerParam.setKey(jnSxDecoderParam.getStr().length());
                 handlerParam.setValue(map);
@@ -209,8 +210,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.sxStatusDataUiAnalysis(clientIp, str);
                 if (null != sxStatusDataUi) {
                     HandlerParam handlerParam = new HandlerParam();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(SxStatusDataUI.class.getSimpleName(), sxStatusDataUi);
+                    Map<String, String> map = new HashMap<>();
+                    map.put(SxStatusDataUI.class.getSimpleName(), JSON.toJSONString(sxStatusDataUi));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
@@ -232,7 +233,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             if (str.length() == 106) {
                 HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 //松下GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回】
                 if ("1201".equals(str.substring(40, 44))) {
                     //读写标志：0：主动上传；1：读取；2：设置；3：删除
@@ -240,21 +241,21 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                         //松下工艺索取返回（无数据）
                         SxProcessClaimReturn sxProcessClaimReturn = JnSxRtDataProtocol.sxProcessClaimReturnAnalysis(clientIp, str);
                         if (null != sxProcessClaimReturn) {
-                            map.put(SxProcessClaimReturn.class.getSimpleName(), sxProcessClaimReturn);
+                            map.put(SxProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(sxProcessClaimReturn));
                         }
                     }
                     if ("2".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
                         //松下工艺下发回复
                         SxProcessReturn sxProcessReturn = JnSxRtDataProtocol.sxProcessReturnAnalysis(clientIp, str);
                         if (null != sxProcessReturn) {
-                            map.put(SxProcessReturn.class.getSimpleName(), sxProcessReturn);
+                            map.put(SxProcessReturn.class.getSimpleName(), JSON.toJSONString(sxProcessReturn));
                         }
                     }
                     if ("3".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50028".equals(str.substring(0, 10))) {
                         //松下工艺删除回复
                         SxProcessDeleteReturn sxProcessDeleteReturn = JnSxRtDataProtocol.sxProcessDeleteReturnAnalysis(clientIp, str);
                         if (null != sxProcessDeleteReturn) {
-                            map.put(SxProcessDeleteReturn.class.getSimpleName(), sxProcessDeleteReturn);
+                            map.put(SxProcessDeleteReturn.class.getSimpleName(), JSON.toJSONString(sxProcessDeleteReturn));
                         }
                     }
                 }
@@ -262,7 +263,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 if ("1202".equals(str.substring(40, 44)) && "FE5AA50035".equals(str.substring(0, 10))) {
                     SxWeldChannelSetReturn weldChannelSetReturn = JnSxRtDataProtocol.sxWeldChannelSetReturnAnalysis(clientIp, str);
                     if (null != weldChannelSetReturn) {
-                        map.put(SxWeldChannelSetReturn.class.getSimpleName(), weldChannelSetReturn);
+                        map.put(SxWeldChannelSetReturn.class.getSimpleName(), JSON.toJSONString(weldChannelSetReturn));
                     }
                 }
                 handlerParam.setKey(jnSxDecoderParam.getStr().length());
@@ -288,8 +289,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 SxCO2ProcessClaimReturn claimReturn = JnSxRtDataProtocol.sxCO2ProcessClaimReturnAnalysis(clientIp, str);
                 if (null != claimReturn) {
                     HandlerParam handlerParam = new HandlerParam();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(SxCO2ProcessClaimReturn.class.getSimpleName(), claimReturn);
+                    Map<String, String> map = new HashMap<>();
+                    map.put(SxCO2ProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(claimReturn));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
@@ -314,8 +315,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 SxTIGProcessClaimReturn sxTigProcessClaimReturn = JnSxRtDataProtocol.sxTIGProcessClaimReturnAnalysis(clientIp, str);
                 if (null != sxTigProcessClaimReturn) {
                     HandlerParam handlerParam = new HandlerParam();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(SxTIGProcessClaimReturn.class.getSimpleName(), sxTigProcessClaimReturn);
+                    Map<String, String> map = new HashMap<>();
+                    map.put(SxTIGProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(sxTigProcessClaimReturn));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
@@ -340,10 +341,10 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 //判断是否是FR2或AT3的软硬件参数协议
                 if (str.length() == 154 && "FE5AA5004D".equals(str.substring(0, 10)) && "0010".equals(str.substring(40, 44))) {
                     SxWeldModel sxWeldModel = JnSxRtDataProtocol.jnSxFr2At3SoftHardParamAnalysis(clientIp, str);
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
                     if (null != sxWeldModel) {
-                        map.put(SxWeldModel.class.getSimpleName(), sxWeldModel);
+                        map.put(SxWeldModel.class.getSimpleName(), JSON.toJSONString(sxWeldModel));
                         ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN);
                     }
                     handlerParam.setKey(str.length());
@@ -369,15 +370,15 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列CO2实时数据
             if (str.length() == 112 && "FE5AA50038".equals(str.substring(0, 10))) {
-                Map<String, Object> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
                 SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.fr2Co2RtDataDbAnalysis(clientIp, str);
                 SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.fr2Co2RtDataUiAnalysis(clientIp, str);
                 if (null != sxRtDataDb) {
-                    map.put(SxRtDataDb.class.getSimpleName(), sxRtDataDb);
+                    map.put(SxRtDataDb.class.getSimpleName(), JSON.toJSONString(sxRtDataDb));
                 }
                 if (null != sxRtDataUi) {
-                    map.put(SxRtDataUi.class.getSimpleName(), sxRtDataUi);
+                    map.put(SxRtDataUi.class.getSimpleName(), JSON.toJSONString(sxRtDataUi));
                 }
                 handlerParam.setKey(jnSxDecoderParam.getStr().length());
                 handlerParam.setValue(map);
@@ -399,15 +400,15 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列TIG实时数据
             if (str.length() == 118 && "FE5AA5003B".equals(str.substring(0, 10))) {
-                Map<String, Object> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
                 SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.fr2TigRtDataDbAnalysis(clientIp, str);
                 SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.fr2TigRtDataUiAnalysis(clientIp, str);
                 if (null != sxRtDataDb) {
-                    map.put(SxRtDataDb.class.getSimpleName(), sxRtDataDb);
+                    map.put(SxRtDataDb.class.getSimpleName(), JSON.toJSONString(sxRtDataDb));
                 }
                 if (null != sxRtDataUi) {
-                    map.put(SxRtDataUi.class.getSimpleName(), sxRtDataUi);
+                    map.put(SxRtDataUi.class.getSimpleName(), JSON.toJSONString(sxRtDataUi));
                 }
                 handlerParam.setKey(jnSxDecoderParam.getStr().length());
                 handlerParam.setValue(map);
@@ -430,19 +431,19 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             //松下FR2系列CO2/TIG状态信息
             if (str.length() == 156 && "FE5AA5004E".equals(str.substring(0, 10))) {
                 HandlerParam handlerParam = new HandlerParam();
-                Map<String, Object> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 //CO2焊机
                 if ("0102".equals(str.substring(40, 44)) && 1 == Integer.valueOf(str.substring(68, 70), 16)) {
                     SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.fr2Co2StatusUiAnalysis(clientIp, str);
                     if (null != sxStatusDataUi) {
-                        map.put(SxStatusDataUI.class.getSimpleName(), sxStatusDataUi);
+                        map.put(SxStatusDataUI.class.getSimpleName(), JSON.toJSONString(sxStatusDataUi));
                     }
                 }
                 //TIG焊机
                 if ("0102".equals(str.substring(40, 44)) && 4 == Integer.valueOf(str.substring(68, 70), 16)) {
                     SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.fr2TigStatusUiAnalysis(clientIp, str);
                     if (null != sxStatusDataUi) {
-                        map.put(SxStatusDataUI.class.getSimpleName(), sxStatusDataUi);
+                        map.put(SxStatusDataUI.class.getSimpleName(), JSON.toJSONString(sxStatusDataUi));
                     }
                 }
                 handlerParam.setKey(jnSxDecoderParam.getStr().length());
@@ -468,8 +469,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 SxChannelParamReply sxChannelParamReply = JnSxRtDataProtocol.sxChannelParamReplyAnalysis(clientIp, str);
                 if (null != sxChannelParamReply) {
                     HandlerParam handlerParam = new HandlerParam();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(SxChannelParamReply.class.getSimpleName(), sxChannelParamReply);
+                    Map<String, String> map = new HashMap<>();
+                    map.put(SxChannelParamReply.class.getSimpleName(), JSON.toJSONString(sxChannelParamReply));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
@@ -493,9 +494,9 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             if (str.length() == 220 && "FE5AA5006E".equals(str.substring(0, 10))) {
                 SxChannelParamReplyHave sxChannelParamReplyHave = JnSxRtDataProtocol.sxChannelParamReplyHaveAnalysis(clientIp, str);
                 if (null != sxChannelParamReplyHave) {
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
-                    map.put(SxChannelParamReplyHave.class.getSimpleName(), sxChannelParamReplyHave);
+                    map.put(SxChannelParamReplyHave.class.getSimpleName(), JSON.toJSONString(sxChannelParamReplyHave));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
@@ -520,8 +521,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 At3ParamQueryReturn at3ParamQueryReturn = JnSxRtDataProtocol.at3ParamQueryReturnAnalysis(clientIp, str);
                 if (null != at3ParamQueryReturn) {
                     HandlerParam handlerParam = new HandlerParam();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(At3ParamQueryReturn.class.getSimpleName(), at3ParamQueryReturn);
+                    Map<String, String> map = new HashMap<>();
+                    map.put(At3ParamQueryReturn.class.getSimpleName(), JSON.toJSONString(at3ParamQueryReturn));
                     handlerParam.setKey(jnSxDecoderParam.getStr().length());
                     handlerParam.setValue(map);
                     return handlerParam;
