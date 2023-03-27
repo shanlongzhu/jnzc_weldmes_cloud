@@ -15,7 +15,6 @@ import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.*;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
-import com.shth.das.util.OshiSystemInfo;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -320,12 +319,12 @@ public class ScheduledTask {
     /**
      * 每隔10分钟检测系统运行状况
      */
-    @Scheduled(fixedRate = 1000 * 60 * 10)
-    @Async
-    public void scheduled9() {
-        //打印系统运行状况
-        OshiSystemInfo.getSystemInfoAll();
-    }
+//    @Scheduled(fixedRate = 1000 * 60 * 10)
+//    @Async
+//    public void scheduled9() {
+//        //打印系统运行状况
+//        OshiSystemInfo.getSystemInfoAll();
+//    }
 
     /**
      * 3秒执行一次

@@ -4,8 +4,8 @@ import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.filter.logging.Slf4jLogFilter;
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,26 +22,14 @@ import java.util.List;
 @Configuration
 public class DataSourceConfig {
 
-    //主数据源配置 ds1数据源
-    @Primary
-    @Bean(name = "ds1DataSourceProperties")
-    @ConfigurationProperties(prefix = "spring.datasource.ds1")
-    public DataSourceProperties ds1DataSourceProperties() {
-        return new DataSourceProperties();
-    }
-
-    //第二个ds2数据源配置
-    @Bean(name = "ds2DataSourceProperties")
-    @ConfigurationProperties(prefix = "spring.datasource.ds2")
-    public DataSourceProperties ds2DataSourceProperties() {
-        return new DataSourceProperties();
-    }
-
-    //主数据源 ds1数据源
+    /**
+     * 主数据源 ds1数据源
+     */
     @Primary
     @Bean(name = "ds1DataSource")
-    public DataSource ds1DataSource(@Qualifier("ds1DataSourceProperties") DataSourceProperties dataSourceProperties) {
-        DruidDataSource build = (DruidDataSource) dataSourceProperties.initializeDataSourceBuilder().build();
+    @ConfigurationProperties("spring.datasource.druid.ds1")
+    public DataSource ds1DataSource() {
+        DruidDataSource build = DruidDataSourceBuilder.create().build();
         List<Filter> filters = new ArrayList<>();
         filters.add(statFilter());
         filters.add(logFilter());
@@ -49,10 +37,13 @@ public class DataSourceConfig {
         return build;
     }
 
-    //第二个ds2数据源
+    /**
+     * 第二个ds2数据源
+     */
     @Bean("ds2DataSource")
-    public DataSource ds2DataSource(@Qualifier("ds2DataSourceProperties") DataSourceProperties dataSourceProperties) {
-        DruidDataSource build = (DruidDataSource) dataSourceProperties.initializeDataSourceBuilder().build();
+    @ConfigurationProperties("spring.datasource.druid.ds2")
+    public DataSource ds2DataSource() {
+        DruidDataSource build = DruidDataSourceBuilder.create().build();
         List<Filter> filters = new ArrayList<>();
         filters.add(statFilter());
         filters.add(logFilter());
@@ -85,10 +76,11 @@ public class DataSourceConfig {
     @Bean(name = "statFilter")
     public StatFilter statFilter() {
         //慢sql时间设置,即执行时间大于2000毫秒的都是慢sql
-        //statFilter.setSlowSqlMillis(2000);
-        //statFilter.setLogSlowSql(true);
-        //statFilter.setMergeSql(true);
-        return new StatFilter();
+        StatFilter statFilter = new StatFilter();
+        statFilter.setLogSlowSql(true);
+        statFilter.setMergeSql(true);
+        statFilter.setSlowSqlMillis(2000);
+        return statFilter;
     }
 
     /**
