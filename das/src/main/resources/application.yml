@@ -5,8 +5,14 @@ spring:
     allow-bean-definition-overriding: true
   jmx:
     enabled: true
+  security:
+    user:
+      name: admin
+      password: 123456
   boot:
     admin:
+      ui:
+        title: 数据采集系统服务监控
       client:
         url: http://localhost:9090
   #  data:
@@ -62,6 +68,9 @@ management:
       exposure:
         include: "*"
     enabled-by-default: true
+  info:
+    env:
+      enabled: true
 
 # 系统日志配置
 logging:

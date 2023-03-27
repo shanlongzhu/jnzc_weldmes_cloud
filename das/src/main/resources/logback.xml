@@ -1,32 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
-    <!--定义当前项目名-->
-    <property name="FILE_NAME" value="das_output"/>
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
-    <property name="LOG_PATH" value="D:/jn-das-log"/>
-    <!-- 定义日志格式  -->
+    <property name="LOG_PATH" value="D:/jn-das-log/das_output"/>
+    <!-- 定义默认的日志格式 -->
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}:%L - %msg%n"/>
+
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:-}){magenta} %clr([%15.15t]){faint} %clr(%-40.40logger{39}:%L){cyan} %clr(—){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
     <!-- 控制台日志 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%highlight${LOG_PATTERN}</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
+
     <!--日志文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${FILE_NAME}.log</file>
+        <file>${LOG_PATH}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_PATH}/${FILE_NAME}-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_PATH}-%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--日志文件保留天数-->
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
         <encoder>
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>${LOG_PATTERN}</pattern>
-            <charset>utf-8</charset>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
         </encoder>
         <!--日志文件最大的大小-->
         <!--        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
@@ -37,11 +48,12 @@
             <level>INFO</level>
         </filter>
     </appender>
+
     <!-- 日志输出级别 -->
     <logger name="org.springframework" level="INFO"/>
     <logger name="com.hl.magic" level="INFO"/>
     <logger name="com.shth.das" level="INFO"/>
-    <!--用来指定最基础的日志输出级别并指定<appender>，可以理解为根logger-->
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
