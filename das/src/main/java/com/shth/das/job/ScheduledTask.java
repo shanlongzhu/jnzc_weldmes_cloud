@@ -7,6 +7,7 @@ import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonList;
 import com.shth.das.common.CommonMap;
 import com.shth.das.common.CommonQueue;
+import com.shth.das.mqtt.EmqMqttClient;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.processdb.DBCreateMethod;
@@ -374,6 +375,15 @@ public class ScheduledTask {
                 log.error("3秒执行一次松下设备实时数据存ProcessDB异常：", e);
             }
         }
+    }
+
+    /**
+     * 每隔10分钟检测MQTT连接，如果断开则重连
+     */
+    @Async
+    @Scheduled(fixedRate = 1000 * 60 * 10)
+    public void scheduled12() {
+        EmqMqttClient.reConnectMqtt();
     }
 
 }

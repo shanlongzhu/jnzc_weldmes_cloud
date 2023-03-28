@@ -5,12 +5,18 @@
 
     <!-- 根据采集编号查询最新的开机时间 -->
     <select id="selectWeldByGatherNo" resultType="com.shth.das.pojo.db.WeldOnOffTime">
-        SELECT * FROM weld_on_off_time WHERE gather_no = #{gatherNo}  ORDER BY start_time DESC LIMIT 1
+        SELECT *
+        FROM weld_on_off_time
+        WHERE gather_no = #{gatherNo}
+        ORDER BY id DESC LIMIT 1
     </select>
 
     <!-- 根据采集编号查询最新的开机时间 -->
     <select id="selectWeldByWeldCid" resultType="com.shth.das.pojo.db.WeldOnOffTime">
-        SELECT * FROM weld_on_off_time WHERE weld_cid = #{weldCid}  ORDER BY start_time DESC LIMIT 1
+        SELECT *
+        FROM weld_on_off_time
+        WHERE weld_cid = #{weldCid}
+        ORDER BY id DESC LIMIT 1
     </select>
 
 </mapper>

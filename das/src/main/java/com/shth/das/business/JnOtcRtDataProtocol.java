@@ -123,7 +123,7 @@ public class JnOtcRtDataProtocol {
                     //集合转字符串[消除对同一对象的循环引用]
                     String message = JSON.toJSONString(jnRtDataUis);
                     //通过mqtt发送到服务端
-                    EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), message, 0);
+                    publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), message);
                 }
             }
             //实时数据存数据库
@@ -142,7 +142,6 @@ public class JnOtcRtDataProtocol {
         } catch (Exception e) {
             log.error("OTC1.0实时数据处理异常：", e);
         }
-
     }
 
     /**
@@ -157,7 +156,7 @@ public class JnOtcRtDataProtocol {
             if (map.containsKey(JNProcessIssueReturn.class.getSimpleName())) {
                 String message = map.get(JNProcessIssueReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProcessIssueReturn), message, 0);
+                publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProcessIssueReturn), message);
             }
         }
     }
@@ -174,7 +173,7 @@ public class JnOtcRtDataProtocol {
             if (map.containsKey(JNProcessClaimReturn.class.getSimpleName())) {
                 String message = map.get(JNProcessClaimReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProcessClaimReturn), message, 0);
+                publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProcessClaimReturn), message);
             }
         }
     }
@@ -192,13 +191,13 @@ public class JnOtcRtDataProtocol {
             if (map.containsKey(JNPasswordReturn.class.getSimpleName())) {
                 String message = map.get(JNPasswordReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1PasswordReturn), message, 0);
+                publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1PasswordReturn), message);
             }
             //控制命令返回
             if (map.containsKey(JNCommandReturn.class.getSimpleName())) {
                 String message = map.get(JNCommandReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1CommandReturn), message, 0);
+                publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1CommandReturn), message);
             }
             //锁焊机或者解锁焊机返回
             if (map.containsKey(JnLockMachineReturn.class.getSimpleName())) {
@@ -256,7 +255,7 @@ public class JnOtcRtDataProtocol {
             if (map.containsKey(OtcV1ProgramPathIssueReturn.class.getSimpleName())) {
                 String message = map.get(OtcV1ProgramPathIssueReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProgramPathIssueReturn), message, 0);
+                publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1ProgramPathIssueReturn), message);
             }
         }
     }
@@ -856,24 +855,32 @@ public class JnOtcRtDataProtocol {
             } catch (Exception e) {
                 log.error("OTC设备关机数据添加到阻塞队列异常：", e);
             }
-            //关机数据通过线程池发送到mq
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
-                List<JNRtDataUI> dataList = new ArrayList<>();
-                JNRtDataUI jnRtDataUi = new JNRtDataUI();
-                jnRtDataUi.setGatherNo(gatherNo);
-                //-1 为关机
-                jnRtDataUi.setWeldStatus(-1);
-                jnRtDataUi.setElectricity(BigDecimal.ZERO);
-                jnRtDataUi.setVoltage(BigDecimal.ZERO);
-                jnRtDataUi.setWeldIp(clientIp);
-                jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
-                dataList.add(jnRtDataUi);
-                String dataArray = JSON.toJSONString(dataList);
-                EmqMqttClient.publishMessage(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray, 0);
-            });
+            //关机数据发送到mq
+            List<JNRtDataUI> dataList = new ArrayList<>();
+            JNRtDataUI jnRtDataUi = new JNRtDataUI();
+            jnRtDataUi.setGatherNo(gatherNo);
+            //-1 为关机
+            jnRtDataUi.setWeldStatus(-1);
+            jnRtDataUi.setElectricity(BigDecimal.ZERO);
+            jnRtDataUi.setVoltage(BigDecimal.ZERO);
+            jnRtDataUi.setWeldIp(clientIp);
+            jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
+            dataList.add(jnRtDataUi);
+            String dataArray = JSON.toJSONString(dataList);
+            publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray);
             CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
             CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
         }
+    }
+
+    /**
+     * 发布消息
+     *
+     * @param topic
+     * @param message
+     */
+    private static void publishMessageToMqtt(String topic, String message) {
+        EmqMqttClient.publishMessage(topic, message, 0);
     }
 
 }
