@@ -1,0 +1,171 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: das-server
+  main:
+    allow-bean-definition-overriding: true
+  jmx:
+    enabled: true
+  security:
+    user:
+      name: admin
+      password: 123456
+  boot:
+    admin:
+      ui:
+        title: 数据采集系统服务监控
+      client:
+        url: http://localhost:9090
+        username: admin
+        password: 123456
+        instance:
+          metadata:
+            user.name: ${spring.security.user.name}
+            user.password: ${spring.security.user.password}
+  #  data:
+  #    mongodb:
+  #      uri: mongodb://admin:123456@localhost:27017/weld_rtdb?authSource=admin
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      ds1: #数据源1
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/weldmesdb?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+        username: root
+        password: 123456
+        initial-size: 5
+        min-idle: 5
+        max-active: 200
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 100
+        connect-properties: druid.stat.logSlowSql=true;druid.stat.mergeSql=true;druid.stat.slowSqlMillis=2000
+        time-between-log-stats-millis: 86400000
+        filters: stat,wall,slf4j #配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      ds2: # 数据源2
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/weldmes-rtdata?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+        username: root
+        password: 123456
+        initial-size: 5
+        min-idle: 5
+        max-active: 200
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 100
+        connect-properties: druid.stat.logSlowSql=true;druid.stat.mergeSql=true;druid.stat.slowSqlMillis=2000
+        time-between-log-stats-millis: 86400000
+        filters: stat,wall,slf4j #配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+
+# 监控端点配置，访问地址：http://localhost:9090
+management:
+  endpoint: # 具体端点的配置
+    health:
+      show-details: always
+    info:
+      enabled: true
+  endpoints: # 全部端点的配置
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true
+  info:
+    env:
+      enabled: true
+
+# 系统日志配置
+logging:
+  config: classpath:logback.xml
+  file:
+    name: 'D:/jn-das-log/das_output.log'
+
+# 配置info端点信息
+info:
+  appName: @project.artifactId@
+  version: @project.version@
+  company: das
+  author: dragon
+
+# mqtt客户端配置
+mqtt:
+  host: localhost
+  port: 1883
+  clientId: jndas
+  username: admin
+  password: 123456
+  connectionTimeout: 30000
+  keepAliveInterval: 30000
+  cleanSession: true
+  automaticReconnect: true
+
+
+# netty服务端口配置
+otcNettyServer:
+  ip: 127.0.0.1
+  port: 5555
+sxNettyServer:
+  ip: 127.0.0.1
+  port: 9002
+
+# 数据累积条数（默认100）
+dataInsertForNumber:
+  otc: 100
+  sx: 100
+
+# OTC待机数据是否存储（true：存储）
+otcStandbySave: true
+
+# 松下待机数据是否存储（true：存储）
+sxStandbySave: true
+
+# mybatis-plus 配置
+mybatis-plus:
+  # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml
+  # 如果是放在resource目录 classpath:/mapper/*Mapper.xml
+  config-location: classpath:mybatis/mybatis.cfg.xml
+  mapper-locations: classpath:mybatis/**/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.shth.das.pojo
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    # 热加载mapper文件
+    refresh: true
+    db-config:
+      db-type: mysql
+
+# 清除任务绑定信息（每天7点执行）
+clearTaskBindingByTime: '0 0 7 * * ?'
+
+# 刷卡启用设备功能（默认：true 开启）
+slotCardEnableDevice: true
+
+# 是否启用OTC业务功能
+enableOtcFunction: true
+
+# 是否启用松下业务功能
+enableSxFunction: false
+
+## 使用SLF4J日志框架进行日志记录功能
+#logging:
+#  # 日志级别从高到低分别是：error、warn、info、debug、trace
+#  level:
+#    root: info
+#  # 指定输出的日志文件名（不指定路径默认和项目同路径，没有会自动新建）
+#  file:
+#    name: D:\jn-das-log\jndas.log
+
+# 配置是否启用ProcessDB（true：启用）
+enableProcessDB: false
+
+# processdb实时数据库配置
+processDB:
+  connectName: jnzcrtdb_account
+  hostName: 127.0.0.1
+  hostPort: 8301
+  userName: root
+  password: root
+  config:
+    dbName: JNZCRTDB
+    otcTableName: OTC
+    sxTableName: SX
+
