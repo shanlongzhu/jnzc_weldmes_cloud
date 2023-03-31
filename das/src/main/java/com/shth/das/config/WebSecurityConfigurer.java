@@ -1,6 +1,7 @@
 package com.shth.das.config;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -8,17 +9,13 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 @Configuration
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
-    /**
-     * 上下文路径
-     */
-    private final String contextPath;
 
-    public WebSecurityConfigurer(AdminServerProperties adminServerProperties) {
-        this.contextPath = adminServerProperties.getContextPath();
-    }
+    @Autowired
+    private AdminServerProperties adminServerProperties;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String contextPath = adminServerProperties.getContextPath();
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(contextPath + "/");
@@ -26,6 +23,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable()
                 .and().authorizeRequests()
                 .antMatchers(contextPath + "/assets/**"
+                        , contextPath + "/druid/**"
                         , contextPath + "/login"
                         , contextPath + "/actuator/**"
                         , contextPath + "/instances/**"

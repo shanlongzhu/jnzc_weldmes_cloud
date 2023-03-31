@@ -1,6 +1,8 @@
 server:
   port: 9090
 spring:
+  application:
+    name: das-server
   main:
     allow-bean-definition-overriding: true
   jmx:
@@ -15,6 +17,12 @@ spring:
         title: 数据采集系统服务监控
       client:
         url: http://localhost:9090
+        username: admin
+        password: 123456
+        instance:
+          metadata:
+            user.name: ${spring.security.user.name}
+            user.password: ${spring.security.user.password}
   #  data:
   #    mongodb:
   #      uri: mongodb://admin:123456@localhost:27017/weld_rtdb?authSource=admin

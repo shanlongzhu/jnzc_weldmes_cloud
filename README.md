@@ -2,7 +2,7 @@
 
 ## 1.准备环境和工具
 
-#### A.JDK 1.8、MySQL 5.7
+#### A.JDK 11、MySQL 5.7
 
 #### B.数据库：weldmesdb、weldmes-rtdata、mongodb
 
@@ -42,11 +42,11 @@ https://gitee.com/zhushanlong/jnzc_weldmes_cloud.git
 
 ## 8.监控
 
-#### (1)SQL和日志监控：http://localhost:9090/druid/login.html
+#### (1)druid监控台：http://localhost:9090/druid/login.html
 
 #### (2)EMQ监控台：http://localhost:18083/#/login
 
-#### (3)SpringBoot监控台：http://localhost:9090
+#### (3)SpringBootAdmin监控台：http://localhost:9090
 
 ## 9.打包部署
 
@@ -82,7 +82,7 @@ https://gitee.com/zhushanlong/jnzc_weldmes_cloud.git
 
 #### (11) ProcessDb数据库是否启用配置，连接配置，库名、表名配置。
 
-#### (12) SLF4J日志框架配置（日志级别，输出目录）
+#### (12) SLF4J日志门面+logback日志实现配置
 
 #### (13) 开机启动任务：
 
