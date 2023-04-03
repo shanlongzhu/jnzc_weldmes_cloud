@@ -75,16 +75,34 @@ public class ScheduledTask {
         if (CommonFunction.isEnableOtcFunction()) {
             //根据时间获取OTC下一个表的表名
             String otcTableName = TableStrategy.getNextOtcTableByDateTime(nowDateTime);
-            if (StringUtils.isNotBlank(otcTableName)) {
+            if (StringUtils.isBlank(otcTableName)) {
+                return;
+            }
+            int otcTable = otcRtDataService.selectTableName(otcTableName);
+            if (otcTable != 1) {
                 int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
                 log.info("otcCreateTableResult:--->>>>{}", otcCreateResult);
             }
         }
+    }
+
+    /**
+     * 每天晚上23点执行
+     * 任务：创建第二天的实时数据表结构
+     */
+    @Scheduled(cron = TableStrategy.EXECUTE_TIME)
+    @Async
+    public void scheduled2() {
+        String nowDateTime = DateTimeUtils.getNowDateTime();
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
             //根据时间获取松下下一个表的表名
             String sxTableName = TableStrategy.getNextSxTableByDateTime(nowDateTime);
-            if (StringUtils.isNotBlank(sxTableName)) {
+            if (StringUtils.isBlank(sxTableName)) {
+                return;
+            }
+            int sxTable = sxRtDataService.selectTableName(sxTableName);
+            if (sxTable != 1) {
                 int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
                 log.info("sxCreateTableResult:--->>>>{}", sxCreateResult);
             }
@@ -97,7 +115,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 60 * 10)
     @Async
-    public void scheduled2() {
+    public void scheduled3() {
         CommonList.setGatherList(gatherService.getMachineGatherAll());
         CommonList.setWeldList(weldService.getMachineWeldAll());
         //CommonDbData.TASK_LIST = taskService.getTaskModelAll();
@@ -112,7 +130,7 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     @Async
-    public void scheduled3() {
+    public void scheduled4() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
             try {
@@ -164,7 +182,7 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     @Async
-    public void scheduled4() {
+    public void scheduled5() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
             try {
@@ -213,7 +231,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 60 * 10)
     @Async
-    public void scheduled5() {
+    public void scheduled6() {
         if (CommonFunction.isEnableOtcFunction()) {
             try {
                 LocalDateTime localDateTime = LocalDateTime.now();
@@ -254,7 +272,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 3)
     @Async
-    public void scheduled6() {
+    public void scheduled7() {
         if (CommonFunction.isEnableOtcFunction()) {
             try {
                 int size = CommonQueue.OTC_LINKED_BLOCKING_QUEUE.size();
@@ -282,7 +300,7 @@ public class ScheduledTask {
      */
     @Scheduled(fixedRate = 1000 * 3)
     @Async
-    public void scheduled7() {
+    public void scheduled8() {
         if (CommonFunction.isEnableSxFunction()) {
             try {
                 int size = CommonQueue.SX_LINKED_BLOCKING_QUEUE.size();
@@ -310,22 +328,12 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "${clearTaskBindingByTime}")
     @Async
-    public void scheduled8() {
+    public void scheduled9() {
         //清空OTC设备的任务
         CommonMap.OTC_TASK_CLAIM_MAP.clear();
         //清空松下设备的任务
         CommonMap.SX_TASK_CLAIM_MAP.clear();
     }
-
-    /**
-     * 每隔10分钟检测系统运行状况
-     */
-//    @Scheduled(fixedRate = 1000 * 60 * 10)
-//    @Async
-//    public void scheduled9() {
-//        //打印系统运行状况
-//        OshiSystemInfo.getSystemInfoAll();
-//    }
 
     /**
      * 3秒执行一次

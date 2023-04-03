@@ -74,7 +74,7 @@ management:
 
 # 系统日志配置
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-dev.xml
   file:
     name: 'D:/jn-das-log/das_output.log'
 

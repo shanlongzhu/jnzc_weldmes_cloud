@@ -25,7 +25,12 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
     private OtcRtDataMapper otcRtDataMapper;
 
     @Override
-    public int createNewTable(String tableName) {
+    public Integer selectTableName(String tableName) {
+        return otcRtDataMapper.selectTableName(tableName);
+    }
+
+    @Override
+    public Integer createNewTable(String tableName) {
         return otcRtDataMapper.createNewTable(tableName);
     }
 
@@ -42,7 +47,7 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
                     otcRtDataMapper.insertRtDataList(map);
                 }
             } catch (Exception e) {
-                log.error("OTC实时数据批量插入异常：", e);
+                log.error("OTC实时数据批量插入异常：{}", e.getMessage());
                 throw new RuntimeException();
             }
         }

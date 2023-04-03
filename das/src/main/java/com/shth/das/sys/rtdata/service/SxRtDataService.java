@@ -8,12 +8,20 @@ import java.util.List;
 public interface SxRtDataService {
 
     /**
+     * 查询表名是否存在
+     *
+     * @param tableName 表名
+     * @return
+     */
+    Integer selectTableName(String tableName);
+
+    /**
      * 创建松下实时数据表结构
      *
      * @param tableName 表名
      * @return 创建结果
      */
-    int createNewTable(String tableName);
+    Integer createNewTable(String tableName);
 
     /**
      * 松下实时数据批量存入数据库

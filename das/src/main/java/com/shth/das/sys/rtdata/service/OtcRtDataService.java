@@ -7,12 +7,20 @@ import java.util.List;
 public interface OtcRtDataService {
 
     /**
+     * 查询表名是否存在
+     *
+     * @param tableName 表名
+     * @return
+     */
+    Integer selectTableName(String tableName);
+
+    /**
      * 创建OTC实时数据表结构
      *
      * @param tableName 表名
      * @return 创建结果
      */
-    int createNewTable(String tableName);
+    Integer createNewTable(String tableName);
 
     /**
      * 实时数据存入数据库

@@ -25,7 +25,12 @@ public class SxRtDataServiceImpl implements SxRtDataService {
     private SxRtDataMapper sxRtDataMapper;
 
     @Override
-    public int createNewTable(String tableName) {
+    public Integer selectTableName(String tableName) {
+        return sxRtDataMapper.selectTableName(tableName);
+    }
+
+    @Override
+    public Integer createNewTable(String tableName) {
         return sxRtDataMapper.createNewTable(tableName);
     }
 
@@ -42,7 +47,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
                     sxRtDataMapper.insertSxRtDataList(map);
                 }
             } catch (Exception e) {
-                log.error("松下实时数据批量插入异常：", e);
+                log.error("松下实时数据批量插入异常：{}", e.getMessage());
                 throw new RuntimeException();
             }
         }

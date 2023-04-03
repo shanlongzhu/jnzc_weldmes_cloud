@@ -11,12 +11,20 @@ import java.util.Map;
 public interface OtcRtDataMapper extends BaseMapper<JNRtDataDB> {
 
     /**
+     * 查询表名是否存在
+     *
+     * @param tableName 表名
+     * @return
+     */
+    Integer selectTableName(@Param("tableName") String tableName);
+
+    /**
      * 创建OTC实时数据表
      *
      * @param tableName 表名
      * @return 创建结果
      */
-    int createNewTable(@Param("tableName") String tableName);
+    Integer createNewTable(@Param("tableName") String tableName);
 
     /**
      * 批量存入OTC实时数据
@@ -24,6 +32,6 @@ public interface OtcRtDataMapper extends BaseMapper<JNRtDataDB> {
      * @param map 将数据封装到map
      * @return 返回新增结果
      */
-    int insertRtDataList(Map<String, Object> map);
+    Integer insertRtDataList(Map<String, Object> map);
 
 }

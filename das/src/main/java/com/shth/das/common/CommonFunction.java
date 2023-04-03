@@ -1,6 +1,5 @@
 package com.shth.das.common;
 
-import com.shth.das.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,15 +18,6 @@ public class CommonFunction {
      * 松下待机数据是否存储（默认：true 存储）
      */
     private static boolean sxStandbySave = true;
-
-    /**
-     * OTC焊机IP
-     */
-    private static String otcIp = "127.0.0.1";
-    /**
-     * 松下焊机IP
-     */
-    private static String sxIp = "127.0.0.1";
 
     /**
      * OTC焊机端口
@@ -120,28 +110,6 @@ public class CommonFunction {
 
     public static int getSxNumber() {
         return sxNumber;
-    }
-
-    public static String getOtcIp() {
-        return otcIp;
-    }
-
-    @Value("${otcNettyServer.ip}")
-    private void setOtcIp(String ip) {
-        if (CommonUtils.isNotEmpty(ip)) {
-            otcIp = ip;
-        }
-    }
-
-    public static String getSxIp() {
-        return sxIp;
-    }
-
-    @Value("${sxNettyServer.ip}")
-    private void setSxIp(String ip) {
-        if (CommonUtils.isNotEmpty(ip)) {
-            sxIp = ip;
-        }
     }
 
     public static boolean isOtcStandbySave() {
