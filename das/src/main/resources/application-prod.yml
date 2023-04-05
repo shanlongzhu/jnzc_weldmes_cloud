@@ -76,7 +76,7 @@ management:
 logging:
   config: classpath:logback-prod.xml
   file:
-    name: '/logs/das_log/das_output.log'
+    name: 'logs/das_log/das-output.log'
 
 # 配置info端点信息
 info:

@@ -289,8 +289,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
 
-                <executions>
-                    <!-- 执行mvn package时，执行：mvn clean package docker:build -->
+                <!--<executions>
+                    &lt;!&ndash; 执行mvn package时，执行：mvn clean package docker:build &ndash;&gt;
                     <execution>
                         <id>build-image</id>
                         <phase>package</phase>
@@ -298,7 +298,7 @@
                             <goal>build</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>-->
 
                 <configuration>
                     <imageName>${project.artifactId}</imageName>
