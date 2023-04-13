@@ -2,6 +2,7 @@ package com.shth.das.sys.rtdata.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
 import com.shth.das.codeparam.TableStrategy;
+import com.shth.das.pojo.db.OtcWeldStatisticsData;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 import com.shth.das.sys.rtdata.mapper.OtcRtDataMapper;
 import com.shth.das.sys.rtdata.service.OtcRtDataService;
@@ -51,5 +52,20 @@ public class OtcRtDataServiceImpl implements OtcRtDataService {
                 throw new RuntimeException();
             }
         }
+    }
+
+    /**
+     * 按时间段统计OTC数据
+     *
+     * @param startTime
+     * @param endTime
+     * @param tableName
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public List<OtcWeldStatisticsData> selectOtcRtDataByDateTime(String startTime, String endTime, String tableName, Integer offset, Integer size) {
+        return otcRtDataMapper.selectOtcRtDataByDateTime(startTime, endTime, tableName, offset, size);
     }
 }

@@ -4,35 +4,33 @@
 <mapper namespace="com.shth.das.sys.weldmesdb.mapper.StatisticsDataMapper">
 
     <!-- 统计OTC实时数据到报表中 -->
-    <insert id="insertWeldStatisticsData" parameterType="java.lang.String">
-        <if test="tableName != null and tableName != '' and startTime != null and startTime != '' and endTime != null and endTime != ''">
-            INSERT INTO weldmesdb.weld_statistics_data(weldDuration, weldModel, gatherNo, welderNo, weldStatus,
-            machineId, machineNo, machineDeptId, gatherId, gatherDeptId,welderId, welderName, welderDeptId, taskId,
-            taskName, taskNo, createTime,startTime,endTime,electricity,voltage,wireFeedRate,wireDiameter,wireMaterialsGases)
-            SELECT COUNT(id) weldDuration,weldModel,gatherNo,welderNo,weldStatus,machineId,machineNo,
-            machineDeptId,gatherId,gatherDeptId,welderId,welderName,welderDeptId,taskId,taskName,taskNo,SYSDATE(),
-            '${startTime}','${endTime}',AVG(electricity),AVG(voltage),AVG(wireFeedRate),AVG(wireDiameter),AVG(wireMaterialsGases)
-            FROM `weldmes-rtdata`.${tableName}
-            WHERE weldTime BETWEEN #{startTime} AND #{endTime}
-            GROUP BY gatherNo, weldStatus, welderNo, taskId
-        </if>
+    <insert id="insertWeldStatisticsData" parameterType="java.util.List">
+        INSERT INTO weldmesdb.weld_statistics_data(weldDuration, weldModel, gatherNo, welderNo, weldStatus,
+        machineId, machineNo, machineDeptId, gatherId, gatherDeptId,welderId, welderName, welderDeptId, taskId,
+        taskName, taskNo, createTime,startTime,endTime,electricity,voltage,wireFeedRate,wireDiameter,wireMaterialsGases)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.weldDuration},#{item.weldModel},#{item.gatherNo},#{item.welderNo},#{item.weldStatus}, #{item.machineId},#{item.machineNo},
+             #{item.machineDeptId},#{item.gatherId},#{item.gatherDeptId},#{item.welderId},#{item.welderName},#{item.welderDeptId},#{item.taskId},
+             #{item.taskName},#{item.taskNo},#{item.createTime},#{item.startTime},#{item.endTime},#{item.electricity},#{item.voltage},
+             #{item.wireFeedRate},#{item.wireDiameter},#{item.wireMaterialsGases})
+        </foreach>
     </insert>
 
     <!-- 统计SX实时数据到报表中 -->
-    <insert id="insertSxWeldStatisticsData" parameterType="java.lang.String">
-        <if test="tableName != null and tableName != '' and startTime != null and startTime != '' and endTime != null and endTime != ''">
-            INSERT INTO weldmesdb.weldsx_statistics_data(weldSuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
-            startTime,endTime,createTime,weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
-            initialEle,initialVol,initialWireSpeed,weldEle,weldVol,weldWireSpeed,
-            arcEle,arcVol,arcWireSpeed,realityWeldEle,realityWeldVol,realityWireSpeed,wireSpeed)
-            SELECT COUNT(id) weldDuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
-            '${startTime}','${endTime}',SYSDATE(),weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
-            AVG(initialEle),AVG(initialVol),AVG(initialWireSpeed),AVG(weldEle),AVG(weldVol),AVG(weldWireSpeed),
-            AVG(arcEle),AVG(arcVol),AVG(arcWireSpeed),AVG(realityWeldEle),AVG(realityWeldVol),AVG(realityWireSpeed),AVG(wireSpeed)
-            FROM `weldmes-rtdata`.${tableName}
-            WHERE weldTime BETWEEN #{startTime} AND #{endTime}
-            GROUP BY weldIp, weldStatus,welderId,taskId
-        </if>
+    <insert id="insertSxWeldStatisticsData" parameterType="java.util.List">
+        INSERT INTO weldmesdb.weldsx_statistics_data(weldSuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
+        startTime,endTime,createTime,weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
+        initialEle,initialVol,initialWireSpeed,weldEle,weldVol,weldWireSpeed,
+        arcEle,arcVol,arcWireSpeed,realityWeldEle,realityWeldVol,realityWireSpeed,wireSpeed)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.weldSuration},#{item.weldCid},#{item.weldCode},#{item.weldIp},#{item.weldModel},#{item.weldType},#{item.weldStatus},
+            #{item.startTime},#{item.endTime},#{item.createTime},#{item.weldFlag},#{item.welderId},#{item.welderName},#{item.welderDeptId},
+            #{item.taskId},#{item.taskName},#{item.taskNo},#{item.initialEle},#{item.initialVol},#{item.initialWireSpeed},#{item.weldEle},
+            #{item.weldVol},#{item.weldWireSpeed},#{item.arcEle},#{item.arcVol},#{item.arcWireSpeed},#{item.realityWeldEle},
+             #{item.realityWeldVol},#{item.realityWireSpeed},#{item.wireSpeed})
+        </foreach>
     </insert>
 
     <!-- 查询OTC报表的最大结束时间 -->

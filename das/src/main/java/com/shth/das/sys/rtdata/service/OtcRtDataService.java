@@ -1,5 +1,6 @@
 package com.shth.das.sys.rtdata.service;
 
+import com.shth.das.pojo.db.OtcWeldStatisticsData;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 
 import java.util.List;
@@ -28,5 +29,17 @@ public interface OtcRtDataService {
      * @param list 数据集合
      */
     void insertRtDataList(List<JNRtDataDB> list);
+
+    /**
+     * 按时间段统计OTC数据
+     *
+     * @param startTime
+     * @param endTime
+     * @param tableName
+     * @param offset
+     * @param size
+     * @return
+     */
+    List<OtcWeldStatisticsData> selectOtcRtDataByDateTime(String startTime, String endTime, String tableName, Integer offset, Integer size);
 
 }

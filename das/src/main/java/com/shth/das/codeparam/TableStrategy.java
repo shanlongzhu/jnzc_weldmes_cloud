@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,19 +65,19 @@ public class TableStrategy {
      * Map<K,Function<T,R>>
      * K:分表策略，T:输入时间点，R:返回当前表名
      */
-    private static final Map<String, Function<String, String>> TIMING_TABLE_MAP = new HashMap<>();
+    private static final Map<String, Function<String, String>> TIMING_TABLE_MAP = new ConcurrentHashMap<>();
 
     /**
      * Map<K,Function<T,R>>
      * K:分表策略，T:输入时间段，R:返回表名集合
      */
-    private static final Map<String, Function<Map<String, String>, List<String>>> TIME_BUCKET_MAP = new HashMap<>();
+    private static final Map<String, Function<Map<String, String>, List<String>>> TIME_BUCKET_MAP = new ConcurrentHashMap<>();
 
     /**
      * Map<K,Function<T,R>>
      * K:分表策略，T:输入时间点，R:返回当前时间下一个表名
      */
-    private static final Map<String, Function<String, String>> TIMING_NEXT_TABLE_MAP = new HashMap<>();
+    private static final Map<String, Function<String, String>> TIMING_NEXT_TABLE_MAP = new ConcurrentHashMap<>();
 
     static {
         //时间点的当前表

@@ -1,6 +1,7 @@
 package com.shth.das.sys.rtdata.service;
 
 
+import com.shth.das.pojo.db.SxWeldStatisticsData;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 
 import java.util.List;
@@ -29,5 +30,17 @@ public interface SxRtDataService {
      * @param list 集合
      */
     void insertSxRtDataList(List<SxRtDataDb> list);
+
+    /**
+     * 按时间段统计SX数据
+     *
+     * @param startTime
+     * @param endTime
+     * @param tableName
+     * @param offset
+     * @param size
+     * @return
+     */
+    List<SxWeldStatisticsData> selectSxRtDataByDateTime(String startTime, String endTime, String tableName, Integer offset, Integer size);
 
 }

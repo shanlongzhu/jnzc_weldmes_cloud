@@ -2,6 +2,7 @@ package com.shth.das.sys.rtdata.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
 import com.shth.das.codeparam.TableStrategy;
+import com.shth.das.pojo.db.SxWeldStatisticsData;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
 import com.shth.das.sys.rtdata.mapper.SxRtDataMapper;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
@@ -51,5 +52,20 @@ public class SxRtDataServiceImpl implements SxRtDataService {
                 throw new RuntimeException();
             }
         }
+    }
+
+    /**
+     * 按时间段统计SX数据
+     *
+     * @param startTime
+     * @param endTime
+     * @param tableName
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public List<SxWeldStatisticsData> selectSxRtDataByDateTime(String startTime, String endTime, String tableName, Integer offset, Integer size) {
+        return sxRtDataMapper.selectSxRtDataByDateTime(startTime, endTime, tableName, offset, size);
     }
 }

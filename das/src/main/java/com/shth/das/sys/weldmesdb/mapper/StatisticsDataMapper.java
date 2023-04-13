@@ -1,28 +1,26 @@
 package com.shth.das.sys.weldmesdb.mapper;
 
+import com.shth.das.pojo.db.OtcWeldStatisticsData;
+import com.shth.das.pojo.db.SxWeldStatisticsData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface StatisticsDataMapper {
 
     /**
-     * 统计松下实时数据到报表中
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @param tableName 表名
+     * 统计OTC实时数据到报表中
      * @return 统计结果
      */
-    int insertWeldStatisticsData(@Param("startTime") String startTime,@Param("endTime") String endTime,@Param("tableName") String tableName);
+    int insertWeldStatisticsData(List<OtcWeldStatisticsData> list);
 
     /**
-     * 统计松下实时数据到报表中
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @param tableName 表名
+     * 统计SX实时数据到报表中
      * @return 统计结果
      */
-    int insertSxWeldStatisticsData(@Param("startTime") String startTime,@Param("endTime") String endTime,@Param("tableName") String tableName);
+    int insertSxWeldStatisticsData(List<SxWeldStatisticsData> list);
 
     /**
      * 查询OTC统计表上一次的统计时间（最大结束时间）

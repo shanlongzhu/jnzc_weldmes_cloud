@@ -261,4 +261,19 @@
         </foreach>
     </insert>
 
+    <!-- 按时间段统计SX数据 -->
+    <select id="selectSxRtDataByDateTime" resultType="com.shth.das.pojo.db.SxWeldStatisticsData">
+        <if test="tableName != null and tableName != '' and startTime != null and startTime != '' and endTime != null and endTime != ''">
+            SELECT COUNT(id) weldDuration,weldCid,weldCode,weldIp,weldModel,weldType,weldStatus,
+                   '${startTime}' startTime,'${endTime}' endTime,SYSDATE() createTime,weldFlag,welderId,welderName,welderDeptId,taskId,taskName,taskNo,
+                   AVG(initialEle) initialEle,AVG(initialVol) initialVol,AVG(initialWireSpeed) initialWireSpeed,AVG(weldEle) weldEle,AVG(weldVol) weldVol,
+                   AVG(weldWireSpeed) weldWireSpeed,AVG(arcEle) arcEle,AVG(arcVol) arcVol,AVG(arcWireSpeed) arcWireSpeed,AVG(realityWeldEle) realityWeldEle,
+                   AVG(realityWeldVol) realityWeldVol,AVG(realityWireSpeed) realityWireSpeed,AVG(wireSpeed) wireSpeed
+            FROM `weldmes-rtdata`.${tableName}
+            WHERE weldTime BETWEEN #{startTime} AND #{endTime}
+            GROUP BY weldIp, weldStatus,welderId,taskId
+            LIMIT #{offset},#{size}
+        </if>
+    </select>
+
 </mapper>

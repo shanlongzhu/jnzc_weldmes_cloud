@@ -191,4 +191,18 @@
         </foreach>
     </insert>
 
+    <!-- 按时间段统计OTC数据 -->
+    <select id="selectOtcRtDataByDateTime" resultType="com.shth.das.pojo.db.OtcWeldStatisticsData">
+        <if test="tableName != null and tableName != '' and startTime != null and startTime != '' and endTime != null and endTime != ''">
+            SELECT COUNT(id) weldDuration,weldModel,gatherNo,welderNo,weldStatus,machineId,machineNo,
+            machineDeptId,gatherId,gatherDeptId,welderId,welderName,welderDeptId,taskId,taskName,taskNo,SYSDATE() createTime,
+            '${startTime}' startTime,'${endTime}' endTime,AVG(electricity) electricity,AVG(voltage) voltage,AVG(wireFeedRate) wireFeedRate,
+            AVG(wireDiameter) wireDiameter,AVG(wireMaterialsGases) wireMaterialsGases
+            FROM `weldmes-rtdata`.${tableName}
+            WHERE weldTime BETWEEN #{startTime} AND #{endTime}
+            GROUP BY gatherNo, weldStatus, welderNo, taskId
+            LIMIT #{offset},#{size}
+        </if>
+    </select>
+
 </mapper>
