@@ -20,7 +20,7 @@ public class AsyncConfig {
         // 设置核心线程数
         executor.setCorePoolSize(10);
         // 设置最大线程数
-        executor.setMaxPoolSize(20);
+        executor.setMaxPoolSize(50);
         // 设置队列容量
         executor.setQueueCapacity(10);
         // 设置线程活跃时间（秒）
@@ -33,4 +33,5 @@ public class AsyncConfig {
         executor.setWaitForTasksToCompleteOnShutdown(true);
         return executor;
     }
+
 }

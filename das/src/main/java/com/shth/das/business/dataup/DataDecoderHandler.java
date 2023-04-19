@@ -28,10 +28,10 @@ public class DataDecoderHandler {
 
     static {
         try {
-            Class<?> superClass = Class.forName(DataUpHandle.class.getName());
+            //Class<?> superClass = Class.forName(DataUpHandle.class.getName());
             Reflections reflections = new Reflections(DataUpHandle.class.getPackageName());
             //得到某接口下的所有实现类
-            Set<Class<?>> implClassSet = (Set<Class<?>>) reflections.getSubTypesOf(superClass);
+            Set<Class<? extends DataUpHandle>> implClassSet = reflections.getSubTypesOf(DataUpHandle.class);
             for (Class<?> aClass : implClassSet) {
 
                 //执行自定义数据拆包逻辑

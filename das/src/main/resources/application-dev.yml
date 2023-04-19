@@ -2,6 +2,10 @@ server:
   port: 9090
   shutdown: graceful
 spring:
+  thymeleaf:
+    cache: false
+    check-template-location: false
+    check-template: false
   application:
     name: das-server
   main:
