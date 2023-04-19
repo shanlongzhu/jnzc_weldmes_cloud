@@ -40,7 +40,7 @@ public class EmqMqttCallback implements MqttCallback {
         log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
         try {
             String message = new String(mqttMessage.getPayload(), StandardCharsets.UTF_8);
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> new MqttMessageManage().mqttMessageManage(topic, message));
+            CommonThreadPool.executeTask(() -> new MqttMessageManage().mqttMessageManage(topic, message));
         } catch (Exception e) {
             log.error("MQTT客户端消息回调-数据接收处理异常：", e);
         }

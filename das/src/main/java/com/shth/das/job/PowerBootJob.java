@@ -68,7 +68,7 @@ public class PowerBootJob {
     public void startJnOtcJob() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
                 String tableName = TableStrategy.getOtcTableByDateTime(DateTimeUtils.getNowDateTime());
                 if (!StringUtils.isEmpty(tableName)) {
@@ -85,7 +85,7 @@ public class PowerBootJob {
     public void startSxJob() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
                 String tableName = TableStrategy.getSxTableByDateTime(DateTimeUtils.getNowDateTime());
                 if (!StringUtils.isEmpty(tableName)) {
@@ -102,7 +102,7 @@ public class PowerBootJob {
     public void startOtcOnQueueConsumer() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 try {
                     while (true) {
                         //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
@@ -133,7 +133,7 @@ public class PowerBootJob {
     public void startOtcOffQueueConsumer() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 while (true) {
                     try {
                         //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
@@ -160,7 +160,7 @@ public class PowerBootJob {
     public void startSxAddMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 while (true) {
                     try {
                         //take()：如果队列为空，进行阻塞，直到有值，防止无限空轮询
@@ -181,7 +181,7 @@ public class PowerBootJob {
     public void startSxOnMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 while (true) {
                     try {
                         SxMachineQueue sxMachineQueue = CommonQueue.SX_ON_MACHINE_QUEUES.take();
@@ -213,7 +213,7 @@ public class PowerBootJob {
     public void startSxOffMachineQueue() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
-            CommonThreadPool.THREAD_POOL_EXECUTOR.execute(() -> {
+            CommonThreadPool.executeTask(() -> {
                 while (true) {
                     try {
                         SxMachineQueue sxMachineQueue = CommonQueue.SX_OFF_MACHINE_QUEUES.take();

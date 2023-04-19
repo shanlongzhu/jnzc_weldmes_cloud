@@ -63,6 +63,8 @@ public class ScheduledTask {
     @Autowired
     private SxRtDataService sxRtDataService;
 
+    //在线cron表达式生成器：https://cron.qqe2.com/
+
     /**
      * 每天晚上23点执行
      * 任务：创建第二天的实时数据表结构
@@ -128,14 +130,14 @@ public class ScheduledTask {
      * 每个整点执行一次
      * 任务：OTC实时数据定时统计
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 1 0/1 * * ?")
     @Async
     public void scheduled4() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
             try {
                 //延迟1分钟
-                Thread.sleep(1000 * 60);
+                //Thread.sleep(1000 * 60);
                 String nowDateTime = DateTimeUtils.getNowDateTime();
                 //获取当前时间对应的表名
                 String otcTableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
@@ -180,14 +182,14 @@ public class ScheduledTask {
      * 每个整点执行一次
      * 任务：松下实时数据定时统计（逻辑同OTC的相似）
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 1 0/1 * * ?")
     @Async
     public void scheduled5() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
             try {
                 //延迟1分钟
-                Thread.sleep(1000 * 60);
+                //Thread.sleep(1000 * 60);
                 String nowDateTime = DateTimeUtils.getNowDateTime();
                 //系统时间整点作为结束时间点
                 String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);

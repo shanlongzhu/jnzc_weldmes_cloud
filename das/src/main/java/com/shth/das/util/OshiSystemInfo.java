@@ -9,6 +9,7 @@ import oshi.util.Util;
 
 import java.text.DecimalFormat;
 import java.util.Properties;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @description: 使用Oshi监控系统运行状况
@@ -33,10 +34,11 @@ public class OshiSystemInfo {
      * 自定义线程池信息
      */
     public static void getThreadPoolInfo() {
+        ThreadPoolExecutor threadPoolExecutor = CommonThreadPool.threadPoolExecutor();
         log.info("-----------------------------------------");
         log.info("自定义线程池--->创建过最大线程数：{} -- 当前线程数：{} -- 活跃线程数：{} -- 队列数量：{}",
-                CommonThreadPool.THREAD_POOL_EXECUTOR.getLargestPoolSize(), CommonThreadPool.THREAD_POOL_EXECUTOR.getPoolSize(),
-                CommonThreadPool.THREAD_POOL_EXECUTOR.getActiveCount(), CommonThreadPool.THREAD_POOL_EXECUTOR.getQueue().size());
+                threadPoolExecutor.getLargestPoolSize(), threadPoolExecutor.getPoolSize(),
+                threadPoolExecutor.getActiveCount(), threadPoolExecutor.getQueue().size());
         log.info("-----------------------------------------");
     }
 

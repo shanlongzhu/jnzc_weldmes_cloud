@@ -27,9 +27,11 @@ public class ShutDownServices {
 
     @PreDestroy
     public void shutdownPool() {
-        log.info("线程池已关闭,当前线程数：{},活跃线程数：{}", CommonThreadPool.THREAD_POOL_EXECUTOR.getPoolSize(), CommonThreadPool.THREAD_POOL_EXECUTOR.getActiveCount());
+        int poolSize = CommonThreadPool.threadPoolExecutor().getPoolSize();
+        int activeCount = CommonThreadPool.threadPoolExecutor().getActiveCount();
+        log.info("线程池已关闭,当前线程数：{},活跃线程数：{}", poolSize, activeCount);
         //线程池关闭
-        CommonThreadPool.THREAD_POOL_EXECUTOR.shutdown();
+        CommonThreadPool.threadPoolExecutor().shutdown();
     }
 
 }
