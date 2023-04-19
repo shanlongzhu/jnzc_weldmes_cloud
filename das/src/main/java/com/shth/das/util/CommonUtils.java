@@ -43,12 +43,30 @@ public class CommonUtils {
     }
 
     /**
+     * 非空判断，非空返回false
+     *
+     * @return boolean
+     */
+    public static boolean isEmpty(String str) {
+        return StringUtils.isBlank(str);
+    }
+
+    /**
      * 非空判断，非空返回true
      *
      * @return boolean
      */
     public static boolean isNotEmpty(List<?> list) {
         return ObjectUtils.isNotEmpty(list);
+    }
+
+    /**
+     * 非空判断，非空返回false
+     *
+     * @return boolean
+     */
+    public static boolean isEmpty(List<?> list) {
+        return ObjectUtils.isEmpty(list);
     }
 
     /**

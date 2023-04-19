@@ -3,12 +3,14 @@ package com.shth.das.netty;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import org.springframework.stereotype.Component;
 
 /**
  * @description: 通道初始化
  * @author: Shan Long
  * @create: 2021-07-31
  */
+@Component
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
@@ -19,11 +21,13 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         //int serverPort = socketChannel.localAddress().getPort();
         //心跳检测
         //pipeline.addLast(new IdleStateHandler(10, 0, 0, TimeUnit.SECONDS));
-        //自定义协议解码器，根据端口动态的选择解码器
+
+        //自定义协议解码器
         pipeline.addLast("decoder", new NettyDecoder());
         //自定义协议编码器
         pipeline.addLast("encoder", new NettyEncoder());
         //业务处理
-        pipeline.addLast(new NettyServerHandler());
+        pipeline.addLast("handler", new NettyServerHandler());
     }
+
 }

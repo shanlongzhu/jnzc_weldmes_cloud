@@ -47,7 +47,7 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
                 count += 1;
                 totalSize += list.size();
             }
-            log.info("OTC全部统计完成，当前统计次数：{},统计数据量：{}", count, totalSize);
+            log.info("OTC设备数据统计,统计时间：{} ~ {},统计次数：{},统计数据量：{}", startTime, endTime, count, totalSize);
         } catch (Exception e) {
             log.error("OTC设备实时数据统计到报表中异常：", e);
             throw new RuntimeException();
@@ -73,7 +73,7 @@ public class StatisticsDataServiceImpl implements StatisticsDataService {
                 count += 1;
                 totalSize += list.size();
             }
-            log.info("松下全部统计完成，当前统计次数：{},统计数据量：{}", count, totalSize);
+            log.info("松下设备数据统计,统计时间：{} ~ {},统计次数：{},统计数据量：{}", startTime, endTime, count, totalSize);
         } catch (Exception e) {
             log.error("松下设备实时数据统计到报表中异常：", e);
             throw new RuntimeException();

@@ -68,11 +68,11 @@
             <!--            <version>4.1.59.Final</version>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jboss.netty/netty -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
             <version>3.2.4.Final</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
@@ -117,7 +117,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
+            <!--<exclusions>
                 <exclusion>
                     <artifactId>spring-test</artifactId>
                     <groupId>org.springframework</groupId>
@@ -126,7 +126,7 @@
                     <artifactId>spring-boot-test</artifactId>
                     <groupId>org.springframework.boot</groupId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
         <!--开发阶段使用：springboot热启动(热部署)：项目有更改，自动编译：需配置idea   true生效-->
         <!--        <dependency>-->
@@ -150,48 +150,34 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-integration</artifactId>
-            <!--            <version>2.7.0</version>-->
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-stream</artifactId>
-            <!--            <version>5.5.12</version>-->
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-mqtt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-                    <groupId>org.eclipse.paho</groupId>
-                </exclusion>
-            </exclusions>
-            <!--            <version>5.5.12</version>-->
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.paho</groupId>
-            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.5</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
-            <!--            <version>2.7.0</version>-->
+            &lt;!&ndash;            <version>2.7.0</version>&ndash;&gt;
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <!--            <version>5.3.20</version>-->
-        </dependency>
-        <dependency>
+            &lt;!&ndash;            <version>5.3.20</version>&ndash;&gt;
+        </dependency>-->
+        <!--<dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -203,7 +189,6 @@
             <artifactId>oshi-core</artifactId>
             <version>6.1.6</version>
         </dependency>
-
         <!-- springboot整合mongodb -->
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->
@@ -231,6 +216,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
         </dependency>
 
     </dependencies>
@@ -284,12 +275,12 @@
                 </configuration>
             </plugin>
             <!-- 使用docker-maven插件代替Dockerfile文件配置 -->
-            <plugin>
+            <!--<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
 
-                <!--<executions>
+                &lt;!&ndash;<executions>
                     &lt;!&ndash; 执行mvn package时，执行：mvn clean package docker:build &ndash;&gt;
                     <execution>
                         <id>build-image</id>
@@ -298,7 +289,7 @@
                             <goal>build</goal>
                         </goals>
                     </execution>
-                </executions>-->
+                </executions>&ndash;&gt;
 
                 <configuration>
                     <imageName>${project.artifactId}</imageName>
@@ -306,26 +297,26 @@
                         <imageTag>latest</imageTag>
                     </imageTags>
                     <baseImage>openjdk:11</baseImage>
-                    <!-- <exposes>9090</exposes>-->
+                    &lt;!&ndash; <exposes>9090</exposes>&ndash;&gt;
                     <maintainer>zhushanlong@126.com</maintainer>
                     <workdir>/ROOT</workdir>
-                    <!--<cmd>["java","-version"]</cmd>-->
+                    &lt;!&ndash;<cmd>["java","-version"]</cmd>&ndash;&gt;
                     <entryPoint>["java", "-jar", "${project.build.finalName}.jar"]
                     </entryPoint>
-                    <!-- 远程docker地址 -->
+                    &lt;!&ndash; 远程docker地址 &ndash;&gt;
                     <dockerHost>http://192.168.0.107:2375</dockerHost>
-                    <!-- 复制jar到docker容器指定目录 -->
+                    &lt;!&ndash; 复制jar到docker容器指定目录 &ndash;&gt;
                     <resources>
                         <resource>
                             <targetPath>/ROOT</targetPath>
-                            <!--需要复制的根目录 -->
+                            &lt;!&ndash;需要复制的根目录 &ndash;&gt;
                             <directory>${project.build.directory}</directory>
-                            <!-- 打包后的文件 -->
+                            &lt;!&ndash; 打包后的文件 &ndash;&gt;
                             <include>${project.build.finalName}.jar</include>
                         </resource>
                     </resources>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
         <resources>
             <!-- 过滤打包，根据maven所选的环境进行打包 -->

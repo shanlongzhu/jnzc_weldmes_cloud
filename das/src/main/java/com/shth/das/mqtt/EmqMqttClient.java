@@ -214,4 +214,18 @@ public class EmqMqttClient {
         }
     }
 
+    /**
+     * 关闭客户端
+     */
+    public static void shutdownMqtt() {
+        try {
+            if (null != mqttClient && mqttClient.isConnected()) {
+                mqttClient.disconnect();
+                mqttClient.close();
+            }
+        } catch (Exception e) {
+            log.error("MQTT客户端关闭异常：{}", e.getMessage());
+        }
+    }
+
 }
