@@ -80,11 +80,11 @@ public class ScheduledTask {
             if (StringUtils.isBlank(otcTableName)) {
                 return;
             }
-            int otcTable = otcRtDataService.selectTableName(otcTableName);
-            if (otcTable != 1) {
-                int otcCreateResult = otcRtDataService.createNewTable(otcTableName);
-                log.info("otcCreateTableResult:--->>>>{}", otcCreateResult);
+            int otcCreateTableResult = otcRtDataService.selectTableName(otcTableName);
+            if (otcCreateTableResult != 1) {
+                otcCreateTableResult = otcRtDataService.createNewTable(otcTableName);
             }
+            log.info("otcCreateTableResult:--->>>> {}", otcCreateTableResult);
         }
     }
 
@@ -103,11 +103,11 @@ public class ScheduledTask {
             if (StringUtils.isBlank(sxTableName)) {
                 return;
             }
-            int sxTable = sxRtDataService.selectTableName(sxTableName);
-            if (sxTable != 1) {
-                int sxCreateResult = sxRtDataService.createNewTable(sxTableName);
-                log.info("sxCreateTableResult:--->>>>{}", sxCreateResult);
+            int sxCreateTableResult = sxRtDataService.selectTableName(sxTableName);
+            if (sxCreateTableResult != 1) {
+                sxCreateTableResult = sxRtDataService.createNewTable(sxTableName);
             }
+            log.info("sxCreateTableResult:--->>>> {}", sxCreateTableResult);
         }
     }
 

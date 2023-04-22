@@ -1,9 +1,9 @@
 package com.shth.das.codeparam;
 
-import com.alibaba.druid.util.StringUtils;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.*;
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class TableStrategy {
      * @return 表名
      */
     public static String getOtcTableByDateTime(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
                 return OTC_TABLE_PREFIX + TIMING_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
@@ -139,7 +139,7 @@ public class TableStrategy {
      * @return 表名
      */
     public static String getNextOtcTableByDateTime(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_NEXT_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
                 return OTC_TABLE_PREFIX + TIMING_NEXT_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
@@ -154,7 +154,7 @@ public class TableStrategy {
      * @return 表名
      */
     public static String getSxTableByDateTime(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
                 return SX_TABLE_PREFIX + TIMING_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
@@ -189,7 +189,7 @@ public class TableStrategy {
      * @return 表名
      */
     public static String getNextSxTableByDateTime(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_NEXT_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
                 return SX_TABLE_PREFIX + TIMING_NEXT_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
@@ -204,7 +204,7 @@ public class TableStrategy {
      * @return 年（yyyy）
      */
     private static String getTableNameByYear(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_YEAR);
         }
         return null;
@@ -246,7 +246,7 @@ public class TableStrategy {
      * @return 月（yyyyMM）
      */
     private static String getTableNameByMonth(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_MONTH);
         }
         return null;
@@ -291,7 +291,7 @@ public class TableStrategy {
      * @return 周一（yyyyMMdd）
      */
     private static String getTableNameByWeek(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             try {
                 final LocalDate parse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
                 return LocalDateTime.of(parse, LocalTime.MIN).with(DayOfWeek.MONDAY).format(DateTimeUtils.CUSTOM_DATE);
@@ -342,7 +342,7 @@ public class TableStrategy {
      * @return 当天（yyyyMMdd）
      */
     private static String getTableNameByDay(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             return LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_DATE);
         }
         return null;
@@ -383,7 +383,7 @@ public class TableStrategy {
      * @return 表名
      */
     private static String getNextTableNameByYear(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusYears(1).format(DateTimeUtils.CUSTOM_YEAR);
         }
@@ -397,7 +397,7 @@ public class TableStrategy {
      * @return 表名
      */
     private static String getNextTableNameByMonth(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusMonths(1).format(DateTimeUtils.CUSTOM_MONTH);
         }
@@ -411,7 +411,7 @@ public class TableStrategy {
      * @return 表名
      */
     private static String getNextTableNameByWeek(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             final LocalDate startParse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             final LocalDateTime startMonday = LocalDateTime.of(startParse, LocalTime.MIN).with(DayOfWeek.MONDAY);
             return startMonday.plusWeeks(1).format(DateTimeUtils.CUSTOM_DATE);
@@ -426,7 +426,7 @@ public class TableStrategy {
      * @return 表名
      */
     private static String getNextTableNameByDay(String dateTime) {
-        if (!StringUtils.isEmpty(dateTime)) {
+        if (StringUtils.isNotBlank(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             return startTime.plusDays(1).format(DateTimeUtils.CUSTOM_DATE);
         }

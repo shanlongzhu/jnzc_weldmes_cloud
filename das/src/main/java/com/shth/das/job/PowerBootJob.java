@@ -1,6 +1,5 @@
 package com.shth.das.job;
 
-import com.alibaba.druid.util.StringUtils;
 import com.shth.das.business.JnOtcRtDataProtocol;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
@@ -17,6 +16,7 @@ import com.shth.das.sys.weldmesdb.service.SxWeldService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
 import com.shth.das.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -71,10 +71,14 @@ public class PowerBootJob {
             CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
                 String tableName = TableStrategy.getOtcTableByDateTime(DateTimeUtils.getNowDateTime());
-                if (!StringUtils.isEmpty(tableName)) {
-                    int newTable = otcRtDataService.createNewTable(tableName);
-                    log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, newTable);
+                if (StringUtils.isBlank(tableName)) {
+                    return;
                 }
+                int otcCreateResult = otcRtDataService.selectTableName(tableName);
+                if (otcCreateResult != 1) {
+                    otcCreateResult = otcRtDataService.createNewTable(tableName);
+                }
+                log.info("系统启动创建当天OTC实时数据表:{} >>> {}", tableName, otcCreateResult);
             });
         }
     }
@@ -88,10 +92,14 @@ public class PowerBootJob {
             CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
                 String tableName = TableStrategy.getSxTableByDateTime(DateTimeUtils.getNowDateTime());
-                if (!StringUtils.isEmpty(tableName)) {
-                    int newTable = sxRtDataService.createNewTable(tableName);
-                    log.info("系统启动创建当天SX实时数据表:{} >>> {}", tableName, newTable);
+                if (StringUtils.isBlank(tableName)) {
+                    return;
                 }
+                int sxCreateTableResult = sxRtDataService.selectTableName(tableName);
+                if (sxCreateTableResult != 1) {
+                    sxCreateTableResult = sxRtDataService.createNewTable(tableName);
+                }
+                log.info("系统启动创建当天SX实时数据表:{} >>> {}", tableName, sxCreateTableResult);
             });
         }
     }

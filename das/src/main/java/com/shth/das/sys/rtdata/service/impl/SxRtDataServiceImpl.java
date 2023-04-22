@@ -1,6 +1,5 @@
 package com.shth.das.sys.rtdata.service.impl;
 
-import com.alibaba.druid.util.StringUtils;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.pojo.db.SxWeldStatisticsData;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
@@ -9,6 +8,7 @@ import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
             try {
                 String nowDateTime = DateTimeUtils.getNowDateTime();
                 String tableName = TableStrategy.getSxTableByDateTime(nowDateTime);
-                if (!StringUtils.isEmpty(tableName)) {
+                if (StringUtils.isNotBlank(tableName)) {
                     Map<String, Object> map = new HashMap<>(8);
                     map.put("tableName", tableName);
                     map.put("list", list);

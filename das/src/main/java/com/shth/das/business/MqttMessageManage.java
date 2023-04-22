@@ -1,9 +1,9 @@
 package com.shth.das.business;
 
-import com.alibaba.druid.util.StringUtils;
 import com.shth.das.codeparam.MqttParam;
 import com.shth.das.common.DownTopicEnum;
 import com.shth.das.common.GainTopicName;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class MqttMessageManage {
      * @param message 消息内容
      */
     public void mqttMessageManage(String topic, String message) {
-        if (!StringUtils.isEmpty(topic) && !StringUtils.isEmpty(message)) {
+        if (StringUtils.isNotBlank(topic) && StringUtils.isNotBlank(message)) {
             if (this.mqttMessageMap.containsKey(topic)) {
                 MqttParam param = new MqttParam();
                 param.setTopic(topic);
