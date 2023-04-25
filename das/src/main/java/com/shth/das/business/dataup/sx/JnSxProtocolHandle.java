@@ -1,4 +1,4 @@
-package com.shth.das.business;
+package com.shth.das.business.dataup.sx;
 
 import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Slf4j
-public class JnSxRtDataProtocol {
+public class JnSxProtocolHandle {
 
     /**
      * 松下设备信息绑定到通道（设备开机）
@@ -63,7 +63,7 @@ public class JnSxRtDataProtocol {
             //添加到松下设备阻塞队列，存储到数据库
             try {
                 CommonQueue.SX_ADD_MACHINE_QUEUES.put(sxWeldModel);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 log.error("松下新增设备添加到阻塞队列异常：", e);
             }
             //设备存储到松下开机阻塞队列
@@ -75,7 +75,7 @@ public class JnSxRtDataProtocol {
                     sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                     CommonQueue.SX_ON_MACHINE_QUEUES.put(sxMachineQueue);
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 log.error("松下开机设备添加到阻塞队列异常：", e);
             }
         }
@@ -94,7 +94,7 @@ public class JnSxRtDataProtocol {
             sxWeldChannelSetting.setFunction(function);
             sxWeldChannelSetting.setReadWriteFlag(2);
             sxWeldChannelSetting.setChannelSelect(0);
-            String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+            String str = JnSxProtocolHandle.sxWeldChannelSetProtocol(sxWeldChannelSetting);
             if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                 if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
                     Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
@@ -1471,7 +1471,7 @@ public class JnSxRtDataProtocol {
                 sxMachineQueue.setWeldIp(clientIp);
                 sxMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.SX_OFF_MACHINE_QUEUES.put(sxMachineQueue);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 log.error("松下设备关机添加到阻塞队列异常：", e);
             }
         }

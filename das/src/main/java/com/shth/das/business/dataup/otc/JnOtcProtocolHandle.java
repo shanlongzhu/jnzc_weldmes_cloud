@@ -1,4 +1,4 @@
-package com.shth.das.business;
+package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * 江南项目数据解析类
  */
 @Slf4j
-public class JnOtcRtDataProtocol {
+public class JnOtcProtocolHandle {
 
     /**
      * OTC设备刷卡启用设备功能
@@ -92,7 +92,7 @@ public class JnOtcRtDataProtocol {
                 otcMachineSaveQueue.setWeldIp(clientIp);
                 //加入到OTC设备阻塞队列临时存储（put：如果阻塞队列已满，则进行等待）
                 CommonQueue.OTC_ON_MACHINE_QUEUES.put(otcMachineSaveQueue);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 log.error("OTC开机设备阻塞队列添加：", e);
             }
         }
@@ -785,7 +785,6 @@ public class JnOtcRtDataProtocol {
                 return jnLockMachineReturn;
             } catch (Exception e) {
                 log.error("锁焊机和解锁焊机指令返回协议解析异常：", e);
-                return null;
             }
         }
         return null;
@@ -806,7 +805,6 @@ public class JnOtcRtDataProtocol {
                 return pathIssueReturn;
             } catch (Exception e) {
                 log.error("OTCv1程序包路径下发返回解析异常：", e);
-                return null;
             }
         }
         return null;
@@ -852,7 +850,7 @@ public class JnOtcRtDataProtocol {
                 otcOnMachineQueue.setWeldIp(clientIp);
                 otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
                 CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 log.error("OTC设备关机数据添加到阻塞队列异常：", e);
             }
             //关机数据发送到mq

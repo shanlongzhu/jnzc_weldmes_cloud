@@ -1,4 +1,4 @@
-package com.shth.das.business;
+package com.shth.das.business.dataup.sx;
 
 import com.alibaba.fastjson2.JSON;
 import com.shth.das.codeparam.HandlerParam;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @create: 2021-08-09
  */
 @Slf4j
-public class JnSxDecoderAnalysis implements BaseDecoder {
+public class JnSxProtocolAnalysis implements BaseDecoder {
 
     /**
      * 保存字符串长度和方法映射关系
@@ -29,7 +29,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
      */
     private final Map<Integer, Function<JnSxDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
 
-    public JnSxDecoderAnalysis() {
+    public JnSxProtocolAnalysis() {
         initDecoderMapping();
     }
 
@@ -95,7 +95,6 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 }
             } catch (Exception e) {
                 log.error("松下第一次握手验证异常：", e);
-                return null;
             }
         }
         return null;
@@ -126,7 +125,6 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 }
             } catch (Exception e) {
                 log.error("松下第二次握手验证异常：", e);
-                return null;
             }
         }
         return null;
@@ -148,7 +146,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                     String clientIp = jnSxDecoderParam.getClientIp();
                     Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
-                    SxWeldModel sxWeldModel = JnSxRtDataProtocol.sxWeldAnalysis(clientIp, str);
+                    SxWeldModel sxWeldModel = JnSxProtocolHandle.sxWeldAnalysis(clientIp, str);
                     if (null != sxWeldModel) {
                         map.put(SxWeldModel.class.getSimpleName(), JSON.toJSONString(sxWeldModel));
                         ctx.channel().writeAndFlush(SxVerificationCode.SX_SOFT_HARDWARE_PARAM_DOWN);
@@ -159,7 +157,6 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 }
             } catch (Exception e) {
                 log.error("松下焊机GL5软硬件参数异常：", e);
-                return null;
             }
         }
         return null;
@@ -179,8 +176,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 String clientIp = jnSxDecoderParam.getClientIp();
                 Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
-                SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.sxRtDataUiAnalysis(clientIp, str);
-                SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.sxRtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = JnSxProtocolHandle.sxRtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = JnSxProtocolHandle.sxRtDataDbAnalysis(clientIp, str);
                 if (null != sxRtDataUi) {
                     map.put(SxRtDataUi.class.getSimpleName(), JSON.toJSONString(sxRtDataUi));
                 }
@@ -207,7 +204,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             //松下焊机GL5系列CO2状态信息
             if (str.length() == 246 && "FE5AA5007B".equals(str.substring(0, 10))) {
                 String clientIp = jnSxDecoderParam.getClientIp();
-                SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.sxStatusDataUiAnalysis(clientIp, str);
+                SxStatusDataUI sxStatusDataUi = JnSxProtocolHandle.sxStatusDataUiAnalysis(clientIp, str);
                 if (null != sxStatusDataUi) {
                     HandlerParam handlerParam = new HandlerParam();
                     Map<String, String> map = new HashMap<>();
@@ -239,21 +236,21 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                     //读写标志：0：主动上传；1：读取；2：设置；3：删除
                     if ("1".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
                         //松下工艺索取返回（无数据）
-                        SxProcessClaimReturn sxProcessClaimReturn = JnSxRtDataProtocol.sxProcessClaimReturnAnalysis(clientIp, str);
+                        SxProcessClaimReturn sxProcessClaimReturn = JnSxProtocolHandle.sxProcessClaimReturnAnalysis(clientIp, str);
                         if (null != sxProcessClaimReturn) {
                             map.put(SxProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(sxProcessClaimReturn));
                         }
                     }
                     if ("2".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50035".equals(str.substring(0, 10))) {
                         //松下工艺下发回复
-                        SxProcessReturn sxProcessReturn = JnSxRtDataProtocol.sxProcessReturnAnalysis(clientIp, str);
+                        SxProcessReturn sxProcessReturn = JnSxProtocolHandle.sxProcessReturnAnalysis(clientIp, str);
                         if (null != sxProcessReturn) {
                             map.put(SxProcessReturn.class.getSimpleName(), JSON.toJSONString(sxProcessReturn));
                         }
                     }
                     if ("3".equals(Integer.valueOf(str.substring(70, 72), 16).toString()) && "FE5AA50028".equals(str.substring(0, 10))) {
                         //松下工艺删除回复
-                        SxProcessDeleteReturn sxProcessDeleteReturn = JnSxRtDataProtocol.sxProcessDeleteReturnAnalysis(clientIp, str);
+                        SxProcessDeleteReturn sxProcessDeleteReturn = JnSxProtocolHandle.sxProcessDeleteReturnAnalysis(clientIp, str);
                         if (null != sxProcessDeleteReturn) {
                             map.put(SxProcessDeleteReturn.class.getSimpleName(), JSON.toJSONString(sxProcessDeleteReturn));
                         }
@@ -261,7 +258,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 }
                 //松下GL5系列【通道设定返回、通道读取返回】
                 if ("1202".equals(str.substring(40, 44)) && "FE5AA50035".equals(str.substring(0, 10))) {
-                    SxWeldChannelSetReturn weldChannelSetReturn = JnSxRtDataProtocol.sxWeldChannelSetReturnAnalysis(clientIp, str);
+                    SxWeldChannelSetReturn weldChannelSetReturn = JnSxProtocolHandle.sxWeldChannelSetReturnAnalysis(clientIp, str);
                     if (null != weldChannelSetReturn) {
                         map.put(SxWeldChannelSetReturn.class.getSimpleName(), JSON.toJSONString(weldChannelSetReturn));
                     }
@@ -286,7 +283,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             //松下GL5系列CO2工艺索取返回
             if (str.length() == 406 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
                 String clientIp = jnSxDecoderParam.getClientIp();
-                SxCO2ProcessClaimReturn claimReturn = JnSxRtDataProtocol.sxCO2ProcessClaimReturnAnalysis(clientIp, str);
+                SxCO2ProcessClaimReturn claimReturn = JnSxProtocolHandle.sxCO2ProcessClaimReturnAnalysis(clientIp, str);
                 if (null != claimReturn) {
                     HandlerParam handlerParam = new HandlerParam();
                     Map<String, String> map = new HashMap<>();
@@ -312,7 +309,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下GL5系列TIG工艺索取返回
             if (str.length() == 446 && "FE5AA500CB".equals(str.substring(0, 10)) && "1201".equals(str.substring(40, 44))) {
-                SxTIGProcessClaimReturn sxTigProcessClaimReturn = JnSxRtDataProtocol.sxTIGProcessClaimReturnAnalysis(clientIp, str);
+                SxTIGProcessClaimReturn sxTigProcessClaimReturn = JnSxProtocolHandle.sxTIGProcessClaimReturnAnalysis(clientIp, str);
                 if (null != sxTigProcessClaimReturn) {
                     HandlerParam handlerParam = new HandlerParam();
                     Map<String, String> map = new HashMap<>();
@@ -340,7 +337,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 ChannelHandlerContext ctx = jnSxDecoderParam.getCtx();
                 //判断是否是FR2或AT3的软硬件参数协议
                 if (str.length() == 154 && "FE5AA5004D".equals(str.substring(0, 10)) && "0010".equals(str.substring(40, 44))) {
-                    SxWeldModel sxWeldModel = JnSxRtDataProtocol.jnSxFr2At3SoftHardParamAnalysis(clientIp, str);
+                    SxWeldModel sxWeldModel = JnSxProtocolHandle.jnSxFr2At3SoftHardParamAnalysis(clientIp, str);
                     Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
                     if (null != sxWeldModel) {
@@ -372,8 +369,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             if (str.length() == 112 && "FE5AA50038".equals(str.substring(0, 10))) {
                 Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
-                SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.fr2Co2RtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.fr2Co2RtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = JnSxProtocolHandle.fr2Co2RtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = JnSxProtocolHandle.fr2Co2RtDataUiAnalysis(clientIp, str);
                 if (null != sxRtDataDb) {
                     map.put(SxRtDataDb.class.getSimpleName(), JSON.toJSONString(sxRtDataDb));
                 }
@@ -402,8 +399,8 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             if (str.length() == 118 && "FE5AA5003B".equals(str.substring(0, 10))) {
                 Map<String, String> map = new HashMap<>();
                 HandlerParam handlerParam = new HandlerParam();
-                SxRtDataDb sxRtDataDb = JnSxRtDataProtocol.fr2TigRtDataDbAnalysis(clientIp, str);
-                SxRtDataUi sxRtDataUi = JnSxRtDataProtocol.fr2TigRtDataUiAnalysis(clientIp, str);
+                SxRtDataDb sxRtDataDb = JnSxProtocolHandle.fr2TigRtDataDbAnalysis(clientIp, str);
+                SxRtDataUi sxRtDataUi = JnSxProtocolHandle.fr2TigRtDataUiAnalysis(clientIp, str);
                 if (null != sxRtDataDb) {
                     map.put(SxRtDataDb.class.getSimpleName(), JSON.toJSONString(sxRtDataDb));
                 }
@@ -434,14 +431,14 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
                 Map<String, String> map = new HashMap<>();
                 //CO2焊机
                 if ("0102".equals(str.substring(40, 44)) && 1 == Integer.valueOf(str.substring(68, 70), 16)) {
-                    SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.fr2Co2StatusUiAnalysis(clientIp, str);
+                    SxStatusDataUI sxStatusDataUi = JnSxProtocolHandle.fr2Co2StatusUiAnalysis(clientIp, str);
                     if (null != sxStatusDataUi) {
                         map.put(SxStatusDataUI.class.getSimpleName(), JSON.toJSONString(sxStatusDataUi));
                     }
                 }
                 //TIG焊机
                 if ("0102".equals(str.substring(40, 44)) && 4 == Integer.valueOf(str.substring(68, 70), 16)) {
-                    SxStatusDataUI sxStatusDataUi = JnSxRtDataProtocol.fr2TigStatusUiAnalysis(clientIp, str);
+                    SxStatusDataUI sxStatusDataUi = JnSxProtocolHandle.fr2TigStatusUiAnalysis(clientIp, str);
                     if (null != sxStatusDataUi) {
                         map.put(SxStatusDataUI.class.getSimpleName(), JSON.toJSONString(sxStatusDataUi));
                     }
@@ -466,7 +463,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
             if (str.length() == 52 && "FE5AA5001A".equals(str.substring(0, 10))) {
-                SxChannelParamReply sxChannelParamReply = JnSxRtDataProtocol.sxChannelParamReplyAnalysis(clientIp, str);
+                SxChannelParamReply sxChannelParamReply = JnSxProtocolHandle.sxChannelParamReplyAnalysis(clientIp, str);
                 if (null != sxChannelParamReply) {
                     HandlerParam handlerParam = new HandlerParam();
                     Map<String, String> map = new HashMap<>();
@@ -492,7 +489,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下FR2系列通道参数查询（有参数）
             if (str.length() == 220 && "FE5AA5006E".equals(str.substring(0, 10))) {
-                SxChannelParamReplyHave sxChannelParamReplyHave = JnSxRtDataProtocol.sxChannelParamReplyHaveAnalysis(clientIp, str);
+                SxChannelParamReplyHave sxChannelParamReplyHave = JnSxProtocolHandle.sxChannelParamReplyHaveAnalysis(clientIp, str);
                 if (null != sxChannelParamReplyHave) {
                     Map<String, String> map = new HashMap<>();
                     HandlerParam handlerParam = new HandlerParam();
@@ -518,7 +515,7 @@ public class JnSxDecoderAnalysis implements BaseDecoder {
             String clientIp = jnSxDecoderParam.getClientIp();
             //松下AT3系列查询回复（有参数）
             if (str.length() == 92 && "FE5AA5002E".equals(str.substring(0, 10))) {
-                At3ParamQueryReturn at3ParamQueryReturn = JnSxRtDataProtocol.at3ParamQueryReturnAnalysis(clientIp, str);
+                At3ParamQueryReturn at3ParamQueryReturn = JnSxProtocolHandle.at3ParamQueryReturnAnalysis(clientIp, str);
                 if (null != at3ParamQueryReturn) {
                     HandlerParam handlerParam = new HandlerParam();
                     Map<String, String> map = new HashMap<>();

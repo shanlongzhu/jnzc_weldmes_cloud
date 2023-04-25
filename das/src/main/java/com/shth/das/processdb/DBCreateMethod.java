@@ -328,7 +328,7 @@ public class DBCreateMethod {
      */
     public static void addPointData(Vector<RecordData> vector) {
         try {
-            if (vector != null && vector.size() > 0) {
+            if (vector != null && !vector.isEmpty()) {
                 DBRealtimeDataDao dbRealtimeDataDao = DBCreateConnect.getDbRealtimeDataDao();
                 if (null != dbRealtimeDataDao) {
                     int insertRealtimeData = dbRealtimeDataDao.insertRealtimeData(vector);

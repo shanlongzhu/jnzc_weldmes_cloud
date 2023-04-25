@@ -1,6 +1,8 @@
-package com.shth.das.business;
+package com.shth.das.business.datadown;
 
 import com.alibaba.fastjson2.JSON;
+import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
+import com.shth.das.business.dataup.sx.JnSxProtocolHandle;
 import com.shth.das.codeparam.MqttParam;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonMap;
@@ -125,7 +127,7 @@ public class MqttMessageAnalysis {
                 sxWeldChannelSetting.setReadWriteFlag(2);
                 //0：焊接通道
                 sxWeldChannelSetting.setChannelSelect(0);
-                String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+                String str = JnSxProtocolHandle.sxWeldChannelSetProtocol(sxWeldChannelSetting);
                 if (CommonUtils.isNotEmpty(weldCid) && CommonUtils.isNotEmpty(str)) {
                     if (!CommonMap.SX_WELD_CID_CTX_MAP.isEmpty() && CommonMap.SX_WELD_CID_CTX_MAP.containsKey(weldCid)) {
                         Channel channel = CommonMap.SX_WELD_CID_CTX_MAP.get(weldCid).channel();
@@ -156,7 +158,7 @@ public class MqttMessageAnalysis {
                 for (JNProcessIssue issue : list) {
                     String gatherNo = issue.getGatherNo();
                     //Java对象解析成16进制字符串
-                    String str = JnOtcRtDataProtocol.jnIssueProtocol(issue);
+                    String str = JnOtcProtocolHandle.jnIssueProtocol(issue);
                     otcChannelWrite(gatherNo, str, "----->OTC工艺下发成功", topic);
                 }
             }
@@ -176,7 +178,7 @@ public class MqttMessageAnalysis {
             if (null != jnProcessClaim) {
                 String gatherNo = jnProcessClaim.getGatherNo();
                 //Java对象解析成16进制字符串
-                String str = JnOtcRtDataProtocol.jnClaimProtocol(jnProcessClaim);
+                String str = JnOtcProtocolHandle.jnClaimProtocol(jnProcessClaim);
                 otcChannelWrite(gatherNo, str, "----->OTC工艺索取成功", topic);
             }
         }
@@ -195,7 +197,7 @@ public class MqttMessageAnalysis {
             if (null != jnPasswordIssue) {
                 String gatherNo = jnPasswordIssue.getGatherNo();
                 //java对象转16进制字符串
-                String str = JnOtcRtDataProtocol.jnPasswordProtocol(jnPasswordIssue);
+                String str = JnOtcProtocolHandle.jnPasswordProtocol(jnPasswordIssue);
                 otcChannelWrite(gatherNo, str, "----->OTC密码下发成功", topic);
             }
         }
@@ -214,7 +216,7 @@ public class MqttMessageAnalysis {
             if (null != jnCommandIssue) {
                 String gatherNo = jnCommandIssue.getGatherNo();
                 //java对象转16进制字符串
-                String str = JnOtcRtDataProtocol.jnCommandProtocol(jnCommandIssue);
+                String str = JnOtcProtocolHandle.jnCommandProtocol(jnCommandIssue);
                 otcChannelWrite(gatherNo, str, "----->OTC控制命令下发成功", topic);
             }
         }
@@ -233,7 +235,7 @@ public class MqttMessageAnalysis {
             if (null != sxCo2ProcessIssue) {
                 String weldCid = sxCo2ProcessIssue.getWeldCid();
                 //length：406
-                String str = JnSxRtDataProtocol.sxCO2ProcessProtocol(sxCo2ProcessIssue);
+                String str = JnSxProtocolHandle.sxCO2ProcessProtocol(sxCo2ProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列CO2工艺下发成功", topic);
             }
         }
@@ -252,7 +254,7 @@ public class MqttMessageAnalysis {
             if (null != sxTigProcessIssue) {
                 String weldCid = sxTigProcessIssue.getWeldCid();
                 //length：446
-                String str = JnSxRtDataProtocol.sxTigProcessProtocol(sxTigProcessIssue);
+                String str = JnSxProtocolHandle.sxTigProcessProtocol(sxTigProcessIssue);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列TIG工艺下发成功", topic);
             }
         }
@@ -271,7 +273,7 @@ public class MqttMessageAnalysis {
             if (null != sxWeldChannelSetting) {
                 String weldCid = sxWeldChannelSetting.getWeldCid();
                 //length:106
-                String str = JnSxRtDataProtocol.sxWeldChannelSetProtocol(sxWeldChannelSetting);
+                String str = JnSxProtocolHandle.sxWeldChannelSetProtocol(sxWeldChannelSetting);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列焊机通道[设定/读取]成功", topic);
             }
         }
@@ -290,7 +292,7 @@ public class MqttMessageAnalysis {
             if (null != sxProcessClaim) {
                 String weldCid = sxProcessClaim.getWeldCid();
                 //length:106
-                String str = JnSxRtDataProtocol.sxProcessClaimProtocol(sxProcessClaim);
+                String str = JnSxProtocolHandle.sxProcessClaimProtocol(sxProcessClaim);
                 sxChannelWrite(weldCid, str, "----->松下GL5系列工艺[索取/删除]成功", topic);
             }
         }
@@ -309,7 +311,7 @@ public class MqttMessageAnalysis {
             if (null != sxChannelParamQuery) {
                 String weldCid = sxChannelParamQuery.getWeldCid();
                 //length:52
-                String str = JnSxRtDataProtocol.sxChannelParamQueryProtocol(sxChannelParamQuery);
+                String str = JnSxProtocolHandle.sxChannelParamQueryProtocol(sxChannelParamQuery);
                 sxChannelWrite(weldCid, str, "----->松下[FR2、AT3]系列通道参数[查询/删除]成功", topic);
             }
         }
@@ -328,7 +330,7 @@ public class MqttMessageAnalysis {
             if (null != channelParamReplyHave) {
                 String weldCid = channelParamReplyHave.getWeldCid();
                 //length：204
-                String str = JnSxRtDataProtocol.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
+                String str = JnSxProtocolHandle.sxChannelParamReplyHaveProtocol(channelParamReplyHave);
                 sxChannelWrite(weldCid, str, "----->松下FR2系列通道参数下载成功", topic);
             }
         }
@@ -347,7 +349,7 @@ public class MqttMessageAnalysis {
             if (null != at3ParamDownload) {
                 String weldCid = at3ParamDownload.getWeldCid();
                 //length：92
-                String str = JnSxRtDataProtocol.at3ParamDownloadProtocol(at3ParamDownload);
+                String str = JnSxProtocolHandle.at3ParamDownloadProtocol(at3ParamDownload);
                 sxChannelWrite(weldCid, str, "----->松下AT3系列参数下载成功", topic);
             }
         }
@@ -365,7 +367,7 @@ public class MqttMessageAnalysis {
             OtcV1IssueProgramPath otcV1IssueProgramPath = JSON.parseObject(message, OtcV1IssueProgramPath.class);
             if (null != otcV1IssueProgramPath) {
                 String gatherNo = otcV1IssueProgramPath.getGatherNo();
-                String str = JnOtcRtDataProtocol.otcV1IssueProgramPath(otcV1IssueProgramPath);
+                String str = JnOtcProtocolHandle.otcV1IssueProgramPath(otcV1IssueProgramPath);
                 otcChannelWrite(gatherNo, str, "----->OTC程序包路径下发成功", topic);
             }
         }

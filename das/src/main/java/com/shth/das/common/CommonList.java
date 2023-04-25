@@ -5,8 +5,8 @@ import com.shth.das.pojo.db.WeldModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 数据集合
@@ -19,12 +19,12 @@ public class CommonList {
     /**
      * 采集模块数据
      */
-    private volatile static List<GatherModel> GATHER_LIST = new ArrayList<>();
+    private static final List<GatherModel> GATHER_LIST = new CopyOnWriteArrayList<>();
 
     /**
      * 焊机数据
      */
-    private volatile static List<WeldModel> WELD_LIST = new ArrayList<>();
+    private static final List<WeldModel> WELD_LIST = new CopyOnWriteArrayList<>();
 
     /**
      * 任务数据
@@ -39,8 +39,9 @@ public class CommonList {
         return GATHER_LIST;
     }
 
-    public synchronized static void setGatherList(List<GatherModel> gatherList) {
-        GATHER_LIST = gatherList;
+    public static void setGatherList(List<GatherModel> gatherList) {
+        GATHER_LIST.clear();
+        GATHER_LIST.addAll(gatherList);
     }
 
     public static List<WeldModel> getWeldList() {
@@ -48,7 +49,8 @@ public class CommonList {
     }
 
     public synchronized static void setWeldList(List<WeldModel> weldList) {
-        WELD_LIST = weldList;
+        WELD_LIST.clear();
+        WELD_LIST.addAll(weldList);
     }
 
 }

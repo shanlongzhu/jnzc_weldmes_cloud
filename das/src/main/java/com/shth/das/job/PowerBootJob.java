@@ -1,6 +1,6 @@
 package com.shth.das.job;
 
-import com.shth.das.business.JnOtcRtDataProtocol;
+import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonQueue;
@@ -111,8 +111,8 @@ public class PowerBootJob {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
             CommonThreadPool.executeTask(() -> {
-                try {
-                    while (true) {
+                while (true) {
+                    try {
                         //take()：当队列为空时进行阻塞对待，防止无限循环消耗CPU
                         OtcMachineQueue queue = CommonQueue.OTC_ON_MACHINE_QUEUES.take();
                         String gatherNo = queue.getGatherNo();
@@ -122,14 +122,15 @@ public class PowerBootJob {
                         WeldOnOffTime onOffTime = new WeldOnOffTime();
                         onOffTime.setGatherNo(gatherNo);
                         onOffTime.setStartTime(weldTime);
-                        onOffTime.setMachineId(JnOtcRtDataProtocol.getMachineIdByGatherNo(gatherNo));
+                        onOffTime.setMachineId(JnOtcProtocolHandle.getMachineIdByGatherNo(gatherNo));
                         onOffTime.setMachineType(0);
                         weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
                         //修改OTC采集表的IP地址
                         machineGatherService.updateGatherIpByNumber(gatherNo, weldIp);
+                    } catch (InterruptedException e) {
+                        log.error("启动OTC开机设备阻塞队列消费者异常：", e);
+                        Thread.currentThread().interrupt();
                     }
-                } catch (InterruptedException e) {
-                    log.error("启动OTC开机设备阻塞队列消费者异常：", e);
                 }
             });
         }
@@ -151,11 +152,12 @@ public class PowerBootJob {
                         WeldOnOffTime onOffTime = new WeldOnOffTime();
                         onOffTime.setGatherNo(gatherNo);
                         onOffTime.setEndTime(queue.getWeldTime());
-                        onOffTime.setMachineId(JnOtcRtDataProtocol.getMachineIdByGatherNo(gatherNo));
+                        onOffTime.setMachineId(JnOtcProtocolHandle.getMachineIdByGatherNo(gatherNo));
                         onOffTime.setMachineType(0);
                         weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                     } catch (InterruptedException e) {
                         log.error("启动OTC关机设备阻塞队列消费者异常：", e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             });
@@ -175,8 +177,9 @@ public class PowerBootJob {
                         SxWeldModel sxWeldModel = CommonQueue.SX_ADD_MACHINE_QUEUES.take();
                         //调用接口，数据存入数据库
                         sxWeldService.insertSxWeld(sxWeldModel);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
                         log.error("启动松下新增设备队列存储的消费者异常：", e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             });
@@ -207,8 +210,9 @@ public class PowerBootJob {
                         onOffTime.setWeldCid(sxMachineQueue.getWeldCid());
                         //开机新增一条
                         weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
                         log.error("启动松下开机设备队列存储的消费者异常：", e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             });
@@ -239,8 +243,9 @@ public class PowerBootJob {
                         onOffTime.setWeldCid(sxMachineQueue.getWeldCid());
                         //关机修改最近一条
                         weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
                         log.error("启动松下关机设备队列存储的消费者异常：", e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             });
