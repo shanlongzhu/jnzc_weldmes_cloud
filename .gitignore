@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### scanner ###
+!**/.scannerwork
+!**/.scannerwork/
+!**/.scannerwork/**
+/das/.scannerwork/**
+/das/.scannerwork/
+/das/.scannerwork
