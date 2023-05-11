@@ -1,7 +1,6 @@
 package com.shth.das.netty;
 
-import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
-import com.shth.das.business.dataup.sx.JnSxProtocolHandle;
+import com.shth.das.business.dataup.HandlerContext;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonMap;
@@ -13,9 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Netty服务端处理器
@@ -27,68 +23,7 @@ import java.util.function.Consumer;
 @Component
 public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam> {
 
-    /**
-     * 保存字符串长度和方法映射关系
-     * Consumer<T>,T:入参，不返回
-     */
-    private final Map<Integer, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
-    private final Map<Integer, Consumer<HandlerParam>> sxHandlerMapping = new HashMap<>();
-
-    private JnOtcProtocolHandle jnOtcProtocolHandle;
-    private JnSxProtocolHandle jnSxProtocolHandle;
-
-    public NettyServerHandler() {
-        init();
-    }
-
-    private void init() {
-        setOtcHandlerMapping();
-        setSxHandlerMapping();
-        this.jnOtcProtocolHandle = new JnOtcProtocolHandle();
-        this.jnSxProtocolHandle = new JnSxProtocolHandle();
-    }
-
-    private void setOtcHandlerMapping() {
-        //OTC（1.0）实时数据解析
-        this.otcHandlerMapping.put(282, JnOtcProtocolHandle::jnRtDataManage);
-        //OTC（1.0）工艺下发返回解析
-        this.otcHandlerMapping.put(24, JnOtcProtocolHandle::otcIssueReturnManage);
-        //OTC（1.0）索取返回协议解析
-        this.otcHandlerMapping.put(112, JnOtcProtocolHandle::otcClaimReturnManage);
-        //OTC（1.0）密码返回和控制命令返回[新增程序包路径下发返回]
-        this.otcHandlerMapping.put(22, JnOtcProtocolHandle::otcPwdCmdReturnManage);
-    }
-
-    private void setSxHandlerMapping() {
-        //松下焊机【GL5、FR2、AT3】第二次握手验证
-        this.sxHandlerMapping.put(128, JnSxProtocolHandle::jnSxSecondVerify);
-        //松下焊机GL5系列软硬件参数【刷卡解锁焊机】
-        this.sxHandlerMapping.put(180, JnSxProtocolHandle::jnSxGl5SoftHardParam);
-        //松下焊机GL5系列CO2实时数据
-        this.sxHandlerMapping.put(206, JnSxProtocolHandle::jnSxGl5RtDataManage);
-        //松下焊机GL5系列CO2状态信息
-        this.sxHandlerMapping.put(246, JnSxProtocolHandle::jnSxGl5StatusManage);
-        //松下焊机GL5系列【工艺下发返回、工艺索取返回(无数据)、工艺删除返回、通道设定返回、通道读取返回】
-        this.sxHandlerMapping.put(106, JnSxProtocolHandle::jnSxGl5ProcessWeldSet);
-        //松下焊机GL5系列CO2工艺索取返回（有数据）
-        this.sxHandlerMapping.put(406, JnSxProtocolHandle::jnSxCo2ProcessClaimReturn);
-        //松下焊机GL5系列TIG工艺索取返回（有数据）
-        this.sxHandlerMapping.put(446, JnSxProtocolHandle::jnSxGl5TigProcessClaimReturn);
-        //松下焊机【FR2、AT3】系列软硬件参数【刷卡解锁焊机】
-        this.sxHandlerMapping.put(154, JnSxProtocolHandle::jnSxFr2At3SoftHardParam);
-        //松下焊机FR2系列CO2实时数据
-        this.sxHandlerMapping.put(112, JnSxProtocolHandle::jnSxFr2Co2RtDataDbManage);
-        //松下焊机FR2系列TIG实时数据
-        this.sxHandlerMapping.put(118, JnSxProtocolHandle::jnSxFr2TigRtDataDbManage);
-        //松下焊机FR2系列【CO2和TIG】的状态信息
-        this.sxHandlerMapping.put(156, JnSxProtocolHandle::jnSxFr2StatusUiManage);
-        //松下焊机【FR2、AT3】系列通道参数【查询回复（无参数）、下载回复、删除回复】
-        this.sxHandlerMapping.put(52, JnSxProtocolHandle::jnSxChannelParamReply);
-        //松下焊机FR2系列通道参数【查询回复（有参数）】
-        this.sxHandlerMapping.put(220, JnSxProtocolHandle::jnSxFr2ChannelParamReplyHave);
-        //松下焊机AT3系列【查询回复（有参数）】
-        this.sxHandlerMapping.put(92, JnSxProtocolHandle::jnSxAt3ParamQueryReturn);
-    }
+    private final HandlerContext handlerContext = new HandlerContext();
 
     /**
      * 服务端收到消息执行的方法
@@ -98,33 +33,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
      */
     @Override
     public void channelRead0(ChannelHandlerContext ctx, HandlerParam param) {
-        InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
-        //客户端IP地址
-        String clientIp = insocket.getAddress().getHostAddress();
-        //客户端端口
-        int clientPort = insocket.getPort();
-        InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        //服务端端口
-        int serverPort = inetSocket.getPort();
         if (param == null) {
             log.info("客户端响应空的消息");
             ctx.flush();
             return;
         }
-        //通道赋值
-        param.setCtx(ctx);
-        //端口为otcPort，则为江南版OTC通讯协议
-        if (serverPort == CommonFunction.getOtcPort()) {
-            if (this.otcHandlerMapping.containsKey(param.getKey())) {
-                this.otcHandlerMapping.get(param.getKey()).accept(param);
-            }
-        }
-        //端口为sxPort，则为松下通讯协议
-        if (serverPort == CommonFunction.getSxPort()) {
-            if (this.sxHandlerMapping.containsKey(param.getKey())) {
-                this.sxHandlerMapping.get(param.getKey()).accept(param);
-            }
-        }
+        handlerContext.dataHandler(ctx, param);
         ctx.flush();
     }
 
@@ -147,21 +61,21 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         if (serverPort == CommonFunction.getOtcPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.warn("OTC存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
+                log.warn("OTC存在连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
             } else {
                 //保存连接
                 CommonMap.OTC_CHANNEL_MAP.put(clientAddress, ctx);
-                log.info("OTC新增连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
+                log.info("OTC新增连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
             }
         }
         if (serverPort == CommonFunction.getSxPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.warn("SX存在连接：" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
+                log.warn("SX存在连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
             } else {
                 //保存连接
                 CommonMap.SX_CHANNEL_MAP.put(clientAddress, ctx);
-                log.info("SX新增连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
+                log.info("SX新增连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
             }
         }
         ctx.flush();
@@ -191,7 +105,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
                 log.info("OTC终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
             }
-            jnOtcProtocolHandle.jnWeldOffDataManage(ctx, clientIp);
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == CommonFunction.getSxPort()) {
@@ -201,8 +114,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
                 log.info("SX终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
             }
-            jnSxProtocolHandle.sxWeldOffDataManage(ctx, clientIp);
         }
+        handlerContext.shutdownHandle(ctx);
         ctx.flush();
         ctx.channel().close();
         ctx.close();

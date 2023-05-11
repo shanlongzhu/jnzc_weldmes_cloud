@@ -1,6 +1,7 @@
 package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
+import com.shth.das.business.dataup.BaseHandler;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
@@ -19,22 +20,91 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * 江南项目数据解析类
  */
 @Slf4j
-public class JnOtcProtocolHandle {
+public class JnOtcProtocolHandle extends BaseHandler {
+
+    public JnOtcProtocolHandle() {
+        init();
+    }
+
+    private final Map<Integer, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
+
+    private void init() {
+        //OTC（1.0）实时数据解析
+        this.otcHandlerMapping.put(282, this::jnRtDataManage);
+        //OTC（1.0）工艺下发返回解析
+        this.otcHandlerMapping.put(24, this::otcIssueReturnManage);
+        //OTC（1.0）索取返回协议解析
+        this.otcHandlerMapping.put(112, this::otcClaimReturnManage);
+        //OTC（1.0）密码返回和控制命令返回[新增程序包路径下发返回]
+        this.otcHandlerMapping.put(22, this::otcPwdCmdReturnManage);
+    }
+
+    @Override
+    protected void dataHandler(HandlerParam param) {
+        if (this.otcHandlerMapping.containsKey(param.getKey())) {
+            this.otcHandlerMapping.get(param.getKey()).accept(param);
+        }
+    }
+
+    @Override
+    protected void shutdownHandler(ChannelHandlerContext ctx) {
+        otcShutdownHandler(ctx);
+    }
+
+    /**
+     * 江南OTC设备关机数据处理
+     */
+    private void otcShutdownHandler(ChannelHandlerContext ctx) {
+        InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
+        //客户端IP地址
+        String clientIp = insocket.getAddress().getHostAddress();
+        //有客户端终止连接则发送关机数据到mq，刷新实时界面
+        if (CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
+            //采集编号
+            String gatherNo = CommonMap.OTC_CTX_GATHER_NO_MAP.get(ctx);
+            //OTC设备关机数据添加到阻塞队列
+            try {
+                OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
+                otcOnMachineQueue.setGatherNo(gatherNo);
+                otcOnMachineQueue.setWeldIp(clientIp);
+                otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
+                CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
+            } catch (InterruptedException e) {
+                log.error("OTC设备关机数据添加到阻塞队列异常：", e);
+            }
+            //关机数据发送到mq
+            List<JNRtDataUI> dataList = new ArrayList<>();
+            JNRtDataUI jnRtDataUi = new JNRtDataUI();
+            jnRtDataUi.setGatherNo(gatherNo);
+            //-1 为关机
+            jnRtDataUi.setWeldStatus(-1);
+            jnRtDataUi.setElectricity(BigDecimal.ZERO);
+            jnRtDataUi.setVoltage(BigDecimal.ZERO);
+            jnRtDataUi.setWeldIp(clientIp);
+            jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
+            dataList.add(jnRtDataUi);
+            String dataArray = JSON.toJSONString(dataList);
+            publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray);
+            CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
+            CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
+        }
+    }
 
     /**
      * OTC设备刷卡启用设备功能
      */
-    private static void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
+    private void slotCardEnableDevice(ChannelHandlerContext ctx, String gatherNo) {
         //进制转换，长度拼接
         String gatherno = CommonUtils.lengthJoint(gatherNo, 4);
         Channel channel = ctx.channel();
@@ -79,7 +149,7 @@ public class JnOtcProtocolHandle {
     /**
      * 采集盒IP地址盒采集编号绑定
      */
-    private static void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
+    private void gatherNoIpBinding(String clientIp, ChannelHandlerContext ctx, String gatherNo) {
         //判断map集合是否有，没有则新增
         if (!CommonMap.OTC_GATHER_NO_CTX_MAP.containsKey(gatherNo)) {
             CommonMap.OTC_GATHER_NO_CTX_MAP.put(gatherNo, ctx);
@@ -106,7 +176,7 @@ public class JnOtcProtocolHandle {
      *
      * @param handlerParam 入参
      */
-    public static void jnRtDataManage(HandlerParam handlerParam) {
+    private void jnRtDataManage(HandlerParam handlerParam) {
         if (ObjectUtils.isEmpty(handlerParam)) {
             return;
         }
@@ -149,7 +219,7 @@ public class JnOtcProtocolHandle {
      *
      * @param handlerParam
      */
-    public static void otcIssueReturnManage(HandlerParam handlerParam) {
+    private void otcIssueReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
             //工艺下发返回
@@ -166,7 +236,7 @@ public class JnOtcProtocolHandle {
      *
      * @param handlerParam
      */
-    public static void otcClaimReturnManage(HandlerParam handlerParam) {
+    private void otcClaimReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
             //工艺索取返回
@@ -183,7 +253,7 @@ public class JnOtcProtocolHandle {
      *
      * @param handlerParam 入参
      */
-    public static void otcPwdCmdReturnManage(HandlerParam handlerParam) {
+    private void otcPwdCmdReturnManage(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
             ChannelHandlerContext ctx = handlerParam.getCtx();
@@ -527,53 +597,6 @@ public class JnOtcProtocolHandle {
         return null;
     }
 
-    /**
-     * 下发规范字符串拼接
-     *
-     * @param model 下发规范实体类
-     * @return 返回解析完成的16进制字符串
-     */
-    public static String jnIssueProtocol(JNProcessIssue model) {
-        if (null != model) {
-            String head = JNProcessIssue.Flag.HEAD.value;
-            String order = JNProcessIssue.Flag.ORDER.value;
-            String foot = JNProcessIssue.Flag.FOOT.value;
-            String gatherNo = CommonUtils.lengthJoint(model.getGatherNo(), 4);//采集编号：0001
-            String channelNo = CommonUtils.lengthJoint(model.getChannelNo(), 2);//通道号：01
-            String spotWeldTime = CommonUtils.lengthJoint(model.getSpotWeldTime().intValue(), 4);//点焊时间：30
-            String preflowTime = CommonUtils.lengthJoint(model.getPreflowTime().intValue(), 4);//提前送气时间：1
-            String initialEle = CommonUtils.lengthJoint(model.getInitialEle().intValue(), 4);//初期电流:100
-            String initialVol = CommonUtils.lengthJoint(model.getInitialVol().intValue(), 4);//初期电压:190
-            String initialVolUnitary = CommonUtils.lengthJoint(model.getInitialVolUnitary().intValue(), 4);//初期电压一元:0
-            String weldElectricity = CommonUtils.lengthJoint(model.getWeldElectricity().intValue(), 4);//焊接电流:100
-            String weldVoltage = CommonUtils.lengthJoint(model.getWeldVoltage().intValue(), 4);//焊接电压:190
-            String weldVoltageUnitary = CommonUtils.lengthJoint(model.getWeldVoltageUnitary().intValue(), 4);//焊接电压一元:0
-            String extinguishArcEle = CommonUtils.lengthJoint(model.getExtinguishArcEle().intValue(), 4);//收弧电流:100
-            String extinguishArcVol = CommonUtils.lengthJoint(model.getExtinguishArcVol().intValue(), 4);//收弧电压:190
-            String extinguishArcVolUnitary = CommonUtils.lengthJoint(model.getExtinguishArcVolUnitary().intValue(), 4);//收弧电压一元:0
-            String hysteresisAspirated = CommonUtils.lengthJoint(model.getHysteresisAspirated().intValue(), 4);//滞后送气:1
-            String arcPeculiarity = CommonUtils.lengthJoint(model.getArcPeculiarity().intValue(), 4);//电弧特性:0
-            String gases = CommonUtils.lengthJoint(model.getGases().intValue(), 2);//气体:0
-            String wireDiameter = CommonUtils.lengthJoint(model.getWireDiameter().intValue(), 2);//焊丝直径:12
-            String wireMaterials = CommonUtils.lengthJoint(model.getWireMaterials(), 2);//焊丝材料:0
-            String weldProcess = CommonUtils.lengthJoint(model.getWeldProcess(), 2);//焊接过程:0
-            String controlInfo = CommonUtils.lengthJoint(model.getControlInfo(), 4);//控制信息:229
-            String weldEleAdjust = CommonUtils.lengthJoint(model.getWeldEleAdjust().intValue(), 2);//焊接电流微调:0
-            String weldVolAdjust = CommonUtils.lengthJoint(model.getWeldVolAdjust().intValue(), 2);//焊接电压微调:0
-            String extinguishArcEleAdjust = CommonUtils.lengthJoint(model.getExtinguishArcEleAdjust().intValue(), 2);//收弧电流微调:0
-            String extinguishArcVolAdjust = CommonUtils.lengthJoint(model.getExtinguishArcVolAdjust().intValue(), 2);//收弧电压微调:0
-            String alarmsElectricityMax = CommonUtils.lengthJoint(model.getAlarmsElectricityMax().intValue(), 4);//报警电流上限:0
-            String alarmsElectricityMin = CommonUtils.lengthJoint(model.getAlarmsElectricityMin().intValue(), 4);//报警电流下限:0
-            String alarmsVoltageMax = CommonUtils.lengthJoint(model.getAlarmsVoltageMax().intValue(), 4);//报警电压上限:0
-            String alarmsVoltageMin = CommonUtils.lengthJoint(model.getAlarmsVoltageMin().intValue(), 4);//报警电压下限:0
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(spotWeldTime).append(preflowTime).append(initialEle).append(initialVol).append(initialVolUnitary).append(weldElectricity).append(weldVoltage).append(weldVoltageUnitary).append(extinguishArcEle).append(extinguishArcVol).append(extinguishArcVolUnitary).append(hysteresisAspirated).append(arcPeculiarity).append(gases).append(wireDiameter).append(wireMaterials).append(weldProcess).append(controlInfo).append(weldEleAdjust).append(weldVolAdjust).append(extinguishArcEleAdjust).append(extinguishArcVolAdjust).append(alarmsElectricityMax).append(alarmsElectricityMin).append(alarmsVoltageMax).append(alarmsVoltageMin);
-            //String str = head + order + gatherNo + channelNo + spotWeldTime + preflowTime + initialEle + initialVol + initialVolUnitary + weldElectricity + weldVoltage + weldVoltageUnitary + extinguishArcEle + extinguishArcVol + extinguishArcVolUnitary + hysteresisAspirated + arcPeculiarity + gases + wireDiameter + wireMaterials + weldProcess + controlInfo + weldEleAdjust + weldVolAdjust + extinguishArcEleAdjust + extinguishArcVolAdjust + alarmsElectricityMax + alarmsElectricityMin + alarmsVoltageMax + alarmsVoltageMin + foot;
-            //str = str.toUpperCase(); //字母全部转为大写
-            return stringBuilder.toString().toUpperCase();
-        }
-        return null;
-    }
 
     /**
      * 下发返回协议解析
@@ -594,29 +617,6 @@ public class JnOtcProtocolHandle {
         return null;
     }
 
-    /**
-     * 索取规范字符串拼接
-     *
-     * @param claimModel 索取规范实体类
-     * @return 返回16进制字符串
-     */
-    public static String jnClaimProtocol(JNProcessClaim claimModel) {
-        if (null != claimModel) {
-            String head = JNProcessClaim.Flag.HEAD.value;
-            String foot = JNProcessClaim.Flag.FOOT.value;
-            String order = JNProcessClaim.Flag.ORDER.value;
-            //采集编号：0001
-            String gatherNo = CommonUtils.lengthJoint(claimModel.getGatherNo(), 4);
-            //通道号：01
-            String channelNo = CommonUtils.lengthJoint(claimModel.getChannelNo(), 2);
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(head).append(order).append(gatherNo).append(channelNo).append(foot);
-//            String str = head + order + gatherNo + channelNo + foot;
-//            str = str.toUpperCase();
-            return stringBuilder.toString().toUpperCase();
-        }
-        return null;
-    }
 
     /**
      * 索取返回协议解析
@@ -658,80 +658,6 @@ public class JnOtcProtocolHandle {
                 claim.setAlarmsElectricityMin(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));//报警电流下限
                 claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
                 return claim;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 密码下发字符串拼接
-     *
-     * @param jnPasswordIssue 密码下发实体类
-     * @return 16进制字符串
-     */
-    public static String jnPasswordProtocol(JNPasswordIssue jnPasswordIssue) {
-        if (null != jnPasswordIssue) {
-            String head = JNPasswordIssue.Flag.HEAD.value;
-            String order = JNPasswordIssue.Flag.ORDER.value;
-            String foot = JNPasswordIssue.Flag.FOOT.value;
-            String gatherNo = CommonUtils.lengthJoint(jnPasswordIssue.getGatherNo(), 4);
-            String password = CommonUtils.lengthJoint(jnPasswordIssue.getPassword(), 4);
-//            String str = head + order + gatherNo + password + foot;
-//            str = str.toUpperCase();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(head).append(order).append(gatherNo).append(password).append(foot);
-            return stringBuilder.toString().toUpperCase();
-        }
-        return null;
-    }
-
-    /**
-     * 控制命令下发字符串拼接
-     *
-     * @param jnCommandIssue 控制命令下发实体类
-     * @return 16进制字符串
-     */
-    public static String jnCommandProtocol(JNCommandIssue jnCommandIssue) {
-        if (null != jnCommandIssue) {
-            String head = JNCommandIssue.Flag.HEAD.value;
-            String order = JNCommandIssue.Flag.ORDER.value;
-            String foot = JNCommandIssue.Flag.FOOT.value;
-            String gatherNo = CommonUtils.lengthJoint(jnCommandIssue.getGatherNo(), 4);
-            String command = CommonUtils.lengthJoint(jnCommandIssue.getCommand(), 2);
-//            String str = head + order + gatherNo + command + foot;
-//            str = str.toUpperCase();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(head).append(order).append(gatherNo).append(command).append(foot);
-            return stringBuilder.toString().toUpperCase();
-        }
-        return null;
-    }
-
-    /**
-     * OTC程序包路径下发
-     *
-     * @param programPath OtcV1IssueProgramPath
-     * @return String
-     */
-    public static String otcV1IssueProgramPath(OtcV1IssueProgramPath programPath) {
-        if (null != programPath) {
-            try {
-                String head = "007E3C01010111";
-                String gatherNo = CommonUtils.lengthJoint(programPath.getGatherNo(), 4);
-                String port = CommonUtils.lengthJoint(programPath.getPort(), 4);
-                //ASCII码转16进制
-                String path = CommonUtils.convertStringToHex(programPath.getPackagePath());
-                //长度拼接（后面拼接0）
-                String packagePath = CommonUtils.backLengthJoint(path, 100);
-                String foot = "007D";
-                StringBuilder stringBuilder = new StringBuilder();
-//                 String str = head + gatherNo + port + packagePath + foot;
-                stringBuilder.append(head).append(gatherNo).append(port).append(packagePath).append(foot);
-                if (stringBuilder.toString().length() == 126) {
-                    return stringBuilder.toString().toUpperCase();
-                }
-            } catch (Exception e) {
-                log.error("OTC程序包路径下发字符串拼接异常：", e);
             }
         }
         return null;
@@ -811,67 +737,6 @@ public class JnOtcProtocolHandle {
     }
 
     /**
-     * 根据采集编号查询焊机ID
-     *
-     * @param gatherNo 采集编号
-     * @return 焊机ID
-     */
-    public static BigInteger getMachineIdByGatherNo(String gatherNo) {
-        try {
-            List<WeldModel> weldList = CommonList.getWeldList();
-            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
-                for (WeldModel weld : weldList) {
-                    if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
-                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
-                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
-                            return weld.getId();
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("根据采集编号查询焊机ID异常：", e);
-        }
-        return BigInteger.ZERO;
-    }
-
-    /**
-     * 江南OTC设备关机数据处理
-     */
-    public void jnWeldOffDataManage(ChannelHandlerContext ctx, String clientIp) {
-        //有客户端终止连接则发送关机数据到mq，刷新实时界面
-        if (CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
-            //采集编号
-            String gatherNo = CommonMap.OTC_CTX_GATHER_NO_MAP.get(ctx);
-            //OTC设备关机数据添加到阻塞队列
-            try {
-                OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
-                otcOnMachineQueue.setGatherNo(gatherNo);
-                otcOnMachineQueue.setWeldIp(clientIp);
-                otcOnMachineQueue.setWeldTime(DateTimeUtils.getNowDateTime());
-                CommonQueue.OTC_OFF_MACHINE_QUEUES.put(otcOnMachineQueue);
-            } catch (InterruptedException e) {
-                log.error("OTC设备关机数据添加到阻塞队列异常：", e);
-            }
-            //关机数据发送到mq
-            List<JNRtDataUI> dataList = new ArrayList<>();
-            JNRtDataUI jnRtDataUi = new JNRtDataUI();
-            jnRtDataUi.setGatherNo(gatherNo);
-            //-1 为关机
-            jnRtDataUi.setWeldStatus(-1);
-            jnRtDataUi.setElectricity(BigDecimal.ZERO);
-            jnRtDataUi.setVoltage(BigDecimal.ZERO);
-            jnRtDataUi.setWeldIp(clientIp);
-            jnRtDataUi.setWeldTime(DateTimeUtils.getNowDateTime());
-            dataList.add(jnRtDataUi);
-            String dataArray = JSON.toJSONString(dataList);
-            publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray);
-            CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
-            CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
-        }
-    }
-
-    /**
      * 发布消息
      *
      * @param topic
@@ -880,5 +745,4 @@ public class JnOtcProtocolHandle {
     private static void publishMessageToMqtt(String topic, String message) {
         EmqMqttClient.publishMessage(topic, message, 0);
     }
-
 }

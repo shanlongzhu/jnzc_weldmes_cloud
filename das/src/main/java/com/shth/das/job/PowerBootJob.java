@@ -1,19 +1,17 @@
 package com.shth.das.job;
 
-import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
+import com.shth.das.common.CommonList;
 import com.shth.das.common.CommonQueue;
 import com.shth.das.common.CommonThreadPool;
-import com.shth.das.pojo.db.OtcMachineQueue;
-import com.shth.das.pojo.db.SxMachineQueue;
-import com.shth.das.pojo.db.SxWeldModel;
-import com.shth.das.pojo.db.WeldOnOffTime;
+import com.shth.das.pojo.db.*;
 import com.shth.das.sys.rtdata.service.OtcRtDataService;
 import com.shth.das.sys.rtdata.service.SxRtDataService;
 import com.shth.das.sys.weldmesdb.service.MachineGatherService;
 import com.shth.das.sys.weldmesdb.service.SxWeldService;
 import com.shth.das.sys.weldmesdb.service.WeldOnOffTimeService;
+import com.shth.das.util.CommonUtils;
 import com.shth.das.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +20,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 开机启动的任务
@@ -122,7 +123,7 @@ public class PowerBootJob {
                         WeldOnOffTime onOffTime = new WeldOnOffTime();
                         onOffTime.setGatherNo(gatherNo);
                         onOffTime.setStartTime(weldTime);
-                        onOffTime.setMachineId(JnOtcProtocolHandle.getMachineIdByGatherNo(gatherNo));
+                        onOffTime.setMachineId(getMachineIdByGatherNo(gatherNo));
                         onOffTime.setMachineType(0);
                         weldOnOffTimeService.insertWeldOnOffTime(onOffTime);
                         //修改OTC采集表的IP地址
@@ -152,7 +153,7 @@ public class PowerBootJob {
                         WeldOnOffTime onOffTime = new WeldOnOffTime();
                         onOffTime.setGatherNo(gatherNo);
                         onOffTime.setEndTime(queue.getWeldTime());
-                        onOffTime.setMachineId(JnOtcProtocolHandle.getMachineIdByGatherNo(gatherNo));
+                        onOffTime.setMachineId(getMachineIdByGatherNo(gatherNo));
                         onOffTime.setMachineType(0);
                         weldOnOffTimeService.updateWeldOnOffTime(onOffTime);
                     } catch (InterruptedException e) {
@@ -162,6 +163,31 @@ public class PowerBootJob {
                 }
             });
         }
+    }
+
+    /**
+     * 根据采集编号查询焊机ID
+     *
+     * @param gatherNo 采集编号
+     * @return 焊机ID
+     */
+    public BigInteger getMachineIdByGatherNo(String gatherNo) {
+        try {
+            List<WeldModel> weldList = CommonList.getWeldList();
+            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(gatherNo)) {
+                for (WeldModel weld : weldList) {
+                    if (CommonUtils.isNotEmpty(weld.getGatherNo())) {
+                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(string -> CommonUtils.stringLengthJoint(string, 4)).collect(Collectors.toList());
+                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(gatherNo, 4))) {
+                            return weld.getId();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("根据采集编号查询焊机ID异常：", e);
+        }
+        return BigInteger.ZERO;
     }
 
     /**

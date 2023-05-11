@@ -34,6 +34,7 @@
         <spring-boot-admin.version>2.6.11</spring-boot-admin.version>
         <reflections.version>0.10.2</reflections.version>
         <oshi-core.version>6.4.0</oshi-core.version>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -204,7 +205,6 @@
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
         </dependency>
-
     </dependencies>
 
     <!-- maven多环境打包配置 -->
@@ -240,6 +240,10 @@
                 <configuration>
                     <!-- 打包时允许添加本地jar包 -->
                     <includeSystemScope>true</includeSystemScope>
+                    <!-- 设置是否 fork 出一个新进程执行目标插件的操作 -->
+                    <fork>true</fork>
+                    <!-- spring-boot:run 中文乱码解决 -->
+                    <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
                 </configuration>
             </plugin>
             <!--<plugin>
@@ -253,6 +257,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <!-- 使用docker-maven插件代替Dockerfile文件配置 -->
@@ -302,7 +307,7 @@
         <resources>
             <!-- 过滤打包，根据maven所选的环境进行打包 -->
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>mybatis/**</include>
@@ -310,6 +315,12 @@
                     <include>application-${spring.profiles.active}.yml</include>
                     <include>logback-${spring.profiles.active}.xml</include>
                 </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/**</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>

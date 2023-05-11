@@ -1,9 +1,9 @@
 package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
+import com.shth.das.business.dataup.BaseAnalysis;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnOtcDecoderParam;
-import com.shth.das.common.BaseDecoder;
 import com.shth.das.pojo.jnotc.*;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,7 +19,7 @@ import java.util.function.Function;
  * @author: Shan Long
  * @create: 2021-08-08
  */
-public class JnOtcProtocolAnalysis implements BaseDecoder {
+public class JnOtcProtocolAnalysis extends BaseAnalysis {
 
     /**
      * 保存字符串长度和方法映射关系
@@ -40,6 +40,18 @@ public class JnOtcProtocolAnalysis implements BaseDecoder {
         this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
         //OTC（1.0）密码返回和控制命令返回[新增包路径下发返回]
         this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
+    }
+
+    @Override
+    public HandlerParam protocolAnalysis(ChannelHandlerContext ctx, String str) {
+        if (this.decoderMapping.containsKey(str.length())) {
+            String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+            JnOtcDecoderParam jnOtcDecoderParam = new JnOtcDecoderParam();
+            jnOtcDecoderParam.setStr(str);
+            jnOtcDecoderParam.setClientIp(clientIp);
+            return this.decoderMapping.get(str.length()).apply(jnOtcDecoderParam);
+        }
+        return null;
     }
 
     /**
@@ -91,18 +103,6 @@ public class JnOtcProtocolAnalysis implements BaseDecoder {
             handlerParam.setKey(jnOtcDecoderParam.getStr().length());
             handlerParam.setValue(map);
             return handlerParam;
-        }
-        return null;
-    }
-
-    @Override
-    public HandlerParam baseProtocolAnalysis(ChannelHandlerContext ctx, String str) {
-        if (this.decoderMapping.containsKey(str.length())) {
-            String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-            JnOtcDecoderParam jnOtcDecoderParam = new JnOtcDecoderParam();
-            jnOtcDecoderParam.setStr(str);
-            jnOtcDecoderParam.setClientIp(clientIp);
-            return this.decoderMapping.get(str.length()).apply(jnOtcDecoderParam);
         }
         return null;
     }
@@ -175,7 +175,6 @@ public class JnOtcProtocolAnalysis implements BaseDecoder {
         }
         return null;
     }
-
 
 
 }
