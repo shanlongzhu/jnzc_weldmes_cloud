@@ -32,38 +32,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
             ctx.flush();
             return;
         }
-        ByteBuf message;
-        if (this.tempMsg.readableBytes() == 0) {
-            message = Unpooled.wrappedBuffer(byteBuf);
-        } else {
-            //wrappedBuffer()方法：将两个ByteBuf进行包装，实现零拷贝
-            message = Unpooled.wrappedBuffer(this.tempMsg, byteBuf);
-            //清空
-            this.tempMsg.clear();
-            this.tempMsg.setZero(0, this.tempMsg.capacity());
-        }
-        //读写指针清空
-        byteBuf.clear();
-        //内容清零（清空缓冲区）
-        byteBuf.setZero(0, byteBuf.capacity());
-        //数据可读长度大于0才进行读取
-        if (message == null) {
-            ctx.flush();
-            return;
-        }
-        if (message.readableBytes() == 0) {
-            //读写指针清空
-            message.clear();
-            //内容清零（清空缓冲区）
-            message.setZero(0, message.capacity());
-            ctx.flush();
-            return;
-        }
-        dataDecoder(ctx, message, out);
-        if (message.readableBytes() >= 0) {
-            //将message拷贝到tempMsg中暂存
-            this.tempMsg.writeBytes(message);
-        }
+        //将数据读取tempMsg
+        this.tempMsg.writeBytes(byteBuf);
+        dataDecoder(ctx, this.tempMsg, out);
     }
 
     private void dataDecoder(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {

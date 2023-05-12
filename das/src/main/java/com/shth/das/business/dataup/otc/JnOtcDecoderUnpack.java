@@ -41,8 +41,7 @@ public class JnOtcDecoderUnpack extends BaseUnpack {
                 //头部1个字节
                 String otcHead = CommonUtils.bytesToHexString(headBytes);
                 if (!this.otcMap.containsKey(otcHead)) {
-                    message.clear();
-                    message.setZero(0, message.capacity());
+                    clearByteBuf(message);
                     break;
                 }
                 //查看第2个字节的数据包长度
@@ -61,11 +60,20 @@ public class JnOtcDecoderUnpack extends BaseUnpack {
                 list.add(str);
             } catch (Exception e) {
                 log.error("OTC数据拆包异常：{}", e.getMessage());
-                message.clear();
-                message.setZero(0, message.capacity());
+                clearByteBuf(message);
             }
         }
         return list;
+    }
+
+    private void clearByteBuf(ByteBuf... byteBuf) {
+        for (ByteBuf buf : byteBuf) {
+            if (buf != null && buf.readableBytes() != 0) {
+                //清空
+                buf.clear();
+                buf.setZero(0, buf.capacity());
+            }
+        }
     }
 
 }

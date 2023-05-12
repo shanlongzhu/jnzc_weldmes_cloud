@@ -75,14 +75,12 @@ public class JnSxDecoderUnpack extends BaseUnpack {
                 }
                 //无法识别的通讯协议
                 else {
-                    message.clear();
-                    message.setZero(0, message.capacity());
+                    clearByteBuf(message);
                     break;
                 }
             } catch (Exception e) {
                 log.error("SX数据拆包异常：{}", e.getMessage());
-                message.clear();
-                message.setZero(0, message.capacity());
+                clearByteBuf(message);
             }
         }
         return list;
@@ -102,4 +100,15 @@ public class JnSxDecoderUnpack extends BaseUnpack {
         }
         return CommonUtils.bytesToHexString(headBytes);
     }
+
+    private void clearByteBuf(ByteBuf... byteBuf) {
+        for (ByteBuf buf : byteBuf) {
+            if (buf != null && buf.readableBytes() != 0) {
+                //清空
+                buf.clear();
+                buf.setZero(0, buf.capacity());
+            }
+        }
+    }
+
 }

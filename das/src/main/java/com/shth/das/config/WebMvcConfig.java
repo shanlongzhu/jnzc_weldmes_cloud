@@ -43,7 +43,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //线程名称前缀
         executor.setThreadNamePrefix("webmvc-taskExecutor-");
         // 等待所有任务结束后再关闭线程池
-        executor.setWaitForTasksToCompleteOnShutdown(false);
+        executor.setWaitForTasksToCompleteOnShutdown(true);
         /*
          * 设置拒绝策略
          * AbortPolicy：丢弃任务并抛出异常

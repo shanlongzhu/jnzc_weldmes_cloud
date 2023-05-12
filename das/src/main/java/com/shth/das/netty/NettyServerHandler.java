@@ -38,6 +38,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             ctx.flush();
             return;
         }
+        param.setCtx(ctx);
         handlerContext.dataHandler(ctx, param);
         ctx.flush();
     }
