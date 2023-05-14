@@ -3,7 +3,6 @@ package com.shth.das.business.datadown;
 import com.alibaba.fastjson2.JSON;
 import com.shth.das.business.datadown.otc.OtcProtocolJoint;
 import com.shth.das.business.datadown.sx.SxProtocolJoint;
-import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
 import com.shth.das.codeparam.MqttParam;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonMap;
@@ -14,6 +13,7 @@ import com.shth.das.util.CRC7Check;
 import com.shth.das.util.CommonUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -32,51 +32,53 @@ public class MqttMessageAnalysis {
      * @param param mqtt入参实体类
      */
     public void taskClaimIssue(MqttParam param) {
-        if (null != param) {
-            String message = param.getMessage();
-            TaskClaimIssue taskClaimIssue = JSON.parseObject(message, TaskClaimIssue.class);
-            if (null != taskClaimIssue) {
-                //0:如果是OTC设备
-                if (taskClaimIssue.getWeldType() == 0) {
-                    //判断是开始任务还是结束任务（0：开始）
-                    if (taskClaimIssue.getStartFlag() == 0) {
-                        String gatherNo = taskClaimIssue.getGatherNo();
-                        if (CommonUtils.isNotEmpty(gatherNo)) {
-                            gatherNo = Integer.valueOf(gatherNo).toString();
-                            //如果已经开始任务，则会将之前的任务顶掉
-                            CommonMap.OTC_TASK_CLAIM_MAP.put(gatherNo, taskClaimIssue);
-                            //领任务成功后，将解锁焊机
-                            slotCardUnLockOtcWeld(gatherNo);
-                        }
-                    }
-                    //判断是开始任务还是结束任务（1：结束）
-                    else if (taskClaimIssue.getStartFlag() == 1) {
-                        String gatherNo = taskClaimIssue.getGatherNo();
-                        if (CommonUtils.isNotEmpty(gatherNo)) {
-                            gatherNo = Integer.valueOf(gatherNo).toString();
-                            CommonMap.OTC_TASK_CLAIM_MAP.remove(gatherNo);
-                        }
-                    }
+        if (ObjectUtils.isEmpty(param)) {
+            return;
+        }
+        String message = param.getMessage();
+        TaskClaimIssue taskClaimIssue = JSON.parseObject(message, TaskClaimIssue.class);
+        if (ObjectUtils.isEmpty(taskClaimIssue)) {
+            return;
+        }
+        //0:如果是OTC设备
+        if (taskClaimIssue.getWeldType() == 0) {
+            //判断是开始任务还是结束任务（0：开始）
+            if (taskClaimIssue.getStartFlag() == 0) {
+                String gatherNo = taskClaimIssue.getGatherNo();
+                if (CommonUtils.isNotEmpty(gatherNo)) {
+                    gatherNo = Integer.valueOf(gatherNo).toString();
+                    //如果已经开始任务，则会将之前的任务顶掉
+                    CommonMap.OTC_TASK_CLAIM_MAP.put(gatherNo, taskClaimIssue);
+                    //领任务成功后，将解锁焊机
+                    slotCardUnLockOtcWeld(gatherNo);
                 }
-                //1:如果是松下设备
-                else if (taskClaimIssue.getWeldType() == 1) {
-                    //判断是开始任务还是结束任务（0：开始）
-                    if (taskClaimIssue.getStartFlag() == 0) {
-                        String weldCid = taskClaimIssue.getWeldCid();
-                        if (CommonUtils.isNotEmpty(weldCid)) {
-                            //如果已经开始任务，则会将之前的任务顶掉
-                            CommonMap.SX_TASK_CLAIM_MAP.put(weldCid, taskClaimIssue);
-                            //领任务成功后，将解锁焊机
-                            slotCardUnLockSxWeld(weldCid);
-                        }
-                    }
-                    //判断是开始任务还是结束任务（1：结束）
-                    else if (taskClaimIssue.getStartFlag() == 1) {
-                        String weldCid = taskClaimIssue.getWeldCid();
-                        if (CommonUtils.isNotEmpty(weldCid)) {
-                            CommonMap.SX_TASK_CLAIM_MAP.remove(weldCid);
-                        }
-                    }
+            }
+            //判断是开始任务还是结束任务（1：结束）
+            else if (taskClaimIssue.getStartFlag() == 1) {
+                String gatherNo = taskClaimIssue.getGatherNo();
+                if (CommonUtils.isNotEmpty(gatherNo)) {
+                    gatherNo = Integer.valueOf(gatherNo).toString();
+                    CommonMap.OTC_TASK_CLAIM_MAP.remove(gatherNo);
+                }
+            }
+        }
+        //1:如果是松下设备
+        else if (taskClaimIssue.getWeldType() == 1) {
+            //判断是开始任务还是结束任务（0：开始）
+            if (taskClaimIssue.getStartFlag() == 0) {
+                String weldCid = taskClaimIssue.getWeldCid();
+                if (CommonUtils.isNotEmpty(weldCid)) {
+                    //如果已经开始任务，则会将之前的任务顶掉
+                    CommonMap.SX_TASK_CLAIM_MAP.put(weldCid, taskClaimIssue);
+                    //领任务成功后，将解锁焊机
+                    slotCardUnLockSxWeld(weldCid);
+                }
+            }
+            //判断是开始任务还是结束任务（1：结束）
+            else if (taskClaimIssue.getStartFlag() == 1) {
+                String weldCid = taskClaimIssue.getWeldCid();
+                if (CommonUtils.isNotEmpty(weldCid)) {
+                    CommonMap.SX_TASK_CLAIM_MAP.remove(weldCid);
                 }
             }
         }

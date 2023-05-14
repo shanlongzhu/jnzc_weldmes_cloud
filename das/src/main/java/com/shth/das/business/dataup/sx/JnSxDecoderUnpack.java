@@ -31,6 +31,7 @@ public class JnSxDecoderUnpack extends BaseUnpack {
         this.sxMap.put("FE5AA5", 0);
     }
 
+    @Override
     public List<String> dataUnpack(ByteBuf message) {
         List<String> list = Lists.newArrayList();
         if (message.readableBytes() <= 5) {
@@ -58,10 +59,10 @@ public class JnSxDecoderUnpack extends BaseUnpack {
                 //非两次握手，正常通讯协议
                 else if (this.sxMap.containsKey(sxThreeHead)) {
                     //查看第4、5个字节的数据包长度
-                    lengthBytes[0] = message.getByte(3);
-                    lengthBytes[1] = message.getByte(4);
+                    this.lengthBytes[0] = message.getByte(3);
+                    this.lengthBytes[1] = message.getByte(4);
                     //查看数据包应该有的长度(字节长度)
-                    int sxThreeHeadLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16);
+                    int sxThreeHeadLength = Integer.valueOf(Hex.encodeHexString(this.lengthBytes), 16);
                     //判断可读长度是否多于数据包长度（是否是一个完整数据包）
                     if (message.readableBytes() < sxThreeHeadLength) {
                         break;

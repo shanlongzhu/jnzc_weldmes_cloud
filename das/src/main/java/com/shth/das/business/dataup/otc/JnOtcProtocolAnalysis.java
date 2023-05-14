@@ -197,76 +197,78 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      * @return 返回一个集合对象
      */
     public List<JNRtDataUI> jnRtDataUiAnalysis(String clientIp, String str) {
+        if (CommonUtils.isEmpty(str) || str.length() != 282) {
+            return null;
+        }
+        str = str.toUpperCase();
+        if (!"7E".equals(str.substring(0, 2)) || !"22".equals(str.substring(10, 12)) || !"7D".equals(str.substring(280, 282))) {
+            return null;
+        }
         try {
-            if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
-                str = str.toUpperCase();
-                if ("7E".equals(str.substring(0, 2)) && "22".equals(str.substring(10, 12)) && "7D".equals(str.substring(280, 282))) {
-                    List<JNRtDataUI> rtData = new ArrayList<>();
-                    Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
-                    //当前系统时间 yyyy-MM-dd HH:mm:ss
-                    String nowDateTime = DateTimeUtils.getNowDateTime();
-                    for (int a = 0; a < 239; a += 80) {
-                        JNRtDataUI data = new JNRtDataUI();
-                        //采集模块编号
-                        data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                        if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
-                            TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
-                            if (null != taskClaimIssue) {
-                                data.setWelderId(taskClaimIssue.getWelderId());
-                                data.setWelderName(taskClaimIssue.getWelderName());
-                                data.setWelderNo(taskClaimIssue.getWelderNo());
-                                data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                                data.setTaskId(taskClaimIssue.getTaskId());
-                                data.setTaskName(taskClaimIssue.getTaskName());
-                                data.setTaskNo(taskClaimIssue.getTaskNo());
-                                data.setMachineId(taskClaimIssue.getMachineId());
-                                data.setMachineNo(taskClaimIssue.getMachineNo());
-                                data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
-                                data.setWeldType(taskClaimIssue.getWeldType());
-                            }
-                        }
-                        String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
-                        String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
-                        String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
-                        String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
-                        String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
-                        String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
-                        StringBuilder strDate = new StringBuilder();
-                        strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
-                        //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-                        try {
-                            String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
-                            data.setWeldTime(weldDateTime);
-                        } catch (Exception e) {
-                            log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
-                            data.setWeldTime(nowDateTime);
-                        }
-                        data.setWeldIp(clientIp);
-                        //电流
-                        data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
-                        //电压
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
-                        //给定电流(焊机面板上的值)
-                        data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));
-                        //给定电压(焊机面板上的值)
-                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)));
-                        //焊机状态
-                        data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
-                        //焊接电流
-                        data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));
-                        //焊接电压
-                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)));
-                        //焊接电流微调
-                        data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));
-                        //焊接电压微调
-                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)));
-                        data.setChannelNo(Integer.valueOf(str.substring(94 + a, 96 + a), 16).toString());
-                        rtData.add(data);
+            List<JNRtDataUI> rtData = new ArrayList<>();
+            Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
+            //当前系统时间 yyyy-MM-dd HH:mm:ss
+            String nowDateTime = DateTimeUtils.getNowDateTime();
+            for (int a = 0; a < 239; a += 80) {
+                JNRtDataUI data = new JNRtDataUI();
+                //采集模块编号
+                data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
+                if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+                    TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
+                    if (null != taskClaimIssue) {
+                        data.setWelderId(taskClaimIssue.getWelderId());
+                        data.setWelderName(taskClaimIssue.getWelderName());
+                        data.setWelderNo(taskClaimIssue.getWelderNo());
+                        data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                        data.setTaskId(taskClaimIssue.getTaskId());
+                        data.setTaskName(taskClaimIssue.getTaskName());
+                        data.setTaskNo(taskClaimIssue.getTaskNo());
+                        data.setMachineId(taskClaimIssue.getMachineId());
+                        data.setMachineNo(taskClaimIssue.getMachineNo());
+                        data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+                        data.setWeldType(taskClaimIssue.getWeldType());
                     }
-                    return rtData;
                 }
+                String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
+                String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
+                String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
+                String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
+                String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
+                String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
+                StringBuilder strDate = new StringBuilder();
+                strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
+                //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                try {
+                    String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                    data.setWeldTime(weldDateTime);
+                } catch (Exception e) {
+                    log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
+                    data.setWeldTime(nowDateTime);
+                }
+                data.setWeldIp(clientIp);
+                //电流
+                data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));
+                //电压
+                data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));
+                data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
+                //给定电流(焊机面板上的值)
+                data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));
+                //给定电压(焊机面板上的值)
+                data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)));
+                //焊机状态
+                data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));
+                //焊接电流
+                data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));
+                //焊接电压
+                data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)));
+                //焊接电流微调
+                data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));
+                //焊接电压微调
+                data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)));
+                data.setChannelNo(Integer.valueOf(str.substring(94 + a, 96 + a), 16).toString());
+                rtData.add(data);
             }
+            return rtData;
         } catch (Exception e) {
             log.error("OTC1.0实时数据解析发MQTT异常：", e);
         }
@@ -280,160 +282,170 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      * @return 返回一个集合对象
      */
     public List<JNRtDataDB> jnRtDataDbAnalysis(String str) {
+        if (CommonUtils.isEmpty(str) || str.length() != 282) {
+            return null;
+        }
+        str = str.toUpperCase();
+        if (!"7E".equals(str.substring(0, 2)) || !"7D".equals(str.substring(280, 282))) {
+            return null;
+        }
         try {
-            if (CommonUtils.isNotEmpty(str) && str.length() == 282) {
-                str = str.toUpperCase();
-                if ("7E".equals(str.substring(0, 2)) && "7D".equals(str.substring(280, 282))) {
-                    List<JNRtDataDB> rtdata = new ArrayList<>();
-                    //采集模块信息
-                    List<GatherModel> gatherList = CommonList.getGatherList();
-                    //焊机设备信息
-                    List<WeldModel> weldList = CommonList.getWeldList();
-                    //刷卡领取任务后进行数据绑定
-                    Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
-                    for (int a = 0; a < 239; a += 80) {
-                        //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
-                        if (!CommonFunction.isOtcStandbySave()) {
-                            Integer otcStandby = Integer.valueOf(str.substring(78 + a, 80 + a), 16);
-                            //焊接状态为0表示待机，则直接进入下一次循环
-                            if (otcStandby == 0) {
-                                continue;
-                            }
-                        }
-                        JNRtDataDB data = new JNRtDataDB();
-                        //焊机型号
-                        data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
-                        //采集模块编号
-                        data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
-                        //焊工号
-                        //data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
-                        //当前日期：yyyy-MM-dd
-                        String nowDate = DateTimeUtils.getNowDate();
-                        //当前系统时间 yyyy-MM-dd HH:mm:ss
-                        String nowDateTime = DateTimeUtils.getNowDateTime();
-                        //创建时间
-                        data.setCreateTime(nowDateTime);
-                        //采集模块信息判断并赋值
-                        if (CommonUtils.isNotEmpty(gatherList)) {
-                            for (GatherModel gather : gatherList) {
-                                if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
-                                    data.setGatherId(gather.getId());
-                                    data.setGatherDeptId(gather.getDeptId());
-                                    break;
-                                }
-                            }
-                        }
-                        //焊工、任务、焊机等信息判断并赋值
-                        if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
-                            TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
-                            if (null != taskClaimIssue) {
-                                data.setWelderId(taskClaimIssue.getWelderId());
-                                data.setWelderNo(taskClaimIssue.getWelderNo());
-                                data.setWelderName(taskClaimIssue.getWelderName());
-                                data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
-                                data.setTaskId(taskClaimIssue.getTaskId());
-                                data.setTaskName(taskClaimIssue.getTaskName());
-                                data.setTaskNo(taskClaimIssue.getTaskNo());
-                                data.setMachineId(taskClaimIssue.getMachineId());
-                                data.setMachineNo(taskClaimIssue.getMachineNo());
-                                data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
-                            }
-                        } else {
-                            //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
-                            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
-                                for (WeldModel weld : weldList) {
-                                    //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
-                                    if (StringUtils.isNotBlank(weld.getGatherNo())) {
-                                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
-                                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
-                                            data.setMachineId(weld.getId());
-                                            data.setMachineNo(weld.getMachineNo());
-                                            data.setMachineDeptId(weld.getDeptId());
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
-                        String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
-                        String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
-                        String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
-                        String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
-                        String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
-                        StringBuilder strDate = new StringBuilder();
-                        strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
-                        //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-                        try {
-                            String weldDate = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
-                            String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
-                            //判断实时数据是否当天数据，true：保存，false；赋值系统时间
-                            if (weldDate.equals(nowDate)) {
-                                data.setWeldTime(weldDateTime);
-                            } else {
-                                //焊机时间
-                                data.setWeldTime(nowDateTime);
-                            }
-                        } catch (Exception e) {
-                            log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
-                            data.setWeldTime(nowDateTime);
-                        }
-                        data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
-                        data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));  //电压
-                        data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
-                        data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));//预置(给定)电流
-                        data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//预置(给定)电压
-                        data.setWeldedJunctionNo(Integer.valueOf(str.substring(70 + a, 78 + a), 16).toString());//焊口号
-                        data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));//焊机状态
-                        data.setWireDiameter(BigDecimal.valueOf(Integer.valueOf(str.substring(80 + a, 82 + a), 16)));//焊丝直径
-                        data.setWireMaterialsGases(BigDecimal.valueOf(Integer.valueOf(str.substring(82 + a, 84 + a), 16)));//焊丝材料和保护气体
-                        data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));//焊接电流（中位数）
-                        data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压（中位数）
-                        data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));//焊接电流微调
-                        data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
-                        data.setChannelNo(Integer.valueOf(str.substring(100 + a, 102 + a), 16).toString());//当前通道号
-                        data.setAlarmsEleMax(BigDecimal.valueOf(Integer.valueOf(str.substring(102 + a, 106 + a), 16)));//报警电流上限
-                        data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
-                        data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
-                        data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
-                        //待机数据不存储，则针对起弧、收弧各存储一条待机数据
-                        if (!CommonFunction.isOtcStandbySave()) {
-                            //起弧（增加一条待机数据）
-                            if (data.getWeldStatus() == 7) {
-                                JNRtDataDB jnRtDataDb = new JNRtDataDB();
-                                jnRtDataDb.setWeldStatus(0);
-                                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
-                                //减去1秒
-                                String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
-                                jnRtDataDb.setWeldTime(weldTime);
-                                jnRtDataDb.setElectricity(BigDecimal.ZERO);
-                                jnRtDataDb.setVoltage(BigDecimal.ZERO);
-                                rtdata.add(jnRtDataDb);
-                            }
-                            //收弧（增加一条待机数据）
-                            else if (data.getWeldStatus() == 5) {
-                                JNRtDataDB jnRtDataDb = new JNRtDataDB();
-                                jnRtDataDb.setWeldStatus(0);
-                                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
-                                //加上1秒
-                                String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
-                                jnRtDataDb.setWeldTime(weldTime);
-                                jnRtDataDb.setElectricity(BigDecimal.ZERO);
-                                jnRtDataDb.setVoltage(BigDecimal.ZERO);
-                                rtdata.add(jnRtDataDb);
-                            }
-                        }
-                        rtdata.add(data);
+            List<JNRtDataDB> rtdata = new ArrayList<>();
+            //采集模块信息
+            List<GatherModel> gatherList = CommonList.getGatherList();
+            //焊机设备信息
+            List<WeldModel> weldList = CommonList.getWeldList();
+            //刷卡领取任务后进行数据绑定
+            Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
+            for (int a = 0; a < 239; a += 80) {
+                //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
+                if (!CommonFunction.isOtcStandbySave()) {
+                    Integer otcStandby = Integer.valueOf(str.substring(78 + a, 80 + a), 16);
+                    //焊接状态为0表示待机，则直接进入下一次循环
+                    if (otcStandby == 0) {
+                        continue;
                     }
-                    return rtdata;
                 }
+                JNRtDataDB data = new JNRtDataDB();
+                //焊机型号
+                data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
+                //采集模块编号
+                data.setGatherNo(Integer.valueOf(str.substring(14, 18), 16).toString());
+                //焊工号
+                //data.setWelderNo(Integer.valueOf(str.substring(34, 38), 16).toString());
+                //当前日期：yyyy-MM-dd
+                String nowDate = DateTimeUtils.getNowDate();
+                //当前系统时间 yyyy-MM-dd HH:mm:ss
+                String nowDateTime = DateTimeUtils.getNowDateTime();
+                //创建时间
+                data.setCreateTime(nowDateTime);
+                //采集模块信息判断并赋值
+                if (CommonUtils.isNotEmpty(gatherList)) {
+                    for (GatherModel gather : gatherList) {
+                        if (Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(gather.getGatherNo()))) {
+                            data.setGatherId(gather.getId());
+                            data.setGatherDeptId(gather.getDeptId());
+                            break;
+                        }
+                    }
+                }
+                //焊工、任务、焊机等信息判断并赋值
+                extracted(weldList, otcTaskClaimMap, data);
+                String year = CommonUtils.hexToDecLengthJoint(str.substring(38 + a, 40 + a), 2);
+                String month = CommonUtils.hexToDecLengthJoint(str.substring(40 + a, 42 + a), 2);
+                String day = CommonUtils.hexToDecLengthJoint(str.substring(42 + a, 44 + a), 2);
+                String hour = CommonUtils.hexToDecLengthJoint(str.substring(44 + a, 46 + a), 2);
+                String minute = CommonUtils.hexToDecLengthJoint(str.substring(46 + a, 48 + a), 2);
+                String second = CommonUtils.hexToDecLengthJoint(str.substring(48 + a, 50 + a), 2);
+                StringBuilder strDate = new StringBuilder();
+                strDate.append(year).append("-").append(month).append("-").append(day).append(" ").append(hour).append(":").append(minute).append(":").append(second);
+                //String strDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                try {
+                    String weldDate = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.TODAY_DATE);
+                    String weldDateTime = LocalDateTime.parse(strDate.toString(), DateTimeUtils.YEAR_DATETIME).format(DateTimeUtils.DEFAULT_DATETIME);
+                    //判断实时数据是否当天数据，true：保存，false；赋值系统时间
+                    if (weldDate.equals(nowDate)) {
+                        data.setWeldTime(weldDateTime);
+                    } else {
+                        //焊机时间
+                        data.setWeldTime(nowDateTime);
+                    }
+                } catch (Exception e) {
+                    log.error("OTC1.0实时数据时间格式异常:{}", e.getMessage());
+                    data.setWeldTime(nowDateTime);
+                }
+                data.setElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(50 + a, 54 + a), 16)));//电流
+                data.setVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(54 + a, 58 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));  //电压
+                data.setWireFeedRate(BigDecimal.valueOf(Integer.valueOf(str.substring(58 + a, 62 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//送丝速度
+                data.setPresetEle(BigDecimal.valueOf(Integer.valueOf(str.substring(62 + a, 66 + a), 16)));//预置(给定)电流
+                data.setPresetVol(BigDecimal.valueOf(Integer.valueOf(str.substring(66 + a, 70 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//预置(给定)电压
+                data.setWeldedJunctionNo(Integer.valueOf(str.substring(70 + a, 78 + a), 16).toString());//焊口号
+                data.setWeldStatus(Integer.valueOf(str.substring(78 + a, 80 + a), 16));//焊机状态
+                data.setWireDiameter(BigDecimal.valueOf(Integer.valueOf(str.substring(80 + a, 82 + a), 16)));//焊丝直径
+                data.setWireMaterialsGases(BigDecimal.valueOf(Integer.valueOf(str.substring(82 + a, 84 + a), 16)));//焊丝材料和保护气体
+                data.setWeldElectricity(BigDecimal.valueOf(Integer.valueOf(str.substring(84 + a, 88 + a), 16)));//焊接电流（中位数）
+                data.setWeldVoltage(BigDecimal.valueOf(Integer.valueOf(str.substring(88 + a, 92 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压（中位数）
+                data.setWeldEleAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(92 + a, 94 + a), 16)));//焊接电流微调
+                data.setWeldVolAdjust(BigDecimal.valueOf(Integer.valueOf(str.substring(94 + a, 96 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
+                data.setChannelNo(Integer.valueOf(str.substring(100 + a, 102 + a), 16).toString());//当前通道号
+                data.setAlarmsEleMax(BigDecimal.valueOf(Integer.valueOf(str.substring(102 + a, 106 + a), 16)));//报警电流上限
+                data.setAlarmsVolMax(BigDecimal.valueOf(Integer.valueOf(str.substring(106 + a, 110 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
+                data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
+                data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
+                //待机数据不存储，则针对起弧、收弧各存储一条待机数据
+                extracted(rtdata, data);
+                rtdata.add(data);
             }
+            return rtdata;
         } catch (Exception e) {
             log.error("OTC1.0实时数据解析存DB异常：", e);
         }
         return null;
     }
 
+    private void extracted(List<WeldModel> weldList, Map<String, TaskClaimIssue> otcTaskClaimMap, JNRtDataDB data) {
+        //焊工、任务、焊机等信息判断并赋值
+        if (ObjectUtils.isNotEmpty(otcTaskClaimMap) && otcTaskClaimMap.containsKey(data.getGatherNo())) {
+            TaskClaimIssue taskClaimIssue = otcTaskClaimMap.get(data.getGatherNo());
+            if (null != taskClaimIssue) {
+                data.setWelderId(taskClaimIssue.getWelderId());
+                data.setWelderNo(taskClaimIssue.getWelderNo());
+                data.setWelderName(taskClaimIssue.getWelderName());
+                data.setWelderDeptId(taskClaimIssue.getWelderDeptId());
+                data.setTaskId(taskClaimIssue.getTaskId());
+                data.setTaskName(taskClaimIssue.getTaskName());
+                data.setTaskNo(taskClaimIssue.getTaskNo());
+                data.setMachineId(taskClaimIssue.getMachineId());
+                data.setMachineNo(taskClaimIssue.getMachineNo());
+                data.setMachineDeptId(taskClaimIssue.getMachineDeptId());
+            }
+        } else {
+            //焊机信息查询并绑定（如果设备未刷卡，则存储数据库设备id）
+            if (CommonUtils.isNotEmpty(weldList) && CommonUtils.isNotEmpty(data.getGatherNo())) {
+                for (WeldModel weld : weldList) {
+                    //if (CommonUtils.isNotEmpty(weld.getGatherNo()) && Integer.valueOf(data.getGatherNo()).equals(Integer.valueOf(weld.getGatherNo()))) {
+                    if (StringUtils.isNotBlank(weld.getGatherNo())) {
+                        List<String> gatherNoList = Arrays.stream(weld.getGatherNo().split(",")).map(gatherNo -> CommonUtils.stringLengthJoint(gatherNo, 4)).collect(Collectors.toList());
+                        if (gatherNoList.contains(CommonUtils.stringLengthJoint(data.getGatherNo(), 4))) {
+                            data.setMachineId(weld.getId());
+                            data.setMachineNo(weld.getMachineNo());
+                            data.setMachineDeptId(weld.getDeptId());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void extracted(List<JNRtDataDB> rtdata, JNRtDataDB data) {
+        if (!CommonFunction.isOtcStandbySave()) {
+            //起弧（增加一条待机数据）
+            if (data.getWeldStatus() == 7) {
+                JNRtDataDB jnRtDataDb = new JNRtDataDB();
+                jnRtDataDb.setWeldStatus(0);
+                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                //减去1秒
+                String weldTime = parse.minusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                jnRtDataDb.setWeldTime(weldTime);
+                jnRtDataDb.setElectricity(BigDecimal.ZERO);
+                jnRtDataDb.setVoltage(BigDecimal.ZERO);
+                rtdata.add(jnRtDataDb);
+            }
+            //收弧（增加一条待机数据）
+            else if (data.getWeldStatus() == 5) {
+                JNRtDataDB jnRtDataDb = new JNRtDataDB();
+                jnRtDataDb.setWeldStatus(0);
+                LocalDateTime parse = LocalDateTime.parse(jnRtDataDb.getWeldTime(), DateTimeUtils.DEFAULT_DATETIME);
+                //加上1秒
+                String weldTime = parse.plusSeconds(1).format(DateTimeUtils.DEFAULT_DATETIME);
+                jnRtDataDb.setWeldTime(weldTime);
+                jnRtDataDb.setElectricity(BigDecimal.ZERO);
+                jnRtDataDb.setVoltage(BigDecimal.ZERO);
+                rtdata.add(jnRtDataDb);
+            }
+        }
+    }
 
     /**
      * 下发返回协议解析

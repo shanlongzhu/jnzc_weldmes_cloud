@@ -16,16 +16,16 @@ public class AnalysisContext {
 
     public HandlerParam protocolAnalysis(ChannelHandlerContext ctx, String str) {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        baseAnalysis = getBaseAnalysis(inetSocket.getPort());
-        if (ObjectUtils.isEmpty(baseAnalysis)) {
+        this.baseAnalysis = getBaseAnalysis(inetSocket.getPort());
+        if (ObjectUtils.isEmpty(this.baseAnalysis)) {
             return null;
         }
-        return baseAnalysis.protocolAnalysis(ctx, str);
+        return this.baseAnalysis.protocolAnalysis(ctx, str);
     }
 
     private BaseAnalysis getBaseAnalysis(int serverPort) {
-        if (ObjectUtils.isNotEmpty(baseAnalysis)) {
-            return baseAnalysis;
+        if (ObjectUtils.isNotEmpty(this.baseAnalysis)) {
+            return this.baseAnalysis;
         }
         if (serverPort == CommonFunction.getOtcPort()) {
             return new JnOtcProtocolAnalysis();

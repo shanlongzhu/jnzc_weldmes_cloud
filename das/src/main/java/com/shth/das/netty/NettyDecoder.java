@@ -39,13 +39,13 @@ public class NettyDecoder extends ByteToMessageDecoder {
 
     private void dataDecoder(ChannelHandlerContext ctx, ByteBuf message, List<Object> out) {
         //1、数据拆包（二进制转16进制字符串）
-        List<String> list = unpackContext.protocolUnpack(ctx, message);
+        List<String> list = this.unpackContext.protocolUnpack(ctx, message);
         if (CommonUtils.isEmpty(list)) {
             return;
         }
         //2、遍历解析数据包（16进制字符串解析成pojo对象）
         for (String str : list) {
-            HandlerParam handlerParam = analysisContext.protocolAnalysis(ctx, str);
+            HandlerParam handlerParam = this.analysisContext.protocolAnalysis(ctx, str);
             if (ObjectUtils.isNotEmpty(handlerParam)) {
                 out.add(handlerParam);
             }

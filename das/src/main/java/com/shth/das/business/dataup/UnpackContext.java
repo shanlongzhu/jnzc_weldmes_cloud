@@ -26,17 +26,17 @@ public class UnpackContext {
      */
     public List<String> protocolUnpack(ChannelHandlerContext ctx, ByteBuf byteBuf) {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        baseUnpack = getBaseUnpack(inetSocket.getPort());
-        if (ObjectUtils.isEmpty(baseUnpack)) {
+        this.baseUnpack = getBaseUnpack(inetSocket.getPort());
+        if (ObjectUtils.isEmpty(this.baseUnpack)) {
             return Lists.newArrayList();
         }
-        return baseUnpack.dataUnpack(byteBuf);
+        return this.baseUnpack.dataUnpack(byteBuf);
     }
 
 
     private BaseUnpack getBaseUnpack(int serverPort) {
-        if (ObjectUtils.isNotEmpty(baseUnpack)) {
-            return baseUnpack;
+        if (ObjectUtils.isNotEmpty(this.baseUnpack)) {
+            return this.baseUnpack;
         }
         if (serverPort == CommonFunction.getOtcPort()) {
             return new JnOtcDecoderUnpack();

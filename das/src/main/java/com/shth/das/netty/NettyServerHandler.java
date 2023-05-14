@@ -39,7 +39,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             return;
         }
         param.setCtx(ctx);
-        handlerContext.dataHandler(ctx, param);
+        this.handlerContext.dataHandler(ctx, param);
         ctx.flush();
     }
 
@@ -104,7 +104,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
-                log.info("OTC终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.OTC_CHANNEL_MAP.size());
+                log.info("OTC终止连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
             }
         }
         //端口为sxPort，则为松下通讯协议
@@ -113,7 +113,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
-                log.info("SX终止连接:" + clientAddress + "--->连接通道数量: " + CommonMap.SX_CHANNEL_MAP.size());
+                log.info("SX终止连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
             }
         }
         handlerContext.shutdownHandle(ctx);

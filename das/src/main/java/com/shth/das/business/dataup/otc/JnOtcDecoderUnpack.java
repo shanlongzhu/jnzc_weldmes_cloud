@@ -30,6 +30,7 @@ public class JnOtcDecoderUnpack extends BaseUnpack {
         this.otcMap.put("7E", 1);
     }
 
+    @Override
     public List<String> dataUnpack(ByteBuf message) {
         List<String> list = Lists.newArrayList();
         if (message.readableBytes() <= 2) {
@@ -37,17 +38,17 @@ public class JnOtcDecoderUnpack extends BaseUnpack {
         }
         while (message.readableBytes() > 2) {
             try {
-                headBytes[0] = message.getByte(0);
+                this.headBytes[0] = message.getByte(0);
                 //头部1个字节
-                String otcHead = CommonUtils.bytesToHexString(headBytes);
+                String otcHead = CommonUtils.bytesToHexString(this.headBytes);
                 if (!this.otcMap.containsKey(otcHead)) {
                     clearByteBuf(message);
                     break;
                 }
                 //查看第2个字节的数据包长度
-                lengthBytes[0] = message.getByte(1);
+                this.lengthBytes[0] = message.getByte(1);
                 //数据包长度(数组转16进制再转10进制)
-                int otcLength = Integer.valueOf(Hex.encodeHexString(lengthBytes), 16) + 2;
+                int otcLength = Integer.valueOf(Hex.encodeHexString(this.lengthBytes), 16) + 2;
                 //判断可读长度是否多于数据包长度（是否是一个完整数据包）
                 if (message.readableBytes() < otcLength) {
                     break;

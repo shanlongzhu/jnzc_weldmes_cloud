@@ -4,7 +4,6 @@ import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
 import com.shth.das.business.dataup.sx.JnSxProtocolHandle;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
-import com.shth.das.mqtt.EmqMqttClient;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -18,25 +17,25 @@ public class HandlerContext {
 
     public void dataHandler(ChannelHandlerContext ctx, HandlerParam param) {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        baseHandler = getBaseHandler(inetSocket.getPort());
-        if (ObjectUtils.isEmpty(baseHandler)) {
+        this.baseHandler = getBaseHandler(inetSocket.getPort());
+        if (ObjectUtils.isEmpty(this.baseHandler)) {
             return;
         }
-        baseHandler.dataHandler(param);
+        this.baseHandler.dataHandler(param);
     }
 
     public void shutdownHandle(ChannelHandlerContext ctx) {
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        baseHandler = getBaseHandler(inetSocket.getPort());
-        if (ObjectUtils.isEmpty(baseHandler)) {
+        this.baseHandler = getBaseHandler(inetSocket.getPort());
+        if (ObjectUtils.isEmpty(this.baseHandler)) {
             return;
         }
-        baseHandler.shutdownHandler(ctx);
+        this.baseHandler.shutdownHandler(ctx);
     }
 
     private BaseHandler getBaseHandler(int serverPort) {
-        if (ObjectUtils.isNotEmpty(baseHandler)) {
-            return baseHandler;
+        if (ObjectUtils.isNotEmpty(this.baseHandler)) {
+            return this.baseHandler;
         }
         if (serverPort == CommonFunction.getOtcPort()) {
             return new JnOtcProtocolHandle();
@@ -46,16 +45,6 @@ public class HandlerContext {
             return new JnSxProtocolHandle();
         }
         return null;
-    }
-
-    /**
-     * 发布消息
-     *
-     * @param topic
-     * @param message
-     */
-    private static void publishMessageToMqtt(String topic, String message) {
-        EmqMqttClient.publishMessage(topic, message, 0);
     }
 
 }
