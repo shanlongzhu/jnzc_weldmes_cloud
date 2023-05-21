@@ -1,7 +1,6 @@
 package com.shth.das.common;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -13,7 +12,6 @@ import java.util.concurrent.TimeUnit;
  *
  * @author zsl
  */
-@Component
 @Slf4j
 public class CommonThreadPool {
 

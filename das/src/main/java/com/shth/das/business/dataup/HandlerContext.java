@@ -5,12 +5,10 @@ import com.shth.das.business.dataup.sx.JnSxProtocolHandle;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.net.InetSocketAddress;
 
-@Slf4j
 public class HandlerContext {
 
     private BaseHandler baseHandler;

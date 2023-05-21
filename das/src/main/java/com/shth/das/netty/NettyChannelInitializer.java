@@ -3,14 +3,12 @@ package com.shth.das.netty;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import org.springframework.stereotype.Component;
 
 /**
  * @description: 通道初始化
  * @author: Shan Long
  * @create: 2021-07-31
  */
-@Component
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override

@@ -18,7 +18,7 @@ import com.shth.das.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +29,7 @@ import java.util.Vector;
  * @author: Shan Long
  * @create: 2021-09-27
  */
-@Configuration
+@Component
 @Slf4j
 public class DBCreateMethod {
 

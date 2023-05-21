@@ -8,14 +8,14 @@ import com.processdb.driver.dao.DBHistoryDataDao;
 import com.processdb.driver.dao.DBRealtimeDataDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * @description: processdb实时数据库创建连接存到IOC容器中
  * @author: Shan Long
  * @create: 2021-09-27
  */
-@Configuration
+@Component
 @Slf4j
 public class DBCreateConnect {
 

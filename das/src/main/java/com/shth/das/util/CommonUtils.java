@@ -1,5 +1,6 @@
 package com.shth.das.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * 系统工具类
  */
+@Slf4j
 public class CommonUtils {
 
     /**

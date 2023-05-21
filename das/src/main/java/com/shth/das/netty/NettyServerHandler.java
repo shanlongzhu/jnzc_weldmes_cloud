@@ -9,7 +9,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 
@@ -20,7 +19,6 @@ import java.net.InetSocketAddress;
  * channelRead0 获取消息会自动释放资源，获取的消息必须是指定的泛型。
  */
 @Slf4j
-@Component
 public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam> {
 
     private final HandlerContext handlerContext = new HandlerContext();

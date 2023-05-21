@@ -3,7 +3,6 @@ package com.shth.das.common;
 import com.shth.das.pojo.db.GatherModel;
 import com.shth.das.pojo.db.WeldModel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,7 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * 数据集合
  */
-@Component
 @Slf4j
 public class CommonList {
 
@@ -48,7 +46,7 @@ public class CommonList {
         return WELD_LIST;
     }
 
-    public synchronized static void setWeldList(List<WeldModel> weldList) {
+    public static void setWeldList(List<WeldModel> weldList) {
         WELD_LIST.clear();
         WELD_LIST.addAll(weldList);
     }

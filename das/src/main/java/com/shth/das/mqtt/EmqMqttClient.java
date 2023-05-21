@@ -9,7 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * mq客户端，连接emq服务器，订阅和发送消息
  */
-@Configuration
+@Component
 @Slf4j
 public class EmqMqttClient {
 
