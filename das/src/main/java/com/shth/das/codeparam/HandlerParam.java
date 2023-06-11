@@ -15,13 +15,20 @@ import java.util.Map;
 public class HandlerParam implements Serializable {
 
     /**
+     * OTC 控制命令
+     */
+    private String ctlCommand;
+
+    /**
      * 通讯协议16进制字符串长度
      */
     private int key;
+
     /**
      * 封装解析好的pojo对象
      */
     private Map<String, String> value;
+
     /**
      * 通道
      */

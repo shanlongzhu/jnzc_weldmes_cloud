@@ -1,7 +1,8 @@
 package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
-import com.shth.das.business.dataup.BaseAnalysis;
+import com.shth.das.business.dataup.base.BaseAnalysis;
+import com.shth.das.business.dataup.base.DecodeObjectFactory;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnOtcDecoderParam;
 import com.shth.das.common.CommonFunction;
@@ -37,10 +38,14 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
     /**
      * 保存字符串长度和方法映射关系
      * Function<T,R>,T:传入参数，R：返回参数
+     * K：控制命令
+     * V：解析方法
      */
-    private final Map<Integer, Function<JnOtcDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
+    private final Map<String, Function<JnOtcDecoderParam, HandlerParam>> decoderMapping = new HashMap<>();
 
     private final JnOtcDecoderParam jnOtcDecoderParam = new JnOtcDecoderParam();
+
+    private final DecodeObjectFactory factory = new DecodeObjectFactory();
 
     public JnOtcProtocolAnalysis() {
         init();
@@ -48,75 +53,134 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
 
     private void init() {
         //OTC（1.0）实时数据解析
-        this.decoderMapping.put(282, this::jnOtcRtDataAnalysis);
+        this.decoderMapping.put("22", this::jnOtcRtDataAnalysis);
         //OTC（1.0）工艺下发返回解析
-        this.decoderMapping.put(24, this::otcIssueReturnAnalysis);
+        this.decoderMapping.put("52", this::otcIssueReturnAnalysis);
         //OTC（1.0）索取返回协议解析
-        this.decoderMapping.put(112, this::otcClaimReturnAnalysis);
-        //OTC（1.0）密码返回和控制命令返回[新增包路径下发返回]
-        this.decoderMapping.put(22, this::otcPwdCmdReturnAnalysis);
+        this.decoderMapping.put("56", this::otcClaimReturnAnalysis);
+        //密码返回
+        this.decoderMapping.put("53", this::otcPasswordReturnAnalysis);
+        //控制命令返回
+        this.decoderMapping.put("54", this::otcCommandReturnAnalysis);
+        //锁焊机指令返回
+        this.decoderMapping.put("18", this::otcLockMachineReturn);
+        //解锁焊机指令返回
+        this.decoderMapping.put("19", this::otcUnLockMachineReturn);
+        //程序包路径下发返回
+        this.decoderMapping.put("11", this::otcProgramPathIssueReturnAnalysis);
     }
 
     @Override
     public HandlerParam protocolAnalysis(ChannelHandlerContext ctx, String str) {
-        if (this.decoderMapping.containsKey(str.length())) {
+        if (!str.startsWith("7E") || !str.endsWith("7D")) {
+            return null;
+        }
+        //控制命令
+        String ctlCommand = str.substring(10, 12);
+        if (this.decoderMapping.containsKey(ctlCommand)) {
             String clientIp = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
             this.jnOtcDecoderParam.setStr(str);
             this.jnOtcDecoderParam.setClientIp(clientIp);
-            return this.decoderMapping.get(str.length()).apply(this.jnOtcDecoderParam);
+            HandlerParam handlerParam = this.decoderMapping.get(ctlCommand).apply(this.jnOtcDecoderParam);
+            if (ObjectUtils.isNotEmpty(handlerParam)) {
+                handlerParam.setCtlCommand(ctlCommand);
+            }
+            return handlerParam;
         }
         return null;
     }
 
-    /**
-     * 密码返回和控制命令返回
-     *
-     * @param jnOtcDecoderParam 入参
-     * @return 返回HandlerParam
-     */
-    private HandlerParam otcPwdCmdReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
+    private HandlerParam otcPasswordReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
-            HandlerParam handlerParam = new HandlerParam();
-            Map<String, String> map = new HashMap<>();
-            String str = jnOtcDecoderParam.getStr();
-            //密码返回
-            if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                String str = jnOtcDecoderParam.getStr();
                 JNPasswordReturn passwordReturn = jnPasswordReturnAnalysis(str);
                 if (null != passwordReturn) {
                     map.put(JNPasswordReturn.class.getSimpleName(), JSON.toJSONString(passwordReturn));
                 }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0密码返回异常：{}", e.getMessage());
             }
-            //控制命令返回
-            else if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+        }
+        return null;
+    }
+
+    private HandlerParam otcCommandReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
+        if (null != jnOtcDecoderParam) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                String str = jnOtcDecoderParam.getStr();
                 JNCommandReturn commandReturn = jnCommandReturnAnalysis(str);
                 if (null != commandReturn) {
                     map.put(JNCommandReturn.class.getSimpleName(), JSON.toJSONString(commandReturn));
                 }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0控制命令返回异常：{}", e.getMessage());
             }
-            //锁焊机指令返回
-            else if ("7E".equals(str.substring(0, 2)) && "18".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+        }
+        return null;
+    }
+
+    private HandlerParam otcLockMachineReturn(JnOtcDecoderParam jnOtcDecoderParam) {
+        if (null != jnOtcDecoderParam) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                String str = jnOtcDecoderParam.getStr();
                 JnLockMachineReturn jnLockMachineReturn = jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put(JnLockMachineReturn.class.getSimpleName(), JSON.toJSONString(jnLockMachineReturn));
                 }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0锁焊机指令返回异常：{}", e.getMessage());
             }
-            //解锁焊机指令返回
-            /*else if ("7E".equals(str.substring(0, 2)) && "19".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+        }
+        return null;
+    }
+
+    private HandlerParam otcUnLockMachineReturn(JnOtcDecoderParam jnOtcDecoderParam) {
+        if (null != jnOtcDecoderParam) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                String str = jnOtcDecoderParam.getStr();
                 JnLockMachineReturn jnLockMachineReturn = jnLockMachineReturnAnalysis(str);
                 if (null != jnLockMachineReturn) {
                     map.put(JnLockMachineReturn.class.getSimpleName(), JSON.toJSONString(jnLockMachineReturn));
                 }
-            }*/
-            //程序包路径下发返回
-            else if ("7E".equals(str.substring(0, 2)) && "11".equals(str.substring(12, 14)) && "7D".equals(str.substring(20, 22))) {
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0解锁焊机指令返回异常：{}", e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private HandlerParam otcProgramPathIssueReturnAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
+        if (null != jnOtcDecoderParam) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                String str = jnOtcDecoderParam.getStr();
                 OtcV1ProgramPathIssueReturn otcV1ProgramPathIssueReturn = otcV1ProgramPathIssueReturn(str);
                 if (null != otcV1ProgramPathIssueReturn) {
                     map.put(OtcV1ProgramPathIssueReturn.class.getSimpleName(), JSON.toJSONString(otcV1ProgramPathIssueReturn));
                 }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0程序包路径下发返回异常：{}", e.getMessage());
             }
-            handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-            handlerParam.setValue(map);
-            return handlerParam;
         }
         return null;
     }
@@ -129,21 +193,24 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      */
     private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
         if (null != jnOtcDecoderParam) {
-            HandlerParam handlerParam = new HandlerParam();
-            Map<String, String> map = new HashMap<>();
-            //存数据库
-            List<JNRtDataDB> jnRtDataDbs = jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
-            //发送前端
-            List<JNRtDataUI> jnRtDataUis = jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
-            if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
-                map.put(JNRtDataDB.class.getSimpleName(), JSON.toJSONString(jnRtDataDbs));
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                //存数据库
+                List<JNRtDataDB> jnRtDataDbs = jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
+                if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
+                    map.put(JNRtDataDB.class.getSimpleName(), JSON.toJSONString(jnRtDataDbs));
+                }
+                //发送前端
+                List<JNRtDataUI> jnRtDataUis = jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
+                if (CommonUtils.isNotEmpty(jnRtDataUis)) {
+                    map.put(JNRtDataUI.class.getSimpleName(), JSON.toJSONString(jnRtDataUis));
+                }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0实时数据解析异常：{}", e.getMessage());
             }
-            if (CommonUtils.isNotEmpty(jnRtDataUis)) {
-                map.put(JNRtDataUI.class.getSimpleName(), JSON.toJSONString(jnRtDataUis));
-            }
-            handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-            handlerParam.setValue(map);
-            return handlerParam;
         }
         return null;
     }
@@ -158,12 +225,15 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
         if (null != jnOtcDecoderParam) {
             JNProcessIssueReturn issueReturn = jnIssueReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != issueReturn) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, String> map = new HashMap<>();
-                map.put(JNProcessIssueReturn.class.getSimpleName(), JSON.toJSONString(issueReturn));
-                handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
+                try {
+                    HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                    Map<String, String> map = factory.getMap();
+                    map.put(JNProcessIssueReturn.class.getSimpleName(), JSON.toJSONString(issueReturn));
+                    handlerParam.setValue(map);
+                    return handlerParam;
+                } catch (Exception e) {
+                    log.error("OTC1.0工艺下发返回解析异常：{}", e.getMessage());
+                }
             }
         }
         return null;
@@ -179,12 +249,15 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
         if (null != jnOtcDecoderParam) {
             JNProcessClaimReturn claimReturn = jnClaimReturnAnalysis(jnOtcDecoderParam.getStr());
             if (null != claimReturn) {
-                HandlerParam handlerParam = new HandlerParam();
-                Map<String, String> map = new HashMap<>();
-                map.put(JNProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(claimReturn));
-                handlerParam.setKey(jnOtcDecoderParam.getStr().length());
-                handlerParam.setValue(map);
-                return handlerParam;
+                try {
+                    HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                    Map<String, String> map = factory.getMap();
+                    map.put(JNProcessClaimReturn.class.getSimpleName(), JSON.toJSONString(claimReturn));
+                    handlerParam.setValue(map);
+                    return handlerParam;
+                } catch (Exception e) {
+                    log.error("OTC1.0索取返回协议解析异常：{}", e.getMessage());
+                }
             }
         }
         return null;
@@ -201,9 +274,6 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
             return null;
         }
         str = str.toUpperCase();
-        if (!"7E".equals(str.substring(0, 2)) || !"22".equals(str.substring(10, 12)) || !"7D".equals(str.substring(280, 282))) {
-            return null;
-        }
         try {
             List<JNRtDataUI> rtData = new ArrayList<>();
             Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
@@ -286,17 +356,15 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
             return null;
         }
         str = str.toUpperCase();
-        if (!"7E".equals(str.substring(0, 2)) || !"7D".equals(str.substring(280, 282))) {
-            return null;
-        }
         try {
-            List<JNRtDataDB> rtdata = new ArrayList<>();
+            List<JNRtDataDB> rtdata = factory.getList(JNRtDataDB.class);
             //采集模块信息
             List<GatherModel> gatherList = CommonList.getGatherList();
             //焊机设备信息
             List<WeldModel> weldList = CommonList.getWeldList();
             //刷卡领取任务后进行数据绑定
             Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
+            JNRtDataDB data = factory.getObject(JNRtDataDB.class);
             for (int a = 0; a < 239; a += 80) {
                 //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
                 if (!CommonFunction.isOtcStandbySave()) {
@@ -306,7 +374,6 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
                         continue;
                     }
                 }
-                JNRtDataDB data = new JNRtDataDB();
                 //焊机型号
                 data.setWeldModel(Integer.valueOf(str.substring(12, 14), 16));
                 //采集模块编号
@@ -455,13 +522,11 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      */
     public JNProcessIssueReturn jnIssueReturnAnalysis(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 24) {
-            if ("7E".equals(str.substring(0, 2)) && "52".equals(str.substring(10, 12)) && "7D".equals(str.substring(22, 24))) {
-                JNProcessIssueReturn issueReturn = new JNProcessIssueReturn();
-                issueReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
-                issueReturn.setChannelNo(Integer.valueOf(str.substring(16, 18), 16).toString());
-                issueReturn.setFlag(Integer.valueOf(str.substring(18, 20), 16));
-                return issueReturn;
-            }
+            JNProcessIssueReturn issueReturn = new JNProcessIssueReturn();
+            issueReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
+            issueReturn.setChannelNo(Integer.valueOf(str.substring(16, 18), 16).toString());
+            issueReturn.setFlag(Integer.valueOf(str.substring(18, 20), 16));
+            return issueReturn;
         }
         return null;
     }
@@ -475,39 +540,37 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      */
     public JNProcessClaimReturn jnClaimReturnAnalysis(String str) {
         if (CommonUtils.isNotEmpty(str) && str.length() == 112) {
-            if ("7E".equals(str.substring(0, 2)) && "56".equals(str.substring(10, 12)) && "7D".equals(str.substring(110, 112))) {
-                JNProcessClaimReturn claim = new JNProcessClaimReturn();
-                claim.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString()); //采集模块编号
-                claim.setStatus(Integer.valueOf(str.substring(16, 18), 16));
-                claim.setChannelNo(Integer.valueOf(str.substring(18, 20), 16).toString());
-                claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//点焊时间
-                claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//提前送气时间
-                claim.setInitialEle(BigDecimal.valueOf(Long.valueOf(str.substring(28, 32), 16)));//初期电流
-                claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//初期电压
-                claim.setInitialVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(36, 40), 16)));//初期电压一元
-                claim.setWeldElectricity(BigDecimal.valueOf(Long.valueOf(str.substring(40, 44), 16)));//焊接电流
-                claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压
-                claim.setWeldVoltageUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(48, 52), 16)));//焊接电压一元
-                claim.setExtinguishArcEle(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));//收弧电流
-                claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压
-                claim.setExtinguishArcVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));//收弧电压一元
-                claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//滞后送气
-                claim.setArcPeculiarity(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));//电弧特性
-                claim.setGases(BigDecimal.valueOf(Long.valueOf(str.substring(72, 74), 16)));//气体
-                claim.setWireDiameter(BigDecimal.valueOf(Long.valueOf(str.substring(74, 76), 16)));//焊丝直径
-                claim.setWireMaterials(Integer.valueOf(str.substring(76, 78), 16).toString());//焊丝材料
-                claim.setWeldProcess(Integer.valueOf(str.substring(78, 80), 16).toString());//焊接过程
-                claim.setControlInfo(Integer.valueOf(str.substring(80, 84), 16).toString());//控制信息
-                claim.setWeldEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(84, 86), 16)));//焊接电流微调
-                claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
-                claim.setExtinguishArcEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(88, 90), 16)));//收弧电流微调
-                claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压微调
-                claim.setAlarmsElectricityMax(BigDecimal.valueOf(Long.valueOf(str.substring(92, 96), 16)));//报警电流上限
-                claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
-                claim.setAlarmsElectricityMin(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));//报警电流下限
-                claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
-                return claim;
-            }
+            JNProcessClaimReturn claim = new JNProcessClaimReturn();
+            claim.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString()); //采集模块编号
+            claim.setStatus(Integer.valueOf(str.substring(16, 18), 16));
+            claim.setChannelNo(Integer.valueOf(str.substring(18, 20), 16).toString());
+            claim.setSpotWeldTime(BigDecimal.valueOf(Long.valueOf(str.substring(20, 24), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//点焊时间
+            claim.setPreflowTime(BigDecimal.valueOf(Long.valueOf(str.substring(24, 28), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//提前送气时间
+            claim.setInitialEle(BigDecimal.valueOf(Long.valueOf(str.substring(28, 32), 16)));//初期电流
+            claim.setInitialVol(BigDecimal.valueOf(Long.valueOf(str.substring(32, 36), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//初期电压
+            claim.setInitialVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(36, 40), 16)));//初期电压一元
+            claim.setWeldElectricity(BigDecimal.valueOf(Long.valueOf(str.substring(40, 44), 16)));//焊接电流
+            claim.setWeldVoltage(BigDecimal.valueOf(Long.valueOf(str.substring(44, 48), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压
+            claim.setWeldVoltageUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(48, 52), 16)));//焊接电压一元
+            claim.setExtinguishArcEle(BigDecimal.valueOf(Long.valueOf(str.substring(52, 56), 16)));//收弧电流
+            claim.setExtinguishArcVol(BigDecimal.valueOf(Long.valueOf(str.substring(56, 60), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压
+            claim.setExtinguishArcVolUnitary(BigDecimal.valueOf(Long.valueOf(str.substring(60, 64), 16)));//收弧电压一元
+            claim.setHysteresisAspirated(BigDecimal.valueOf(Long.valueOf(str.substring(64, 68), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//滞后送气
+            claim.setArcPeculiarity(BigDecimal.valueOf(Long.valueOf(str.substring(68, 72), 16)));//电弧特性
+            claim.setGases(BigDecimal.valueOf(Long.valueOf(str.substring(72, 74), 16)));//气体
+            claim.setWireDiameter(BigDecimal.valueOf(Long.valueOf(str.substring(74, 76), 16)));//焊丝直径
+            claim.setWireMaterials(Integer.valueOf(str.substring(76, 78), 16).toString());//焊丝材料
+            claim.setWeldProcess(Integer.valueOf(str.substring(78, 80), 16).toString());//焊接过程
+            claim.setControlInfo(Integer.valueOf(str.substring(80, 84), 16).toString());//控制信息
+            claim.setWeldEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(84, 86), 16)));//焊接电流微调
+            claim.setWeldVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(86, 88), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//焊接电压微调
+            claim.setExtinguishArcEleAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(88, 90), 16)));//收弧电流微调
+            claim.setExtinguishArcVolAdjust(BigDecimal.valueOf(Long.valueOf(str.substring(90, 92), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//收弧电压微调
+            claim.setAlarmsElectricityMax(BigDecimal.valueOf(Long.valueOf(str.substring(92, 96), 16)));//报警电流上限
+            claim.setAlarmsVoltageMax(BigDecimal.valueOf(Long.valueOf(str.substring(96, 100), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压上限
+            claim.setAlarmsElectricityMin(BigDecimal.valueOf(Long.valueOf(str.substring(100, 104), 16)));//报警电流下限
+            claim.setAlarmsVoltageMin(BigDecimal.valueOf(Long.valueOf(str.substring(104, 108), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
+            return claim;
         }
         return null;
     }
@@ -519,7 +582,7 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      * @return 密码返回实体类
      */
     public JNPasswordReturn jnPasswordReturnAnalysis(String str) {
-        if ("7E".equals(str.substring(0, 2)) && "53".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+        if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
             JNPasswordReturn passwordReturn = new JNPasswordReturn();
             passwordReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
             passwordReturn.setFlag(Integer.valueOf(str.substring(16, 18)));
@@ -535,7 +598,7 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
      * @return 控制命令返回实体类
      */
     public JNCommandReturn jnCommandReturnAnalysis(String str) {
-        if ("7E".equals(str.substring(0, 2)) && "54".equals(str.substring(10, 12)) && "7D".equals(str.substring(20, 22))) {
+        if (CommonUtils.isNotEmpty(str) && str.length() == 22) {
             JNCommandReturn commandReturn = new JNCommandReturn();
             commandReturn.setGatherNo(Integer.valueOf(str.substring(12, 16), 16).toString());
             commandReturn.setFlag(Integer.valueOf(str.substring(16, 18)));

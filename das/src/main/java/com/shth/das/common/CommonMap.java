@@ -36,10 +36,10 @@ public class CommonMap {
     public static final Map<String, ChannelHandlerContext> OTC_GATHER_NO_CTX_MAP = new ConcurrentHashMap<>();
 
     /**
-     * KEY：设备通道（ctx）
+     * KEY：客户端地址（ip+port）
      * VALUE: 采集编号（10进制数字）
      */
-    public static final Map<ChannelHandlerContext, String> OTC_CTX_GATHER_NO_MAP = new ConcurrentHashMap<>();
+    public static final Map<String, String> OTC_CTX_GATHER_NO_MAP = new ConcurrentHashMap<>();
 
     /**
      * KEY：设备CID
@@ -49,18 +49,18 @@ public class CommonMap {
     public static final Map<String, ChannelHandlerContext> SX_WELD_CID_CTX_MAP = new ConcurrentHashMap<>();
 
     /**
-     * KEY：设备通道（ctx）
+     * KEY：客户端地址（ip+port）
      * VALUE: 设备CID
      * 通道和设备CID进行对应绑定
      */
-    public static final Map<ChannelHandlerContext, String> SX_CTX_WELD_CID_MAP = new ConcurrentHashMap<>();
+    public static final Map<String, String> SX_CTX_WELD_CID_MAP = new ConcurrentHashMap<>();
 
     /**
-     * key: 设备通道（ctx）
+     * key: 客户端地址（ip+port）
      * value：松下设备信息
      * 松下焊机设备数据暂存
      */
-    public static final Map<ChannelHandlerContext, SxWeldModel> SX_CTX_WELD_INFO_MAP = new ConcurrentHashMap<>();
+    public static final Map<String, SxWeldModel> SX_CTX_WELD_INFO_MAP = new ConcurrentHashMap<>();
 
     /**
      * OTC设备领任务存储

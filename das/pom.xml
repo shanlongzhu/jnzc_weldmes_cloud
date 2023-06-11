@@ -43,9 +43,9 @@
             <groupId>com.processdb</groupId>
             <artifactId>ProcessDBDriver</artifactId>
             <version>2.0</version>
-            <type>jar</type>
+            <!--<type>jar</type>-->
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/ProcessDBDriver2.0.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/ProcessDBDriver2.0.jar</systemPath>
         </dependency>
         <!-- 添加web依赖 -->
         <dependency>
@@ -244,6 +244,9 @@
                     <fork>true</fork>
                     <!-- spring-boot:run 中文乱码解决 -->
                     <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
+                    <arguments>
+                        <argument>${pom.basedir}/lib</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <!--<plugin>

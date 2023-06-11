@@ -1,7 +1,7 @@
 package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
-import com.shth.das.business.dataup.BaseHandler;
+import com.shth.das.business.dataup.base.BaseHandler;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.*;
 import com.shth.das.mqtt.EmqMqttClient;
@@ -29,27 +29,41 @@ import java.util.function.Consumer;
 @Slf4j
 public class JnOtcProtocolHandle extends BaseHandler {
 
+    /**
+     * 保存字符串长度和方法映射关系
+     * Function<T,R>,T:传入参数，R：返回参数
+     * K：控制命令
+     * V：解析方法
+     */
+    private final Map<String, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
+
     public JnOtcProtocolHandle() {
         init();
     }
 
-    private final Map<Integer, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
-
     private void init() {
         //OTC（1.0）实时数据解析
-        this.otcHandlerMapping.put(282, this::jnRtDataManage);
+        this.otcHandlerMapping.put("22", this::jnRtDataHandle);
         //OTC（1.0）工艺下发返回解析
-        this.otcHandlerMapping.put(24, this::otcIssueReturnManage);
+        this.otcHandlerMapping.put("52", this::otcIssueReturnHandle);
         //OTC（1.0）索取返回协议解析
-        this.otcHandlerMapping.put(112, this::otcClaimReturnManage);
-        //OTC（1.0）密码返回和控制命令返回[新增程序包路径下发返回]
-        this.otcHandlerMapping.put(22, this::otcPwdCmdReturnManage);
+        this.otcHandlerMapping.put("56", this::otcClaimReturnHandle);
+        //密码返回
+        this.otcHandlerMapping.put("53", this::otcPasswordReturnHandle);
+        //控制命令返回
+        this.otcHandlerMapping.put("54", this::otcCommandReturnHandle);
+        //锁焊机指令返回
+        this.otcHandlerMapping.put("18", this::otcLockMachineReturnHandle);
+        //解锁焊机指令返回
+        this.otcHandlerMapping.put("19", this::otcLockMachineReturnHandle);
+        //程序包路径下发返回
+        this.otcHandlerMapping.put("11", this::otcProgramPathIssueReturnHandle);
     }
 
     @Override
     protected void dataHandler(HandlerParam param) {
-        if (this.otcHandlerMapping.containsKey(param.getKey())) {
-            this.otcHandlerMapping.get(param.getKey()).accept(param);
+        if (this.otcHandlerMapping.containsKey(param.getCtlCommand())) {
+            this.otcHandlerMapping.get(param.getCtlCommand()).accept(param);
         }
     }
 
@@ -65,10 +79,11 @@ public class JnOtcProtocolHandle extends BaseHandler {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         //客户端IP地址
         String clientIp = insocket.getAddress().getHostAddress();
+        String clientAddress = CommonUtils.getClientAddress(ctx);
         //有客户端终止连接则发送关机数据到mq，刷新实时界面
-        if (CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
+        if (CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(clientAddress)) {
             //采集编号
-            String gatherNo = CommonMap.OTC_CTX_GATHER_NO_MAP.get(ctx);
+            String gatherNo = CommonMap.OTC_CTX_GATHER_NO_MAP.get(clientAddress);
             //OTC设备关机数据添加到阻塞队列
             try {
                 OtcMachineQueue otcOnMachineQueue = new OtcMachineQueue();
@@ -93,7 +108,7 @@ public class JnOtcProtocolHandle extends BaseHandler {
             String dataArray = JSON.toJSONString(dataList);
             publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1RtData), dataArray);
             CommonMap.OTC_GATHER_NO_CTX_MAP.remove(gatherNo);
-            CommonMap.OTC_CTX_GATHER_NO_MAP.remove(ctx);
+            CommonMap.OTC_CTX_GATHER_NO_MAP.remove(clientAddress);
         }
     }
 
@@ -166,8 +181,9 @@ public class JnOtcProtocolHandle extends BaseHandler {
                     log.error("OTC开机设备阻塞队列添加：", e);
                 }
             }
-            if (!CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(ctx)) {
-                CommonMap.OTC_CTX_GATHER_NO_MAP.put(ctx, gatherNo);
+            String clientAddress = CommonUtils.getClientAddress(ctx);
+            if (!CommonMap.OTC_CTX_GATHER_NO_MAP.containsKey(clientAddress)) {
+                CommonMap.OTC_CTX_GATHER_NO_MAP.put(clientAddress, gatherNo);
             }
         } catch (Exception e) {
             log.error("采集盒IP地址盒采集编号绑定异常：{}", e.getMessage());
@@ -179,7 +195,7 @@ public class JnOtcProtocolHandle extends BaseHandler {
      *
      * @param handlerParam 入参
      */
-    private void jnRtDataManage(HandlerParam handlerParam) {
+    private void jnRtDataHandle(HandlerParam handlerParam) {
         if (ObjectUtils.isEmpty(handlerParam)) {
             return;
         }
@@ -226,7 +242,7 @@ public class JnOtcProtocolHandle extends BaseHandler {
      *
      * @param handlerParam
      */
-    private void otcIssueReturnManage(HandlerParam handlerParam) {
+    private void otcIssueReturnHandle(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
             //工艺下发返回
@@ -243,7 +259,7 @@ public class JnOtcProtocolHandle extends BaseHandler {
      *
      * @param handlerParam
      */
-    private void otcClaimReturnManage(HandlerParam handlerParam) {
+    private void otcClaimReturnHandle(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
             //工艺索取返回
@@ -255,27 +271,34 @@ public class JnOtcProtocolHandle extends BaseHandler {
         }
     }
 
-    /**
-     * 密码返回和控制命令返回
-     *
-     * @param handlerParam 入参
-     */
-    private void otcPwdCmdReturnManage(HandlerParam handlerParam) {
+    private void otcPasswordReturnHandle(HandlerParam handlerParam) {
         if (null != handlerParam) {
             Map<String, String> map = handlerParam.getValue();
-            ChannelHandlerContext ctx = handlerParam.getCtx();
             //密码返回
             if (map.containsKey(JNPasswordReturn.class.getSimpleName())) {
                 String message = map.get(JNPasswordReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
                 publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1PasswordReturn), message);
             }
+        }
+    }
+
+    private void otcCommandReturnHandle(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, String> map = handlerParam.getValue();
             //控制命令返回
             if (map.containsKey(JNCommandReturn.class.getSimpleName())) {
                 String message = map.get(JNCommandReturn.class.getSimpleName());
                 //通过mqtt发送到服务端
                 publishMessageToMqtt(GainTopicName.getMqttUpTopicName(UpTopicEnum.OtcV1CommandReturn), message);
             }
+        }
+    }
+
+    private void otcLockMachineReturnHandle(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, String> map = handlerParam.getValue();
+            ChannelHandlerContext ctx = handlerParam.getCtx();
             //锁焊机或者解锁焊机返回
             if (map.containsKey(JnLockMachineReturn.class.getSimpleName())) {
                 JnLockMachineReturn jnLockMachineReturn = JSON.parseObject(map.get(JnLockMachineReturn.class.getSimpleName()), JnLockMachineReturn.class);
@@ -328,6 +351,12 @@ public class JnOtcProtocolHandle extends BaseHandler {
                     }
                 }
             }
+        }
+    }
+
+    private void otcProgramPathIssueReturnHandle(HandlerParam handlerParam) {
+        if (null != handlerParam) {
+            Map<String, String> map = handlerParam.getValue();
             //程序包路径下发返回
             if (map.containsKey(OtcV1ProgramPathIssueReturn.class.getSimpleName())) {
                 String message = map.get(OtcV1ProgramPathIssueReturn.class.getSimpleName());

@@ -1,9 +1,10 @@
 package com.shth.das.netty;
 
-import com.shth.das.business.dataup.HandlerContext;
+import com.shth.das.business.dataup.base.HandlerContext;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonMap;
+import com.shth.das.util.CommonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -36,6 +37,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
             ctx.flush();
             return;
         }
+        //赋值通道环境，注意：decoder的ctx和handler的ctx不是同一个
         param.setCtx(ctx);
         this.handlerContext.dataHandler(ctx, param);
         ctx.flush();
@@ -48,15 +50,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        //客户端IP
-        String clientIp = insocket.getAddress().getHostAddress();
-        //客户端端口
-        int clientPort = insocket.getPort();
         //服务端端口
         int serverPort = inetSocket.getPort();
-        String clientAddress = clientIp + ":" + clientPort;
+        String clientAddress = CommonUtils.getClientAddress(ctx);
         if (serverPort == CommonFunction.getOtcPort()) {
             //如果map中不包含此连接，就保存连接
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
@@ -87,15 +84,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().localAddress();
-        //客户端IP地址
-        String clientIp = insocket.getAddress().getHostAddress();
-        //客户端端口
-        int clientPort = insocket.getPort();
         //服务端端口
         int serverPort = inetSocket.getPort();
-        String clientAddress = clientIp + ":" + clientPort;
+        String clientAddress = CommonUtils.getClientAddress(ctx);
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == CommonFunction.getOtcPort()) {
             //包含此客户端才去删除

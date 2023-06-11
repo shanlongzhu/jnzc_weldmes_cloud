@@ -1,9 +1,11 @@
 package com.shth.das.util;
 
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
 /**
@@ -316,6 +318,35 @@ public class CommonUtils {
             re = Integer.parseInt(byteStr, 2);
         }
         return (byte) re;
+    }
+
+    /**
+     * 获取客户端的IP和端口的地址
+     *
+     * @param clientIp
+     * @param clientPort
+     * @return
+     */
+    public static String getClientAddress(String clientIp, String clientPort) {
+        return clientIp + ":" + clientPort;
+    }
+
+    /**
+     * 获取客户端的IP和端口的地址
+     *
+     * @param ctx
+     * @return
+     */
+    public static String getClientAddress(ChannelHandlerContext ctx) {
+        if (ObjectUtils.isEmpty(ctx)) {
+            return null;
+        }
+        InetSocketAddress inetSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+        //客户端IP
+        String clientIp = inetSocket.getAddress().getHostAddress();
+        //客户端端口
+        int clientPort = inetSocket.getPort();
+        return clientIp + ":" + clientPort;
     }
 
 }

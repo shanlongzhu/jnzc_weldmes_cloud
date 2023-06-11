@@ -1,6 +1,7 @@
-package com.shth.das.business.dataup;
+package com.shth.das.business.dataup.base;
 
 
+import com.shth.das.business.dataup.base.BaseAnalysis;
 import com.shth.das.business.dataup.otc.JnOtcProtocolAnalysis;
 import com.shth.das.business.dataup.sx.JnSxProtocolAnalysis;
 import com.shth.das.codeparam.HandlerParam;

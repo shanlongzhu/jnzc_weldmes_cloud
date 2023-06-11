@@ -1,7 +1,7 @@
 package com.shth.das.business.dataup.sx;
 
 import com.alibaba.fastjson2.JSON;
-import com.shth.das.business.dataup.BaseAnalysis;
+import com.shth.das.business.dataup.base.BaseAnalysis;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.codeparam.JnSxDecoderParam;
 import com.shth.das.codeparam.SxVerificationCode;
