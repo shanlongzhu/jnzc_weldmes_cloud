@@ -1,6 +1,7 @@
 package com.shth.das.mqtt;
 
-import com.shth.das.business.datadown.MqttMessageManage;
+import com.shth.das.business.datadown.ProtocolDownContext;
+import com.shth.das.codeparam.MqttParam;
 import com.shth.das.common.CommonThreadPool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class EmqMqttCallback implements MqttCallback {
+
+    private final ProtocolDownContext context = new ProtocolDownContext();
 
     /**
      * 连接丢失后，一般在这里面进行重连
@@ -40,7 +43,10 @@ public class EmqMqttCallback implements MqttCallback {
         log.info("mqtt客户端收到消息主题：{} 消息内容：{}", topic, new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
         try {
             String message = new String(mqttMessage.getPayload(), StandardCharsets.UTF_8);
-            CommonThreadPool.executeTask(() -> new MqttMessageManage().mqttMessageManage(topic, message));
+            MqttParam param = new MqttParam();
+            param.setTopic(topic);
+            param.setMessage(message);
+            CommonThreadPool.executeTask(() -> context.protocolHandlerByTopic(param));
         } catch (Exception e) {
             log.error("MQTT客户端消息回调-数据接收处理异常：", e);
         }

@@ -27,13 +27,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Slf4j
-public class JnSxProtocolHandle extends BaseHandler {
+public class JnSxProtocolHandler extends BaseHandler {
 
     private final Map<Integer, Consumer<HandlerParam>> sxHandlerMapping = new HashMap<>();
 
     private final SxProtocolJoint sxProtocolJoint = new SxProtocolJoint();
 
-    public JnSxProtocolHandle() {
+    public JnSxProtocolHandler() {
         init();
     }
 

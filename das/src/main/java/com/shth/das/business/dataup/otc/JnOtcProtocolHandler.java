@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * 江南项目数据解析类
  */
 @Slf4j
-public class JnOtcProtocolHandle extends BaseHandler {
+public class JnOtcProtocolHandler extends BaseHandler {
 
     /**
      * 保存字符串长度和方法映射关系
@@ -37,7 +37,7 @@ public class JnOtcProtocolHandle extends BaseHandler {
      */
     private final Map<String, Consumer<HandlerParam>> otcHandlerMapping = new HashMap<>();
 
-    public JnOtcProtocolHandle() {
+    public JnOtcProtocolHandler() {
         init();
     }
 

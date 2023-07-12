@@ -1,8 +1,7 @@
 package com.shth.das.business.dataup.base;
 
-import com.shth.das.business.dataup.base.BaseHandler;
-import com.shth.das.business.dataup.otc.JnOtcProtocolHandle;
-import com.shth.das.business.dataup.sx.JnSxProtocolHandle;
+import com.shth.das.business.dataup.otc.JnOtcProtocolHandler;
+import com.shth.das.business.dataup.sx.JnSxProtocolHandler;
 import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,11 +36,11 @@ public class HandlerContext {
             return this.baseHandler;
         }
         if (serverPort == CommonFunction.getOtcPort()) {
-            return new JnOtcProtocolHandle();
+            return new JnOtcProtocolHandler();
         }
         //端口为sxPort，则为松下通讯协议
         else if (serverPort == CommonFunction.getSxPort()) {
-            return new JnSxProtocolHandle();
+            return new JnSxProtocolHandler();
         }
         return null;
     }
