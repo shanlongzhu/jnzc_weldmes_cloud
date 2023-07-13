@@ -30,10 +30,7 @@ import org.springframework.util.StopWatch;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * 定时任务类
@@ -284,7 +281,7 @@ public class ScheduledTask {
                 StopWatch stopWatch = new StopWatch();
                 for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
                     stopWatch.start();
-                    List<JNRtDataDB> jnRtDataDbList = new ArrayList<>();
+                    List<JNRtDataDB> jnRtDataDbList = new LinkedList<>();
                     Queues.drain(CommonQueue.OTC_LINKED_BLOCKING_QUEUE, jnRtDataDbList, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
                     otcRtDataService.insertRtDataList(jnRtDataDbList);
                     stopWatch.stop();
@@ -312,7 +309,7 @@ public class ScheduledTask {
                 StopWatch stopWatch = new StopWatch();
                 for (int i = 0; i < size; i += ADD_DATA_MAX_SIZE) {
                     stopWatch.start();
-                    List<SxRtDataDb> sxRtDataList = new ArrayList<>();
+                    List<SxRtDataDb> sxRtDataList = new LinkedList<>();
                     Queues.drain(CommonQueue.SX_LINKED_BLOCKING_QUEUE, sxRtDataList, ADD_DATA_MAX_SIZE, Duration.ofMillis(0));
                     sxRtDataService.insertSxRtDataList(sxRtDataList);
                     stopWatch.stop();

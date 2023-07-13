@@ -1,6 +1,7 @@
 package com.shth.das.business.dataup.otc;
 
 import com.alibaba.fastjson2.JSON;
+import com.google.common.collect.Lists;
 import com.shth.das.business.dataup.base.BaseAnalysis;
 import com.shth.das.business.dataup.base.DecodeObjectFactory;
 import com.shth.das.codeparam.HandlerParam;
@@ -23,7 +24,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -86,6 +90,36 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
                 handlerParam.setCtlCommand(ctlCommand);
             }
             return handlerParam;
+        }
+        return null;
+    }
+
+    /**
+     * OTC1.0实时数据解析
+     *
+     * @param jnOtcDecoderParam 入参
+     * @return 返回HandlerParam
+     */
+    private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
+        if (null != jnOtcDecoderParam) {
+            try {
+                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
+                Map<String, String> map = factory.getMap();
+                //存数据库
+                List<JNRtDataDB> jnRtDataDbs = jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
+                if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
+                    map.put(JNRtDataDB.class.getSimpleName(), JSON.toJSONString(jnRtDataDbs));
+                }
+                //发送前端
+                List<JNRtDataUI> jnRtDataUis = jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
+                if (CommonUtils.isNotEmpty(jnRtDataUis)) {
+                    map.put(JNRtDataUI.class.getSimpleName(), JSON.toJSONString(jnRtDataUis));
+                }
+                handlerParam.setValue(map);
+                return handlerParam;
+            } catch (Exception e) {
+                log.error("OTC1.0实时数据解析异常：{}", e.getMessage());
+            }
         }
         return null;
     }
@@ -186,36 +220,6 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
     }
 
     /**
-     * OTC1.0实时数据解析
-     *
-     * @param jnOtcDecoderParam 入参
-     * @return 返回HandlerParam
-     */
-    private HandlerParam jnOtcRtDataAnalysis(JnOtcDecoderParam jnOtcDecoderParam) {
-        if (null != jnOtcDecoderParam) {
-            try {
-                HandlerParam handlerParam = factory.getObject(HandlerParam.class);
-                Map<String, String> map = factory.getMap();
-                //存数据库
-                List<JNRtDataDB> jnRtDataDbs = jnRtDataDbAnalysis(jnOtcDecoderParam.getStr());
-                if (CommonUtils.isNotEmpty(jnRtDataDbs)) {
-                    map.put(JNRtDataDB.class.getSimpleName(), JSON.toJSONString(jnRtDataDbs));
-                }
-                //发送前端
-                List<JNRtDataUI> jnRtDataUis = jnRtDataUiAnalysis(jnOtcDecoderParam.getClientIp(), jnOtcDecoderParam.getStr());
-                if (CommonUtils.isNotEmpty(jnRtDataUis)) {
-                    map.put(JNRtDataUI.class.getSimpleName(), JSON.toJSONString(jnRtDataUis));
-                }
-                handlerParam.setValue(map);
-                return handlerParam;
-            } catch (Exception e) {
-                log.error("OTC1.0实时数据解析异常：{}", e.getMessage());
-            }
-        }
-        return null;
-    }
-
-    /**
      * 工艺下发返回解析
      *
      * @param jnOtcDecoderParam 入参
@@ -275,7 +279,7 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
         }
         str = str.toUpperCase();
         try {
-            List<JNRtDataUI> rtData = new ArrayList<>();
+            List<JNRtDataUI> rtData = Lists.newArrayList();
             Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
             //当前系统时间 yyyy-MM-dd HH:mm:ss
             String nowDateTime = DateTimeUtils.getNowDateTime();
@@ -357,14 +361,14 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
         }
         str = str.toUpperCase();
         try {
-            List<JNRtDataDB> rtdata = factory.getList(JNRtDataDB.class);
+            List<JNRtDataDB> rtDataList = Lists.newArrayList();
             //采集模块信息
             List<GatherModel> gatherList = CommonList.getGatherList();
             //焊机设备信息
             List<WeldModel> weldList = CommonList.getWeldList();
             //刷卡领取任务后进行数据绑定
             Map<String, TaskClaimIssue> otcTaskClaimMap = CommonMap.OTC_TASK_CLAIM_MAP;
-            JNRtDataDB data = factory.getObject(JNRtDataDB.class);
+            JNRtDataDB data = new JNRtDataDB();
             for (int a = 0; a < 239; a += 80) {
                 //判断OTC待机数据是否存储,如果不存储，则取出待机状态判断
                 if (!CommonFunction.isOtcStandbySave()) {
@@ -440,10 +444,10 @@ public class JnOtcProtocolAnalysis extends BaseAnalysis {
                 data.setAlarmsEleMin(BigDecimal.valueOf(Integer.valueOf(str.substring(110 + a, 114 + a), 16)));//报警电流下限
                 data.setAlarmsVolMin(BigDecimal.valueOf(Integer.valueOf(str.substring(114 + a, 118 + a), 16)).divide(new BigDecimal("10"), 1, RoundingMode.HALF_UP));//报警电压下限
                 //待机数据不存储，则针对起弧、收弧各存储一条待机数据
-                extracted(rtdata, data);
-                rtdata.add(data);
+                extracted(rtDataList, data);
+                rtDataList.add(data);
             }
-            return rtdata;
+            return rtDataList;
         } catch (Exception e) {
             log.error("OTC1.0实时数据解析存DB异常：", e);
         }
