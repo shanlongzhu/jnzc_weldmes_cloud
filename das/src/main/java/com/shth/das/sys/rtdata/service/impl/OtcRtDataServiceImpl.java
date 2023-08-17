@@ -1,5 +1,6 @@
 package com.shth.das.sys.rtdata.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.pojo.db.OtcWeldStatisticsData;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Service
 @Transactional(value = "ds2TransactionManager", rollbackFor = Exception.class)
 @Slf4j
-public class OtcRtDataServiceImpl implements OtcRtDataService {
+public class OtcRtDataServiceImpl extends ServiceImpl<OtcRtDataMapper, JNRtDataDB> implements OtcRtDataService {
 
     @Autowired
     private OtcRtDataMapper otcRtDataMapper;

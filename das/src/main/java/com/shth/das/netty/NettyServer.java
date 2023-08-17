@@ -67,14 +67,14 @@ public class NettyServer {
             }
         } catch (Exception e) {
             log.error("服务端启动异常：{}", e.getMessage());
+            closeNettyServer();
         }
-
     }
 
     public static void closeNettyServer() {
+        bossGroup.shutdownGracefully().syncUninterruptibly();
+        workerGroup.shutdownGracefully().syncUninterruptibly();
         log.info("Netty服务端已关闭!");
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
     }
 
 }

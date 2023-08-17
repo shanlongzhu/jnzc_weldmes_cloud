@@ -244,12 +244,12 @@
 
     <!-- 松下实时数据批量存入 -->
     <insert id="insertSxRtDataList" parameterType="java.util.Map">
-        insert into
+        INSERT INTO
         `${tableName}`(weldCid,weldIp,weldStatus,weldTime,alarmsCode,realityWeldEle,realityWeldVol,createTime,weldFlag,welderId,
         welderName,welderDeptId,taskId,taskName,taskNo,weldCode,weldModel,weldType,functionFlag,initialEle,initialVol,initialWireSpeed,
         weldEle,weldVol,weldWireSpeed,arcEle,arcVol,arcWireSpeed,realityWireSpeed,presetInitialEle,presetArcEle,presetEle,
         presetVol,presetInitialVol,presetArcVol,wireSpeed,runFlag,presetWeldEle,presetMaxEle,pulseRate,pulseFrequency,
-        cleanWidth,acFrequency,mixFrequency,mixAcRate) values
+        cleanWidth,acFrequency,mixFrequency,mixAcRate) VALUES
         <foreach collection="list" item="data" index="index" separator=",">
             (#{data.weldCid},#{data.weldIp},#{data.weldStatus},#{data.weldTime},#{data.alarmsCode},#{data.realityWeldEle},#{data.realityWeldVol},
             #{data.createTime},#{data.weldFlag},#{data.welderId},#{data.welderName},#{data.welderDeptId},#{data.taskId},#{data.taskName},

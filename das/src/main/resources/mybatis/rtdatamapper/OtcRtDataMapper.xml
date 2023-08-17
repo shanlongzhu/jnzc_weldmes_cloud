@@ -165,7 +165,7 @@
             `weldTime`
         )
           USING BTREE COMMENT '焊机时间'
-            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='实时数据表'
+            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='实时数据表';
     </update>
 
     <!-- 查询表名是否存在 -->
@@ -177,10 +177,10 @@
 
     <!-- 实时数据批量存入 -->
     <insert id="insertRtDataList" parameterType="java.util.Map">
-        insert into `${tableName}`(weldModel,gatherNo,welderNo,weldTime,electricity,voltage,wireFeedRate,presetEle,
+        INSERT INTO `${tableName}`(weldModel,gatherNo,welderNo,weldTime,electricity,voltage,wireFeedRate,presetEle,
         presetVol,weldedJunctionNo,weldStatus,wireDiameter,wireMaterialsGases,weldElectricity,weldVoltage,
         weldEleAdjust,weldVolAdjust,channelNo,alarmsEleMax,alarmsEleMin,alarmsVolMax,alarmsVolMin,machineId,machineNo,
-        machineDeptId,gatherId,gatherDeptId,welderId,welderName,welderDeptId,taskId,taskName,taskNo,createTime) values
+        machineDeptId,gatherId,gatherDeptId,welderId,welderName,welderDeptId,taskId,taskName,taskNo,createTime) VALUES
         <foreach collection="list" item="data" index="index" separator=",">
             (#{data.weldModel},#{data.gatherNo},#{data.welderNo},#{data.weldTime},#{data.electricity},#{data.voltage},#{data.wireFeedRate},
             #{data.presetEle},#{data.presetVol},#{data.weldedJunctionNo},#{data.weldStatus},#{data.wireDiameter},#{data.wireMaterialsGases},

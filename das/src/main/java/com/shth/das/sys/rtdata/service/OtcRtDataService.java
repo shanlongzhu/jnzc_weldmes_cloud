@@ -1,11 +1,12 @@
 package com.shth.das.sys.rtdata.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.shth.das.pojo.db.OtcWeldStatisticsData;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
 
 import java.util.List;
 
-public interface OtcRtDataService {
+public interface OtcRtDataService extends IService<JNRtDataDB> {
 
     /**
      * 查询表名是否存在
