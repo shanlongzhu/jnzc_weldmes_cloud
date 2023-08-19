@@ -55,11 +55,11 @@ public class TableStrategy {
     /**
      * OTC表名前缀
      */
-    private static final String OTC_TABLE_PREFIX = "otcrtd";
+    public static final String OTC_TABLE_PREFIX = "otcrtd_";
     /**
      * 松下表名前缀
      */
-    private static final String SX_TABLE_PREFIX = "sxrtd";
+    public static final String SX_TABLE_PREFIX = "sxrtd_";
 
     /**
      * Map<K,Function<T,R>>

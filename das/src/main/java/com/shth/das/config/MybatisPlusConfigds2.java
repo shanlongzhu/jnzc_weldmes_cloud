@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,9 @@ public class MybatisPlusConfigds2 {
     static final String PACKAGE = "com.shth.das.sys.rtdata.mapper";
     static final String MAPPER_LOCATION = "classpath*:mybatis/rtdatamapper/*.xml";
 
+    @Autowired
+    private DynamicTableNameInterceptor dynamicTableNameInterceptor;
+
     //ds2数据源Session工厂
     @Bean("ds2SqlSessionFactory")
     public SqlSessionFactory ds2SqlSessionFactory(@Qualifier("ds2DataSource") DataSource dataSource) throws Exception {
@@ -43,6 +47,8 @@ public class MybatisPlusConfigds2 {
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().
                 getResources(MAPPER_LOCATION));
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setBanner(false));
+        //设置自定义SQL拦截器，实现动态表名
+        sqlSessionFactory.setPlugins(dynamicTableNameInterceptor);
         return sqlSessionFactory.getObject();
     }
 
