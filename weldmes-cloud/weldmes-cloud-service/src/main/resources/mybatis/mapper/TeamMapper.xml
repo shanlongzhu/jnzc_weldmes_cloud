@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gw.data.team.dao.TeamDao">
+<mapper namespace="com.gw.service.data.team.dao.TeamDao">
 
 	<resultMap id="weldStatisticsData" type="com.gw.entities.WeldStatisticsDataTeam">
 		<id property="id"  column="id"></id>

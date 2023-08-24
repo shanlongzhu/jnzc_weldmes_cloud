@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.gw.equipment.collection.dao.AreaBayDao">
+<mapper namespace="com.gw.service.equipment.collection.dao.AreaBayDao">
 
     <resultMap id="AreaByaMap" type="com.gw.entities.AreaBayInfo">
         <id property="id" column="id"></id>

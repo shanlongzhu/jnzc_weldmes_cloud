@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.gw.sys.dao.UserRolesAndPerDao">
+<mapper namespace="com.gw.service.sys.dao.UserRolesAndPerDao">
 
     <resultMap id="SysRoleMap" type="com.gw.entities.SysRole">
         <id property="id" column="id"></id>

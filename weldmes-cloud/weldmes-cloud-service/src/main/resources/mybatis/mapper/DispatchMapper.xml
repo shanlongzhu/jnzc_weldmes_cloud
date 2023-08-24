@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.gw.process.dispatch.dao.DispatchDao">
+<mapper namespace="com.gw.service.process.dispatch.dao.DispatchDao">
 
     <resultMap id="taskList" type="com.gw.entities.TaskInfo">
         <id property="id" column="id"></id>

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.gw.process.craft.dao.SxFR2ProcessIssueDao">
+<mapper namespace="com.gw.service.process.craft.dao.SxFR2ProcessIssueDao">
 
     <resultMap id="sxFR2Map" type="com.gw.entities.SxFR2ProcessIssue">
         <id property="id" column="id"></id>

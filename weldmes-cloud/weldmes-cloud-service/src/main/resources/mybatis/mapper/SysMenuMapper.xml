@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.gw.sys.dao.SysMenuDao">
+<mapper namespace="com.gw.service.sys.dao.SysMenuDao">
 
     <resultMap id="MenuAndButtonMap" type="com.gw.entities.SysMenuInfo">
         <id property="id" column="id"></id>
