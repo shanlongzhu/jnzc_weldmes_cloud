@@ -1,5 +1,6 @@
 package com.shth.das.sys.rtdata.service.impl;
 
+import com.shth.das.codeparam.TableNameEnum;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.pojo.db.SxWeldStatisticsData;
 import com.shth.das.pojo.jnsx.SxRtDataDb;
@@ -40,7 +41,7 @@ public class SxRtDataServiceImpl implements SxRtDataService {
         if (CommonUtils.isNotEmpty(list)) {
             try {
                 String nowDateTime = DateTimeUtils.getNowDateTime();
-                String tableName = TableStrategy.getSxTableByDateTime(nowDateTime);
+                String tableName = TableStrategy.getTableNameByDateTime(TableNameEnum.SX, nowDateTime);
                 if (StringUtils.isNotBlank(tableName)) {
                     Map<String, Object> map = new HashMap<>(8);
                     map.put("tableName", tableName);

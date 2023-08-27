@@ -1,6 +1,7 @@
 package com.shth.das.sys.rtdata.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shth.das.codeparam.TableNameEnum;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.pojo.db.OtcWeldStatisticsData;
 import com.shth.das.pojo.jnotc.JNRtDataDB;
@@ -41,7 +42,7 @@ public class OtcRtDataServiceImpl extends ServiceImpl<OtcRtDataMapper, JNRtDataD
         if (CommonUtils.isNotEmpty(list)) {
             try {
                 String nowDateTime = DateTimeUtils.getNowDateTime();
-                String tableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
+                String tableName = TableStrategy.getTableNameByDateTime(TableNameEnum.OTC, nowDateTime);
                 if (StringUtils.isNotBlank(tableName)) {
                     Map<String, Object> map = new HashMap<>(8);
                     map.put("tableName", tableName);

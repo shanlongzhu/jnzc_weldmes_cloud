@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -16,7 +16,9 @@ import java.math.BigInteger;
 @Data
 //@Document("otc_weld_rtdata")
 @TableName("otcrtd")
-public class JNRtDataDB implements Serializable {
+public class JNRtDataDB extends Model<JNRtDataDB> {
+
+    private static final long serialVersionUID = 2047021588347136198L;
 
     /**
      * 焊机发送的数据字段

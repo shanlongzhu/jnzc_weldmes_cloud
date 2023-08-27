@@ -2,6 +2,7 @@ package com.shth.das.job;
 
 import com.google.common.collect.Queues;
 import com.processdb.driver.record.RecordData;
+import com.shth.das.codeparam.TableNameEnum;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonList;
@@ -30,7 +31,10 @@ import org.springframework.util.StopWatch;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * 定时任务类
@@ -73,7 +77,7 @@ public class ScheduledTask {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
             //根据时间获取OTC下一个表的表名
-            String otcTableName = TableStrategy.getNextOtcTableByDateTime(nowDateTime);
+            String otcTableName = TableStrategy.getNextTableNameByDateTime(TableNameEnum.OTC, nowDateTime);
             if (StringUtils.isBlank(otcTableName)) {
                 return;
             }
@@ -96,7 +100,7 @@ public class ScheduledTask {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
             //根据时间获取松下下一个表的表名
-            String sxTableName = TableStrategy.getNextSxTableByDateTime(nowDateTime);
+            String sxTableName = TableStrategy.getNextTableNameByDateTime(TableNameEnum.SX, nowDateTime);
             if (StringUtils.isBlank(sxTableName)) {
                 return;
             }
@@ -137,7 +141,7 @@ public class ScheduledTask {
                 //Thread.sleep(1000 * 60);
                 String nowDateTime = DateTimeUtils.getNowDateTime();
                 //获取当前时间对应的表名
-                String otcTableName = TableStrategy.getOtcTableByDateTime(nowDateTime);
+                String otcTableName = TableStrategy.getTableNameByDateTime(TableNameEnum.OTC, nowDateTime);
                 //系统时间整点作为结束时间点
                 String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
                 //查询出上一次统计的时间
@@ -164,7 +168,7 @@ public class ScheduledTask {
                     //循环每个小时统计
                     String nowEndTime;
                     for (int i = 0; i < hours; i++) {
-                        nowEndTime = DateTimeUtils.addDateMinut(otcStartTime, 1);
+                        nowEndTime = DateTimeUtils.addDateHour(otcStartTime, 1);
                         statisticsDataService.insertWeldStatisticsData(otcStartTime, nowEndTime, otcTableName);
                         otcStartTime = nowEndTime;
                     }
@@ -190,7 +194,7 @@ public class ScheduledTask {
                 String nowDateTime = DateTimeUtils.getNowDateTime();
                 //系统时间整点作为结束时间点
                 String endTime = LocalDateTime.now().format(DateTimeUtils.HOUR_DATE);
-                String sxTableName = TableStrategy.getSxTableByDateTime(nowDateTime);
+                String sxTableName = TableStrategy.getTableNameByDateTime(TableNameEnum.SX, nowDateTime);
                 String sxMaxEndTime = statisticsDataService.selectSxMaxEndTime();
                 String sxStartTime = LocalDateTime.now().format(DateTimeUtils.TODAY_DATETIME);
                 if (CommonUtils.isNotEmpty(sxMaxEndTime)) {
@@ -213,7 +217,7 @@ public class ScheduledTask {
                     //循环每个小时统计
                     String nowEndTime;
                     for (int i = 0; i < sxHours; i++) {
-                        nowEndTime = DateTimeUtils.addDateMinut(sxStartTime, 1);
+                        nowEndTime = DateTimeUtils.addDateHour(sxStartTime, 1);
                         statisticsDataService.insertSxWeldStatisticsData(sxStartTime, nowEndTime, sxTableName);
                         sxStartTime = nowEndTime;
                     }

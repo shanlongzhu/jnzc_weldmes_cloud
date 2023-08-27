@@ -28,38 +28,12 @@ public class TableStrategy {
      * 按周分表（每周日23点执行）：0 0 23 ? * SUN
      * 按天分表（每天23点执行）：0 0 23 * * ?
      */
-    public static final String EXECUTE_TIME = TableStrategy.DAY_TIME;
+    public static final String EXECUTE_TIME = TableExecuteEnum.DAY_TIME;
 
     /**
      * 指定使用的分表策略
      */
     private static final String TABLE_STRATEGY = TableStrategyEnum.DAY.getStrategy();
-
-    /**
-     * 按年分表（每月底23点执行）：0 0 23 L * ?
-     */
-    private static final String YEAR_TIME = "0 0 23 L * ?";
-    /**
-     * 按月分表（每月底23点执行）：0 0 23 L * ?
-     */
-    private static final String MONTH_TIME = "0 0 23 L * ?";
-    /**
-     * 按周分表（每周日23点执行）：0 0 23 ? * SUN
-     */
-    private static final String WEEK_TIME = "0 0 23 ? * SUN";
-    /**
-     * 按天分表（每天23点执行）：0 0 23 * * ?
-     */
-    private static final String DAY_TIME = "0 0 23 * * ?";
-
-    /**
-     * OTC表名前缀
-     */
-    public static final String OTC_TABLE_PREFIX = "otcrtd_";
-    /**
-     * 松下表名前缀
-     */
-    public static final String SX_TABLE_PREFIX = "sxrtd_";
 
     /**
      * Map<K,Function<T,R>>
@@ -79,22 +53,48 @@ public class TableStrategy {
      */
     private static final Map<String, Function<String, String>> TIMING_NEXT_TABLE_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 表名后缀MAP
+     */
+    private static final Map<String, Function<String, String>> TABLE_NAME_SUFFIX_MAP = new ConcurrentHashMap<>();
+
     static {
         //时间点的当前表
-        TIMING_TABLE_MAP.put("year", TableStrategy::getTableNameByYear);
-        TIMING_TABLE_MAP.put("month", TableStrategy::getTableNameByMonth);
-        TIMING_TABLE_MAP.put("week", TableStrategy::getTableNameByWeek);
-        TIMING_TABLE_MAP.put("day", TableStrategy::getTableNameByDay);
+        TIMING_TABLE_MAP.put(TableStrategyEnum.YEAR.getStrategy(), TableStrategy::getTableNameByYear);
+        TIMING_TABLE_MAP.put(TableStrategyEnum.MONTH.getStrategy(), TableStrategy::getTableNameByMonth);
+        TIMING_TABLE_MAP.put(TableStrategyEnum.WEEK.getStrategy(), TableStrategy::getTableNameByWeek);
+        TIMING_TABLE_MAP.put(TableStrategyEnum.DAY.getStrategy(), TableStrategy::getTableNameByDay);
         //时间段的所有表集合
-        TIME_BUCKET_MAP.put("year", TableStrategy::getTableNameByYear);
-        TIME_BUCKET_MAP.put("month", TableStrategy::getTableNameByMonth);
-        TIME_BUCKET_MAP.put("week", TableStrategy::getTableNameByWeek);
-        TIME_BUCKET_MAP.put("day", TableStrategy::getTableNameByDay);
+        TIME_BUCKET_MAP.put(TableStrategyEnum.YEAR.getStrategy(), TableStrategy::getTableNameByYear);
+        TIME_BUCKET_MAP.put(TableStrategyEnum.MONTH.getStrategy(), TableStrategy::getTableNameByMonth);
+        TIME_BUCKET_MAP.put(TableStrategyEnum.WEEK.getStrategy(), TableStrategy::getTableNameByWeek);
+        TIME_BUCKET_MAP.put(TableStrategyEnum.DAY.getStrategy(), TableStrategy::getTableNameByDay);
         //时间点的下一个表
-        TIMING_NEXT_TABLE_MAP.put("year", TableStrategy::getNextTableNameByYear);
-        TIMING_NEXT_TABLE_MAP.put("month", TableStrategy::getNextTableNameByMonth);
-        TIMING_NEXT_TABLE_MAP.put("week", TableStrategy::getNextTableNameByWeek);
-        TIMING_NEXT_TABLE_MAP.put("day", TableStrategy::getNextTableNameByDay);
+        TIMING_NEXT_TABLE_MAP.put(TableStrategyEnum.YEAR.getStrategy(), TableStrategy::getNextTableNameByYear);
+        TIMING_NEXT_TABLE_MAP.put(TableStrategyEnum.MONTH.getStrategy(), TableStrategy::getNextTableNameByMonth);
+        TIMING_NEXT_TABLE_MAP.put(TableStrategyEnum.WEEK.getStrategy(), TableStrategy::getNextTableNameByWeek);
+        TIMING_NEXT_TABLE_MAP.put(TableStrategyEnum.DAY.getStrategy(), TableStrategy::getNextTableNameByDay);
+        //存储表名后缀
+        TABLE_NAME_SUFFIX_MAP.put(TableStrategyEnum.YEAR.getStrategy(), TableStrategy::getTableNameSuffixByYear);
+        TABLE_NAME_SUFFIX_MAP.put(TableStrategyEnum.MONTH.getStrategy(), TableStrategy::getTableNameSuffixByMonth);
+        TABLE_NAME_SUFFIX_MAP.put(TableStrategyEnum.WEEK.getStrategy(), TableStrategy::getTableNameSuffixByWeek);
+        TABLE_NAME_SUFFIX_MAP.put(TableStrategyEnum.DAY.getStrategy(), TableStrategy::getTableNameSuffixByDay);
+    }
+
+    /**
+     * 获取表名后缀
+     *
+     * @param dateTime 格式：yyyy-MM-dd HH:mm:ss
+     * @return 表名后缀
+     */
+    public static String getTableNameSuffix(String dateTime) {
+        if (StringUtils.isBlank(dateTime)) {
+            return null;
+        }
+        if (!TABLE_NAME_SUFFIX_MAP.containsKey(TABLE_STRATEGY)) {
+            return null;
+        }
+        return TABLE_NAME_SUFFIX_MAP.get(TABLE_STRATEGY).apply(dateTime);
     }
 
     /**
@@ -103,10 +103,10 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    public static String getOtcTableByDateTime(String dateTime) {
+    public static String getTableNameByDateTime(TableNameEnum tableNameEnum, String dateTime) {
         if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
-                return OTC_TABLE_PREFIX + TIMING_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
+                return tableNameEnum.getStrategy() + TIMING_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
         }
         return null;
@@ -119,14 +119,14 @@ public class TableStrategy {
      * @param endTime   yyyy-MM-dd HH:mm:ss
      * @return List<String>
      */
-    public static List<String> getOtcTableByDateTime(String startTime, String endTime) {
+    public static List<String> getTableNameByDateTime(TableNameEnum tableNameEnum, String startTime, String endTime) {
         if (CommonUtils.isNotEmpty(startTime) && CommonUtils.isNotEmpty(endTime)) {
             if (TIME_BUCKET_MAP.containsKey(TABLE_STRATEGY)) {
                 Map<String, String> map = new HashMap<>();
                 map.put("startTime", startTime);
                 map.put("endTime", endTime);
                 List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
-                return otcTableList.stream().map(value -> OTC_TABLE_PREFIX + value).collect(Collectors.toList());
+                return otcTableList.stream().map(value -> tableNameEnum.getStrategy() + value).collect(Collectors.toList());
             }
         }
         return null;
@@ -138,60 +138,10 @@ public class TableStrategy {
      * @param dateTime yyyy-MM-dd HH:mm:ss
      * @return 表名
      */
-    public static String getNextOtcTableByDateTime(String dateTime) {
+    public static String getNextTableNameByDateTime(TableNameEnum tableNameEnum, String dateTime) {
         if (StringUtils.isNotBlank(dateTime)) {
             if (TIMING_NEXT_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
-                return OTC_TABLE_PREFIX + TIMING_NEXT_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 根据时间点获取松下表名
-     *
-     * @param dateTime yyyy-MM-dd HH:mm:ss
-     * @return 表名
-     */
-    public static String getSxTableByDateTime(String dateTime) {
-        if (StringUtils.isNotBlank(dateTime)) {
-            if (TIMING_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
-                return SX_TABLE_PREFIX + TIMING_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 根据时间段获取松下表名集合
-     *
-     * @param startTime yyyy-MM-dd HH:mm:ss
-     * @param endTime   yyyy-MM-dd HH:mm:ss
-     * @return List<String>
-     */
-    public static List<String> getSxTableByDateTime(String startTime, String endTime) {
-        if (CommonUtils.isNotEmpty(startTime) && CommonUtils.isNotEmpty(endTime)) {
-            if (TIME_BUCKET_MAP.containsKey(TABLE_STRATEGY)) {
-                Map<String, String> map = new HashMap<>();
-                map.put("startTime", startTime);
-                map.put("endTime", endTime);
-                List<String> otcTableList = TIME_BUCKET_MAP.get(TABLE_STRATEGY).apply(map);
-                return otcTableList.stream().map(value -> SX_TABLE_PREFIX + value).collect(Collectors.toList());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 根据时间点获取下一个松下表名
-     *
-     * @param dateTime yyyy-MM-dd HH:mm:ss
-     * @return 表名
-     */
-    public static String getNextSxTableByDateTime(String dateTime) {
-        if (StringUtils.isNotBlank(dateTime)) {
-            if (TIMING_NEXT_TABLE_MAP.containsKey(TABLE_STRATEGY)) {
-                return SX_TABLE_PREFIX + TIMING_NEXT_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
+                return tableNameEnum.getStrategy() + TIMING_NEXT_TABLE_MAP.get(TABLE_STRATEGY).apply(dateTime);
             }
         }
         return null;
@@ -294,7 +244,7 @@ public class TableStrategy {
         if (StringUtils.isNotBlank(dateTime)) {
             try {
                 final LocalDate parse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
-                return LocalDateTime.of(parse, LocalTime.MIN).with(DayOfWeek.MONDAY).format(DateTimeUtils.CUSTOM_DATE);
+                return LocalDateTime.of(parse, LocalTime.MIN).with(DayOfWeek.MONDAY).format(DateTimeUtils.CUSTOM_DAY);
             } catch (Exception e) {
                 log.error("根据时间点获取周异常：", e);
                 return null;
@@ -323,7 +273,7 @@ public class TableStrategy {
                     final long totalWeeks = Math.abs(Duration.between(startMonday, endMonday).toDays()) / 7;
                     List<String> list = new ArrayList<>();
                     for (int i = 0; i <= totalWeeks; i++) {
-                        list.add(startMonday.plusWeeks(i).format(DateTimeUtils.CUSTOM_DATE));
+                        list.add(startMonday.plusWeeks(i).format(DateTimeUtils.CUSTOM_DAY));
                     }
                     return list;
                 }
@@ -343,7 +293,7 @@ public class TableStrategy {
      */
     private static String getTableNameByDay(String dateTime) {
         if (StringUtils.isNotBlank(dateTime)) {
-            return LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_DATE);
+            return LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_DAY);
         }
         return null;
     }
@@ -364,7 +314,7 @@ public class TableStrategy {
                     final long totalDays = Math.abs(Duration.between(startTime, endTime).toDays());
                     List<String> list = new ArrayList<>();
                     for (int i = 0; i <= totalDays; i++) {
-                        list.add(startTime.plusDays(i).format(DateTimeUtils.CUSTOM_DATE));
+                        list.add(startTime.plusDays(i).format(DateTimeUtils.CUSTOM_DAY));
                     }
                     return list;
                 }
@@ -414,7 +364,7 @@ public class TableStrategy {
         if (StringUtils.isNotBlank(dateTime)) {
             final LocalDate startParse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
             final LocalDateTime startMonday = LocalDateTime.of(startParse, LocalTime.MIN).with(DayOfWeek.MONDAY);
-            return startMonday.plusWeeks(1).format(DateTimeUtils.CUSTOM_DATE);
+            return startMonday.plusWeeks(1).format(DateTimeUtils.CUSTOM_DAY);
         }
         return null;
     }
@@ -428,9 +378,62 @@ public class TableStrategy {
     private static String getNextTableNameByDay(String dateTime) {
         if (StringUtils.isNotBlank(dateTime)) {
             final LocalDateTime startTime = LocalDateTime.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
-            return startTime.plusDays(1).format(DateTimeUtils.CUSTOM_DATE);
+            return startTime.plusDays(1).format(DateTimeUtils.CUSTOM_DAY);
         }
         return null;
+    }
+
+    /**
+     * 根据时间获取表名后缀
+     *
+     * @param dateTime yyyy-MM-dd HH:mm:ss
+     * @return 表名后缀
+     */
+    private static String getTableNameSuffixByYear(String dateTime) {
+        if (StringUtils.isBlank(dateTime)) {
+            return null;
+        }
+        return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_YEAR);
+    }
+
+    /**
+     * 根据时间获取表名后缀
+     *
+     * @param dateTime yyyy-MM-dd HH:mm:ss
+     * @return 表名后缀
+     */
+    private static String getTableNameSuffixByMonth(String dateTime) {
+        if (StringUtils.isBlank(dateTime)) {
+            return null;
+        }
+        return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_MONTH);
+    }
+
+    /**
+     * 根据时间获取表名后缀
+     *
+     * @param dateTime yyyy-MM-dd HH:mm:ss
+     * @return 表名后缀
+     */
+    private static String getTableNameSuffixByWeek(String dateTime) {
+        if (StringUtils.isBlank(dateTime)) {
+            return null;
+        }
+        LocalDate parse = LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME);
+        return LocalDateTime.of(parse, LocalTime.MIN).with(DayOfWeek.MONDAY).format(DateTimeUtils.CUSTOM_DAY);
+    }
+
+    /**
+     * 根据时间获取表名后缀
+     *
+     * @param dateTime yyyy-MM-dd HH:mm:ss
+     * @return 表名后缀
+     */
+    private static String getTableNameSuffixByDay(String dateTime) {
+        if (StringUtils.isBlank(dateTime)) {
+            return null;
+        }
+        return LocalDate.parse(dateTime, DateTimeUtils.DEFAULT_DATETIME).format(DateTimeUtils.CUSTOM_DAY);
     }
 
 }

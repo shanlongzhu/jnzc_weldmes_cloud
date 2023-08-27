@@ -42,8 +42,7 @@ public class MybatisPlusConfigds1 {
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().
-                getResources(MAPPER_LOCATION));
+        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATION));
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setBanner(false));
         return sqlSessionFactory.getObject();
     }

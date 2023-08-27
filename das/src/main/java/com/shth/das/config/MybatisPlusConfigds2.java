@@ -3,13 +3,15 @@ package com.shth.das.config;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -28,11 +30,9 @@ public class MybatisPlusConfigds2 {
     static final String PACKAGE = "com.shth.das.sys.rtdata.mapper";
     static final String MAPPER_LOCATION = "classpath*:mybatis/rtdatamapper/*.xml";
 
-    @Autowired
-    private DynamicTableNameInterceptor dynamicTableNameInterceptor;
-
     //ds2数据源Session工厂
     @Bean("ds2SqlSessionFactory")
+    @ConfigurationPropertiesBinding
     public SqlSessionFactory ds2SqlSessionFactory(@Qualifier("ds2DataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
@@ -44,12 +44,21 @@ public class MybatisPlusConfigds2 {
         //开启驼峰功能
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().
-                getResources(MAPPER_LOCATION));
+        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATION));
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setBanner(false));
-        //设置自定义SQL拦截器，实现动态表名
-        sqlSessionFactory.setPlugins(dynamicTableNameInterceptor);
+        sqlSessionFactory.setPlugins(mybatisPlusInterceptor());
         return sqlSessionFactory.getObject();
+    }
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        //动态表名插件
+        DynamicTableNameInnerInterceptor dynamicTableNameInnerInterceptor = new DynamicTableNameInnerInterceptor();
+        //设置自定义的表名逻辑处理器
+        dynamicTableNameInnerInterceptor.setTableNameHandler(new MyTableNameHandler());
+        interceptor.addInnerInterceptor(dynamicTableNameInnerInterceptor);
+        return interceptor;
     }
 
     //ds2数据源事务管理器

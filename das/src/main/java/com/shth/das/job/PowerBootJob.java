@@ -1,5 +1,6 @@
 package com.shth.das.job;
 
+import com.shth.das.codeparam.TableNameEnum;
 import com.shth.das.codeparam.TableStrategy;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonList;
@@ -71,7 +72,7 @@ public class PowerBootJob {
         if (CommonFunction.isEnableOtcFunction()) {
             CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
-                String tableName = TableStrategy.getOtcTableByDateTime(DateTimeUtils.getNowDateTime());
+                String tableName = TableStrategy.getTableNameByDateTime(TableNameEnum.OTC, DateTimeUtils.getNowDateTime());
                 if (StringUtils.isBlank(tableName)) {
                     return;
                 }
@@ -92,7 +93,7 @@ public class PowerBootJob {
         if (CommonFunction.isEnableSxFunction()) {
             CommonThreadPool.executeTask(() -> {
                 //当天数据库表名
-                String tableName = TableStrategy.getSxTableByDateTime(DateTimeUtils.getNowDateTime());
+                String tableName = TableStrategy.getTableNameByDateTime(TableNameEnum.SX, DateTimeUtils.getNowDateTime());
                 if (StringUtils.isBlank(tableName)) {
                     return;
                 }
