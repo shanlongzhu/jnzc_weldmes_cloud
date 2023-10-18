@@ -14,6 +14,9 @@ import java.util.List;
 @Slf4j
 public class CommonUtils {
 
+    private CommonUtils() {
+    }
+
     /**
      * 16进制字符串转10进制数字
      *

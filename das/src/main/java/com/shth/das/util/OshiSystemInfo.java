@@ -19,6 +19,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class OshiSystemInfo {
 
+    private OshiSystemInfo() {
+    }
+
     /**
      * 获取所有信息
      */

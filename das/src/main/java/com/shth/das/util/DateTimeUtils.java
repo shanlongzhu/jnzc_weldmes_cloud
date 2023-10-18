@@ -14,6 +14,9 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class DateTimeUtils {
 
+    private DateTimeUtils() {
+    }
+
     public static final DateTimeFormatter DEFAULT_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter TODAY_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00");
     public static final DateTimeFormatter TODAY_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
