@@ -1,11 +1,9 @@
 package com.shth.das.common;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 公共线程池
@@ -22,13 +20,18 @@ public class CommonThreadPool {
             new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.DiscardOldestPolicy());*/
 
     /**
-     * 核心线程：100
-     * 最大线程：2000
-     * 超时时间：30秒
-     * 拒绝策略：丢弃任务并抛异常
+     * 使用guava提供的ThreadFactoryBuilder创建线程池
      */
-    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(50, 1000, 30000, TimeUnit.MILLISECONDS,
-            new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.CallerRunsPolicy());
+    private static final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("das-pool-%d").build();
+
+    /**
+     * 核心线程：10
+     * 最大线程：200
+     * 超时时间：30秒
+     * 拒绝策略：由调用线程处理该任务
+     */
+    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(10, 200, 30000, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(50), threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
 
 
     public static ThreadPoolExecutor threadPoolExecutor() {

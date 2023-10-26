@@ -56,6 +56,7 @@
     <logger name="com.hl.magic" level="INFO"/>
     <logger name="com.shth.das" level="INFO"/>
 
+    <!-- 只有INFO级别及以上的日志消息才会被记录 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
