@@ -1,7 +1,7 @@
 package com.shth.das.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.async.TimeoutCallableProcessingInterceptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
@@ -19,7 +19,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         configurer.setTaskExecutor(threadPoolTaskExecutor());
     }
 
-    @Bean
     public TimeoutCallableProcessingInterceptor timeoutInterceptor() {
         return new TimeoutCallableProcessingInterceptor();
     }
@@ -29,15 +28,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
      *
      * @return
      */
-    @Bean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    public AsyncTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数
         executor.setCorePoolSize(10);
         //最大线程数
         executor.setMaxPoolSize(100);
         //队列
-        executor.setQueueCapacity(20);
+        executor.setQueueCapacity(50);
         //设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(30);
         //线程名称前缀

@@ -71,7 +71,7 @@ public class ScheduledTask {
      * 任务：创建第二天的实时数据表结构
      */
     @Scheduled(cron = TableStrategy.EXECUTE_TIME)
-    @Async
+    @Async("taskExecutor")
     public void scheduled1() {
         String nowDateTime = DateTimeUtils.getNowDateTime();
         //判断是否启用OTC业务功能
@@ -94,7 +94,7 @@ public class ScheduledTask {
      * 任务：创建第二天的实时数据表结构
      */
     @Scheduled(cron = TableStrategy.EXECUTE_TIME)
-    @Async
+    @Async("taskExecutor")
     public void scheduled2() {
         String nowDateTime = DateTimeUtils.getNowDateTime();
         //判断是否启用松下业务功能
@@ -117,7 +117,7 @@ public class ScheduledTask {
      * 任务：定时更新焊工、焊机、任务等数据
      */
     @Scheduled(fixedRate = 1000 * 60 * 10)
-    @Async
+    @Async("taskExecutor")
     public void scheduled3() {
         CommonList.setGatherList(gatherService.getMachineGatherAll());
         CommonList.setWeldList(weldService.getMachineWeldAll());
@@ -132,7 +132,7 @@ public class ScheduledTask {
      * 任务：OTC实时数据定时统计
      */
     @Scheduled(cron = "0 1 0/1 * * ?")
-    @Async
+    @Async("taskExecutor")
     public void scheduled4() {
         //判断是否启用OTC业务功能
         if (CommonFunction.isEnableOtcFunction()) {
@@ -184,7 +184,7 @@ public class ScheduledTask {
      * 任务：松下实时数据定时统计（逻辑同OTC的相似）
      */
     @Scheduled(cron = "0 1 0/1 * * ?")
-    @Async
+    @Async("taskExecutor")
     public void scheduled5() {
         //判断是否启用松下业务功能
         if (CommonFunction.isEnableSxFunction()) {
@@ -233,7 +233,7 @@ public class ScheduledTask {
      * 任务：时间校准
      */
     @Scheduled(fixedRate = 1000 * 60 * 10)
-    @Async
+    @Async("taskExecutor")
     public void scheduled6() {
         if (CommonFunction.isEnableOtcFunction()) {
             try {
@@ -249,6 +249,7 @@ public class ScheduledTask {
                 if (CommonMap.OTC_GATHER_NO_CTX_MAP.isEmpty()) {
                     return;
                 }
+                StringBuilder sb = new StringBuilder();
                 for (Map.Entry<String, ChannelHandlerContext> next : CommonMap.OTC_GATHER_NO_CTX_MAP.entrySet()) {
                     String key = next.getKey();
                     //采集编号
@@ -256,8 +257,11 @@ public class ScheduledTask {
                     //设备通道
                     Channel channel = CommonMap.OTC_GATHER_NO_CTX_MAP.get(key).channel();
                     if (channel.isOpen() && channel.isActive() && channel.isWritable()) {
+                        sb.setLength(0); // 清空之前的字符串
+                        sb.append(head).append(gatherNo).append("20").append(year).append(month)
+                                .append(day).append(hour).append(minute).append(second).append(foot);
                         //字符总长度：36
-                        String timeString = (head + gatherNo + "20" + year + month + day + hour + minute + second + foot).toUpperCase();
+                        String timeString = sb.toString().toUpperCase();
                         if (timeString.length() == 36) {
                             channel.writeAndFlush(timeString);
                         }
@@ -274,7 +278,7 @@ public class ScheduledTask {
      * 任务：江南OTC设备实时数据定时存储
      */
     @Scheduled(fixedRate = 1000 * 3)
-    @Async
+    @Async("taskExecutor")
     public void scheduled7() {
         if (CommonFunction.isEnableOtcFunction()) {
             try {
@@ -302,7 +306,7 @@ public class ScheduledTask {
      * 任务：江南松下设备实时数据定时存储
      */
     @Scheduled(fixedRate = 1000 * 3)
-    @Async
+    @Async("taskExecutor")
     public void scheduled8() {
         if (CommonFunction.isEnableSxFunction()) {
             try {
@@ -330,7 +334,7 @@ public class ScheduledTask {
      * 任务：清除前一天任务绑定信息
      */
     @Scheduled(cron = "${clearTaskBindingByTime}")
-    @Async
+    @Async("taskExecutor")
     public void scheduled9() {
         //清空OTC设备的任务
         CommonMap.OTC_TASK_CLAIM_MAP.clear();
@@ -343,7 +347,7 @@ public class ScheduledTask {
      * 任务：读取OTC实时数据队列并存储到ProcessDB实时数据库中
      */
     @Scheduled(fixedRate = 1000 * 3)
-    @Async
+    @Async("taskExecutor")
     public void scheduled10() {
         if (CommonFunction.isEnableOtcFunction() && CommonFunction.isEnableProcessDB()) {
             try {
@@ -367,7 +371,7 @@ public class ScheduledTask {
      * 3秒执行一次
      * 任务：读取SX实时数据队列并存储到ProcessDB实时数据库中
      */
-    @Async
+    @Async("taskExecutor")
     @Scheduled(fixedRate = 1000 * 3)
     public void scheduled11() {
         if (CommonFunction.isEnableSxFunction() && CommonFunction.isEnableProcessDB()) {
@@ -391,7 +395,7 @@ public class ScheduledTask {
     /**
      * 每隔10分钟检测MQTT连接，如果断开则重连
      */
-    @Async
+    @Async("taskExecutor")
     @Scheduled(fixedRate = 1000 * 60 * 10)
     public void scheduled12() {
         EmqMqttClient.reConnectMqtt();
