@@ -39,3 +39,5 @@ build/
 /das/.scannerwork/**
 /das/.scannerwork/
 /das/.scannerwork
+/das/target/*
+/das/target
