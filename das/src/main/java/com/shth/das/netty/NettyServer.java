@@ -8,7 +8,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -16,7 +15,6 @@ import javax.annotation.PostConstruct;
  * Netty服务端
  */
 @Slf4j
-@Component
 public class NettyServer {
 
     @Value("${otcNettyServer.port}")

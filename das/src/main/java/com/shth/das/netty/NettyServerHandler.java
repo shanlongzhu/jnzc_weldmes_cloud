@@ -5,6 +5,7 @@ import com.shth.das.codeparam.HandlerParam;
 import com.shth.das.common.CommonFunction;
 import com.shth.das.common.CommonMap;
 import com.shth.das.util.CommonUtils;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -12,6 +13,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Netty服务端处理器
@@ -20,7 +22,18 @@ import java.net.InetSocketAddress;
  * channelRead0 获取消息会自动释放资源，获取的消息必须是指定的泛型。
  */
 @Slf4j
+@ChannelHandler.Sharable
+//只在bootstrap中创建一个实例，它就可以被添加到一或多个pipeline中且不存在竞争，这样可以减少同一类handler的new和GC，节省资源，提高效率(注意这个ChannelHandler必须是无成员变量的)
 public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam> {
+
+
+    private NettyServerHandler() {
+    }
+
+    private final AtomicInteger otcAtomicInteger = new AtomicInteger(0);
+    private final AtomicInteger sxAtomicInteger = new AtomicInteger(0);
+
+    public static final NettyServerHandler INSTANCE = new NettyServerHandler();
 
     private final HandlerContext handlerContext = new HandlerContext();
 
@@ -55,23 +68,25 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         int serverPort = inetSocket.getPort();
         String clientAddress = CommonUtils.getClientAddress(ctx);
         if (serverPort == CommonFunction.getOtcPort()) {
+            otcAtomicInteger.incrementAndGet();
             //如果map中不包含此连接，就保存连接
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.warn("OTC存在连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
+                log.warn("OTC存在连接：{}--->连接通道数量：{},---->otcAtomicInteger:{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size(), otcAtomicInteger.get());
             } else {
                 //保存连接
                 CommonMap.OTC_CHANNEL_MAP.put(clientAddress, ctx);
-                log.info("OTC新增连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
+                log.info("OTC新增连接：{}--->连接通道数量：{},---->otcAtomicInteger:{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size(), otcAtomicInteger.get());
             }
         }
         if (serverPort == CommonFunction.getSxPort()) {
+            sxAtomicInteger.incrementAndGet();
             //如果map中不包含此连接，就保存连接
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
-                log.warn("SX存在连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
+                log.warn("SX存在连接：{}--->连接通道数量：{},---->sxAtomicInteger:{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size(), sxAtomicInteger.get());
             } else {
                 //保存连接
                 CommonMap.SX_CHANNEL_MAP.put(clientAddress, ctx);
-                log.info("SX新增连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
+                log.info("SX新增连接：{}--->连接通道数量：{},---->sxAtomicInteger:{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size(), sxAtomicInteger.get());
             }
         }
         ctx.flush();
@@ -90,20 +105,22 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<HandlerParam
         String clientAddress = CommonUtils.getClientAddress(ctx);
         //端口为otcPort，则为江南版OTC通讯协议
         if (serverPort == CommonFunction.getOtcPort()) {
+            otcAtomicInteger.decrementAndGet();
             //包含此客户端才去删除
             if (CommonMap.OTC_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接
                 CommonMap.OTC_CHANNEL_MAP.remove(clientAddress);
-                log.info("OTC终止连接：{}--->连接通道数量：{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size());
+                log.info("OTC终止连接：{}--->连接通道数量：{},---->otcAtomicInteger:{}", clientAddress, CommonMap.OTC_CHANNEL_MAP.size(), otcAtomicInteger.get());
             }
         }
         //端口为sxPort，则为松下通讯协议
         if (serverPort == CommonFunction.getSxPort()) {
+            sxAtomicInteger.decrementAndGet();
             //包含此客户端才去删除
             if (CommonMap.SX_CHANNEL_MAP.containsKey(clientAddress)) {
                 //删除连接
                 CommonMap.SX_CHANNEL_MAP.remove(clientAddress);
-                log.info("SX终止连接：{}--->连接通道数量：{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size());
+                log.info("SX终止连接：{}--->连接通道数量：{},---->sxAtomicInteger:{}", clientAddress, CommonMap.SX_CHANNEL_MAP.size(), sxAtomicInteger.get());
             }
         }
         handlerContext.shutdownHandle(ctx);
